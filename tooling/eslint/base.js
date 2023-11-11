@@ -19,7 +19,7 @@ const config = {
   rules: {
     "turbo/no-undeclared-env-vars": "off",
     "@typescript-eslint/no-unused-vars": [
-      "error",
+      "warn",
       { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
     ],
     "@typescript-eslint/consistent-type-imports": [
@@ -30,7 +30,11 @@ const config = {
       2,
       { checksVoidReturn: { attributes: false } },
     ],
-    "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+    "import/consistent-type-specifier-style": ["off", "prefer-top-level"],
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/consistent-type-definitions": "off",
+    "@typescript-eslint/no-empty-function": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
   },
   ignorePatterns: [
     "**/.eslintrc.cjs",

@@ -1,8 +1,9 @@
 {
-  "name": "@acme/nextjs",
+  "name": "@pachi/nextjs",
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "beautify": "prettier \"**/*.{mjs,ts,tsx,md,json}\" --write --log-level error",
     "build": "pnpm with-env next build",
     "clean": "git clean -xdf .next .turbo node_modules",
     "dev": "pnpm with-env next dev",
@@ -13,9 +14,7 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@acme/api": "workspace:^0.1.0",
-    "@acme/auth": "workspace:^0.1.0",
-    "@acme/db": "workspace:^0.1.0",
+    "@pachi/db": "workspace:^0.1.0",
     "@t3-oss/env-nextjs": "^0.7.1",
     "@tanstack/react-query": "^5.8.1",
     "@tanstack/react-query-devtools": "^5.8.1",
@@ -31,10 +30,10 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@acme/eslint-config": "workspace:^0.2.0",
-    "@acme/prettier-config": "workspace:^0.1.0",
-    "@acme/tailwind-config": "workspace:^0.1.0",
-    "@acme/tsconfig": "workspace:^0.1.0",
+    "@pachi/eslint-config": "workspace:^0.1.0",
+    "@pachi/prettier-config": "workspace:^0.1.0",
+    "@pachi/tailwind-config": "workspace:^0.1.0",
+    "@pachi/tsconfig": "workspace:^0.1.0",
     "@types/node": "^18.18.9",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
@@ -47,10 +46,10 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@acme/eslint-config/base",
-      "@acme/eslint-config/nextjs",
-      "@acme/eslint-config/react"
+      "@pachi/eslint-config/base",
+      "@pachi/eslint-config/nextjs",
+      "@pachi/eslint-config/react"
     ]
   },
-  "prettier": "@acme/prettier-config"
+  "prettier": "@pachi/prettier-config"
 }

@@ -6,6 +6,7 @@
   },
   "packageManager": "pnpm@8.10.2",
   "scripts": {
+    "beautify": "turbo beautify",
     "build": "turbo build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo clean",
@@ -21,7 +22,7 @@
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
-    "@acme/prettier-config": "workspace:^0.1.0",
+    "@pachi/prettier-config": "workspace:^0.1.0",
     "@turbo/gen": "^1.10.16",
     "prettier": "^3.0.3",
     "turbo": "^1.10.16",
@@ -32,5 +33,5 @@
       "@auth/core": "0.18.0"
     }
   },
-  "prettier": "@acme/prettier-config"
+  "prettier": "@pachi/prettier-config"
 }

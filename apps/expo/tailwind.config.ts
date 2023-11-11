@@ -1,8 +1,7 @@
-// @ts-expect-error - no types
-import nativewind from "nativewind/preset";
+import nativewind from "nativewind";
 import type { Config } from "tailwindcss";
 
-import baseConfig from "@acme/tailwind-config";
+import baseConfig from "@pachi/tailwind-config";
 
 export default {
   content: ["./src/**/*.{ts,tsx}"],

@@ -1,26 +1,34 @@
 {
-  "name": "@acme/db",
+  "name": "@pachi/db",
   "version": "0.1.0",
   "private": true,
   "main": "./index.ts",
   "types": "./index.ts",
   "license": "MIT",
   "scripts": {
+    "beautify": "prettier \"**/*.{mjs,ts,tsx,md,json}\" --write --log-level error",
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
     "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
-    "push": "drizzle-kit push:mysql",
-    "studio": "drizzle-kit studio",
+    "generate": "drizzle-kit generate:pg",
+    "push": "drizzle-kit push:pg",
+    "studio": "drizzle-kit studio --port 3001 --verbose",
+    "dev": "drizzle-kit studio",
+    "migrate": "wrangler d1 migrations apply local --local",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@planetscale/database": "^1.11.0",
-    "drizzle-orm": "^0.28.6"
+    "@neondatabase/serverless": "^0.6.0",
+    "drizzle-orm": "^0.28.6",
+    "drizzle-valibot": "^0.1.1",
+    "pg": "^8.11.3",
+    "replicache": "13.0.1",
+    "valibot": "^0.17.1"
   },
   "devDependencies": {
-    "@acme/eslint-config": "workspace:^0.2.0",
-    "@acme/prettier-config": "workspace:^0.1.0",
-    "@acme/tsconfig": "workspace:^0.1.0",
+    "@pachi/tsconfig": "workspace:^0.1.0",
+    "@pachi/eslint-config": "workspace:^0.1.0",
+    "@pachi/prettier-config": "workspace:^0.1.0",
     "dotenv-cli": "^7.3.0",
     "drizzle-kit": "^0.19.13",
     "eslint": "^8.53.0",
@@ -30,8 +38,8 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@acme/eslint-config/base"
+      "@pachi/eslint-config/base"
     ]
   },
-  "prettier": "@acme/prettier-config"
+  "prettier": "@pachi/prettier-config"
 }
