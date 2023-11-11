@@ -6,6 +6,7 @@
   },
   "packageManager": "pnpm@8.10.2",
   "scripts": {
+    "beautify": "turbo beautify",
     "build": "turbo build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo clean",
