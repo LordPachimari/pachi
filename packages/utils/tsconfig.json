@@ -1,0 +1,11 @@
+{
+  "extends": "@pachi/tsconfig/base.json",
+  "exclude": ["node_modules"],
+  "include": [
+    "src",
+    "*.mjs",
+    "*.ts",
+    "../types/src/common/currencies.ts",
+    "../db/src/table-name.ts"
+  ]
+}
