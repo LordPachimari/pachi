@@ -20,6 +20,10 @@
       "persistent": true,
       "cache": false
     },
+    "beautify": {
+      "outputs": ["node_modules/.cache/.prettiercache"],
+      "outputMode": "new-only"
+    },
     "format": {
       "outputs": ["node_modules/.cache/.prettiercache"],
       "outputMode": "new-only"
