@@ -30,7 +30,8 @@
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noPropertyAccessFromIndexSignature": true
+    "noPropertyAccessFromIndexSignature": true,
+    "types": ["@cloudflare/workers-types"]
   },
   "exclude": ["node_modules", "build", "dist", ".next", ".expo"]
 }

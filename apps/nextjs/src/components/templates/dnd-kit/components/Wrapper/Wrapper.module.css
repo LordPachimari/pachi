@@ -1,0 +1,12 @@
+/* Wrapper */
+.Wrapper {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  
+}
+
+.Wrapper.center {
+  justify-content: center;
+}

@@ -1,3 +1,4 @@
+//@ts-ignore
 import { fileURLToPath } from "url";
 
 /** @typedef  {import("prettier").Config} PrettierConfig */
