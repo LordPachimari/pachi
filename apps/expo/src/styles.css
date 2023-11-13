@@ -1,3 +1,105 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --icon-color: #000;
+
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 210 40% 100%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 222.2 47.4% 0%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    --slate-a1: hsla(240, 89.3%, 18.3%, 0.012);
+    --slate-a2: hsla(240, 89.3%, 18.3%, 0.024);
+    --slate-a3: hsla(240, 99.7%, 11.6%, 0.051);
+    --slate-a4: hsla(240, 93.2%, 10.6%, 0.079);
+    --slate-a5: hsla(240, 98.8%, 9.4%, 0.106);
+    --slate-a6: hsla(240, 94.6%, 9.3%, 0.134);
+    --slate-a7: hsla(233, 97.2%, 9.3%, 0.173);
+    --slate-a8: hsla(231, 98.1%, 9.4%, 0.275);
+    --slate-a9: hsla(231, 99.6%, 5.6%, 0.455);
+    --slate-a10: hsla(230, 99.5%, 4.7%, 0.506);
+    --slate-a11: hsla(220, 98%, 3.8%, 0.624);
+    --slate-a12: hsla(210, 95.1%, 1.9%, 0.891);
+  }
+
+  .dark {
+    --icon-color: #fff;
+    --background: 210 40% 0%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 0%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 100%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    --slate-a1: hsla(240, 92.7%, 53%, 0.009);
+    --slate-a2: hsla(240, 92.5%, 72.7%, 0.031);
+    --slate-a3: hsla(230, 99.3%, 87%, 0.091);
+    --slate-a4: hsla(223, 97.1%, 88.8%, 0.126);
+    --slate-a5: hsla(223, 99%, 91.1%, 0.156);
+    --slate-a6: hsla(218, 97.1%, 91.5%, 0.191);
+    --slate-a7: hsla(210, 97.4%, 91.7%, 0.243);
+    --slate-a8: hsla(202, 97.3%, 93.4%, 0.334);
+    --slate-a9: hsla(219, 97.6%, 93.2%, 0.412);
+    --slate-a10: hsla(217, 98.3%, 94.7%, 0.494);
+    --slate-a11: hsla(218, 98.5%, 96.8%, 0.693);
+    --slate-a12: hsla(220, 87.4%, 99.3%, 0.936);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
