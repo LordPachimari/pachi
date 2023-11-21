@@ -9,11 +9,11 @@ export const prefixEnum = enumType([
   "default_sc",
   "st",
   "f_flag",
-  "p_col",
-  "p_cat",
-  "p_var",
-  "p_opt",
-  "p_opt_val",
+  "col",
+  "cat",
+  "var",
+  "opt",
+  "opt_val",
   "draft",
   "l_item",
   "l_adj",
@@ -31,11 +31,11 @@ export type Prefix = Output<typeof prefixEnum>;
 export const generateId = ({
   id,
   prefix,
-  additional_id,
+  filter_id,
 }: {
   id: string;
   prefix: Prefix;
-  additional_id?: string;
+  filter_id?: string;
 }) => {
-  return additional_id ? `${prefix}_${id}_${additional_id}` : `${prefix}_${id}`;
+  return filter_id ? `${prefix}_${filter_id}_${id}` : `${prefix}_${id}`;
 };

@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.6.0",
-    "drizzle-orm": "^0.28.6",
+    "drizzle-orm": "^0.29.0",
     "drizzle-valibot": "^0.1.1",
     "pg": "^8.11.3",
     "replicache": "13.0.1",
@@ -30,7 +30,7 @@
     "@pachi/eslint-config": "workspace:^0.1.0",
     "@pachi/prettier-config": "workspace:^0.1.0",
     "dotenv-cli": "^7.3.0",
-    "drizzle-kit": "^0.19.13",
+    "drizzle-kit": "^0.20.2",
     "eslint": "^8.53.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"

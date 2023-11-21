@@ -25,12 +25,13 @@ import type {
   AddProductToPriceListProps,
   CreateCustomerGroupProps,
   CreatePriceListProps,
-  CreatePriceProps,
+  CreatePricesProps,
   CreateProductCollectionProps,
   CreateProductOptionProps,
   CreateProductOptionValueProps,
   CreateProductProps,
   CreateProductVariantProps,
+  DeletePricesProps,
   DeleteProps,
   RemoveCustomerFromGroupProps,
   RemoveProductFromPriceListProps,
@@ -194,7 +195,7 @@ export const dashboardMutators_ = {
     console.log("new_option_values", new_option_values);
     console.log("old values keys", oldValuesKeys);
     const newValues = new_option_values.map((value) => ({
-      id: generateId({ id: ulid(), prefix: "p_opt_val" }),
+      id: generateId({ id: ulid(), prefix: "opt_val" }),
       option_id,
       value,
     }));
@@ -225,6 +226,7 @@ export const dashboardMutators_ = {
   ) => {
     const { variant } = args;
     ProductVariantSchema._parse(variant);
+    console.log("new variant from the server", variant);
     await Promise.all([
       tx.put(variant.id, variant, "product_variants"),
       tx.update(variant.product_id, {}, "products"),
@@ -376,14 +378,19 @@ export const dashboardMutators_ = {
     string()._parse(price_id);
     await tx.del(price_id, "money_amount");
   },
-  createPrice: async (
+  createPrices: async (
     tx: ReplicacheTransaction,
-    { args }: CreatePriceProps,
+    { args }: CreatePricesProps,
   ) => {
-    const { price, product_id } = args;
+    const { prices, product_id } = args;
     string()._parse(product_id);
-    MoneyAmountSchema._parse(price);
-    await tx.put(price.id, price, "money_amount");
+    array(MoneyAmountSchema)._parse(prices);
+    console.log("prices to create", prices);
+    await Promise.all(
+      prices.map(async (price) => {
+        await tx.put(price.id, price, "money_amount");
+      }),
+    );
   },
   updatePrice: async (
     tx: ReplicacheTransaction,
@@ -397,5 +404,17 @@ export const dashboardMutators_ = {
       tx.update(money_amount_id, updates, "money_amount"),
       tx.update(product_id, {}, "products"),
     ]);
+  },
+  deletePrices: async (
+    tx: ReplicacheTransaction,
+    { args }: DeletePricesProps,
+  ) => {
+    const { ids } = args;
+    array(string())._parse(ids);
+    await Promise.all(
+      ids.map(async (id) => {
+        await tx.del(id, "money_amount");
+      }),
+    );
   },
 };

@@ -29,7 +29,7 @@ export interface CreateProductProps extends MutationBase {
 }
 
 export interface DeleteProps extends MutationBase {
-  args: { id: string };
+  args: { id: string; productId: string };
 }
 
 export interface UpdateProductProps extends MutationBase {
@@ -117,8 +117,8 @@ export interface RemoveProductFromPriceListProps extends MutationBase {
   args: { price_id: string; price_list_id: string };
 }
 
-export interface CreatePriceProps extends MutationBase {
-  args: { price: MoneyAmount; product_id: string };
+export interface CreatePricesProps extends MutationBase {
+  args: { prices: MoneyAmount[]; product_id: string; variant_id: string };
 }
 export interface UpdatePriceProps extends MutationBase {
   args: {
@@ -132,11 +132,6 @@ export interface CreateVariantProps extends MutationBase {
   args: { variant: ProductVariant };
 }
 
-export interface CreateStoreProps extends MutationBase {
-  args: {
-    store: Store;
-  };
-}
-export interface UpdateStoreProps extends MutationBase {
-  args: { updates: StoreUpdates; id: string };
+export interface DeletePricesProps extends MutationBase {
+  args: { ids: string[]; variant_id: string; product_id: string };
 }

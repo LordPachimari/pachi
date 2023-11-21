@@ -1,3 +1,197 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --input-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
+
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: ;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --ring: 240 5% 64.9%;
+
+    --radius: 0.5rem;
+
+    --brand: #f31260;
+
+    --component: #fff;
+
+    --background-color: #fff;
+    --border-color: #efefef;
+    --text-color: #333;
+    --handle-color: rgba(0, 0, 0, 0.25);
+    --box-shadow-border: 0 0 0 calc(1px / var(--scale-x, 1))
+      rgba(63, 63, 68, 0.05);
+    --box-shadow-common: 0 1px calc(3px / var(--scale-x, 1)) 0
+      rgba(34, 33, 81, 0.15);
+    --box-shadow: var(--box-shadow-border), var(--box-shadow-common);
+    --button-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
+
+    --crimson-a1: hsla(340, 100%, 51%, 0.012);
+    --crimson-a2: hsla(330, 100%, 51%, 0.032);
+    --crimson-a3: hsla(332, 99.1%, 47.1%, 0.063);
+    --crimson-a4: hsla(331, 99.9%, 44.3%, 0.102);
+    --crimson-a5: hsla(333, 99.9%, 42.3%, 0.153);
+    --crimson-a6: hsla(333, 99.5%, 40.5%, 0.224);
+    --crimson-a7: hsla(335, 99.7%, 39.1%, 0.322);
+    --crimson-a8: hsla(336, 99.5%, 38.5%, 0.44);
+    --crimson-a9: hsla(336, 99.9%, 44.3%, 0.761);
+    --crimson-a10: hsla(336, 100%, 41.5%, 0.808);
+    --crimson-a11: hsla(336, 99.8%, 38.5%, 0.887);
+    --crimson-a12: hsla(332, 99.8%, 16.3%, 0.914);
+
+    --ruby-a1: hsla(340, 100%, 51%, 0.012);
+    --ruby-a2: hsla(345, 100%, 51%, 0.032);
+    --ruby-a3: hsla(344, 99.1%, 47.1%, 0.063);
+    --ruby-a4: hsla(348, 99.9%, 46.2%, 0.102);
+    --ruby-a5: hsla(346, 99.9%, 43.6%, 0.153);
+    --ruby-a6: hsla(347, 99.6%, 41.2%, 0.22);
+    --ruby-a7: hsla(348, 99.8%, 39.4%, 0.314);
+    --ruby-a8: hsla(348, 99.7%, 38.2%, 0.428);
+    --ruby-a9: hsla(348, 99.8%, 43%, 0.726);
+    --ruby-a10: hsla(347, 99.9%, 40.6%, 0.773);
+    --ruby-a11: hsla(345, 99.9%, 37.9%, 0.859);
+    --ruby-a12: hsla(344, 99.9%, 16.6%, 0.91);
+
+    --slate-a1: hsla(240, 89.3%, 18.3%, 0.012);
+    --slate-a2: hsla(240, 89.3%, 18.3%, 0.024);
+    --slate-a3: hsla(240, 99.7%, 11.6%, 0.051);
+    --slate-a4: hsla(240, 93.2%, 10.6%, 0.079);
+    --slate-a5: hsla(240, 98.8%, 9.4%, 0.106);
+    --slate-a6: hsla(240, 94.6%, 9.3%, 0.134);
+    --slate-a7: hsla(233, 97.2%, 9.3%, 0.173);
+    --slate-a8: hsla(231, 98.1%, 9.4%, 0.275);
+    --slate-a9: hsla(231, 99.6%, 5.6%, 0.455);
+    --slate-a10: hsla(230, 99.5%, 4.7%, 0.506);
+    --slate-a11: hsla(220, 98%, 3.8%, 0.624);
+    --slate-a12: hsla(210, 95.1%, 1.9%, 0.891);
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --input-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
+    --button-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: ;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+
+    --ring: 240 3.7% 15.9%;
+    --component: #000;
+    --background-color: black;
+    --box-shadow-border: 0 0 0 calc(1px / var(--scale-x, 1))
+      rgba(248, 248, 248, 0.05);
+    --box-shadow-common: 0 1px calc(3px / var(--scale-x, 1)) 0
+      rgba(255, 253, 253, 0.15);
+    --box-shadow: var(--box-shadow-border), var(--box-shadow-common);
+    --focused-outline-color: #1a001e;
+    --focused-outline-color: #430245;
+    --crimson-a1: hsla(354, 100%, 49.3%, 0.022);
+    --crimson-a2: hsla(338, 100%, 49.8%, 0.074);
+    --crimson-a3: hsla(335, 99.8%, 54.7%, 0.143);
+    --crimson-a4: hsla(336, 99.4%, 56.6%, 0.191);
+    --crimson-a5: hsla(336, 99.8%, 57.8%, 0.247);
+    --crimson-a6: hsla(336, 99.3%, 58.1%, 0.33);
+    --crimson-a7: hsla(336, 99.9%, 57.5%, 0.485);
+    --crimson-a8: hsla(336, 99.8%, 54.4%, 0.793);
+    --crimson-a9: hsla(336, 99.9%, 62.7%, 0.905);
+    --crimson-a10: hsla(339, 99.8%, 70.1%, 0.953);
+    --crimson-a11: hsla(341, 100%, 76.1%, 1);
+    --crimson-a12: hsla(330, 99.3%, 91.6%, 0.992);
+
+    --ruby-a1: hsla(340, 100%, 41%, 0.031);
+    --ruby-a2: hsla(345, 100%, 40%, 0.078);
+    --ruby-a3: hsla(344, 99.1%, 37.1%, 0.152);
+    --ruby-a4: hsla(348, 99.9%, 36.2%, 0.204);
+    --ruby-a5: hsla(346, 99.9%, 33.6%, 0.256);
+    --ruby-a6: hsla(347, 99.6%, 31.2%, 0.338);
+    --ruby-a7: hsla(348, 99.8%, 29.4%, 0.494);
+    --ruby-a8: hsla(348, 99.7%, 28.2%, 0.797);
+    --ruby-a9: hsla(348, 99.8%, 33%, 0.888);
+    --ruby-a10: hsla(347, 99.9%, 30.6%, 0.944);
+    --ruby-a11: hsla(345, 99.9%, 27.9%, 1);
+    --ruby-a12: hsla(344, 99.9%, 10.6%, 0.996);
+
+    --slate-a1: hsla(240, 92.7%, 53%, 0.009);
+    --slate-a2: hsla(240, 92.5%, 72.7%, 0.031);
+    --slate-a3: hsla(230, 99.3%, 87%, 0.091);
+    --slate-a4: hsla(223, 97.1%, 88.8%, 0.126);
+    --slate-a5: hsla(223, 99%, 91.1%, 0.156);
+    --slate-a6: hsla(218, 97.1%, 91.5%, 0.191);
+    --slate-a7: hsla(210, 97.4%, 91.7%, 0.243);
+    --slate-a8: hsla(202, 97.3%, 93.4%, 0.334);
+    --slate-a9: hsla(219, 97.6%, 93.2%, 0.412);
+    --slate-a10: hsla(217, 98.3%, 94.7%, 0.494);
+    --slate-a11: hsla(218, 98.5%, 96.8%, 0.693);
+    --slate-a12: hsla(220, 87.4%, 99.3%, 0.936);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+@layer components {
+  .zoom-image [data-rmiz-modal-overlay="visible"] {
+    @apply bg-background/10 backdrop-blur;
+  }
+
+  .zoom-image [data-rmiz-modal-img] {
+    @apply rounded-md lg:rounded-2xl;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    @apply px-4;
+  }
+}

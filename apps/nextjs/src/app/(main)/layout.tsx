@@ -10,6 +10,7 @@ interface HomeLayoutProps {
 
 export default async function MainLayout({ children }: HomeLayoutProps) {
   const user_id = await userId();
+  console.log("GLOBAL_USER_ID", user_id);
   const username = await getUsername(user_id);
   return (
     <div className="relative flex min-h-screen flex-col">
@@ -18,7 +19,7 @@ export default async function MainLayout({ children }: HomeLayoutProps) {
         <MainSidebar />
 
         <main className="max-h-screen flex-1 bg-white dark:bg-black">
-          <ScrollArea className=" h-content w-full border bg-background  shadow-inner md:rounded-tl-2xl">
+          <ScrollArea className="h-content w-full border bg-background  shadow-inner md:rounded-tl-2xl">
             {children}
           </ScrollArea>
         </main>

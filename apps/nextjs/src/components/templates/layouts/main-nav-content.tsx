@@ -33,7 +33,7 @@ export function MainNavContent({ items }: MainNavProps) {
           <li key={category.title}>
             <Link
               href={`/products/${category.title}`}
-              className="text-white underline-offset-4 hover:text-black hover:underline dark:text-neutral-400 dark:hover:text-neutral-300"
+              className="text-slate-9 underline-offset-4 hover:text-slate-10 hover:underline "
             >
               {category.title}
             </Link>

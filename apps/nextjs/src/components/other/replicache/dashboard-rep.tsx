@@ -10,28 +10,28 @@ import { env } from "~/env.mjs";
 import { ReplicacheInstancesStore } from "~/zustand/replicache";
 
 interface DashboardRepProps {
-  username: string | undefined;
+  userId: string | undefined;
 }
-export default function DashboardRep({ username }: DashboardRepProps) {
+export default function DashboardRep({ userId }: DashboardRepProps) {
   const rep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const setRep = ReplicacheInstancesStore((state) => state.setDashboardRep);
-  const [userIdState, setUserIdState] = useState<string | undefined>(undefined);
+  const [userIdState, setUserIdState] = useState<string>(userId ?? "");
   useEffect(() => {
-    if (!username) {
+    if (!userId) {
       const user_id = localStorage.getItem("user_id");
       if (user_id) setUserIdState(user_id);
     }
-  }, [username]);
+  }, [userId]);
   React.useEffect(() => {
-    if (rep ?? userIdState) {
+    if (rep) {
       return;
     }
 
     const r = new Replicache({
       name: `dashboard/${userIdState}`,
       licenseKey: env.NEXT_PUBLIC_REPLICACHE_KEY,
-      pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/dashboard?username=${userIdState}`,
-      pullURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/dashboard?username=${userIdState}`,
+      pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/dashboard?userId=${userIdState}`,
+      pullURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/dashboard?userId=${userIdState}`,
       mutators: dashboardMutators,
       pullInterval: null,
 
@@ -39,6 +39,6 @@ export default function DashboardRep({ username }: DashboardRepProps) {
     });
 
     setRep(r);
-  }, [rep, setRep, userIdState]);
+  }, [rep, setRep, userId]);
   return <></>;
 }

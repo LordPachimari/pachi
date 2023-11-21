@@ -48,6 +48,7 @@ interface ProductTableProps {
 
 export function Table({ data, createProduct }: ProductTableProps) {
   const router = useRouter();
+
   // Memoize the columns so they don't re-render on every render
   const columns = React.useMemo<ColumnDef<Product, unknown>[]>(
     () => [
@@ -175,11 +176,7 @@ export function Table({ data, createProduct }: ProductTableProps) {
           <DataTableColumnHeader column={column} title="Inventory" />
         ),
         cell: ({ row }) => {
-          return (
-            <div className="w-[80px]">
-              {row.original.variants![0]!.inventory_quantity ?? 0}
-            </div>
-          );
+          return <div className="w-[80px]"></div>;
         },
         enableSorting: false,
         enableHiding: true,

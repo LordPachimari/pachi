@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSubscribe } from "replicache-react";
 import { ulid } from "ulid";
 
-import type { Product } from "@pachi/db";
+import type { Product, Store } from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
 import { Shell } from "~/components/atoms/shell";
@@ -20,11 +20,12 @@ const Page = () => {
   const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const router = useRouter();
   const createProduct = useCallback(async () => {
+    console.log("on create product", store_id, dashboardRep);
     if (dashboardRep && store_id) {
       const id = generateId({
         id: ulid(),
         prefix: "p",
-        additional_id: store_id,
+        filter_id: store_id,
       });
       await dashboardRep.mutate.createProduct({
         args: {
@@ -37,7 +38,7 @@ const Page = () => {
           },
           default_variant_id: generateId({
             id: ulid(),
-            prefix: "p_var",
+            prefix: "var",
           }),
         },
       });
@@ -55,6 +56,7 @@ const Page = () => {
     },
     [],
   );
+
   console.log("products", products);
   useEffect(() => {
     if (!store_id) router.push("/");

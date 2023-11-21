@@ -2,15 +2,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import {
-  CheckCircledIcon,
-  CrossCircledIcon,
-  DotsHorizontalIcon,
-  QuestionMarkCircledIcon,
-  StopwatchIcon,
-} from "@radix-ui/react-icons";
 // import {
 //   ArrowDownIcon,
 //   ArrowRightIcon,
@@ -23,61 +14,63 @@ import {
 //   StopwatchIcon,
 // } from "@radix-ui/react-icons";
 import type { ColumnDef } from "@tanstack/react-table";
-import { CircleIcon, PlusIcon } from "lucide-react";
+import { Loader2, Loader2Icon } from "lucide-react";
+import { ulid } from "ulid";
+import { set } from "zod";
 
-import type {
-  Currency,
-  Image as ImageType,
-  Product,
-  ProductVariant,
-} from "@pachi/db";
-import { product_status } from "@pachi/db";
+import type { Currency, MoneyAmount } from "@pachi/db";
 import { currencies } from "@pachi/types";
+import { generateId } from "@pachi/utils";
 
 import { Button } from "~/components/atoms/button";
 import { Checkbox } from "~/components/atoms/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "~/components/atoms/dropdown-menu";
-import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { DataTableColumnHeader } from "~/components/organisms/data-table/data-table-column-header";
+import { ReplicacheInstancesStore } from "~/zustand/replicache";
 import { CurrenciesTable } from "./table";
 
 interface CurrencyTableProps {
-  store_currencies: Currency[];
+  store_currencies: string[];
+  storeId: string;
+  prices: MoneyAmount[];
+  variantId: string;
+  productId: string;
+  close: () => void;
 }
 
-export function Table({ store_currencies }: CurrencyTableProps) {
-  const my_currencies = new Set(store_currencies.map((s) => s.code));
+export function Table({
+  store_currencies,
+  storeId,
+  prices,
+  productId,
+  variantId,
+  close,
+}: CurrencyTableProps) {
+  const [selectedRowIds, setSelectedRowIds] =
+    React.useState<string[]>(store_currencies);
+  const [saving, setSaving] = React.useState(false);
+  console.log("store_currencies", store_currencies);
+  console.log("selectedRowIds", selectedRowIds);
+  const globalRep = ReplicacheInstancesStore((state) => state.globalRep);
+  const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
+  const currencyData = Object.values(currencies);
+
   // Memoize the columns so they don't re-render on every render
   const columns = React.useMemo<ColumnDef<Currency, unknown>[]>(
     () => [
       {
         id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={table.getIsAllPageRowsSelected()}
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-            className="translate-y-[2px]"
-          />
-        ),
+        header: ({ table }) => <></>,
         cell: ({ row }) => (
           <Checkbox
-            checked={my_currencies.has(row.original.code)}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            defaultChecked={selectedRowIds.includes(row.original.code)}
+            onCheckedChange={(value) => {
+              row.toggleSelected(!!value);
+              setSelectedRowIds((prev) =>
+                value
+                  ? [...prev, row.original.code]
+                  : prev.filter((code) => code !== row.original.code),
+              );
+            }}
             aria-label="Select row"
             className="translate-y-[2px]"
           />
@@ -119,22 +112,82 @@ export function Table({ store_currencies }: CurrencyTableProps) {
       //   enableHiding: true,
       // },
     ],
-    [],
+    [store_currencies],
   );
+  const saveCurrencies = React.useCallback(async () => {
+    setSaving(true);
+    const exisitingCurrencyCodesSet = new Set(
+      prices.map((price) => price.currency_code),
+    );
+    const priceIdsToDelete: string[] = [];
+    const pricesToCreate: MoneyAmount[] = [];
+
+    for (const price of prices) {
+      console.log("price currency code", price.currency_code);
+      if (!selectedRowIds.includes(price.currency_code)) {
+        priceIdsToDelete.push(price.id);
+      }
+    }
+    for (const currencyCode of selectedRowIds) {
+      if (!exisitingCurrencyCodesSet.has(currencyCode))
+        pricesToCreate.push({
+          id: generateId({ id: ulid(), prefix: "m_amount" }),
+          amount: 0,
+          currency_code: currencyCode,
+          variant_id: variantId,
+          created_at: new Date().toISOString(),
+        });
+    }
+    await Promise.all([
+      globalRep?.mutate.updateStore({
+        args: {
+          store_id: storeId,
+          updates: {
+            currencies: selectedRowIds,
+          },
+        },
+      }),
+      dashboardRep?.mutate.createPrices({
+        args: {
+          prices: pricesToCreate,
+          product_id: productId,
+          variant_id: variantId,
+        },
+      }),
+      dashboardRep?.mutate.deletePrices({
+        args: {
+          ids: priceIdsToDelete,
+          product_id: productId,
+          variant_id: variantId,
+        },
+      }),
+    ]);
+    setSaving(false);
+    close();
+  }, [
+    prices,
+    selectedRowIds,
+    globalRep,
+    dashboardRep,
+    storeId,
+    productId,
+    variantId,
+    close,
+  ]);
 
   return (
     <CurrenciesTable
       columns={columns}
-      data={Object.values(currencies)}
+      data={currencyData}
       view={"row"}
       // pageCount={pageCount}
       withToolbar
-      additionalToolbarButton={<></>}
+      additionalToolbarButton={
+        <Button disabled={saving} onClick={saveCurrencies}>
+          {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Save
+        </Button>
+      }
       searchableColumns={[
-        {
-          id: "name",
-          title: "name",
-        },
         {
           id: "code",
           title: "code",

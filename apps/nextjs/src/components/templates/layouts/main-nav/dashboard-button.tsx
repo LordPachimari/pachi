@@ -19,10 +19,13 @@ export function DashboardButton({ username }: DashboardButtonProps) {
   const globalRep = ReplicacheInstancesStore((state) => state.globalRep);
   const onClick = useCallback(async () => {
     const store_id = localStorage.getItem("store_id");
+    console.log("on click store_id", store_id);
+    console.log("on click username", username);
     if (store_id)
       return router.push(`/dashboard/products?store_id=${store_id}`);
     if (username)
       return router.push(`/dashboard/products?store_id=${username}`);
+    if (username && !store_id) localStorage.setItem("store_id", username);
 
     if (!username) {
       const user_id = localStorage.getItem("user_id");
@@ -32,14 +35,15 @@ export function DashboardButton({ username }: DashboardButtonProps) {
       } else {
         const new_id = generateId({ prefix: "unauthenticated", id: ulid() });
         const new_store_id = generateId({ prefix: "store", id: new_id });
-        console.log("creating new store");
-        await globalRep?.mutate.createStore({
+        console.log("creating new user");
+        await globalRep?.mutate.createUser({
           args: {
-            store: {
-              id: new_store_id,
+            user: {
+              id: new_id,
               created_at: new Date().toISOString(),
-              name: "My Store",
+              username: new_id,
               version: 1,
+              email: new_id,
             },
           },
         });

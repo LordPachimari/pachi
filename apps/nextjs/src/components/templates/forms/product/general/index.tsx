@@ -66,6 +66,8 @@ export function General({
         updatePrice={updatePrice}
         variant={product.variants![0]!}
         store_currencies={store.currencies ?? []}
+        storeId={store.id}
+        productId={product.id}
       />
       <Separator className="my-4" />
       <Inventory

@@ -41,9 +41,12 @@ export type Currency = Output<typeof CurrencySchema>;
 
 export const StoreSchema = merge([
   createInsertSchema(stores),
-  object({ currencies: optional(array(CurrencySchema)) }),
+  object({ currencies: optional(array(string())) }),
 ]);
-export const StoreUpdatesSchema = pick(StoreSchema, ["name", "currencies"]);
+export const StoreUpdatesSchema = object({
+  name: optional(string()),
+  currencies: optional(array(string())),
+});
 export type StoreUpdates = Output<typeof StoreUpdatesSchema>;
 export type Store = Output<typeof StoreSchema> & { products?: Product[] };
 export const UserSchema = merge([

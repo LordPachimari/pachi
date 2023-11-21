@@ -17,6 +17,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+import { Button } from "~/components/atoms/button";
 import { ScrollArea } from "~/components/atoms/scroll-area";
 import {
   Table,
@@ -252,21 +253,21 @@ export function CurrenciesTable<TData, TValue>({
     <div className="relative w-full space-y-4 overflow-auto">
       {withToolbar && (
         <DataTableToolbar
-          additionalToolbarButton={additionalToolbarButton}
           table={table}
           filterableColumns={filterableColumns}
           searchableColumns={searchableColumns}
           onChangeView={setView}
           view={view}
+          withView={false}
+          additionalToolbarButton={additionalToolbarButton}
         />
       )}
 
-      <div className="rounded-xl border bg-white dark:bg-black">
+      <ScrollArea className="relative h-product-page rounded-xl  bg-component">
         <Table>
-          <TableHeader className="pr-24">
+          <TableHeader className="absolute w-full border-b bg-component">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {/* <Link href={"/products"}> */}
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id} className="w-[2px]">
@@ -279,42 +280,41 @@ export function CurrenciesTable<TData, TValue>({
                     </TableHead>
                   );
                 })}
-                {/* </Link> */}
               </TableRow>
             ))}
           </TableHeader>
-          <ScrollArea className="h-product-page">
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No currencies.
-                  </TableCell>
+
+          <div className="h-10"></div>
+          <TableBody className="pt-20">
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              )}
-            </TableBody>
-          </ScrollArea>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No currencies.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
         </Table>
-      </div>
+      </ScrollArea>
       <div className="flex w-full flex-col items-center justify-between gap-4 overflow-auto px-2 py-1 sm:flex-row sm:gap-8">
         <div className="flex-1 whitespace-nowrap text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}

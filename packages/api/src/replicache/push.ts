@@ -14,6 +14,7 @@ import type { Repositories } from "../repositories";
 import { ProductRepository } from "../repositories/product";
 import { ProductOptionRepository } from "../repositories/product-option";
 import { ProductVariantRepository } from "../repositories/product-variant";
+import { UserRepository } from "../repositories/user";
 import type { Bindings } from "../types/bindings";
 import {
   getClientGroupObject,
@@ -89,6 +90,7 @@ export const push = async ({
           product_option_repository: new ProductOptionRepository(transaction),
           product_repository: new ProductRepository(transaction),
           product_variant_repository: new ProductVariantRepository(transaction),
+          user_repository: new UserRepository(transaction),
         };
         const lastMutationIdsAndVersions =
           await getClientLastMutationIdsAndVersion({

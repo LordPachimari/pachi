@@ -85,7 +85,7 @@ app.post("/pull/:spaceId", async (c) => {
   console.log("userId", userId);
   const allCookies = getCookie(c);
   console.log("all cookies", allCookies);
-  const unauthenticated_user_id = c.req.query("username") as string;
+  const unauthenticated_user_id = c.req.query("userId") as string;
   console.log("unauthenticated_user_id", unauthenticated_user_id);
   try {
     SpaceIdSchema._parse(c.req.param("spaceId"));
@@ -150,7 +150,7 @@ app.post("/currencies", async (c) => {
   const db = drizzle(pool, { schema });
   const values: Currency[] = Object.values(currencies_values).map((value) => {
     return {
-      code: value.code.toLowerCase(),
+      code: value.code,
       symbol: value.symbol,
       symbol_native: value.symbol_native,
       name: value.name,
