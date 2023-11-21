@@ -238,7 +238,7 @@ export const putItems = async (
     }
     return await Promise.all(queries);
   } catch (error) {
-    console.log(error);
+    console.log(error, "WATCHOUT", JSON.stringify(props));
     throw new Error("failed to put items");
   }
 };
@@ -248,7 +248,7 @@ export const updateItems = async (
   transaction: Transaction,
 ) => {
   try {
-    console.log("updating items");
+    console.log("updating items", JSON.stringify(props.entries()));
     const queries = [];
     for (const [tableName, values] of props.entries()) {
       queries.push(
@@ -263,7 +263,7 @@ export const updateItems = async (
     console.log("update queries");
     return await Promise.all(queries.flat());
   } catch (error) {
-    console.log(error);
+    console.log(error, "WATCHOUT", JSON.stringify(props));
     throw new Error("failed to update items");
   }
 };

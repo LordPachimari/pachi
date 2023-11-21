@@ -8,7 +8,6 @@ export default function Advanced() {
       <Info
         title="Shipping"
         description="
-      
         Configure to calculate the most accurate shipping rate
       "
       />

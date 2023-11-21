@@ -11,7 +11,6 @@ export default async function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
   const user_id = await userId();
-  const username = await getUsername(user_id);
   // const socket = useRef(
   //   new PartySocket({
   //     host: `http://127.0.0.1:1999/parties/push`, // for local development
@@ -36,7 +35,7 @@ export default async function DashboardLayout({
     <div className="flex min-h-screen">
       <DashboardSidebar items={dashboardConfig.sidebarNav} />
       <main className="ml-14 w-full">{children}</main>
-      <DashboardRep username={username} />
+      <DashboardRep userId={user_id} />
     </div>
   );
 }

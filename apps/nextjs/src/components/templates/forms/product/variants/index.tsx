@@ -8,11 +8,15 @@ interface VariantsProps {
   product_id: string;
   options: ProductOption[];
   variants: ProductVariant[];
+  createVariant: () => Promise<void>;
+  openVariantModal: (prop: { variantId: string }) => void;
 }
 export default function Variants({
   product_id,
   options,
   variants,
+  createVariant,
+  openVariantModal,
 }: VariantsProps) {
   return (
     <div className="px-4 py-2">
@@ -25,6 +29,8 @@ export default function Variants({
         product_id={product_id}
         options={options}
         variants={variants}
+        createVariant={createVariant}
+        openVariantModal={openVariantModal}
       />
     </div>
   );

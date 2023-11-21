@@ -25,7 +25,7 @@ export async function userId() {
   else return undefined;
 }
 export async function getUsername(user_id: string | undefined) {
-  console.log("user_id", user_id);
+  console.log("get username user_id", user_id);
   if (!user_id) return undefined;
   string()._parse(user_id);
   if (user_id.startsWith("unauthenticated")) return user_id;

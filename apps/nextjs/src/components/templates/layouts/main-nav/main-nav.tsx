@@ -21,7 +21,7 @@ export function MainNav({ username }: MainNavProps) {
 
   console.log("username", username);
   return (
-    <header className="sticky top-0 z-50 flex h-[56px] w-full items-center  bg-white  dark:bg-black">
+    <header className="sticky top-0 z-50 flex h-[56px] w-full items-center  bg-component  ">
       <div className="container flex h-16 items-center">
         <MainNavContent items={siteConfig.mainNav} />
 

@@ -31,12 +31,13 @@ import type {
   AddProductToPriceListProps,
   CreateCustomerGroupProps,
   CreatePriceListProps,
-  CreatePriceProps,
+  CreatePricesProps,
   CreateProductCollectionProps,
   CreateProductOptionProps,
   CreateProductOptionValueProps,
   CreateProductProps,
   CreateProductVariantProps,
+  DeletePricesProps,
   DeleteProps,
   RemoveCustomerFromGroupProps,
   RemoveProductFromPriceListProps,
@@ -197,9 +198,21 @@ export const dashboardMutators = {
     });
   },
   deleteProductOption: async (tx: WriteTransaction, { args }: DeleteProps) => {
-    const { id } = args;
+    const { id, productId } = args;
     string()._parse(id);
-    await tx.del(id);
+    string()._parse(productId);
+    const product = (await tx.get(productId)) as Product | undefined;
+    if (!product) {
+      console.info(`Product ${productId} not found`);
+      return;
+    }
+    const product_options = product.options
+      ? product.options.filter((option) => option.id !== id)
+      : [];
+    await tx.put(product.id, {
+      ...product,
+      options: product_options,
+    });
   },
 
   createProductOptionValue: async (
@@ -224,7 +237,7 @@ export const dashboardMutators = {
     }
     console.log("new_option_values", new_option_values);
     const newValues = new_option_values.map((value) => ({
-      id: generateId({ id: ulid(), prefix: "p_opt_val" }),
+      id: generateId({ id: ulid(), prefix: "opt_val" }),
       option_id,
       value,
     }));
@@ -257,7 +270,7 @@ export const dashboardMutators = {
       console.info(`Product  not found`);
       return;
     }
-    const variants = product.variants ? product.variants : [];
+    const variants = product.variants ? [...product.variants] : [];
     variants.push(variant);
     await tx.put(product.id, {
       ...product,
@@ -457,27 +470,29 @@ export const dashboardMutators = {
       : [];
     await tx.put(price_id, priceList);
   },
-  createPrice: async (tx: WriteTransaction, { args }: CreatePriceProps) => {
-    const { price, product_id } = args;
-    MoneyAmountSchema._parse(price);
+  createPrices: async (tx: WriteTransaction, { args }: CreatePricesProps) => {
+    const { prices, product_id, variant_id } = args;
+    array(MoneyAmountSchema)._parse(prices);
     const product = (await tx.get(product_id)) as Product | undefined;
     if (!product) {
       console.info(`Product  not found`);
       return;
     }
     const variant = product.variants?.find(
-      (variant) => variant.id === price.variant_id,
+      (variant) => variant.id === variant_id,
     );
     if (!variant) {
       console.log("variant not found");
       return;
     }
-    const variant_prices = variant.prices ? variant.prices : [];
-    variant_prices.push(price);
+    const variant_prices = variant.prices ? [...variant.prices] : [];
+    for (const price of prices) {
+      variant_prices.push(price);
+    }
     await tx.put(product.id, {
       ...product,
       variants: product.variants?.map((variant) =>
-        variant.id === price.variant_id
+        variant.id === variant_id
           ? { ...variant, prices: [...variant_prices] }
           : variant,
       ),
@@ -509,6 +524,33 @@ export const dashboardMutators = {
         })
       : [];
 
+    await tx.put(product.id, {
+      ...product,
+      variants: product.variants?.map((variant_) =>
+        variant_.id === variant_id
+          ? { ...variant, prices: variant_prices }
+          : variant_,
+      ),
+    });
+  },
+  deletePrices: async (tx: WriteTransaction, { args }: DeletePricesProps) => {
+    const { ids, product_id, variant_id } = args;
+    array(string())._parse(ids);
+    string()._parse(product_id);
+    string()._parse(variant_id);
+    const product = (await tx.get(product_id)) as Product | undefined;
+    if (!product) {
+      console.info(`Product  not found`);
+      return;
+    }
+    const variant = product.variants?.find((val) => val.id === variant_id);
+    if (!variant) {
+      console.log("variant not found");
+      return;
+    }
+    const variant_prices = variant.prices
+      ? variant.prices.filter((price) => !ids.includes(price.id))
+      : [];
     await tx.put(product.id, {
       ...product,
       variants: product.variants?.map((variant_) =>

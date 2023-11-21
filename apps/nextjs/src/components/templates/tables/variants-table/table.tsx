@@ -1,5 +1,4 @@
 import * as React from "react";
-import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type {
   ColumnDef,
@@ -18,8 +17,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import type { Product } from "@pachi/db";
-
+import { Button } from "~/components/atoms/button";
+import { ScrollArea } from "~/components/atoms/scroll-area";
 import {
   Table,
   TableBody,
@@ -30,7 +29,6 @@ import {
 } from "~/components/atoms/table";
 import { DataTableToolbar } from "~/components/organisms/data-table/data-table-toolbar";
 import { useDebounce } from "~/hooks/use-debounce";
-import { createUrl } from "~/libs/create-url";
 import type {
   DataTableFilterableColumn,
   DataTableSearchableColumn,
@@ -43,21 +41,17 @@ interface DataTableProps<TData, TValue> {
   filterableColumns?: DataTableFilterableColumn<TData>[];
   searchableColumns?: DataTableSearchableColumn<TData>[];
   view?: "row" | "grid";
-  gridViewComponent?: React.ReactNode;
-  withGridView?: boolean;
   withToolbar?: boolean;
   additionalToolbarButton?: React.ReactNode;
 }
 
-export function ProductsTable<TData, TValue>({
+export function VariantsTable<TData, TValue>({
   columns,
   data,
   // pageCount,
   filterableColumns = [],
   searchableColumns = [],
   view: initialView = "row",
-  gridViewComponent,
-  withGridView = false,
   withToolbar = false,
   additionalToolbarButton,
 }: DataTableProps<TData, TValue>) {
@@ -256,28 +250,27 @@ export function ProductsTable<TData, TValue>({
   });
 
   return (
-    <div className="relative w-full space-y-4 overflow-auto">
+    <div className="relative w-full space-y-4 overflow-auto rounded-xl border">
       {withToolbar && (
         <DataTableToolbar
-          additionalToolbarButton={additionalToolbarButton}
           table={table}
           filterableColumns={filterableColumns}
           searchableColumns={searchableColumns}
-          withGridView={withGridView}
           onChangeView={setView}
           view={view}
+          withView={false}
+          additionalToolbarButton={additionalToolbarButton}
         />
       )}
 
-      <div className="rounded-xl border bg-white dark:bg-black">
+      <ScrollArea className="relative h-[300px] rounded-xl  bg-component">
         <Table>
-          <TableHeader className="pr-24">
+          <TableHeader className="absolute w-full border-b bg-component">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {/* <Link href={"/products"}> */}
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="w-[2px]">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -287,28 +280,17 @@ export function ProductsTable<TData, TValue>({
                     </TableHead>
                   );
                 })}
-                {/* </Link> */}
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
-            {view === "row" && table.getRowModel().rows?.length ? (
+
+          <div className="h-10"></div>
+          <TableBody className="pt-20">
+            {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  className="cursor-pointer"
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={() => {
-                    const newParams = new URLSearchParams(
-                      searchParams.toString(),
-                    );
-                    router.push(
-                      createUrl(
-                        `products/${(row.original as Product).id}`,
-                        newParams,
-                      ),
-                    );
-                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -320,21 +302,12 @@ export function ProductsTable<TData, TValue>({
                   ))}
                 </TableRow>
               ))
-            ) : view === "grid" && table.getRowModel().rows.length ? (
-              gridViewComponent
             ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
+              <></>
             )}
           </TableBody>
         </Table>
-      </div>
+      </ScrollArea>
       <div className="flex w-full flex-col items-center justify-between gap-4 overflow-auto px-2 py-1 sm:flex-row sm:gap-8">
         <div className="flex-1 whitespace-nowrap text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}

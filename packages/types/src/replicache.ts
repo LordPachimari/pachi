@@ -112,6 +112,18 @@ export const mutationAffectedSpaces = {
     dashboard: ["store"] as const,
   },
   createStore: {
+    global: ["user"] as const,
+  },
+  createUser: {
+    global: ["user"] as const,
+  },
+  updateStore: {
+    global: ["user"] as const,
+  },
+  createPrices: {
+    dashboard: ["store"] as const,
+  },
+  deletePrices: {
     dashboard: ["store"] as const,
   },
 };

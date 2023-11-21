@@ -65,7 +65,9 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
   }
   async update(key: string, value: ReadonlyJSONObject, tableName: TableName) {
     const prevUpdate = this._cache.get(key);
+    console.log("value", value);
     if (prevUpdate) {
+      console.log("prev update", JSON.stringify(prevUpdate));
       this._cache.set(key, {
         method: UPDATE,
         value: prevUpdate.value ? { ...prevUpdate.value, ...value } : value,
@@ -142,6 +144,7 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
       }
     }
 
+    console.log("still there");
     await Promise.all([
       deleteItems(itemsToDel, this._userId, this._transaction),
       putItems(itemsToPut, this._transaction),

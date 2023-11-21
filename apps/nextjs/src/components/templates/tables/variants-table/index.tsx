@@ -26,13 +26,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/atoms/dropdown-menu";
-import { DataTable } from "~/components/organisms/data-table/data-table";
+import { VariantsTable } from "./table";
 
 interface VariantTableProps {
   data: ProductVariant[];
 }
 
-export function VariantTable({ data }: VariantTableProps) {
+export function Table({ data }: VariantTableProps) {
   // Memoize the columns so they don't re-render on every render
   const columns = React.useMemo<ColumnDef<ProductVariant, unknown>[]>(
     () => [
@@ -62,9 +62,13 @@ export function VariantTable({ data }: VariantTableProps) {
       {
         accessorKey: "Variant",
 
-        header: ({ column }) => <h3 className="text-md ">Variant</h3>,
+        header: ({ column }) => <h3 className="text-sm ">Variant</h3>,
         cell: ({ row }) => (
-          <div className="w-[80px]">{row.getValue("title")}</div>
+          <div className="w-[50px]">
+            {row.original.options && row.original.options.length > 0
+              ? row.original.options.map((opt) => opt.value).join("/")
+              : ""}
+          </div>
         ),
         enableSorting: false,
         enableHiding: false,
@@ -72,9 +76,12 @@ export function VariantTable({ data }: VariantTableProps) {
       {
         accessorKey: "Price",
 
-        header: ({ column }) => <h3 className="text-md ">Price</h3>,
+        header: ({ column }) => <h3 className="text-sm ">Price</h3>,
         cell: ({ row }) => (
-          <div className="w-[80px]">
+          <div className="w-[50px]">
+            {row.original.prices && row.original.prices.length > 0
+              ? row.original.prices[0]!.amount
+              : ""}
             {/* <PriceAmount value={row.getValue("price")} o /> */}
           </div>
         ),
@@ -83,20 +90,22 @@ export function VariantTable({ data }: VariantTableProps) {
       },
       {
         accessorKey: "Inventory",
-        header: ({ column }) => <h3 className="text-md ">Inventory</h3>,
+        header: ({ column }) => <h3 className="text-sm ">Inventory</h3>,
 
         cell: ({ row }) => {
           return (
-            <div className="w-[80px]">{row.getValue("inventory_quantity")}</div>
+            <div className="flex w-[50px] items-center justify-center">
+              {row.original.inventory_quantity ?? 0}
+            </div>
           );
         },
       },
       {
         accessorKey: "sku",
 
-        header: ({ column }) => <h3 className="text-md ">SKU</h3>,
+        header: ({ column }) => <h3 className="text-sm ">SKU</h3>,
         cell: ({ row }) => (
-          <div className="w-[80px]">{row.getValue("sku")}</div>
+          <div className="w-[50px]">{row.original.sku ?? ""}</div>
         ),
         enableSorting: false,
         enableHiding: true,
@@ -104,9 +113,9 @@ export function VariantTable({ data }: VariantTableProps) {
 
       {
         accessorKey: "barcode",
-        header: ({ column }) => <h3 className="text-md ">Barcode</h3>,
+        header: ({ column }) => <h3 className="text-sm ">Barcode</h3>,
         cell: ({ row }) => (
-          <div className="w-[80px]">{row.getValue("barcode")}</div>
+          <div className="w-[50px]">{row.original.barcode ?? ""}</div>
         ),
         enableSorting: false,
         enableHiding: true,
@@ -137,10 +146,12 @@ export function VariantTable({ data }: VariantTableProps) {
     [],
   );
 
+  const productVariants = data.length > 0 ? data.slice(1) : [];
+
   return (
-    <DataTable
+    <VariantsTable
       columns={columns}
-      data={data}
+      data={productVariants}
       view={"row"}
 
       // pageCount={pageCount}

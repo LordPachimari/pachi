@@ -32,7 +32,7 @@ import Advanced from "~/components/templates/forms/product/advanced";
 import { General } from "~/components/templates/forms/product/general";
 import Organize from "~/components/templates/forms/product/organize";
 import Variants from "~/components/templates/forms/product/variants";
-import VariantModal from "~/components/templates/forms/product/variants/variant";
+import VariantModal from "~/components/templates/modals/variant";
 import ProductOverview from "~/components/templates/product-overview/product-overview";
 import { createUrl } from "~/libs/create-url";
 import { ReplicacheInstancesStore } from "~/zustand/replicache";
@@ -42,6 +42,25 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const store_id = searchParams.get("store_id");
+
+  const [isVariantModalOpen, setIsVariantModalOpen] = useState(true);
+
+  const closeModal = useCallback(() => {
+    setIsVariantModalOpen(false);
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.delete("variantId");
+    router.push(createUrl(id, newParams));
+  }, [id, router, searchParams]);
+
+  const openModal = useCallback(
+    ({ variantId }: { variantId: string }) => {
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.set("variantId", variantId);
+      router.push(createUrl(id, newParams));
+      setIsVariantModalOpen(true);
+    },
+    [id, router, searchParams],
+  );
   console.log("store_id", store_id);
 
   const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
@@ -61,9 +80,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const user_id = localStorage.getItem("user_id");
+    const local_store_id = localStorage.getItem("store_id");
     if (!store_id && !user_id) router.push("/");
+    if (!local_store_id && store_id) localStorage.setItem("store_id", store_id);
   }, [router, store_id]);
-  console.log("global rep", globalRep);
   const store = useSubscribe(
     globalRep,
     async (tx) => {
@@ -76,9 +96,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       return store;
     },
     undefined,
-    [id, store_id],
+    [store_id],
   );
-  console.log("is that it");
 
   const updateProduct = useCallback(
     async ({ updates }: { updates: ProductUpdates }) => {
@@ -151,11 +170,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   const createVariant = useCallback(async () => {
     if (dashboardRep && product) {
-      const id = generateId({ id: ulid(), prefix: "p_var" });
+      const variantId = generateId({ id: ulid(), prefix: "var" });
       await dashboardRep.mutate.createProductVariant({
         args: {
           variant: {
-            id,
+            id: variantId,
             created_at: new Date().toISOString(),
             product_id: product.id,
             inventory_quantity: 0,
@@ -163,10 +182,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         },
       });
       const newParams = new URLSearchParams(searchParams.toString());
-      newParams.set("variant", id);
+      newParams.set("variantId", variantId);
       router.push(createUrl(id, newParams));
+      openModal({ variantId });
     }
-  }, [dashboardRep, product, searchParams, router]);
+  }, [dashboardRep, product, id, searchParams, router, openModal]);
 
   const onTabClick = (
     value: "general" | "variants" | "organize" | "advanced",
@@ -176,10 +196,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     router.push(createUrl(id, newParams));
   };
 
-  const variant_id = searchParams.get("variant");
+  const variant_id = searchParams.get("variantId");
   const variant = product?.variants?.find(
     (variant) => variant.id === variant_id,
   );
+  console.log("store currencies", store?.currencies);
+  console.log("is it true", !!(variant_id && variant && product && store));
 
   return (
     <>
@@ -193,6 +215,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           options={product.options ?? []}
           product_id={product.id}
           currencies={store.currencies ?? []}
+          storeId={store.id}
+          closeModal={closeModal}
+          isOpen={isVariantModalOpen}
         />
       )}
       <div className="flex h-full w-full flex-col-reverse  md:flex-row ">
@@ -256,6 +281,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                   product_id={id}
                   options={product?.options ?? []}
                   variants={product?.variants ?? []}
+                  createVariant={createVariant}
+                  openVariantModal={openModal}
                 />
               </ScrollArea>
             </TabsContent>

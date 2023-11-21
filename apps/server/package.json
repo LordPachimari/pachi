@@ -18,7 +18,7 @@
     "@pachi/db": "^0.1.0",
     "@pachi/types": "^0.1.0",
     "@pachi/utils": "^0.1.0",
-    "drizzle-orm": "^0.28.6",
+    "drizzle-orm": "^0.29.0",
     "hono": "^3.7.2",
     "jose": "^4.15.2"
   },

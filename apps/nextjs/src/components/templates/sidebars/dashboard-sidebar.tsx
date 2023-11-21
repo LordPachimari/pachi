@@ -21,7 +21,7 @@ const DashboardSidebar = ({ items }: DashboardSidebarProps) => {
   return (
     <nav
       className={cn(
-        "group fixed z-50 h-full w-14  overflow-hidden border-r-[1px] shadow-inner backdrop-blur-md transition-all duration-300 ease-in-out hover:w-56 md:rounded-tl-2xl",
+        "group fixed z-40 h-full w-14  overflow-hidden border-r-[1px] shadow-inner backdrop-blur-md transition-all duration-300 ease-in-out hover:w-56 md:rounded-tl-2xl",
       )}
     >
       <div className=" mt-20 flex w-full flex-col items-start gap-1 px-2 py-6">

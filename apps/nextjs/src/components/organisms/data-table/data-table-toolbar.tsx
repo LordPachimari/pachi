@@ -19,7 +19,7 @@ interface DataTableToolbar<TData> {
   additionalToolbarButton?: React.ReactNode;
   view: "row" | "grid";
   withGridView?: boolean;
-
+  withView?: boolean;
   onChangeView?: React.Dispatch<React.SetStateAction<"row" | "grid">>;
 }
 export function DataTableToolbar<TData>({
@@ -29,12 +29,13 @@ export function DataTableToolbar<TData>({
   onChangeView,
   searchableColumns,
   view,
-  withGridView,
+  withGridView = false,
+  withView = true,
 }: DataTableToolbar<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
-    <div className="flex items-center justify-between p-1">
+    <div className="flex items-center justify-between gap-1 p-1">
       <div className="flex flex-1 items-center space-x-2">
         {searchableColumns &&
           searchableColumns.length > 0 &&
@@ -54,7 +55,7 @@ export function DataTableToolbar<TData>({
                       .getColumn(String(column.id))
                       ?.setFilterValue(event.target.value)
                   }
-                  className="h-8 w-[150px] lg:w-[250px]"
+                  className="h-8 w-[150px] lg:w-[200px]"
                 />
               ),
           )}
@@ -83,12 +84,14 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       {additionalToolbarButton ?? additionalToolbarButton}
-      <DataTableViewOptions
-        onChangeView={onChangeView}
-        table={table}
-        view={view}
-        withGridView={withGridView}
-      />
+      {withView && (
+        <DataTableViewOptions
+          onChangeView={onChangeView}
+          table={table}
+          view={view}
+          withGridView={withGridView}
+        />
+      )}
     </div>
   );
 }

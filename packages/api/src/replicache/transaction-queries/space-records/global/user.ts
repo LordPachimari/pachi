@@ -9,11 +9,15 @@ export const userCVD: GetClientViewData = async ({
   userId,
   isFullItems = false,
 }) => {
+  console.log("-------WATCH-----USERID", userId);
   if (!userId) return [{ cvd: [], tableName: "users" }];
   const UserCVD = isFullItems
     ? await transaction.query.users
         .findFirst({
           where: () => eq(users.id, userId),
+          with: {
+            stores: true,
+          },
         })
         .execute()
     : await transaction.query.users
@@ -23,7 +27,19 @@ export const userCVD: GetClientViewData = async ({
             version: true,
           },
           where: () => eq(users.id, userId),
+          with: {
+            stores: {
+              columns: {
+                id: true,
+                version: true,
+              },
+            },
+          },
         })
         .execute();
-  return [{ cvd: UserCVD ? [UserCVD] : [], tableName: "users" }];
+  console.log("-------WATCH", UserCVD?.stores);
+  return [
+    { cvd: UserCVD ? [UserCVD] : [], tableName: "users" },
+    { cvd: UserCVD?.stores ?? [], tableName: "stores" },
+  ];
 };

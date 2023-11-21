@@ -20,33 +20,39 @@ export const updateItems_ = ({
   transaction: Transaction;
 }) => {
   const queries = [];
+
   if (tableName === "users") {
     for (const { id, value } of items) {
-      queries.push(
-        transaction
-          .update(users)
-          .set({
-            ...value,
-            version: sql`${users.version} + 1`,
-          })
-          .where(and(eq(users.id, id), eq(users.id, userId)))
-          .execute(),
-      );
+      if (Object.values(value).length > 0)
+        queries.push(
+          transaction
+            .update(users)
+            .set({
+              ...value,
+              version: sql`${users.version} + 1`,
+            })
+            .where(and(eq(users.id, id), eq(users.id, userId)))
+            .execute(),
+        );
     }
   } else {
     const table = tableNamesMap[tableName];
-    console.log("table", table);
+
     for (const { id, value } of items) {
-      queries.push(
-        transaction
-          .update(table)
-          .set({
-            ...value,
-            version: sql`${table.version} + 1`,
-          })
-          .where(eq(table.id, id))
-          .execute(),
-      );
+      console.log("COCONUT");
+      console.log("id", id);
+      console.log("value", JSON.stringify(value));
+      if (Object.values(value).length > 0)
+        queries.push(
+          transaction
+            .update(table)
+            .set({
+              ...value,
+              version: sql`${table.version} + 1`,
+            })
+            .where(eq(table.id, id))
+            .execute(),
+        );
     }
   }
   return queries;

@@ -1,9 +1,16 @@
 import { string } from "valibot";
 
-import { StoreSchema, StoreUpdatesSchema } from "@pachi/db";
+import {
+  StoreSchema,
+  StoreUpdatesSchema,
+  UserSchema,
+  type Store,
+} from "@pachi/db";
+import { generateId } from "@pachi/utils";
 
 import type {
   CreateStoreProps,
+  CreateUserProps,
   UpdateStoreProps,
 } from "../../../types/mutators";
 import type { ReplicacheTransaction } from "../../replicache-transaction/transaction";
@@ -61,6 +68,25 @@ export const globalMutators_ = {
   //     updates: { quantity },
   //   });
   // },
+  createUser: async (
+    tx: ReplicacheTransaction,
+    { args, repositories }: CreateUserProps,
+  ) => {
+    const { user } = args;
+
+    const new_store_id = generateId({ prefix: "store", id: user.id });
+    UserSchema._parse(user);
+    const store: Store = {
+      id: new_store_id,
+      created_at: new Date().toISOString(),
+      name: user.username,
+      version: 1,
+      founder_id: user.id,
+    };
+
+    await repositories?.user_repository.insertUser(user);
+    await tx.put(store.id, store, "stores");
+  },
   createStore: async (
     tx: ReplicacheTransaction,
     { args }: CreateStoreProps,
@@ -73,9 +99,9 @@ export const globalMutators_ = {
     tx: ReplicacheTransaction,
     { args }: UpdateStoreProps,
   ) => {
-    const { id, updates } = args;
-    string()._parse(id);
+    const { store_id, updates } = args;
+    string()._parse(store_id);
     StoreUpdatesSchema._parse(updates);
-    await tx.update(id, updates, "stores");
+    await tx.update(store_id, updates, "stores");
   },
 };
