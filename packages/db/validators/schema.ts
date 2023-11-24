@@ -10,7 +10,7 @@ import {
   pick,
   record,
   string,
-  type Output
+  type Output,
 } from "valibot";
 
 import {
