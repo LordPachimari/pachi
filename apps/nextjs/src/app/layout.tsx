@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
+import { Toaster } from "~/components/atoms/toaster";
 import { ThemeProvider } from "~/components/other/providers/theme-provider";
 
 import "~/styles/globals.css";
@@ -33,6 +34,7 @@ export default function Layout(props: { children: React.ReactNode }) {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {props.children}
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

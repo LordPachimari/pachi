@@ -21,6 +21,7 @@ export const stores = pgTable(
     founder_id: varchar("founder_id")
       .references(() => users.id)
       .notNull(),
+      about: text("about"),
     version: integer("version").notNull(),
     created_at: varchar("created_at").notNull(),
   },

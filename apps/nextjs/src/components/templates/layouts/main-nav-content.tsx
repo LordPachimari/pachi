@@ -20,7 +20,7 @@ export function MainNavContent({ items }: MainNavProps) {
     <div className="hidden  gap-6 md:flex">
       <Link
         aria-label="Home"
-        href="/"
+        href="/home"
         className="hidden items-center space-x-2 md:flex"
       >
         <Icons.logo className="h-6 w-6" aria-hidden="true" />
