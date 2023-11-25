@@ -17,8 +17,9 @@ export const users = pgTable(
     last_name: varchar("last_name"),
     first_name: varchar("first_name"),
     username: varchar("username").notNull(),
-    created_at: varchar("created_at"),
+    created_at: varchar("created_at").notNull(),
     email: varchar("email").notNull(),
+    about: text("about"),
     role: text("role", { enum: ["admin", "user"] })
       .notNull()
       .default("user"),

@@ -20,7 +20,8 @@
     "@pachi/utils": "^0.1.0",
     "drizzle-orm": "^0.29.0",
     "hono": "^3.7.2",
-    "jose": "^4.15.2"
+    "jose": "^4.15.2",
+    "valibot": "^0.17.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230922.0",

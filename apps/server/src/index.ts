@@ -4,6 +4,7 @@ import { Hono, type Context } from "hono";
 import { getCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import * as jose from "jose";
+import { number, object, string } from "valibot";
 
 import { pull, push, type Bindings } from "@pachi/api";
 import {
@@ -191,36 +192,48 @@ app.get("/username/:id", async (c) => {
 app.post("/create-user", async (c) => {
   const pool = new Pool({ connectionString: c.env.DATABASE_URL });
   const db = drizzle(pool, { schema });
-  const { email, id, username } = (await c.req.json()) as {
+  const { email, userId, username } = (await c.req.json()) as {
     username: string;
     email: string;
-    id: string;
+    userId: string;
   };
-  const created_at = new Date().toISOString();
-  const new_user: User = {
-    id,
-    username,
-    email,
-    created_at,
-  };
-  const new_store: Store = {
-    id: generateId({ id: ulid(), prefix: "store" }),
-    name: username,
-    founder_id: id,
-    version: 0,
-    created_at,
-  };
+
   try {
+    object({ username: string(), email: string(), userId: string() })._parse({
+      username,
+      email,
+      userId,
+    });
+    const created_at = new Date().toISOString();
+    const new_user: User = {
+      id: userId,
+      username,
+      email,
+      created_at,
+    };
+    const new_store: Store = {
+      id: generateId({ id: ulid(), prefix: "store" }),
+      name: username,
+      founder_id: userId,
+      version: 0,
+      created_at,
+    };
     await Promise.all([
       //@ts-ignore
       db.insert(users).values(new_user).execute(),
       //@ts-ignore
       db.insert(stores).values(new_store).execute(),
     ]);
+    return c.json({ message: "Successfully created user" }, 200);
   } catch (error) {
     console.log(error);
+    console.log("CODE", (error as { code: number }).code);
+    if ((error as { code: string }).code === "23505")
+      return c.json({ message: "User already created" }, 400);
     return c.json({ message: "Failed to create user" }, 400);
   }
-  return c.status(200);
+});
+app.get("/hello", async (c) => {
+  return c.text("hello");
 });
 export default app;

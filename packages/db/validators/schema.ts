@@ -2,13 +2,13 @@ import { createInsertSchema } from "drizzle-valibot";
 import {
   array,
   boolean,
+  enumType,
   merge,
   object,
   optional,
   partial,
   pick,
   record,
-  required,
   string,
   type Output,
 } from "valibot";
@@ -205,18 +205,21 @@ export const ProductSchema = merge([
     discountable: boolean(),
   }),
 ]);
-export const PublishedProductSchema = required(
-  merge([
-    ProductSchema,
-    object({
-      title: string(),
-      description: string(),
-      thumbnail: ImageSchema,
-      images: array(ImageSchema),
-      prices: array(MoneyAmountSchema),
-    }),
-  ]),
-);
+export const PublishedProductSchema = merge([
+  ProductSchema,
+  object({
+    title: string(),
+    description: string(),
+    thumbnail: ImageSchema,
+    images: array(ImageSchema),
+    prices: array(MoneyAmountSchema),
+    handle: string(),
+    status: enumType(["draft", "proposed", "published", "rejected"]),
+    discountable: boolean(),
+    variants: array(ProductVariantSchema),
+    options: array(ProductOptionSchema),
+  }),
+]);
 export type PublishedProduct = Output<typeof PublishedProductSchema>;
 export const ProductUpdatesSchema = partial(
   pick(ProductSchema, ["title", "description", "discountable", "status"]),

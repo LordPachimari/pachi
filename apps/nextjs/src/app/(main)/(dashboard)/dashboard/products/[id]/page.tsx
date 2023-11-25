@@ -259,7 +259,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               value="general"
               className=" w-full  "
             >
-              <ScrollArea className="h-product-input   ">
+              <ScrollArea className="h-product-input">
                 {product && store && (
                   <General
                     product={product}
