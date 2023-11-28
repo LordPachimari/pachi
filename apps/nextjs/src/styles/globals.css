@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: #fff;
     --foreground: 240 10% 3.9%;
 
     --muted: 240 4.8% 95.9%;
@@ -39,8 +39,8 @@
     --brand: #f31260;
 
     --component: #fff;
+    --navbar: #f9f9fb;
 
-    --background-color: #fff;
     --border-color: #efefef;
     --text-color: #333;
     --handle-color: rgba(0, 0, 0, 0.25);
@@ -89,10 +89,23 @@
     --slate-a10: hsla(230, 99.5%, 4.7%, 0.506);
     --slate-a11: hsla(220, 98%, 3.8%, 0.624);
     --slate-a12: hsla(210, 95.1%, 1.9%, 0.891);
+
+    --slate-1: #fcfcfd;
+    --slate-2: #f9f9fb;
+    --slate-3: #f0f0f3;
+    --slate-4: #e8e8ec;
+    --slate-5: #e0e1e6;
+    --slate-6: #d9d9e0;
+    --slate-7: #cdced6;
+    --slate-8: #b9bbc6;
+    --slate-9: #8b8d98;
+    --slate-10: #80838d;
+    --slate-11: #60646c;
+    --slate-12: #1c2024;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: #212225;
     --foreground: 0 0% 98%;
 
     --muted: 240 3.7% 15.9%;
@@ -100,7 +113,7 @@
 
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-
+    --navbar: hsla(240, 92.7%, 53%, 0.009);
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
 
@@ -108,6 +121,7 @@
     --input: 240 3.7% 15.9%;
     --input-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
     --button-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
+    --brand: #f31260;
 
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
@@ -122,8 +136,7 @@
     --destructive-foreground: 0 85.7% 97.3%;
 
     --ring: 240 3.7% 15.9%;
-    --component: #000;
-    --background-color: black;
+    --component: #272a2d;
     --box-shadow-border: 0 0 0 calc(1px / var(--scale-x, 1))
       rgba(248, 248, 248, 0.05);
     --box-shadow-common: 0 1px calc(3px / var(--scale-x, 1)) 0
@@ -169,6 +182,19 @@
     --slate-a10: hsla(217, 98.3%, 94.7%, 0.494);
     --slate-a11: hsla(218, 98.5%, 96.8%, 0.693);
     --slate-a12: hsla(220, 87.4%, 99.3%, 0.936);
+
+    --slate-1: #111113;
+    --slate-2: #18191b;
+    --slate-3: #212225;
+    --slate-4: #272a2d;
+    --slate-5: #2e3135;
+    --slate-6: #363a3f;
+    --slate-7: #43484e;
+    --slate-8: #5a6169;
+    --slate-9: #696e77;
+    --slate-10: #777b84;
+    --slate-11: #b0b4ba;
+    --slate-12: #edeef0;
   }
 }
 

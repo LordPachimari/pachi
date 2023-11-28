@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Flame } from "lucide-react";
+import { Flame, LayoutDashboard } from "lucide-react";
 import { ulid } from "ulid";
 
 import { generateId } from "@pachi/utils";
@@ -56,10 +56,12 @@ export function DashboardButton({ username }: DashboardButtonProps) {
   }, [globalRep, username, router]);
 
   return (
-    <Button size="sm" onClick={onClick}>
-      <Flame className="mr-1 text-white" size={15} />
-      Dashboard
-      <span className="sr-only">Dashboard</span>
-    </Button>
+
+      <button onClick={onClick} className="group flex h-18 w-18 flex-col items-center justify-center text-sm   ">
+        <LayoutDashboard  className="text-slate-11 group-hover:text-slate-9" />
+        <p className="text-[10px] text-slate-11 group-hover:text-slate-9">
+          Dashboard
+        </p>
+      </button>
   );
 }

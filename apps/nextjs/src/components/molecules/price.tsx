@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@pachi/utils";
 
 const Price = ({
   amount,
@@ -18,7 +18,7 @@ const Price = ({
       currencyDisplay: "narrowSymbol",
     }).format(amount / 100)}`}
     <span
-      className={clsx("ml-1 inline", currencyCodeClassName)}
+      className={cn("ml-1 inline", currencyCodeClassName)}
     >{`${currencyCode}`}</span>
   </p>
 );

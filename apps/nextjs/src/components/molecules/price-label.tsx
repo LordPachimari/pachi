@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@pachi/utils";
 
 import Price from "./price";
 
@@ -15,8 +15,8 @@ const PriceLabel = ({
 }) => {
   return (
     <div
-      className={clsx(
-        "absolute bottom-0 left-0 flex w-full px-4 pb-4 @container/label",
+      className={cn(
+        "absolute bottom-2 left-0 flex w-full px-4 pb-4 @container/label",
         {
           "lg:px-20 lg:pb-[35%]": position === "center",
         },
@@ -27,7 +27,7 @@ const PriceLabel = ({
           {title}
         </h3>
         <Price
-          className="flex-none rounded-full bg-blue-600 p-2 text-white"
+          className="flex-none rounded-full bg-brand p-2 text-white"
           amount={amount}
           currencyCode={currencyCode}
           currencyCodeClassName="hidden @[275px]/label:inline"

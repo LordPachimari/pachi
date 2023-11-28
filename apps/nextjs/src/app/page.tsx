@@ -1,3 +1,3 @@
 export default function LandingPage() {
-  return <>hi</>;
+  return <div className="h-screen w-full bg-background">hi</div>;
 }

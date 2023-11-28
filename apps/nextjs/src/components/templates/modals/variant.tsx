@@ -78,7 +78,6 @@ export default function VariantModal({
   console.log("variant values", values);
 
   return (
-    <>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-40" onClose={closeModal}>
           <Transition.Child
@@ -169,6 +168,5 @@ export default function VariantModal({
           </div>
         </Dialog>
       </Transition>
-    </>
   );
 }

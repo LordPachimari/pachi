@@ -14,16 +14,16 @@ export default async function MainLayout({ children }: HomeLayoutProps) {
   const username = await getUsername(user_id);
   return (
     <div className="relative flex min-h-screen flex-col">
-      <MainNav username={username} />
+      <MainNav />
       <div className="flex">
-        <MainSidebar />
+        <MainSidebar username={username} />
 
-        <main className="max-h-screen flex-1 bg-white dark:bg-black">
-          <ScrollArea className="h-content w-full border bg-background  shadow-inner md:rounded-tl-2xl">
+        <main className="z-0 max-h-screen flex-1 bg-navbar">
+          <ScrollArea className="z-10 h-content w-full border bg-background  shadow-inner md:rounded-tl-2xl">
             {children}
           </ScrollArea>
         </main>
-        <GlobalRep userId={user_id} />
+        {/* <GlobalRep userId={user_id} /> */}
       </div>
     </div>
   );

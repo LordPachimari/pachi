@@ -35,7 +35,8 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        background: "var(--background)",
+        navbar: "var(--navbar)",
         component: "var(--component)",
         foreground: "hsl(var(--foreground))",
         primary: {
@@ -99,7 +100,7 @@ export default {
           11: "var(--ruby-a11)",
           12: "var(--ruby-a12)",
         },
-        slate: {
+        "slate-alpha": {
           1: "var(--slate-a1)",
           2: "var(--slate-a2)",
           3: "var(--slate-a3)",
@@ -112,6 +113,20 @@ export default {
           10: "var(--slate-a10)",
           11: "var(--slate-a11)",
           12: "var(--slate-a12)",
+        },
+        slate: {
+          1: "var(--slate-1)",
+          2: "var(--slate-2)",
+          3: "var(--slate-3)",
+          4: "var(--slate-4)",
+          5: "var(--slate-5)",
+          6: "var(--slate-6)",
+          7: "var(--slate-7)",
+          8: "var(--slate-8)",
+          9: "var(--slate-9)",
+          10: "var(--slate-10)",
+          11: "var(--slate-11)",
+          12: "var(--slate-12)",
         },
       },
       borderRadius: {

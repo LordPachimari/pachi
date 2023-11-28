@@ -8,10 +8,7 @@ import { DashboardButton } from "./dashboard-button";
 //   // user: User | null;
 // }
 
-interface MainNavProps {
-  username: string | undefined;
-}
-export function MainNav({ username }: MainNavProps) {
+export function MainNav() {
   // const initials = `${user?.firstName?.charAt(0) ?? ""} ${
   //   user?.lastName?.charAt(0) ?? ""
   // }`;
@@ -19,9 +16,8 @@ export function MainNav({ username }: MainNavProps) {
   //   user?.emailAddresses?.find((e) => e.id === user.primaryEmailAddressId)
   //     ?.emailAddress ?? "";
 
-  console.log("username", username);
   return (
-    <header className="sticky top-0 z-50 flex h-[56px] w-full items-center  bg-component  ">
+    <header className="sticky top-0 z-50 flex h-[56px] w-full items-center  bg-navbar backdrop-blur-md ">
       <div className="container flex h-16 items-center">
         <MainNavContent items={siteConfig.mainNav} />
 
@@ -31,7 +27,6 @@ export function MainNav({ username }: MainNavProps) {
         />
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">
-            <DashboardButton username={username} />
             {/* <Combobox /> */}
             {/* <CartSheet /> */}
             {/* {user ? (
