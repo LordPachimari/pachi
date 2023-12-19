@@ -17,24 +17,33 @@ import {
   addresses,
   countries,
   currencies,
-  customer_groups,
-  money_amount,
-  price_lists,
-  product_collections,
-  product_option_values,
-  product_options,
-  product_tags,
-  product_types,
-  product_variants,
+  customerGroups,
+  priceLists,
+  prices,
+  productCollections,
+  productOptions,
+  productOptionValues,
   products,
+  productTags,
+  productVariants,
   regions,
-  sales_channels,
-  shipping_options,
+  salesChannels,
+  shippingOptions,
   stores,
-  tax_rates,
+  taxRates,
   users,
 } from "../schema";
-import { ImageSchema } from "./common";
+import { carts } from "../schema/cart";
+import { cartItemAdjustments, cartItems } from "../schema/cart-item";
+import { discounts } from "../schema/discount";
+import { discountConditions } from "../schema/discount-condition";
+import { fulfillments } from "../schema/fulfillment";
+import { orders } from "../schema/order";
+import { payments } from "../schema/payment";
+import { shippingMethods } from "../schema/shipping-method";
+import { swaps } from "../schema/swap";
+import { trackingLinks } from "../schema/tracking-link";
+import { fulfillmentStatus, ImageSchema, PaymentStatusSchema } from "./common";
 
 export const CurrencySchema = createInsertSchema(currencies);
 export type Currency = Output<typeof CurrencySchema>;
@@ -64,8 +73,8 @@ export const RegionSchema = merge([
   createInsertSchema(regions),
   object({
     countries: array(CountrySchema),
-    automatic_taxes: boolean(),
-    gift_cards_taxable: boolean(),
+    automaticTaxes: boolean(),
+    giftCardsTaxable: boolean(),
   }),
 ]);
 export type Region = Output<typeof RegionSchema>;
@@ -74,7 +83,7 @@ export const AddressSchema = createInsertSchema(addresses);
 export type Address = Output<typeof AddressSchema>;
 
 export const CustomerGroupSchema = merge([
-  createInsertSchema(customer_groups),
+  createInsertSchema(customerGroups),
   object({
     customers: array(UserSchema),
   }),
@@ -87,42 +96,42 @@ export const CustomerGroupUpdatesSchema = pick(CustomerGroupSchema, [
 export type CustomerGroupUpdates = Output<typeof CustomerGroupUpdatesSchema>;
 
 export const PriceListSchema = merge([
-  createInsertSchema(price_lists),
+  createInsertSchema(priceLists),
   object({
-    customer_groups: optional(array(CustomerGroupSchema)),
+    customerGroups: optional(array(CustomerGroupSchema)),
   }),
 ]);
 export type PriceList = Output<typeof PriceListSchema> & {
-  prices?: MoneyAmount[];
+  prices?: Price[];
 };
 export const PriceListUpdatesSchema = pick(PriceListSchema, [
   "name",
   "description",
-  "expires_at",
+  "expiresAt",
   "status",
-  "starts_at",
-  "includes_tax",
+  "startsAt",
+  "includesTax",
 ]);
 export type PriceListUpdates = Output<typeof PriceListUpdatesSchema>;
 
-export const MoneyAmountSchema = merge([
-  createInsertSchema(money_amount),
+export const PriceSchema = merge([
+  createInsertSchema(prices),
   object({
     currency: optional(CurrencySchema),
-    price_list: optional(PriceListSchema),
+    priceList: optional(PriceListSchema),
   }),
 ]);
-export type MoneyAmount = Output<typeof MoneyAmountSchema>;
-export const MoneyAmountUpdatesSchema = pick(MoneyAmountSchema, ["amount"]);
-export type MoneyAmountUpdates = Output<typeof MoneyAmountUpdatesSchema>;
+export type Price = Output<typeof PriceSchema>;
+export const PriceUpdatesSchema = pick(PriceSchema, ["amount"]);
+export type PriceUpdates = Output<typeof PriceUpdatesSchema>;
 
-export const TaxRateSchema = createInsertSchema(tax_rates);
+export const TaxRateSchema = createInsertSchema(taxRates);
 export type TaxRate = Output<typeof TaxRateSchema>;
 
-export const SalesChannelSchema = createInsertSchema(sales_channels);
+export const SalesChannelSchema = createInsertSchema(salesChannels);
 export type SalesChannel = Output<typeof SalesChannelSchema>;
 
-export const ProductCollectionSchema = createInsertSchema(product_collections);
+export const ProductCollectionSchema = createInsertSchema(productCollections);
 export type ProductCollection = Output<typeof ProductCollectionSchema>;
 export const ProductCollectionUpdatesSchema = pick(ProductCollectionSchema, [
   "handle",
@@ -133,7 +142,7 @@ export type ProductCollectionUpdates = Output<
 >;
 
 export const ProductOptionValueSchema = merge([
-  createInsertSchema(product_option_values),
+  createInsertSchema(productOptionValues),
   object({}),
 ]);
 export type ProductOptionValue = Output<typeof ProductOptionValueSchema>;
@@ -145,7 +154,7 @@ export type ProductOptionValueUpdates = Output<
 >;
 
 export const ProductOptionSchema = merge([
-  createInsertSchema(product_options),
+  createInsertSchema(productOptions),
   object({
     values: optional(array(ProductOptionValueSchema)),
   }),
@@ -154,38 +163,35 @@ export type ProductOption = Output<typeof ProductOptionSchema>;
 export const ProductOptionUpdatesSchema = pick(ProductOptionSchema, ["name"]);
 export type ProductOptionUpdates = Output<typeof ProductOptionUpdatesSchema>;
 
-export const ProductTagSchema = createInsertSchema(product_tags);
+export const ProductTagSchema = createInsertSchema(productTags);
 export type ProductTag = Output<typeof ProductTagSchema>;
 
-export const ProductTypeSchema = createInsertSchema(product_types);
-export type ProductType = Output<typeof ProductTypeSchema>;
-
 export const ProductVariantSchema = merge([
-  createInsertSchema(product_variants),
+  createInsertSchema(productVariants),
   object({
     options: optional(array(ProductOptionValueSchema)),
-    prices: optional(array(MoneyAmountSchema)),
+    prices: optional(array(PriceSchema)),
     images: optional(array(ImageSchema)),
   }),
 ]);
 export type ProductVariant = Output<typeof ProductVariantSchema> & {
-  product?: PublishedProduct;
+  product?: Product;
 };
 export const ProductVariantUpdatesSchema = pick(ProductVariantSchema, [
   "title",
   "barcode",
   "ean",
   "height",
-  "hs_code",
-  "inventory_quantity",
+  "hsCode",
+  "inventoryQuantity",
   "metadata",
   "material",
-  "mid_code",
+  "midCode",
   "sku",
   "weight",
   "width",
   "upc",
-  "allow_backorder",
+  "allowBackorder",
 ]);
 export type ProductVariantUpdates = Output<typeof ProductVariantUpdatesSchema>;
 
@@ -194,14 +200,13 @@ export const ProductSchema = merge([
   object({
     variants: optional(array(ProductVariantSchema)),
     options: optional(array(ProductOptionSchema)),
-    sales_channels: optional(array(SalesChannelSchema)),
+    salesChannels: optional(array(SalesChannelSchema)),
     collection: optional(ProductCollectionSchema),
     tags: optional(array(ProductTagSchema)),
-    type: optional(ProductTypeSchema),
     thumbnail: optional(ImageSchema),
     metadata: optional(record(string(), string())),
     images: optional(array(ImageSchema)),
-    tax_rates: optional(array(TaxRateSchema)),
+    taxRates: optional(array(TaxRateSchema)),
     discountable: boolean(),
   }),
 ]);
@@ -212,7 +217,7 @@ export const PublishedProductSchema = merge([
     description: string(),
     thumbnail: ImageSchema,
     images: array(ImageSchema),
-    prices: array(MoneyAmountSchema),
+    prices: array(PriceSchema),
     handle: string(),
     status: enumType(["draft", "proposed", "published", "rejected"]),
     discountable: boolean(),
@@ -222,7 +227,13 @@ export const PublishedProductSchema = merge([
 ]);
 export type PublishedProduct = Output<typeof PublishedProductSchema>;
 export const ProductUpdatesSchema = partial(
-  pick(ProductSchema, ["title", "description", "discountable", "status"]),
+  pick(ProductSchema, [
+    "title",
+    "description",
+    "discountable",
+    "status",
+    "type",
+  ]),
 );
 export type ProductUpdates = Output<typeof ProductUpdatesSchema>;
 export const UpdateProductSchema = object({
@@ -232,5 +243,125 @@ export const UpdateProductSchema = object({
 export type UpdateProduct = Output<typeof UpdateProductSchema>;
 export type Product = Output<typeof ProductSchema>;
 
-export const ShippingOptionSchema = createInsertSchema(shipping_options);
+export const ShippingOptionSchema = createInsertSchema(shippingOptions);
 export type ShippingOption = Output<typeof ShippingOptionSchema>;
+
+export const DiscountConditionSchema = merge([
+  createInsertSchema(discountConditions),
+  object({
+    products: optional(array(ProductSchema)),
+    productTags: optional(array(ProductTagSchema)),
+    productCollections: optional(array(ProductCollectionSchema)),
+  }),
+]);
+export type DiscountCondition = Output<typeof DiscountConditionSchema>;
+
+export const DiscountRuleSchema = merge([
+  createInsertSchema(discounts),
+  object({
+    conditions: optional(array(DiscountConditionSchema)),
+  }),
+]);
+export type DiscountRule = Output<typeof DiscountRuleSchema>;
+
+export const DiscountSchema = merge([
+  createInsertSchema(discounts),
+  object({
+    rule: DiscountRuleSchema,
+  }),
+]);
+export type Discount = Output<typeof DiscountSchema>;
+
+export const PaymentSchema = createInsertSchema(payments);
+export type PaymentSchema = Output<typeof PaymentSchema>;
+
+export const CartItemAdjustmentSchema = createInsertSchema(cartItemAdjustments);
+export type CartItemAdjustment = Output<typeof CartItemAdjustmentSchema>;
+export const CartItemSchema = merge([
+  createInsertSchema(cartItems),
+  object({
+    thumbnail: ImageSchema,
+    variant: optional(ProductVariantSchema),
+    adjustments: optional(array(CartItemAdjustmentSchema)),
+  }),
+]);
+export type CartItem = Output<typeof CartItemSchema> & {
+  variant?: ProductVariant;
+};
+
+export const CartItemUpdatesSchema = pick(CartItemSchema, ["quantity"]);
+export type CartItemUpdates = Output<typeof CartItemAdjustmentSchema>;
+export const UpdateCartItemSchema = object({
+  id: string(),
+  updates: CartItemUpdatesSchema,
+  cartId: string(),
+});
+export type UpdateCartItem = Output<typeof UpdateCartItemSchema>;
+
+export const ShippingMethodSchema = createInsertSchema(shippingMethods);
+export type ShippingMethod = Output<typeof ShippingMethodSchema>;
+
+export const TrackingLinkSchema = createInsertSchema(trackingLinks);
+
+export type TrackingLink = Output<typeof TrackingLinkSchema>;
+
+export const FulfillmentSchema = merge([
+  createInsertSchema(fulfillments),
+  object({ trackingLinks: optional(array(TrackingLinkSchema)) }),
+]);
+export type Fulfillment = Output<typeof FulfillmentSchema>;
+
+export const SwapSchema = merge([
+  createInsertSchema(swaps),
+  object({
+    fulfillments: array(FulfillmentSchema),
+    additionalItems: optional(array(CartItemSchema)),
+  }),
+]);
+export type Swap = Output<typeof SwapSchema>;
+
+export const OrderSchema = merge([
+  createInsertSchema(orders),
+  object({
+    items: array(CartItemSchema),
+    discounts: optional(array(DiscountSchema)),
+    // giftCards: optional(array(GiftCardSchema)),
+    // giftCardTotal: number(),
+    paymentStatus: PaymentStatusSchema,
+    payments: array(PaymentSchema),
+    // shippingAddress: AddressSchema,
+    fulfillmentStatus: enumType(fulfillmentStatus),
+    shippingMethods: array(ShippingMethodSchema),
+    fulfillments: array(FulfillmentSchema),
+    // claims: optional(array(ClaimOrderSchema)),
+    swaps: optional(array(SwapSchema)),
+    // customer: optional(UserSchema),
+  }),
+]);
+export type Order = Output<typeof OrderSchema>;
+
+export const CartSchema = merge([
+  createInsertSchema(carts),
+  object({
+    discounts: optional(array(DiscountSchema)),
+    // giftCards: optional(array(GiftCardSchema)),
+    context: optional(record(string(), string())),
+    shippingMethods: optional(array(ShippingMethodSchema)),
+    shippingAddress: optional(AddressSchema),
+    region: optional(RegionSchema),
+    customer: optional(UserSchema),
+  }),
+]);
+
+export type Cart = Output<typeof CartSchema> & { items?: CartItem[] };
+export const CreateCartSchema = pick(CartSchema, [
+  "regionId",
+  "id",
+  "context",
+  "salesChannelId",
+  "discounts",
+  // "giftCards",
+  "type",
+  "email",
+]);
+export type CreateCart = Output<typeof CreateCartSchema>;

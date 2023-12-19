@@ -18,7 +18,7 @@ import { Loader2, Loader2Icon } from "lucide-react";
 import { ulid } from "ulid";
 import { set } from "zod";
 
-import type { Currency, MoneyAmount } from "@pachi/db";
+import type { Currency, Price } from "@pachi/db";
 import { currencies } from "@pachi/types";
 import { generateId } from "@pachi/utils";
 
@@ -29,16 +29,16 @@ import { ReplicacheInstancesStore } from "~/zustand/replicache";
 import { CurrenciesTable } from "./table";
 
 interface CurrencyTableProps {
-  store_currencies: string[];
+  storeCurrencies: string[];
   storeId: string;
-  prices: MoneyAmount[];
+  prices: Price[];
   variantId: string;
   productId: string;
   close: () => void;
 }
 
 export function Table({
-  store_currencies,
+  storeCurrencies,
   storeId,
   prices,
   productId,
@@ -46,9 +46,9 @@ export function Table({
   close,
 }: CurrencyTableProps) {
   const [selectedRowIds, setSelectedRowIds] =
-    React.useState<string[]>(store_currencies);
+    React.useState<string[]>(storeCurrencies);
   const [saving, setSaving] = React.useState(false);
-  console.log("store_currencies", store_currencies);
+  console.log("storeCurrencies", storeCurrencies);
   console.log("selectedRowIds", selectedRowIds);
   const globalRep = ReplicacheInstancesStore((state) => state.globalRep);
   const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
@@ -112,36 +112,35 @@ export function Table({
       //   enableHiding: true,
       // },
     ],
-    [store_currencies],
+    [storeCurrencies],
   );
   const saveCurrencies = React.useCallback(async () => {
     setSaving(true);
     const exisitingCurrencyCodesSet = new Set(
-      prices.map((price) => price.currency_code),
+      prices.map((price) => price.currencyCode),
     );
     const priceIdsToDelete: string[] = [];
-    const pricesToCreate: MoneyAmount[] = [];
+    const pricesToCreate: Price[] = [];
 
     for (const price of prices) {
-      console.log("price currency code", price.currency_code);
-      if (!selectedRowIds.includes(price.currency_code)) {
+      if (!selectedRowIds.includes(price.currencyCode)) {
         priceIdsToDelete.push(price.id);
       }
     }
     for (const currencyCode of selectedRowIds) {
       if (!exisitingCurrencyCodesSet.has(currencyCode))
         pricesToCreate.push({
-          id: generateId({ id: ulid(), prefix: "m_amount" }),
+          id: generateId({ id: ulid(), prefix: "price" }),
           amount: 0,
-          currency_code: currencyCode,
-          variant_id: variantId,
-          created_at: new Date().toISOString(),
+          currencyCode: currencyCode,
+          variantId: variantId,
+          createdAt: new Date().toISOString(),
         });
     }
     await Promise.all([
       globalRep?.mutate.updateStore({
         args: {
-          store_id: storeId,
+          storeId: storeId,
           updates: {
             currencies: selectedRowIds,
           },
@@ -150,15 +149,15 @@ export function Table({
       dashboardRep?.mutate.createPrices({
         args: {
           prices: pricesToCreate,
-          product_id: productId,
-          variant_id: variantId,
+          productId: productId,
+          variantId: variantId,
         },
       }),
       dashboardRep?.mutate.deletePrices({
         args: {
           ids: priceIdsToDelete,
-          product_id: productId,
-          variant_id: variantId,
+          productId: productId,
+          variantId: variantId,
         },
       }),
     ]);

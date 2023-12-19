@@ -184,7 +184,8 @@ export function Sortable({
               const reordered = reorderItems(items, activeIndex, overIndex);
               if (itemsType === "images" && updateProductImagesOrder)
                 console.log("reordered <=====", reordered);
-              // updateProductImagesOrder(reordered as Image[]);
+              if(updateProductImagesOrder)
+                updateProductImagesOrder(reordered );
               return reordered;
             });
           }

@@ -1,5 +1,7 @@
-"use client"
+"use client";
+
 import type { PublishedProduct } from "@pachi/db";
+
 import Grid from "~/components/atoms/grid";
 import ProductGridItems from "~/components/templates/layouts/product-grid-items";
 
@@ -8,10 +10,10 @@ export function Products() {
     {
       id: "m1e",
       title: "me",
-      created_at: "2023-11-21T12:34:56Z",
+      createdAt: "2023-11-21T12:34:56Z",
       version: 0,
       discountable: true,
-      store_id: "m1e",
+      storeId: "m1e",
       description: "dadwwad",
       handle: "dadwad",
       images: [],
@@ -20,16 +22,16 @@ export function Products() {
       prices: [
         {
           id: "adwd",
-          currency_code: "USD",
+          currencyCode: "USD",
           amount: 100,
-          variant_id: "m1e",
+          variantId: "m1e",
         },
       ],
       status: "published",
       thumbnail: {
         id: "awdwa",
         url: "https://utfs.io/f/86f71c61-ea84-4de2-be71-ffa98c17f140-130p7e.png",
-        name: "dawdaw",
+        altText: "dawdaw",
         order: 1,
       },
     },

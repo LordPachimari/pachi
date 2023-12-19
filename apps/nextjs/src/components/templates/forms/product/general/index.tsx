@@ -54,18 +54,18 @@ export function General({
       />
       <Separator className="mb-4 mt-2" />
       <Media
-        product_id={product.id}
+        productId={product.id}
         images={product.images}
         files={files}
         setFiles={setFiles}
-        variant_id={product.variants![0]!.id}
+        variantId={product.variants![0]!.id}
         uploadProductImages={uploadProductImages}
       />
       <Separator className="my-4" />
       <Pricing
         updatePrice={updatePrice}
         variant={product.variants![0]!}
-        store_currencies={store.currencies ?? []}
+        storeCurrencies={store.currencies ?? []}
         storeId={store.id}
         productId={product.id}
       />

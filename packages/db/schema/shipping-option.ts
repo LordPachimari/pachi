@@ -10,96 +10,96 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-import { fulfillment_providers } from "./fulfillment-provider";
+import { fulfillmentProviders } from "./fulfillment-provider";
 import { regions } from "./region";
-import { tax_rates } from "./tax-rate";
+import { taxRates } from "./tax-rate";
 
-export const shipping_options = pgTable(
-  "shipping_options",
+export const shippingOptions = pgTable(
+  "shippingOptions",
   {
     id: varchar("id").notNull().primaryKey(),
-    created_at: varchar("created_at"),
-    updated_at: varchar("updated_at"),
-    admin_only: boolean("admin_only"),
+    createdAt: varchar("createdAt"),
+    updatedAt: varchar("updatedAt"),
+    adminOnly: boolean("adminOnly"),
     amount: integer("amount"),
     data: json("data").$type<Record<string, unknown>>(),
-    includes_tax: boolean("includes_tax"),
-    is_return: boolean("is_return"),
+    includesTax: boolean("includesTax"),
+    isReturn: boolean("isReturn"),
     name: varchar("name"),
-    price_type: text("price_type", { enum: ["calculated", "flat_rate"] }),
-    provider_id: varchar("provider_id"),
-    region_id: varchar("region_id"),
+    priceType: text("priceType", { enum: ["calculated", "flatRate"] }),
+    providerId: varchar("providerId"),
+    regionId: varchar("regionId"),
     version: integer("version").notNull().default(0),
   },
   (t) => ({
-    provider_id_index: index("provider_id_index").on(t.provider_id),
-    region_id_index2: index("region_id_index2").on(t.region_id),
+    providerIdIndex: index("providerIdIndex").on(t.providerId),
+    regionIdIndex2: index("regionIdIndex2").on(t.regionId),
   }),
 );
-export const shipping_option_relations = relations(
-  shipping_options,
+export const shippingOptionRelations = relations(
+  shippingOptions,
   ({ one, many }) => ({
-    provider: one(fulfillment_providers, {
-      fields: [shipping_options.provider_id],
-      references: [fulfillment_providers.id],
+    provider: one(fulfillmentProviders, {
+      fields: [shippingOptions.providerId],
+      references: [fulfillmentProviders.id],
     }),
     region: one(regions, {
-      fields: [shipping_options.region_id],
+      fields: [shippingOptions.regionId],
       references: [regions.id],
     }),
-    requirements: many(shipping_options_requirements),
+    requirements: many(shippingOptionsRequirements),
   }),
 );
-export const shipping_options_requirements = pgTable(
-  "shipping_option_requirements",
+export const shippingOptionsRequirements = pgTable(
+  "shippingOptionRequirements",
   {
     id: varchar("id").notNull().primaryKey(),
     amount: integer("amount"),
-    shipping_option_id: varchar("shipping_option_id"),
-    type: text("type", { enum: ["max_subtotal", "min_subtotal"] }),
+    shippingOptionId: varchar("shippingOptionId"),
+    type: text("type", { enum: ["maxSubtotal", "minSubtotal"] }),
     version: integer("version"),
   },
   (t) => ({
-    shipping_option_id_index: index("shipping_option_id_index").on(
-      t.shipping_option_id,
+    shippingOptionIdIndex: index("shippingOptionIdIndex").on(
+      t.shippingOptionId,
     ),
   }),
 );
-export const shipping_option_requirement_relations = relations(
-  shipping_options_requirements,
+export const shippingOptionRequirementRelations = relations(
+  shippingOptionsRequirements,
   ({ one }) => ({
-    shipping_option: one(shipping_options, {
-      fields: [shipping_options_requirements.shipping_option_id],
-      references: [shipping_options.id],
+    shipping_option: one(shippingOptions, {
+      fields: [shippingOptionsRequirements.shippingOptionId],
+      references: [shippingOptions.id],
     }),
   }),
 );
-export const shipping_options_to_tax_rates = pgTable(
-  "shipping_options_to_tax_rates",
+export const shippingOptionsToTaxRates = pgTable(
+  "shippingOptionsToTaxRates",
   {
     id: varchar("id"),
-    rate_id: varchar("rate_id")
+    rateId: varchar("rateId")
       .notNull()
-      .references(() => tax_rates.id),
-    shipping_option_id: varchar("shipping_option_id")
+      .references(() => taxRates.id),
+    shippingOptionId: varchar("shippingOptionId")
       .notNull()
-      .references(() => shipping_options.id),
+      .references(() => shippingOptions.id),
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.shipping_option_id, t.rate_id),
+    pk: primaryKey(t.shippingOptionId, t.rateId),
   }),
 );
-export const shipping_option_to_tax_rates_relations = relations(
-  shipping_options_to_tax_rates,
+export const shippingOptionToTaxRatesRelations = relations(
+  shippingOptionsToTaxRates,
   ({ one }) => ({
-    rate: one(tax_rates, {
-      fields: [shipping_options_to_tax_rates.rate_id],
-      references: [tax_rates.id],
+    rate: one(taxRates, {
+      fields: [shippingOptionsToTaxRates.rateId],
+      references: [taxRates.id],
     }),
-    shipping_option: one(shipping_options, {
-      fields: [shipping_options_to_tax_rates.shipping_option_id],
-      references: [shipping_options.id],
+    shipping_option: one(shippingOptions, {
+      fields: [shippingOptionsToTaxRates.shippingOptionId],
+      references: [shippingOptions.id],
     }),
   }),
 );

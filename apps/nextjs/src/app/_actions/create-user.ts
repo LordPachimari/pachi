@@ -30,9 +30,6 @@ export async function createUser(
     const payload = jose.decodeJwt(token);
 
     const userID = payload.sub;
-    const options = {
-      method: "GET",
-    };
 
     // const hankoUserResponse = await fetch(
     //   `${env.NEXT_PUBLIC_HANKO_API_URL}/users/${userID}`,
@@ -54,8 +51,6 @@ export async function createUser(
     if (createUserReponse.status === 400)
       return { message: "User already exists", type: "FAIL" };
     const userReponse = (await createUserReponse.json()) as { message: string };
-    cookies().set("accountExist", "true");
-    console.log("userReponse", userReponse);
 
     return { message: userReponse.message, type: "SUCCESS" };
   } catch (e) {

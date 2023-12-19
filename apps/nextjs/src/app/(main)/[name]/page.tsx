@@ -1,13 +1,8 @@
-import { useState } from "react";
-
-import type { Product, PublishedProduct, Store } from "@pachi/db";
+import type { Store } from "@pachi/db";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/atoms/avatar";
-import { Button } from "~/components/atoms/button";
 import { Card, CardContent, CardFooter } from "~/components/atoms/card";
-import Grid from "~/components/atoms/grid";
 import { PageHeaderHeading } from "~/components/molecules/page-header";
-import ProductGridItems from "~/components/templates/layouts/product-grid-items";
 import { EditStoreButton } from "./_components/edit-store-button";
 import { Products } from "./_components/products";
 
@@ -22,8 +17,8 @@ export default function StorePage({
   const store: Store = {
     id: "m1e",
     name: "me",
-    created_at: "2023-11-21T12:34:56Z",
-    founder_id: "m1e",
+    createdAt: "2023-11-21T12:34:56Z",
+    founderId: "m1e",
     version: 0,
   };
   return (

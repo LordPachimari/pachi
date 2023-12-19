@@ -1,6 +1,7 @@
-import { string } from "valibot";
+import { number, object, string } from "valibot";
 
 import {
+  CartSchema,
   StoreSchema,
   StoreUpdatesSchema,
   UserSchema,
@@ -9,10 +10,14 @@ import {
 import { generateId } from "@pachi/utils";
 
 import type {
+  AddItemToCartProps,
+  CreateCartProps,
   CreateStoreProps,
   CreateUserProps,
+  DeleteItemProps,
+  UpdateItemQuantityProps,
   UpdateStoreProps,
-} from "../../../types/mutators";
+} from "../../../types/mutators/global";
 import type { ReplicacheTransaction } from "../../replicache-transaction/transaction";
 
 export type GlobalMutators_ = typeof globalMutators_;
@@ -49,7 +54,7 @@ export const globalMutators_ = {
   //     region_id,
   //     ...(user?.id && { customer_id: user.id }),
   //   });
-  //   await services.cartService_.addOrUpdateLineItems(cart_id, lineItems);
+  //   await services.cartService_.addOrUpdateCartItems(cart_id, lineItems);
   // },
   // removeFromCart: async (
   //   tx: ReplicacheTransaction,
@@ -74,17 +79,17 @@ export const globalMutators_ = {
   ) => {
     const { user } = args;
 
-    const new_store_id = generateId({ prefix: "store", id: user.id });
+    const newStoreId = generateId({ prefix: "store", id: user.id });
     UserSchema._parse(user);
     const store: Store = {
-      id: new_store_id,
-      created_at: new Date().toISOString(),
+      id: newStoreId,
+      createdAt: new Date().toISOString(),
       name: user.username,
       version: 1,
-      founder_id: user.id,
+      founderId: user.id,
     };
 
-    await repositories?.user_repository.insertUser(user);
+    await repositories?.userRepository.insertUser({user});
     await tx.put(store.id, store, "stores");
   },
   createStore: async (
@@ -99,9 +104,73 @@ export const globalMutators_ = {
     tx: ReplicacheTransaction,
     { args }: UpdateStoreProps,
   ) => {
-    const { store_id, updates } = args;
-    string()._parse(store_id);
+    const { storeId, updates } = args;
+    string()._parse(storeId);
     StoreUpdatesSchema._parse(updates);
-    await tx.update(store_id, updates, "stores");
+    await tx.update(storeId, updates, "stores");
+  },
+  createCart: async (tx: ReplicacheTransaction, { args }: CreateCartProps) => {
+    const { cart } = args;
+    CartSchema._parse(cart);
+    await tx.put(cart.id, cart, "carts");
+  },
+
+  addItemToCart: async (
+    tx: ReplicacheTransaction,
+    { args, services }: AddItemToCartProps,
+  ) => {
+    const { quantity, variantId, currencyCode, cartItemId, cartId } = args;
+    object({
+      quantity: number(),
+      variantId: string(),
+      currencyCode: string(),
+      lineItemId: string(),
+      cartId: string(),
+    })._parse(args);
+    const cartItemService = services?.cartItemService;
+    const cartService = services?.cartService;
+    if (!cartItemService || !cartService) throw new Error("Missing services");
+    await cartItemService.generateItem({
+      item: {
+        cartId,
+        currencyCode,
+        cartItemId,
+        quantity,
+        variantId,
+      },
+    });
+    await cartService.updateCartTotals({ cartId });
+  },
+  updateItemQuantity: async (
+    tx: ReplicacheTransaction,
+    { args, services }: UpdateItemQuantityProps,
+  ) => {
+    const { quantity, itemId, cartId } = args;
+    object({
+      quantity: number(),
+      cartItemId: string(),
+      cartId: string(),
+    })._parse(args);
+    const cartItemService = services?.cartItemService;
+    const cartService = services?.cartService;
+    if (!cartItemService || !cartService) throw new Error("Missing services");
+    await cartItemService.updateItem({
+      id: itemId,
+      updates: { quantity },
+      cartId,
+    });
+    await cartService.updateCartTotals({ cartId });
+  },
+  deleteItem: async (
+    tx: ReplicacheTransaction,
+    { args, services }: DeleteItemProps,
+  ) => {
+    const { id, cartId } = args;
+    object({ id: string(), cartId: string() })._parse(id);
+    const cartItemService = services?.cartItemService;
+    const cartService = services?.cartService;
+    if (!cartItemService || !cartService) throw new Error("Missing services");
+    await cartItemService.deleteItem(id);
+    await cartService.updateCartTotals({ cartId });
   },
 };

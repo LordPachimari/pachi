@@ -4,9 +4,9 @@ export enum PriceListType {
 }
 export type PriceListPriceUpdateInput = {
   id?: string;
-  variant_id?: string;
+  variantId?: string;
   region_id?: string;
-  currency_code?: string;
+  currencyCode?: string;
   amount?: number;
   min_quantity?: number;
   max_quantity?: number;
@@ -14,7 +14,7 @@ export type PriceListPriceUpdateInput = {
 
 export type PriceListPriceCreateInput = {
   region_id?: string;
-  currency_code?: string;
+  currencyCode?: string;
   amount: number;
   min_quantity?: number;
   max_quantity?: number;
@@ -25,5 +25,5 @@ export type PriceListLoadConfig = {
   customer_id?: string;
   cart_id?: string;
   region_id?: string;
-  currency_code?: string;
+  currencyCode?: string;
 };

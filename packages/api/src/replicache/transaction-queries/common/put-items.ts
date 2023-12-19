@@ -22,6 +22,5 @@ export const putItems_ = ({
       //@ts-ignore
       .values(itemsToPut)
       .onConflictDoNothing()
-      .execute()
   );
 };

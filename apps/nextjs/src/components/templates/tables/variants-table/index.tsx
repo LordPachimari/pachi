@@ -95,7 +95,7 @@ export function Table({ data }: VariantTableProps) {
         cell: ({ row }) => {
           return (
             <div className="flex w-[50px] items-center justify-center">
-              {row.original.inventory_quantity ?? 0}
+              {row.original.inventoryQuantity ?? 0}
             </div>
           );
         },

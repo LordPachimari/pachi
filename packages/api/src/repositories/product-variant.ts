@@ -3,9 +3,14 @@ import { eq } from "drizzle-orm";
 import { RepositoryBase } from "./base";
 
 export class ProductVariantRepository extends RepositoryBase {
-  async getProductVariantById(id: string) {
-    return await this.manager.query.product_variants.findFirst({
-      where: (product_variant) => eq(product_variant.id, id),
+  async getProductVariantById({id, withProduct}:{id: string, withProduct?:boolean}) {
+    return await this.manager.query.productVariants.findFirst({
+      where: (variant) => eq(variant.id, id),
+      ...(withProduct && {
+        with:{
+          product:true
+        }
+      })
     });
   }
 }

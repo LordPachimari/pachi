@@ -29,7 +29,7 @@ import Pricing from "../forms/product/general/pricing";
 interface VariantModalProps {
   closeModal: () => void;
   isOpen: boolean;
-  product_id: string;
+  productId: string;
   images: Image[];
   // trigger: React.ReactNode;
   options: ProductOption[];
@@ -49,7 +49,7 @@ export default function VariantModal({
   currencies,
   images,
   options,
-  product_id,
+  productId,
   storeId,
   updatePrice,
   updateVariant,
@@ -78,95 +78,95 @@ export default function VariantModal({
   console.log("variant values", values);
 
   return (
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-40" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/25" />
-          </Transition.Child>
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-40" onClose={closeModal}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black/25" />
+        </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-component p-6 text-left align-middle shadow-xl transition-all ">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-slate-11"
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-component p-6 text-left align-middle shadow-xl transition-all ">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-slate-11"
+                >
+                  Variant
+                </Dialog.Title>
+
+                <div className="flex w-full  gap-4">
+                  <Select
+                    defaultValue={optionNameState}
+                    onValueChange={(value) => setOptionNameState(value)}
                   >
-                    Variant
-                  </Dialog.Title>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {Object.keys(optionsMap).map((name) => (
+                          <SelectItem value={name} key={name}>
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
 
-                  <div className="flex w-full  gap-4">
-                    <Select
-                      defaultValue={optionNameState}
-                      onValueChange={(value) => setOptionNameState(value)}
-                    >
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {Object.keys(optionsMap).map((name) => (
-                            <SelectItem value={name} key={name}>
-                              {name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-
-                    <Select defaultValue={optionValue ?? ""}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {values.map((value) => (
-                            <SelectItem value={value.value} key={value.value}>
-                              {value.value}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <h2 className="text-md py-2 font-semibold">{`Media (optional)`}</h2>
-                  <Media
-                    images={images}
-                    product_id={product_id}
-                    files={files}
-                    setFiles={setFiles}
-                    uploadProductImages={uploadProductImages}
-                    variant_id={variant.id}
-                  />
-                  <Pricing
-                    updatePrice={updatePrice}
-                    variant={variant}
-                    store_currencies={currencies}
-                    productId={product_id}
-                    storeId={storeId}
-                  />
-                  <Inventory updateVariant={updateVariant} variant={variant} />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
+                  <Select defaultValue={optionValue ?? ""}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {values.map((value) => (
+                          <SelectItem value={value.value} key={value.value}>
+                            {value.value}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <h2 className="text-md py-2 font-semibold">{`Media (optional)`}</h2>
+                <Media
+                  images={images}
+                  productId={productId}
+                  files={files}
+                  setFiles={setFiles}
+                  uploadProductImages={uploadProductImages}
+                  variantId={variant.id}
+                />
+                <Pricing
+                  updatePrice={updatePrice}
+                  variant={variant}
+                  storeCurrencies={currencies}
+                  productId={productId}
+                  storeId={storeId}
+                />
+                <Inventory updateVariant={updateVariant} variant={variant} />
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
-        </Dialog>
-      </Transition>
+        </div>
+      </Dialog>
+    </Transition>
   );
 }

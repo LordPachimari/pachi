@@ -57,7 +57,7 @@
 //       ...rest
 //     } = omit(product, [
 //       "id",
-//       "created_at",
+//       "createdAt",
 //       "updated_at",
 //       "deleted_at",
 //       "external_id",
@@ -103,11 +103,11 @@
 //         const { prices, options, ...rest } = omit(variant, [
 //           "id",
 //           "sku",
-//           "created_at",
+//           "createdAt",
 //           "updated_at",
 //           "deleted_at",
 //           "product",
-//           "product_id",
+//           "productId",
 //           "variant_rank",
 //           "purchasable",
 //         ]);
@@ -128,7 +128,7 @@
 //         if (prices && prices.length) {
 //           variantBase.prices = prices.map((price) => ({
 //             amount: price.amount,
-//             currency_code: !price.region_id ? price.currency_code : undefined,
+//             currencyCode: !price.region_id ? price.currencyCode : undefined,
 //             region_id: price.region_id,
 //           }));
 //         }
@@ -136,7 +136,7 @@
 //         if (options && options.length) {
 //           // Sort the options by rank by looking up the rank in the optionRankMap
 //           const sortedOptions = options.sort(
-//             (a, b) => optionRankMap[a.option_id] - optionRankMap[b.option_id],
+//             (a, b) => optionRankMap[a.optionId] - optionRankMap[b.optionId],
 //           );
 
 //           variantBase.options = sortedOptions.map((option) => ({

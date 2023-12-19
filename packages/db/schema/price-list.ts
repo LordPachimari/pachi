@@ -8,58 +8,58 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-import { customer_groups } from "./customer-group";
-import { money_amount } from "./money-amount";
+import { customerGroups } from "./customer-group";
+import { prices } from "./price";
 
-export const price_lists = pgTable("price_lists", {
+export const priceLists = pgTable("priceLists", {
   id: varchar("id").notNull().primaryKey(),
-  created_at: varchar("created_at"),
-  updated_at: varchar("updated_at"),
+  createdAt: varchar("createdAt"),
+  updatedAt: varchar("updatedAt"),
   description: text("description"),
-  expires_at: varchar("expires_at"),
-  includes_tax: boolean("includes_tax").default(false),
+  expiresAt: varchar("expiresAt"),
+  includesTax: boolean("includesTax").default(false),
   name: varchar("name"),
-  starts_at: varchar("starts_at"),
+  startsAt: varchar("startsAt"),
   status: text("status", { enum: ["sales", "override"] })
     .notNull()
     .default("sales"),
   type: text("type", { enum: ["active", "draft"] })
     .notNull()
     .default("draft"),
-  updated_by: varchar("updated_by"),
+  updatedBy: varchar("updatedBy"),
   version: integer("version").notNull().default(0),
 });
 
-export const price_list_relations = relations(price_lists, ({ many }) => ({
-  customer_groups: many(price_lists_to_customer_groups),
-  prices: many(money_amount),
+export const priceListRelations = relations(priceLists, ({ many }) => ({
+  customerGroups: many(priceListsToCustomerGroups),
+  prices: many(prices),
 }));
-export const price_lists_to_customer_groups = pgTable(
-  "price_lists_to_customer_groups",
+export const priceListsToCustomerGroups = pgTable(
+  "priceListsToCustomerGroups",
   {
     id: varchar("id"),
-    customer_group_id: varchar("customer_group_id")
+    customerGroupId: varchar("customerGroupId")
       .notNull()
-      .references(() => customer_groups.id, { onDelete: "cascade" }),
-    price_list_id: varchar("price_list_id")
+      .references(() => customerGroups.id, { onDelete: "cascade" }),
+    priceListId: varchar("priceListId")
       .notNull()
-      .references(() => price_lists.id, { onDelete: "cascade" }),
+      .references(() => priceLists.id, { onDelete: "cascade" }),
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.customer_group_id, t.price_list_id),
+    pk: primaryKey(t.customerGroupId, t.priceListId),
   }),
 );
-export const price_lists_to_customer_groups_relations = relations(
-  price_lists_to_customer_groups,
+export const priceListsToCustomerGroupsRelations = relations(
+  priceListsToCustomerGroups,
   ({ one }) => ({
-    customer_group: one(customer_groups, {
-      fields: [price_lists_to_customer_groups.customer_group_id],
-      references: [customer_groups.id],
+    customer_group: one(customerGroups, {
+      fields: [priceListsToCustomerGroups.customerGroupId],
+      references: [customerGroups.id],
     }),
-    price_list: one(price_lists, {
-      fields: [price_lists_to_customer_groups.price_list_id],
-      references: [price_lists.id],
+    price_list: one(priceLists, {
+      fields: [priceListsToCustomerGroups.priceListId],
+      references: [priceLists.id],
     }),
   }),
 );

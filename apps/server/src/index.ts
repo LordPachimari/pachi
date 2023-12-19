@@ -1,18 +1,18 @@
+import { pg } from "@lucia-auth/adapter-postgresql";
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
 import { Hono, type Context } from "hono";
 import { getCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import * as jose from "jose";
+import { lucia } from "lucia";
+import { hono } from "lucia/middleware";
 import { number, object, string } from "valibot";
 
 import { pull, push, type Bindings } from "@pachi/api";
 import {
-  countries as countries_table,
-  currencies,
+  pool,
   schema,
-  stores,
-  users,
   type Country,
   type Currency,
   type Store,
@@ -59,23 +59,20 @@ app.use("/*", async (c, next) => {
   return await next();
 });
 app.use("*", async (c, next) => {
-  if (c.env.ENVIRONMENT === "test" || c.env.ENVIRONMENT === "dev") {
-    return await next();
-  }
-  const jwt = getToken(c);
-  const JWKS_ENDPOINT = `${c.env.HANKO_URL}/.well-known/jwks.json`;
-  const JWKS = jose.createRemoteJWKSet(new URL(JWKS_ENDPOINT), {
-    cooldownDuration: 120000,
+  const auth = lucia({
+    env: "DEV", // "PROD" if deployed to HTTPS
+    middleware: hono(),
+    adapter: pg(pool, {
+      user: "users",
+      key: "user_key",
+      session: "user_sessions",
+    }),
   });
-  if (jwt) {
-    try {
-      const { payload } = await jose.jwtVerify(jwt, JWKS);
-      console.log("what is payload sub?", payload.sub);
-      c.set("auth" as never, payload.sub);
-    } catch (error) {
-      return c.newResponse("Invalid token", { status: 403 });
-    }
-  }
+  const authRequest = auth.handleRequest(c);
+  const session = await authRequest.validate();
+  console.log("session", session);
+  c.set("auth" as never, session.user as { userId: string });
+
   return await next();
 });
 app.post("/pull/:spaceId", async (c) => {
@@ -84,10 +81,6 @@ app.post("/pull/:spaceId", async (c) => {
       ? c.req.query("userId")
       : c.get("auth" as never);
   console.log("userId", userId);
-  const allCookies = getCookie(c);
-  console.log("all cookies", allCookies);
-  const unauthenticated_user_id = c.req.query("userId") as string;
-  console.log("unauthenticated_user_id", unauthenticated_user_id);
   try {
     SpaceIdSchema._parse(c.req.param("spaceId"));
   } catch (error) {
@@ -95,7 +88,6 @@ app.post("/pull/:spaceId", async (c) => {
     return c.json({ message: "Invalid spaceId" }, 400);
   }
   const json = await c.req.json();
-  console.log("req.body", json);
 
   const pool = new Pool({ connectionString: c.env.DATABASE_URL });
 
@@ -106,7 +98,7 @@ app.post("/pull/:spaceId", async (c) => {
     db,
     spaceId: c.req.param("spaceId") as SpaceId,
     storage: c.env.PACHI,
-    userId: userId ?? unauthenticated_user_id,
+    userId: userId,
   });
   return c.json(pullResponse, 200);
 });
@@ -115,9 +107,7 @@ app.post("/push/:spaceId", async (c) => {
     c.env.ENVIRONMENT === "test"
       ? c.req.query("userId")
       : c.get("auth" as never);
-
-  const unauthenticated_user_id = c.req.query("userId") as string;
-  console.log("unauthenticated_user_id", unauthenticated_user_id);
+  console.log("userId", userId);
 
   try {
     SpaceIdSchema._parse(c.req.param("spaceId"));
@@ -137,7 +127,7 @@ app.post("/push/:spaceId", async (c) => {
     db,
     spaceId: c.req.param("spaceId") as SpaceId,
     storage: c.env.PACHI,
-    userId: userId ?? unauthenticated_user_id,
+    userId: userId,
     requestHeaders: {
       ip: c.req.raw.headers.get("cf-connecting-ip"),
       userAgent: c.req.raw.headers.get("user-agent"),
@@ -158,7 +148,7 @@ app.post("/currencies", async (c) => {
     };
   });
   //@ts-ignore
-  await db.insert(currencies).values(values).execute();
+  await db.insert(currencies).values(values);
   return c.json({}, 200);
 });
 
@@ -168,14 +158,14 @@ app.post("/countries", async (c) => {
   const values: Country[] = Object.values(countries).map((value) => {
     return {
       id: generateId({ id: ulid(), prefix: "country" }),
-      iso_2: value.alpha2,
-      iso_3: value.alpha3,
+      iso2: value.alpha2,
+      iso3: value.alpha3,
       name: value.name,
-      display_name: value.name,
+      displayName: value.name,
     };
   });
   //@ts-ignore
-  await db.insert(countries_table).values(values).execute();
+  await db.insert(countries_table).values(values);
   return c.json({}, 200);
 });
 app.get("/username/:id", async (c) => {
@@ -204,25 +194,25 @@ app.post("/create-user", async (c) => {
       email,
       userId,
     });
-    const created_at = new Date().toISOString();
-    const new_user: User = {
+    const createdAt = new Date().toISOString();
+    const newUser: User = {
       id: userId,
       username,
       email,
-      created_at,
+      createdAt,
     };
-    const new_store: Store = {
+    const newStore: Store = {
       id: generateId({ id: ulid(), prefix: "store" }),
       name: username,
-      founder_id: userId,
+      founderId: userId,
       version: 0,
-      created_at,
+      createdAt,
     };
     await Promise.all([
       //@ts-ignore
-      db.insert(users).values(new_user).execute(),
+      db.insert(users).values(newUser),
       //@ts-ignore
-      db.insert(stores).values(new_store).execute(),
+      db.insert(stores).values(newStore),
     ]);
     return c.json({ message: "Successfully created user" }, 200);
   } catch (error) {

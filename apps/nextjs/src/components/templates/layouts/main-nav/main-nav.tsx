@@ -2,7 +2,6 @@ import { MainNavContent } from "~/components/templates/layouts/main-nav-content"
 import { MobileMainNav } from "~/components/templates/layouts/mobile-main-nav";
 import { dashboardConfig } from "~/config/dashboard";
 import { siteConfig } from "~/config/site";
-import { DashboardButton } from "./dashboard-button";
 
 // interface SiteHeaderProps {
 //   // user: User | null;

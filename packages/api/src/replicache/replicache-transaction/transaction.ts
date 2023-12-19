@@ -42,9 +42,13 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
     }
   >();
 
-  private readonly _userId: string;
+  private readonly _userId: string | undefined;
 
-  constructor(spaceId: string, userId: string, transaction: Transaction) {
+  constructor(
+    spaceId: string,
+    userId: string | undefined,
+    transaction: Transaction,
+  ) {
     this._spaceId = spaceId;
     this._userId = userId;
     this._transaction = transaction;
@@ -65,7 +69,7 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
   }
   async update(key: string, value: ReadonlyJSONObject, tableName: TableName) {
     const prevUpdate = this._cache.get(key);
-    console.log("value", value);
+    console.log("value", JSON.stringify(value));
     if (prevUpdate) {
       console.log("prev update", JSON.stringify(prevUpdate));
       this._cache.set(key, {
@@ -144,10 +148,9 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
       }
     }
 
-    console.log("still there");
     await Promise.all([
       deleteItems(itemsToDel, this._userId, this._transaction),
-      putItems(itemsToPut, this._transaction),
+      putItems(itemsToPut, this._userId, this._transaction),
       updateItems(itemsToUpdate, this._userId, this._transaction),
     ]);
     this._cache.clear();

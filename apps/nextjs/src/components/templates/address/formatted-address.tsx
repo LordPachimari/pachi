@@ -20,13 +20,13 @@ export const FormattedAddress = ({ title, addr }: FormattedAddressProps) => {
       <div className="inter-small-regular text-grey-50 mb-1">{title}</div>
       <div className="inter-small-regular flex flex-col">
         <span>
-          {addr?.address_1} {addr?.address_2}
+          {addr?.address1} {addr?.address2}
         </span>
         <span>
-          {addr?.postal_code} {addr?.city}
+          {addr?.postalCode} {addr?.city}
           {", "}
           {addr?.province ? `${addr.province} ` : ""}
-          {addr?.country_code?.toUpperCase()}
+          {addr?.countryCode?.toUpperCase()}
         </span>
       </div>
     </div>

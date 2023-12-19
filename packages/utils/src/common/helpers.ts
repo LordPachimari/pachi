@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import dayjs from "dayjs";
 import { twMerge } from "tailwind-merge";
 
-// import type { MoneyAmount, ProductVariant, Region } from "@pachi/db";
+// import type { Price, ProductVariant, Region } from "@pachi/db";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -65,7 +65,7 @@ export function isArrayOfFile(files: unknown): files is File[] {
 }
 
 // export type RegionInfo = Pick< Region,
-//   "currency_code" | "tax_code" | "tax_rate"
+//   "currencyCode" | "tax_code" | "tax_rate"
 // >;
 // type ComputeAmountParams = {
 //   amount: number;
@@ -75,7 +75,7 @@ export function isArrayOfFile(files: unknown): files is File[] {
 
 export type Money = {
   amount: number;
-  currency_code: string;
+  currencyCode: string;
 };
 /**
  * Takes an amount, a region, and returns the amount as a decimal including or excluding taxes
@@ -85,7 +85,7 @@ export type Money = {
 //   region,
 //   includeTaxes = true,
 // }: ComputeAmountParams) => {
-//   const toDecimal = convertToDecimal(amount, region.currency_code);
+//   const toDecimal = convertToDecimal(amount, region.currencyCode);
 
 //   const taxRate = includeTaxes ? getTaxRate(region) : 0;
 
@@ -110,13 +110,13 @@ export const convertToDecimal = (amount: number, currencyCode = "USD") => {
 // };
 
 // export const calculateVariantAmount = (variant: ProductVariant): Money => {
-//   const currency_code = variant.prices?.[0]?.currency_code ?? "USD";
+//   const currencyCode = variant.prices?.[0]?.currencyCode ?? "USD";
 //   const amount = convertToDecimal(
 //     variant.prices?.[0]?.amount || 0,
-//     currency_code,
+//     currencyCode,
 //   );
 //   return {
 //     amount,
-//     currency_code,
+//     currencyCode,
 //   };
 // };

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 
-import { products } from "@pachi/db";
+import { products } from "@pachi/db/schema";
 
 import type { GetClientViewData } from "../../types";
 
@@ -13,11 +13,9 @@ export const productsCVD: GetClientViewData = async ({
         .select()
         .from(products)
         .where(eq(products.status, "published"))
-        .execute()
     : await transaction
         .select({ id: products.id, version: products.version })
         .from(products)
-        .where(eq(products.status, "published"))
-        .execute();
+        .where(eq(products.status, "published"));
   return [{ cvd: productsCVR, tableName: "products" }];
 };

@@ -12,13 +12,13 @@ export const FulfillmentStatus = ({
       return <DotIndicator title="Shipped" variant="success" />;
     case "fulfilled":
       return <DotIndicator title="Fulfilled" variant="warning" />;
-    case "partially_fulfilled":
+    case "partiallyFulfilled":
       return <DotIndicator title="Partially fulfilled" variant="warning" />;
-    case "requires_action":
+    case "requiresAction":
       return <DotIndicator title="Requires Action" variant="danger" />;
-    case "not_fulfilled":
+    case "notFulfilled":
       return <DotIndicator title="Awaiting fulfillment" variant="danger" />;
-    case "partially_shipped":
+    case "partiallyShipped":
       return <DotIndicator title="Partially Shipped" variant="warning" />;
     default:
       return null;

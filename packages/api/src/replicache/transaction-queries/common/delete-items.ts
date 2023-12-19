@@ -14,11 +14,8 @@ export const deleteItems_ = async ({
 }): Promise<void> => {
   const table = tableNamesMap[tableName];
   if (tableName !== "products") {
-    await transaction
-      .delete(table)
-      .where(and(inArray(table.id, keys)))
-      .execute();
+    await transaction.delete(table).where(and(inArray(table.id, keys)));
   } else {
-    await transaction.delete(table).where(inArray(table.id, keys)).execute();
+    await transaction.delete(table).where(inArray(table.id, keys));
   }
 };

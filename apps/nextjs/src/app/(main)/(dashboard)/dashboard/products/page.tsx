@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSubscribe } from "replicache-react";
 import { ulid } from "ulid";
 
-import type { Product, Store } from "@pachi/db";
+import type { Product } from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
 import { Shell } from "~/components/atoms/shell";
@@ -16,27 +16,27 @@ import { ReplicacheInstancesStore } from "~/zustand/replicache";
 
 const Page = () => {
   const searchParams = useSearchParams();
-  const store_id = searchParams.get("store_id");
+  const storeId = searchParams.get("storeId");
   const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const router = useRouter();
   const createProduct = useCallback(async () => {
-    console.log("on create product", store_id, dashboardRep);
-    if (dashboardRep && store_id) {
+    console.log("on create product", storeId, dashboardRep);
+    if (dashboardRep && storeId) {
       const id = generateId({
         id: ulid(),
         prefix: "p",
-        filter_id: store_id,
+        filterId: storeId,
       });
       await dashboardRep.mutate.createProduct({
         args: {
           product: {
             id,
-            created_at: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
             status: "draft",
             discountable: true,
-            store_id,
+            storeId,
           },
-          default_variant_id: generateId({
+          defaultVariantId: generateId({
             id: ulid(),
             prefix: "var",
           }),
@@ -44,7 +44,7 @@ const Page = () => {
       });
       router.push(createUrl(`/dashboard/products/${id}`, searchParams));
     }
-  }, [dashboardRep, router, store_id, searchParams]);
+  }, [dashboardRep, router, storeId, searchParams]);
   const products = useSubscribe(
     dashboardRep,
     async (tx) => {
@@ -59,8 +59,8 @@ const Page = () => {
 
   console.log("products", products);
   useEffect(() => {
-    if (!store_id) router.push("/");
-  }, [router, store_id]);
+    if (!storeId) router.push("/");
+  }, [router, storeId]);
 
   return (
     <Shell>

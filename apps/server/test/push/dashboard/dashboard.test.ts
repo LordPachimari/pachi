@@ -54,14 +54,14 @@
 //   test("create product mutation", async () => {
 //     const product: Product = {
 //       id: "product1",
-//       created_at: "today",
+//       createdAt: "today",
 //       seller_id: userId,
 //     };
 //     await dashboardMutators.createProduct(product);
 //     const newProduct = await db.query.products.findFirst({
 //       columns: {
 //         id: true,
-//         created_at: true,
+//         createdAt: true,
 //         seller_id: true,
 //       },
 //       where: () => eq(products.id, product.id),
@@ -78,7 +78,7 @@
 //   });
 
 //   test("update product mutation", async () => {
-//     const product_id = "product1";
+//     const productId = "product1";
 //     const updates: ProductUpdates = {
 //       description: "new description",
 //       title: "new title",
@@ -88,7 +88,7 @@
 //         description: true,
 //         title: true,
 //       },
-//       where: () => eq(products.id, product_id),
+//       where: () => eq(products.id, productId),
 //     });
 //     console.log("product", product);
 //     expect.hasAssertions();
@@ -96,13 +96,13 @@
 //   });
 
 //   test("delete product mutation", async () => {
-//     const product_id = "product1";
-//     await dashboardMutators.deleteProduct(product_id);
+//     const productId = "product1";
+//     await dashboardMutators.deleteProduct(productId);
 //     const product = await db.query.products.findFirst({
 //       columns: {
 //         id: true,
 //       },
-//       where: () => eq(products.id, product_id),
+//       where: () => eq(products.id, productId),
 //     });
 
 //     expect.hasAssertions();

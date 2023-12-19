@@ -9,24 +9,24 @@ import {
 
 import { products } from "./product";
 
-export const product_collections = pgTable(
-  "product_collections",
+export const productCollections = pgTable(
+  "productCollections",
   {
     id: varchar("id").notNull().primaryKey(),
     handle: varchar("handle"),
-    created_at: varchar("created_at"),
+    createdAt: varchar("createdAt"),
     title: varchar("title"),
-    updated_at: varchar("updated_at"),
+    updatedAt: varchar("updatedAt"),
     version: integer("version").notNull().default(0),
-    store_id: varchar("store_id").notNull(),
+    storeId: varchar("storeId").notNull(),
   },
-  (product_collection) => ({
-    handle_index_1: uniqueIndex("handle_index_1").on(product_collection.handle),
-    store_id_index_1: index("store_id_index_1").on(product_collection.store_id),
+  (productCollection) => ({
+    handleIndex1: uniqueIndex("handleIndex1").on(productCollection.handle),
+    storeIdIndex1: index("storeIdIndex1").on(productCollection.storeId),
   }),
 );
-export const product_collection_relations = relations(
-  product_collections,
+export const productCollectionRelations = relations(
+  productCollections,
   ({ many }) => ({
     products: many(products),
   }),

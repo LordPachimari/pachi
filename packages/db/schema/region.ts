@@ -10,102 +10,100 @@ import {
 
 import { countries } from "./country";
 import { currencies } from "./currency";
-import { fulfillment_providers } from "./fulfillment-provider";
-import { payment_providers } from "./payment-provider";
-import { tax_providers } from "./tax-provider";
-import { tax_rates } from "./tax-rate";
+import { fulfillmentProviders } from "./fulfillment-provider";
+import { paymentProviders } from "./payment-provider";
+import { taxProviders } from "./tax-provider";
+import { taxRates } from "./tax-rate";
 
 export const regions = pgTable(
   "regions",
   {
     id: varchar("id").notNull().primaryKey(),
-    automatic_taxes: boolean("automatic_taxes").notNull().default(true),
-    created_at: varchar("created_at"),
-    currency_code: varchar("currency_code").notNull(),
-    gift_cards_taxable: boolean("gift_cards_taxable").notNull().default(true),
-    includes_tax: boolean("includes_tax").default(false),
+    automaticTaxes: boolean("automaticTaxes").notNull().default(true),
+    createdAt: varchar("createdAt"),
+    currencyCode: varchar("currencyCode").notNull(),
+    giftCardsTaxable: boolean("giftCardsTaxable").notNull().default(true),
+    includesTax: boolean("includesTax").default(false),
     name: varchar("name"),
-    tax_code: varchar("tax_code"),
-    tax_provider_id: varchar("tax_provider_id"),
-    tax_rate: integer("tax_rate").notNull(),
-    updated_at: varchar("updated_at"),
+    taxCode: varchar("taxCode"),
+    taxProviderId: varchar("taxProviderId"),
+    taxRate: integer("taxRate").notNull(),
+    updatedAt: varchar("updatedAt"),
     version: integer("version").notNull().default(0),
   },
   (region) => ({
-    currency_code_index: index("currency_code_index").on(region.currency_code),
-    tax_provider_id_index: index("tax_provider_id_index").on(
-      region.tax_provider_id,
-    ),
+    currencyCodeIndex: index("currencyCodeIndex").on(region.currencyCode),
+    taxProviderIdIndex: index("taxProviderIdIndex").on(region.taxProviderId),
   }),
 );
 export const region_relations = relations(regions, ({ one, many }) => ({
   currency: one(currencies, {
-    fields: [regions.currency_code],
+    fields: [regions.currencyCode],
     references: [currencies.code],
   }),
-  tax_provider: one(tax_providers, {
-    fields: [regions.tax_provider_id],
-    references: [tax_providers.id],
+  taxProvider: one(taxProviders, {
+    fields: [regions.taxProviderId],
+    references: [taxProviders.id],
   }),
-  tax_rates: many(tax_rates),
+  taxRates: many(taxRates),
   countries: many(countries),
-  payment_providers: many(regions_to_payment_providers),
-  fulfillment_providers: many(regions_to_fulfillment_providers),
+  paymentProviders: many(regionsToPaymentProviders),
+  fulfillmentProviders: many(regionsToFulfillmentProviders),
 }));
-export const regions_to_payment_providers = pgTable(
-  "regions_to_payment_providers",
+export const regionsToPaymentProviders = pgTable(
+  "regionsToPaymentProviders",
   {
     id: varchar("id"),
-    payment_provider_id: varchar("payment_provider_id")
+    paymentProviderId: varchar("paymentProviderId")
       .notNull()
-      .references(() => payment_providers.id),
-    region_id: varchar("region_id")
+      .references(() => paymentProviders.id),
+    regionId: varchar("regionId")
       .notNull()
       .references(() => regions.id),
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.region_id, t.payment_provider_id),
+    pk: primaryKey(t.regionId, t.paymentProviderId),
   }),
 );
-export const regions_to_payment_providers_relations = relations(
-  regions_to_payment_providers,
+export const regionsToPaymentProvidersRelations = relations(
+  regionsToPaymentProviders,
   ({ one }) => ({
-    payment_provider: one(payment_providers, {
-      fields: [regions_to_payment_providers.payment_provider_id],
-      references: [payment_providers.id],
+    payment_provider: one(paymentProviders, {
+      fields: [regionsToPaymentProviders.paymentProviderId],
+      references: [paymentProviders.id],
     }),
     region: one(regions, {
-      fields: [regions_to_payment_providers.region_id],
+      fields: [regionsToPaymentProviders.regionId],
       references: [regions.id],
     }),
   }),
 );
-export const regions_to_fulfillment_providers = pgTable(
+export const regionsToFulfillmentProviders = pgTable(
   "r_to_f_providers",
   {
     id: varchar("id"),
-    fulfillment_provider_id: varchar("fulfillment_provider_id")
+    fulfillmentProviderId: varchar("fulfillmentProviderId")
       .notNull()
-      .references(() => fulfillment_providers.id, { onDelete: "cascade" }),
-    region_id: varchar("region_id")
+      .references(() => fulfillmentProviders.id, { onDelete: "cascade" }),
+    regionId: varchar("regionId")
       .notNull()
       .references(() => regions.id, { onDelete: "cascade" }),
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.region_id, t.fulfillment_provider_id),
+    pk: primaryKey(t.regionId, t.fulfillmentProviderId),
   }),
 );
-export const regions_to_fulfillment_providers_relations = relations(
-  regions_to_fulfillment_providers,
+export const regionsToFulfillmentProvidersRelations = relations(
+  regionsToFulfillmentProviders,
   ({ one }) => ({
-    fulfillment_provider: one(fulfillment_providers, {
-      fields: [regions_to_fulfillment_providers.fulfillment_provider_id],
-      references: [fulfillment_providers.id],
+    fulfillment_provider: one(fulfillmentProviders, {
+      fields: [regionsToFulfillmentProviders.fulfillmentProviderId],
+      references: [fulfillmentProviders.id],
     }),
     region: one(regions, {
-      fields: [regions_to_fulfillment_providers.region_id],
+      fields: [regionsToFulfillmentProviders.regionId],
       references: [regions.id],
     }),
   }),

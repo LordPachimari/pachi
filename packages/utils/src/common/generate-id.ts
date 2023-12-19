@@ -3,6 +3,7 @@ import { enumType, type Output } from "valibot";
 export const prefixEnum = enumType([
   "user",
   "p",
+  "p_tag",
   "dashboard",
   "default_sp",
   "giftcard_sp",
@@ -20,10 +21,10 @@ export const prefixEnum = enumType([
   "l_item_txl",
   "sm_txl",
   "cart",
-  "m_amount",
+  "price",
   "image",
   "country",
-  "unauthenticated",
+  "unauth",
   "store",
 ] as const);
 export type Prefix = Output<typeof prefixEnum>;
@@ -31,11 +32,11 @@ export type Prefix = Output<typeof prefixEnum>;
 export const generateId = ({
   id,
   prefix,
-  filter_id,
+  filterId,
 }: {
   id: string;
   prefix: Prefix;
-  filter_id?: string;
+  filterId?: string;
 }) => {
-  return filter_id ? `${prefix}_${filter_id}_${id}` : `${prefix}_${id}`;
+  return filterId ? `${prefix}_${filterId}_${id}` : `${prefix}_${id}`;
 };

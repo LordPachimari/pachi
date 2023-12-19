@@ -2,7 +2,6 @@
 
 import { useTheme } from "next-themes";
 
-import { Button } from "~/components/atoms/button";
 import { Icons } from "~/components/atoms/icons";
 
 export function ThemeToggle() {

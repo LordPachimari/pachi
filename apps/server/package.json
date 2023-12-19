@@ -21,6 +21,7 @@
     "drizzle-orm": "^0.29.0",
     "hono": "^3.7.2",
     "jose": "^4.15.2",
+    "lucia": "^2.7.5",
     "valibot": "^0.17.1"
   },
   "devDependencies": {
@@ -31,7 +32,7 @@
     "eslint": "^8.53.0",
     "miniflare": "^3.20230922.0",
     "prettier": "^3.0.3",
-    "typescript": "^5.2.2",
+    "typescript": "^5.3.3",
     "vitest": "^0.34.6",
     "vitest-environment-miniflare": "^2.14.1",
     "wrangler": "^3.10.1"

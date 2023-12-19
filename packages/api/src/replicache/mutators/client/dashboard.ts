@@ -4,10 +4,10 @@ import { array, string } from "valibot";
 import {
   CustomerGroupSchema,
   CustomerGroupUpdatesSchema,
-  MoneyAmountSchema,
-  MoneyAmountUpdatesSchema,
   PriceListSchema,
   PriceListUpdatesSchema,
+  PriceSchema,
+  PriceUpdatesSchema,
   ProductCollectionSchema,
   ProductCollectionUpdatesSchema,
   ProductOptionSchema,
@@ -21,6 +21,7 @@ import {
   type PriceList,
   type Product,
   type ProductCollection,
+  type ProductTag,
   type ProductVariant,
   type User,
 } from "@pachi/db";
@@ -49,6 +50,7 @@ import type {
   UpdateProductOptionProps,
   UpdateProductOptionValuesProps,
   UpdateProductProps,
+  UpdateProductTagsProps,
   UpdateProductVariantProps,
   UploadImagesProps,
 } from "../../../types/mutators";
@@ -57,17 +59,17 @@ export type DashboardMutators = typeof dashboardMutators;
 export const dashboardMutators = {
   createProduct: async (tx: WriteTransaction, props: CreateProductProps) => {
     const { args } = props;
-    const { product, default_variant_id } = args;
+    const { product, defaultVariantId } = args;
     ProductSchema._parse(product);
 
-    const default_variant: ProductVariant = {
-      id: default_variant_id,
-      product_id: product.id,
+    const defaultVariant: ProductVariant = {
+      id: defaultVariantId,
+      productId: product.id,
     };
     await tx.put(product.id, {
       ...product,
-      default_variant_id: default_variant.id,
-      variants: [default_variant],
+      defaultVariantId: defaultVariant.id,
+      variants: [defaultVariant],
     });
   },
 
@@ -95,19 +97,19 @@ export const dashboardMutators = {
   ): Promise<void> => {
     console.log("uploading images for a product");
     const { args } = props;
-    const { variant_id, images, product_id } = args;
+    const { variantId, images, productId } = args;
     console.log("images", images);
-    const product = (await tx.get(product_id)) as Product | undefined;
+    const product = (await tx.get(productId)) as Product | undefined;
     if (!product) {
       console.log("no product");
       return;
     }
-    string()._parse(product_id);
-    string()._parse(variant_id);
+    string()._parse(productId);
+    string()._parse(variantId);
 
     if (images.length > 0) {
       string()._parse(images[0]!.id);
-      string()._parse(images[0]!.name);
+      string()._parse(images[0]!.altText);
     } else {
       console.log("no images");
       return;
@@ -116,7 +118,7 @@ export const dashboardMutators = {
     const newProduct = {
       ...product,
       variants: product.variants?.map((variant) => {
-        if (variant.id === variant_id) {
+        if (variant.id === variantId) {
           return {
             ...variant,
             images: [...(variant.images ? variant.images : []), ...images],
@@ -125,8 +127,7 @@ export const dashboardMutators = {
         return variant;
       }),
     };
-    console.log("new product", newProduct);
-    await tx.put(product_id, newProduct);
+    await tx.put(productId, newProduct);
   },
 
   updateImagesOrder: async (
@@ -134,10 +135,10 @@ export const dashboardMutators = {
     props: UpdateImagesOrderProps,
   ): Promise<void> => {
     const { args } = props;
-    const { order, product_id, variant_id } = args;
-    const product = (await tx.get(product_id)) as Product | undefined;
+    const { order, productId, variantId } = args;
+    const product = (await tx.get(productId)) as Product | undefined;
     if (!product) {
-      console.info(`Product ${product_id} not found`);
+      console.info(`Product ${productId} not found`);
       return;
     }
     const images = product.images ? [...product.images] : [];
@@ -147,10 +148,10 @@ export const dashboardMutators = {
     for (const image of images) {
       if (order[image.id]) image.order = order[image.id]!;
     }
-    await tx.put(product_id, {
+    await tx.put(productId, {
       ...product,
       variant: product.variants?.map((variant) => {
-        if (variant.id === variant_id) {
+        if (variant.id === variantId) {
           return { ...variant, images };
         }
         return variant;
@@ -164,9 +165,9 @@ export const dashboardMutators = {
     const { args } = props;
     const { option } = args;
     ProductOptionSchema._parse(option);
-    const product = (await tx.get(option.product_id)) as Product | undefined;
+    const product = (await tx.get(option.productId)) as Product | undefined;
     if (!product) {
-      console.info(`Product ${option.product_id} not found`);
+      console.info(`Product ${option.productId} not found`);
       return;
     }
     const product_options = product.options ? product.options : [];
@@ -182,18 +183,18 @@ export const dashboardMutators = {
     tx: WriteTransaction,
     { args }: UpdateProductOptionProps,
   ) => {
-    const { option_id, product_id, updates } = args;
+    const { optionId, productId, updates } = args;
     ProductOptionUpdatesSchema._parse(updates);
 
-    const product = (await tx.get(product_id)) as Product | undefined;
+    const product = (await tx.get(productId)) as Product | undefined;
     if (!product) {
-      console.info(`Product ${product_id} not found`);
+      console.info(`Product ${productId} not found`);
       return;
     }
     await tx.put(product.id, {
       ...product,
       options: product.options?.map((option) =>
-        option.id === option_id ? { ...option, ...updates } : option,
+        option.id === optionId ? { ...option, ...updates } : option,
       ),
     });
   },
@@ -219,33 +220,33 @@ export const dashboardMutators = {
     tx: WriteTransaction,
     { args }: CreateProductOptionValueProps,
   ) => {
-    const { option_value } = args;
-    ProductOptionValueSchema._parse(option_value);
-    await tx.put(option_value.id, option_value);
+    const { optionValue } = args;
+    ProductOptionValueSchema._parse(optionValue);
+    await tx.put(optionValue.id, optionValue);
   },
   updateProductOptionValues: async (
     tx: WriteTransaction,
     { args }: UpdateProductOptionValuesProps,
   ) => {
-    const { option_id, product_id, new_option_values } = args;
+    const { optionId, productId, newOptionValues } = args;
 
-    array(string())._parse(new_option_values);
-    const product = (await tx.get(product_id)) as Product | undefined;
+    array(string())._parse(newOptionValues);
+    const product = (await tx.get(productId)) as Product | undefined;
     if (!product) {
-      console.info(`Product ${product_id} not found`);
+      console.info(`Product ${productId} not found`);
       return;
     }
-    console.log("new_option_values", new_option_values);
-    const newValues = new_option_values.map((value) => ({
+    console.log("new_option_values", newOptionValues);
+    const newValues = newOptionValues.map((value) => ({
       id: generateId({ id: ulid(), prefix: "opt_val" }),
-      option_id,
+      optionId,
       value,
     }));
 
     await tx.put(product.id, {
       ...product,
       options: product.options?.map((option) =>
-        option.id === option_id ? { ...option, values: newValues } : option,
+        option.id === optionId ? { ...option, values: newValues } : option,
       ),
     });
   },
@@ -265,7 +266,7 @@ export const dashboardMutators = {
   ) => {
     const { variant } = args;
     ProductVariantSchema._parse(variant);
-    const product = (await tx.get(variant.product_id)) as Product | undefined;
+    const product = (await tx.get(variant.productId)) as Product | undefined;
     if (!product) {
       console.info(`Product  not found`);
       return;
@@ -279,11 +280,11 @@ export const dashboardMutators = {
   },
   updateProductVariant: async (
     tx: WriteTransaction,
-    { args, repositories }: UpdateProductVariantProps,
+    { args }: UpdateProductVariantProps,
   ) => {
-    const { variant_id, updates, product_id } = args;
+    const { variantId, updates, productId } = args;
     ProductVariantUpdatesSchema._parse(updates);
-    const product = (await tx.get(product_id)) as Product | undefined;
+    const product = (await tx.get(productId)) as Product | undefined;
     if (!product) {
       throw new Error("Product not found");
     }
@@ -293,7 +294,7 @@ export const dashboardMutators = {
       throw new Error("Product variants not found");
     }
     const product_variants = product.variants.map((variant) => {
-      if (variant.id === variant_id) {
+      if (variant.id === variantId) {
         return { ...variant, ...updates };
       }
       return variant;
@@ -344,7 +345,7 @@ export const dashboardMutators = {
       console.info(`Product ${id} not found`);
       return;
     }
-    if (product.collection_id) delete product.collection_id;
+    if (product.collectionId) delete product.collectionId;
     await tx.put(id, product);
   },
   createCustomerGroup: async (
@@ -375,46 +376,46 @@ export const dashboardMutators = {
     tx: WriteTransaction,
     { args }: AddCustomerToGroupProps,
   ) => {
-    const { customer_id, group_id } = args;
-    string()._parse(customer_id);
-    string()._parse(group_id);
-    const customerGroup = (await tx.get(group_id)) as CustomerGroup | undefined;
-    const customer = (await tx.get(customer_id)) as User | undefined;
+    const { customerId, groupId } = args;
+    string()._parse(customerId);
+    string()._parse(groupId);
+    const customerGroup = (await tx.get(groupId)) as CustomerGroup | undefined;
+    const customer = (await tx.get(customerId)) as User | undefined;
     if (!customerGroup || !customer) {
-      console.info(`Group/customer ${group_id} not found`);
+      console.info(`Group/customer ${groupId} not found`);
       return;
     }
     customerGroup.customers.push(customer);
 
-    await tx.put(group_id, customerGroup);
+    await tx.put(groupId, customerGroup);
   },
   removeCustomerFromGroup: async (
     tx: WriteTransaction,
     { args }: RemoveCustomerFromGroupProps,
   ) => {
-    const { customer_id, group_id } = args;
-    string()._parse(customer_id);
-    string()._parse(group_id);
-    const customerGroup = (await tx.get(group_id)) as CustomerGroup | undefined;
+    const { customerId, groupId } = args;
+    string()._parse(customerId);
+    string()._parse(groupId);
+    const customerGroup = (await tx.get(groupId)) as CustomerGroup | undefined;
     if (!customerGroup) {
-      console.info(`Group/customer ${group_id} not found`);
+      console.info(`Group/customer ${groupId} not found`);
       return;
     }
     const updated = {
       ...customerGroup,
       customers: customerGroup.customers.filter(
-        (customer) => customer.id !== customer_id,
+        (customer) => customer.id !== customerId,
       ),
     };
-    await tx.put(group_id, updated);
+    await tx.put(groupId, updated);
   },
   createPriceList: async (
     tx: WriteTransaction,
     { args }: CreatePriceListProps,
   ) => {
-    const { price_list } = args;
-    PriceListSchema._parse(price_list);
-    await tx.put(price_list.id, price_list);
+    const { priceList } = args;
+    PriceListSchema._parse(priceList);
+    await tx.put(priceList.id, priceList);
   },
   updatePriceList: async (
     tx: WriteTransaction,
@@ -441,109 +442,109 @@ export const dashboardMutators = {
     tx: WriteTransaction,
     { args }: AddProductToPriceListProps,
   ) => {
-    const { price, price_list_id } = args;
-    string()._parse(price_list_id);
-    MoneyAmountSchema._parse(price);
-    price.price_list_id = price_list_id;
-    const priceList = (await tx.get(price_list_id)) as PriceList | undefined;
+    const { price, priceListId } = args;
+    string()._parse(priceListId);
+    PriceSchema._parse(price);
+    price.priceListId = priceListId;
+    const priceList = (await tx.get(priceListId)) as PriceList | undefined;
     if (!priceList) {
-      console.info(`Price list ${price_list_id} not found`);
+      console.info(`Price list ${priceListId} not found`);
       return;
     }
     if (priceList.prices) priceList.prices.push(price);
     else priceList.prices = [price];
-    await tx.put(price_list_id, priceList);
+    await tx.put(priceListId, priceList);
   },
   removeProductFromPriceList: async (
     tx: WriteTransaction,
     { args }: RemoveProductFromPriceListProps,
   ) => {
-    const { price_id, price_list_id } = args;
-    string()._parse(price_id);
-    const priceList = (await tx.get(price_list_id)) as PriceList | undefined;
+    const { priceId, priceListId } = args;
+    string()._parse(priceId);
+    const priceList = (await tx.get(priceListId)) as PriceList | undefined;
     if (!priceList) {
-      console.info(`Price list ${price_id} not found`);
+      console.info(`Price list ${priceId} not found`);
       return;
     }
     priceList.prices = priceList.prices
-      ? priceList.prices.filter((price) => price.id !== price_id)
+      ? priceList.prices.filter((price) => price.id !== priceId)
       : [];
-    await tx.put(price_id, priceList);
+    await tx.put(priceId, priceList);
   },
   createPrices: async (tx: WriteTransaction, { args }: CreatePricesProps) => {
-    const { prices, product_id, variant_id } = args;
-    array(MoneyAmountSchema)._parse(prices);
-    const product = (await tx.get(product_id)) as Product | undefined;
+    const { prices, productId, variantId } = args;
+    array(PriceSchema)._parse(prices);
+    const product = (await tx.get(productId)) as Product | undefined;
     if (!product) {
       console.info(`Product  not found`);
       return;
     }
     const variant = product.variants?.find(
-      (variant) => variant.id === variant_id,
+      (variant) => variant.id === variantId,
     );
     if (!variant) {
       console.log("variant not found");
       return;
     }
-    const variant_prices = variant.prices ? [...variant.prices] : [];
+    const variantPrices = variant.prices ? [...variant.prices] : [];
     for (const price of prices) {
-      variant_prices.push(price);
+      variantPrices.push(price);
     }
     await tx.put(product.id, {
       ...product,
       variants: product.variants?.map((variant) =>
-        variant.id === variant_id
-          ? { ...variant, prices: [...variant_prices] }
+        variant.id === variantId
+          ? { ...variant, prices: [...variantPrices] }
           : variant,
       ),
     });
   },
   updatePrice: async (tx: WriteTransaction, { args }: UpdatePriceProps) => {
-    const { money_amount_id, updates, variant_id, product_id } = args;
+    const { priceId, updates, variantId, productId } = args;
 
-    string()._parse(money_amount_id);
-    console.log("updates", updates);
-    MoneyAmountUpdatesSchema._parse(updates);
-    console.log("product_id", product_id);
+    string()._parse(priceId);
+    string()._parse(variantId);
+    string()._parse(productId);
+    PriceUpdatesSchema._parse(updates);
+    console.log("productId", productId);
 
-    const product = (await tx.get(product_id)) as Product | undefined;
+    const product = (await tx.get(productId)) as Product | undefined;
     if (!product) {
       console.info(`Product  not found`);
       return;
     }
-    const variant = product.variants?.find((val) => val.id === variant_id);
+    const variant = product.variants?.find((val) => val.id === variantId);
     if (!variant) {
       console.log("variant not found");
       return;
     }
     const variant_prices = variant.prices
-      ? variant.prices.map((money_amount) => {
-          if (money_amount.id === money_amount_id)
-            return { ...money_amount, ...updates };
-          return money_amount;
+      ? variant.prices.map((price) => {
+          if (price.id === priceId) return { ...price, ...updates };
+          return price;
         })
       : [];
 
     await tx.put(product.id, {
       ...product,
       variants: product.variants?.map((variant_) =>
-        variant_.id === variant_id
+        variant_.id === variantId
           ? { ...variant, prices: variant_prices }
           : variant_,
       ),
     });
   },
   deletePrices: async (tx: WriteTransaction, { args }: DeletePricesProps) => {
-    const { ids, product_id, variant_id } = args;
+    const { ids, productId, variantId } = args;
     array(string())._parse(ids);
-    string()._parse(product_id);
-    string()._parse(variant_id);
-    const product = (await tx.get(product_id)) as Product | undefined;
+    string()._parse(productId);
+    string()._parse(variantId);
+    const product = (await tx.get(productId)) as Product | undefined;
     if (!product) {
       console.info(`Product  not found`);
       return;
     }
-    const variant = product.variants?.find((val) => val.id === variant_id);
+    const variant = product.variants?.find((val) => val.id === variantId);
     if (!variant) {
       console.log("variant not found");
       return;
@@ -554,10 +555,29 @@ export const dashboardMutators = {
     await tx.put(product.id, {
       ...product,
       variants: product.variants?.map((variant_) =>
-        variant_.id === variant_id
+        variant_.id === variantId
           ? { ...variant, prices: variant_prices }
           : variant_,
       ),
     });
+  },
+  updateProductTags: async (
+    tx: WriteTransaction,
+    { args }: UpdateProductTagsProps,
+  ) => {
+    const { productId, tags } = args;
+    const product = (await tx.get(productId)) as Product | undefined;
+    if (!product) {
+      throw new Error("Product not found");
+    }
+    const newProductTags: ProductTag[] = tags.map((tag) => ({
+      id: generateId({
+        id: ulid(),
+        prefix: "p_tag",
+      }),
+      value: tag,
+      createdAt: new Date().toISOString(),
+    }));
+    await tx.put(productId, { ...product, tags:newProductTags });
   },
 };

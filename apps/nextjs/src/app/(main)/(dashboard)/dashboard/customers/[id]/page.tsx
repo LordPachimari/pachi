@@ -14,7 +14,7 @@
 //   const { id } = params;
 //   const testOrder: Order = {
 //     id: "order1",
-//     currency_code: "AUD",
+//     currencyCode: "AUD",
 //     items: [],
 //     discounts: [],
 //     gift_cards: [],
@@ -37,7 +37,7 @@
 //     fulfillment_status: "not_fulfilled",
 //     fulfillments: [],
 //     shipping_methods: [],
-//     created_at: "2021-10-10",
+//     createdAt: "2021-10-10",
 //   };
 //   const test_customer: User = {
 //     id: "customer1",
@@ -47,7 +47,7 @@
 //       id: "user1",
 //     },
 //     email: "awdawdawd@gmail.com",
-//     created_at: "2021-10-10",
+//     createdAt: "2021-10-10",
 //   };
 //   return (
 //     <Shell className="flex w-full flex-col gap-0 ">

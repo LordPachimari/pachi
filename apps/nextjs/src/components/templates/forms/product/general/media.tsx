@@ -22,16 +22,16 @@ export interface MediaFormType {
 
 interface Props {
   images: Image[] | undefined;
-  product_id: string;
-  variant_id: string;
+  productId: string;
+  variantId: string;
   files: Image[];
   setFiles: React.Dispatch<React.SetStateAction<Image[]>>;
   uploadProductImages: (props: UploadImagesProps["args"]) => Promise<void>;
 }
 
 const Media = ({
-  product_id,
-  variant_id,
+  productId,
+  variantId,
   images,
   files,
   setFiles,
@@ -55,11 +55,11 @@ const Media = ({
     <div className="w-full">
       <DndContext>
         <FileUpload
-          id={product_id}
+          id={productId}
           setFiles={setFiles}
           uploadProductImages={uploadProductImages}
-          product_id={product_id}
-          variant_id={variant_id}
+          productId={productId}
+          variantId={variantId}
           startUpload={startUpload}
         />
         {files && files.length > 0 && (

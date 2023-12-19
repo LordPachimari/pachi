@@ -12,163 +12,149 @@ import {
 } from "drizzle-orm/pg-core";
 
 import type { Image } from "../validators/common";
-import { product_collections } from "./product-collection";
-import { product_options } from "./product-option";
-import { product_tags } from "./product-tag";
-import { product_types } from "./product-type";
-import { product_variants } from "./product-variant";
-import { sales_channels } from "./sales-channel";
+import { productCollections } from "./product-collection";
+import { productOptions } from "./product-option";
+import { productTags } from "./product-tag";
+import { productVariants } from "./product-variant";
+import { salesChannels } from "./sales-channel";
 import { stores } from "./store";
-import { tax_rates } from "./tax-rate";
-import { users } from "./user";
+import { taxRates } from "./tax-rate";
 
 export const products = pgTable(
   "products",
   {
     id: varchar("id").notNull().primaryKey(),
-    collection_id: varchar("collection_id").references(
-      () => product_collections.id,
+    collectionId: varchar("collectionId").references(
+      () => productCollections.id,
     ),
-    created_at: varchar("created_at").notNull(),
+    createdAt: varchar("createdAt").notNull(),
     description: text("description"),
     version: integer("version").notNull().default(0),
-    updated_at: varchar("updated_at"),
+    updatedAt: varchar("updatedAt"),
     discountable: boolean("discountable").notNull().default(true),
     handle: varchar("handle"),
-    is_giftcard: boolean("is_giftcard").default(false),
+    isGiftcard: boolean("isGiftcard").default(false),
     metadata: json("metadata").$type<Record<string, unknown>>(),
-    origin_country: varchar("origin_country"),
+    originCountry: varchar("originCountry"),
     status: text("status", {
       enum: ["draft", "proposed", "published", "rejected"],
     }).default("draft"),
     thumbnail: json("thumbnail").$type<Image>(),
     title: varchar("title"),
-    type_id: varchar("type_id"),
     updated_by: varchar("updated_by"),
-    default_variant_id: varchar("default_variant_id"),
-    store_id: varchar("store_id").notNull(),
-    unauthenticated: boolean("unauthenticated").default(false),
+    defaultVariantId: varchar("defaultVariantId"),
+    storeId: varchar("storeId").notNull(),
+    available: boolean("available").default(true),
+    type: varchar("type"),
   },
   (product) => ({
-    collection_id_index: index("collection_id_index").on(product.collection_id),
-    type_id_index: index("type_id_index").on(product.type_id),
-    handle_index: uniqueIndex("handle_index").on(product.handle),
-    status_index: index("status_index").on(product.status),
-    default_variant_id_index: index("default_variant_id_index").on(
-      product.default_variant_id,
+    collectionIdIndex: index("collectionIdIndex").on(product.collectionId),
+    handleIndex: uniqueIndex("handleIndex").on(product.handle),
+    statusIndex: index("statusIndex").on(product.status),
+    defaultVariantIdIndex: index("defaultVariantIdIndex").on(
+      product.defaultVariantId,
     ),
-    store_id_index: index("store_id_index").on(product.store_id),
+    storeIdIndex: index("storeIdIndex").on(product.storeId),
   }),
 );
-export const products_relations = relations(products, ({ one, many }) => ({
-  collection: one(product_collections, {
-    fields: [products.collection_id],
-    references: [product_collections.id],
+export const productsRelations = relations(products, ({ one, many }) => ({
+  collection: one(productCollections, {
+    fields: [products.collectionId],
+    references: [productCollections.id],
   }),
-  type: one(product_types, {
-    fields: [products.type_id],
-    references: [product_types.id],
-  }),
-  variants: many(product_variants, { relationName: "product.variants" }),
-  options: many(product_options),
-  tags: many(products_to_tags),
-  sales_channels: many(products_to_sales_channels),
-  tax_rates: many(products_to_tax_rates),
+  variants: many(productVariants, { relationName: "product.variants" }),
+  options: many(productOptions),
+  tags: many(productsToTags),
+  salesChannels: many(productsToSalesChannels),
+  taxRates: many(productsToTaxRates),
   store: one(stores, {
-    fields: [products.store_id],
+    fields: [products.storeId],
     references: [stores.id],
   }),
 }));
-export const products_to_sales_channels = pgTable(
-  "products_to_sales_channels",
+export const productsToSalesChannels = pgTable(
+  "productsToSalesChannels",
   {
     id: varchar("id"),
-    product_id: varchar("product_id")
+    productId: varchar("productId")
       .notNull()
       .references(() => products.id),
-    sales_channel_id: varchar("sales_channel_id")
+    salesChannelId: varchar("salesChannelId")
       .notNull()
-      .references(() => sales_channels.id),
+      .references(() => salesChannels.id),
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.product_id, t.sales_channel_id),
+    pk: primaryKey(t.productId, t.salesChannelId),
   }),
 );
-export const products_to_sales_channels_relations = relations(
-  products_to_sales_channels,
+export const productsToSalesChannelsRelations = relations(
+  productsToSalesChannels,
   ({ one }) => ({
     product: one(products, {
-      fields: [products_to_sales_channels.product_id],
+      fields: [productsToSalesChannels.productId],
       references: [products.id],
     }),
-    sales_channel: one(sales_channels, {
-      fields: [products_to_sales_channels.sales_channel_id],
-      references: [sales_channels.id],
-    }),
-    seller: one(users, {
-      fields: [products_to_sales_channels.sales_channel_id],
-      references: [users.id],
+    sales_channel: one(salesChannels, {
+      fields: [productsToSalesChannels.salesChannelId],
+      references: [salesChannels.id],
     }),
   }),
 );
 
-export const products_to_tax_rates = pgTable(
-  "products_to_tax_rates",
+export const productsToTaxRates = pgTable(
+  "productsToTaxRates",
   {
     id: varchar("id"),
-    product_id: varchar("product_id")
+    productId: varchar("productId")
       .notNull()
       .references(() => products.id, { onDelete: "cascade" }),
-    rate_id: varchar("rate_id")
+    rateId: varchar("rateId")
       .notNull()
-      .references(() => tax_rates.id, { onDelete: "cascade" }),
+      .references(() => taxRates.id, { onDelete: "cascade" }),
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.product_id, t.rate_id),
+    pk: primaryKey(t.productId, t.rateId),
   }),
 );
 
-export const products_to_tax_rates_relations = relations(
-  products_to_tax_rates,
+export const productsToTaxRatesRelations = relations(
+  productsToTaxRates,
   ({ one }) => ({
     product: one(products, {
-      fields: [products_to_tax_rates.product_id],
+      fields: [productsToTaxRates.productId],
       references: [products.id],
     }),
-    rate: one(tax_rates, {
-      fields: [products_to_tax_rates.rate_id],
-      references: [tax_rates.id],
+    rate: one(taxRates, {
+      fields: [productsToTaxRates.rateId],
+      references: [taxRates.id],
     }),
   }),
 );
-export const products_to_tags = pgTable(
-  "products_to_tags",
+export const productsToTags = pgTable(
+  "productsToTags",
   {
     id: varchar("id"),
-    product_id: varchar("product_id")
+    productId: varchar("productId")
       .notNull()
       .references(() => products.id, { onDelete: "cascade" }),
-    tag_id: varchar("tag_id")
+    tagId: varchar("tagId")
       .notNull()
-      .references(() => product_tags.id, { onDelete: "cascade" }),
+      .references(() => productTags.id, { onDelete: "cascade" }),
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.product_id, t.tag_id),
+    pk: primaryKey(t.productId, t.tagId),
   }),
 );
-export const product_to_tags_relations = relations(
-  products_to_tags,
-  ({ one }) => ({
-    product: one(products, {
-      fields: [products_to_tags.product_id],
-      references: [products.id],
-    }),
-    tag: one(product_tags, {
-      fields: [products_to_tags.tag_id],
-      references: [product_tags.id],
-    }),
+export const productToTagsRelations = relations(productsToTags, ({ one }) => ({
+  product: one(products, {
+    fields: [productsToTags.productId],
+    references: [products.id],
   }),
-);
+  tag: one(productTags, {
+    fields: [productsToTags.tagId],
+    references: [productTags.id],
+  }),
+}));

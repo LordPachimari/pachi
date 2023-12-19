@@ -1,37 +1,38 @@
 import { relations } from "drizzle-orm";
 import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
-import { product_options } from "./product-option";
-import { product_variants } from "./product-variant";
+import { productOptions } from "./product-option";
+import { productVariants } from "./product-variant";
 
-export const product_option_values = pgTable(
-  "product_option_values",
+export const productOptionValues = pgTable(
+  "productOptionValues",
   {
     id: varchar("id").notNull().primaryKey(),
-    variant_id: varchar("variant_id").references(() => product_variants.id),
+    variantId: varchar("variantId").references(() => productVariants.id),
     value: varchar("value").notNull(),
-    option_id: varchar("option_id")
+    optionId: varchar("optionId")
       .notNull()
-      .references(() => product_options.id, { onDelete: "cascade" }),
+      .references(() => productOptions.id, { onDelete: "cascade" }),
     version: integer("version").notNull().default(0),
+    optionName: varchar("optionName").notNull(),
   },
-  (product_option) => ({
-    product_variant_id_index: index("product_variant_id_index").on(
-      product_option.variant_id,
+  (productOption) => ({
+    productVariantIdIndex: index("productVariantIdIndex").on(
+      productOption.variantId,
     ),
-    option_id_index: index("option_id_index").on(product_option.option_id),
+    optionIdIndex: index("optionIdIndex").on(productOption.optionId),
   }),
 );
-export const product_option_values_relations = relations(
-  product_option_values,
+export const productOptionValuesRelations = relations(
+  productOptionValues,
   ({ one }) => ({
-    variant: one(product_variants, {
-      fields: [product_option_values.variant_id],
-      references: [product_variants.id],
+    variant: one(productVariants, {
+      fields: [productOptionValues.variantId],
+      references: [productVariants.id],
     }),
-    option: one(product_options, {
-      fields: [product_option_values.option_id],
-      references: [product_options.id],
+    option: one(productOptions, {
+      fields: [productOptionValues.optionId],
+      references: [productOptions.id],
     }),
   }),
 );

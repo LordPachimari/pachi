@@ -16,7 +16,7 @@
 //   const [fullfilmentToShip, setFullfilmentToShip] = useState(null);
 //   const testOrder: Order = {
 //     id: "order1",
-//     currency_code: "AUD",
+//     currencyCode: "AUD",
 //     items: [],
 //     discounts: [],
 //     gift_cards: [],

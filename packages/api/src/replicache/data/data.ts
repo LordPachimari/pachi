@@ -52,7 +52,7 @@ export const getPatch = async <T extends SpaceId>({
   spaceId: T;
   spaceRecord: SpaceRecord<T>;
   subspaceIds?: SubspaceIds<T>[];
-  userId: string;
+  userId: string | undefined;
   transaction: Transaction;
 }): Promise<{ patch: PatchOperation[]; newSpaceRecord: SpaceRecord<T> }> => {
   if (!spaceRecord) {
@@ -167,7 +167,7 @@ const getResetPatch = async <T extends SpaceId>({
   userId,
 }: {
   spaceId: T;
-  userId: string;
+  userId: string | undefined;
   transaction: Transaction;
 }): Promise<{ patch: PatchOperation[]; newSpaceRecord: SpaceRecord<T> }> => {
   try {
@@ -228,8 +228,11 @@ const getResetPatch = async <T extends SpaceId>({
 
 export const putItems = async (
   props: Map<TableName, { id: string; value: ReadonlyJSONObject }[]>,
+
+  userId: string | undefined,
   transaction: Transaction,
 ) => {
+  if (!userId) return;
   try {
     const queries = [];
     console.log("put items", props);
@@ -244,11 +247,13 @@ export const putItems = async (
 };
 export const updateItems = async (
   props: Map<TableName, { id: string; value: ReadonlyJSONObject }[]>,
-  userId: string,
+  userId: string | undefined,
   transaction: Transaction,
 ) => {
+  if (!userId) return;
   try {
-    console.log("updating items", JSON.stringify(props.entries()));
+    console.log("LENGTH", props.size);
+    console.log("updating items", JSON.stringify(props));
     const queries = [];
     for (const [tableName, values] of props.entries()) {
       queries.push(
@@ -270,9 +275,10 @@ export const updateItems = async (
 
 export const deleteItems = async (
   props: Map<TableName, string[]>,
-  userId: string,
+  userId: string | undefined,
   transaction: Transaction,
 ) => {
+  if (!userId) return;
   const queries = [];
   try {
     for (const [tableName, keys] of props.entries()) {
@@ -282,7 +288,7 @@ export const deleteItems = async (
     return await Promise.all(queries);
   } catch (error) {
     console.log(error);
-    throw new Error("failed to update items");
+    throw new Error("failed to delete items");
   }
 };
 export const getPrevSpaceRecord = async ({

@@ -57,17 +57,17 @@ export default function ProductPage({
   const product: PublishedProduct = {
     id: "m1e",
     title: "me",
-    created_at: "2023-11-21T12:34:56Z",
+    createdAt: "2023-11-21T12:34:56Z",
     version: 0,
     discountable: true,
-    store_id: "m1e",
+    storeId: "m1e",
     description: "dadwwad",
     handle: "dadwad",
     images: [
       {
         id: "awdwa",
         url: "https://utfs.io/f/86f71c61-ea84-4de2-be71-ffa98c17f140-130p7e.png",
-        name: "dawdaw",
+        altText: "dawdaw",
         order: 1,
       },
     ],
@@ -76,16 +76,16 @@ export default function ProductPage({
     prices: [
       {
         id: "adwd",
-        currency_code: "USD",
+        currencyCode: "USD",
         amount: 100,
-        variant_id: "m1e",
+        variantId: "m1e",
       },
     ],
     status: "published",
     thumbnail: {
       id: "awdwa",
       url: "https://utfs.io/f/86f71c61-ea84-4de2-be71-ffa98c17f140-130p7e.png",
-      name: "dawdaw",
+      altText: "dawdaw",
       order: 1,
     },
   };
@@ -103,7 +103,7 @@ export default function ProductPage({
       availability: product.available
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
-      priceCurrency: product.prices[0]!.currency_code,
+      priceCurrency: product.prices[0]!.currencyCode,
       price: product.prices[0]!.amount,
     },
   };
@@ -122,7 +122,7 @@ export default function ProductPage({
             <Gallery
               images={product.images!.map((image) => ({
                 src: image.url,
-                altText: image.name,
+                altText: image.altText,
               }))}
             />
           </div>

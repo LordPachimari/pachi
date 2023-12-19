@@ -12,7 +12,7 @@ export function ProductDescription({ product }: { product: PublishedProduct }) {
         <div className="mr-auto w-auto rounded-full bg-brand p-2 text-sm text-white">
           <Price
             amount={product.prices[0]!.amount}
-            currencyCode={product.prices[0]!.currency_code}
+            currencyCode={product.prices[0]!.currencyCode}
           />
         </div>
       </div>

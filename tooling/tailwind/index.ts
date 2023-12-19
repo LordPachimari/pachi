@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import uiPreset from "@medusajs/ui-preset";
 import tailwindContainerQueries from "@tailwindcss/container-queries";
 import pluginForm from "@tailwindcss/forms";
@@ -275,46 +274,12 @@ export default {
         visibility: "visibility",
         padding: "padding-top padding-right padding-bottom padding-left",
       },
-      spacing: {
-        "2xsmall": "0.25rem",
-        xsmall: "0.5rem",
-        small: "0.75rem",
-        base: "1rem",
-        large: "1.5rem",
-        xlarge: "2rem",
-        "2xlarge": "2.5rem",
-        "3xlarge": "3rem",
-        "4xlarge": "3.5rem",
-        "5xlarge": "4rem",
-        "6xlarge": "6rem",
-      },
       minWidth: {
         modal: "520px",
         sidebar: "240px",
       },
       maxWidth: {
         sidebar: "240px",
-      },
-      lineHeight: {
-        xsmall: "1rem",
-        small: "1.25rem",
-        base: "1.5rem",
-        large: "2.25rem",
-        xlarge: "3rem",
-        "2xlarge": "4rem",
-        "3xlarge": "4.5rem",
-        "4xlarge": "6rem",
-      },
-      fontSize: {
-        xsmall: "10px",
-        small: "12px",
-        base: "14px",
-        large: "16px",
-        xlarge: "24px",
-        "2xlarge": "30px",
-        "3xlarge": "40px",
-        "4xlarge": "48px",
-        "5xlarge": "60px",
       },
       fontFamily: {
         sans: [
@@ -351,14 +316,12 @@ export default {
       },
     },
   },
-  //@ts-ignore
   presets: [uiPreset],
   plugins: [
     tailwindTypography,
     //@ts-ignore
     tailwindContainerQueries,
     tailwindAnimate,
-
     pluginForm({ strategy: "class" }),
 
     plugin(({ matchUtilities, theme }) => {
@@ -366,6 +329,7 @@ export default {
         {
           "animation-delay": (value) => {
             return {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               "animation-delay": value,
             };
           },

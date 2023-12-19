@@ -21,14 +21,14 @@ import { ReplicacheInstancesStore } from "~/zustand/replicache";
 import Option from "./option";
 
 interface CreateOptionProps {
-  product_id: string;
+  productId: string;
   options: ProductOption[];
   variants: ProductVariant[];
   createVariant: () => Promise<void>;
   openVariantModal: (prop: { variantId: string }) => void;
 }
 export default function CreateOption({
-  product_id,
+  productId,
   options,
   variants,
   createVariant,
@@ -37,9 +37,9 @@ export default function CreateOption({
   const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const createOption = useCallback(async () => {
     const id = generateId({ id: ulid(), prefix: "opt" });
-    const option: ProductOption = { id, product_id };
+    const option: ProductOption = { id, productId };
     await dashboardRep?.mutate.createProductOption({ args: { option } });
-  }, [dashboardRep, product_id]);
+  }, [dashboardRep, productId]);
   const deleteOption = useCallback(
     async ({ id, productId }: { id: string; productId: string }) => {
       await dashboardRep?.mutate.deleteProductOption({
@@ -48,18 +48,18 @@ export default function CreateOption({
     },
     [dashboardRep],
   );
-  const onNameChange = useCallback(
-    debounce(async (option_id: string, name: string) => {
+  const onOptionNameChange = useCallback(
+    debounce(async (optionId: string, name: string) => {
       await dashboardRep?.mutate.updateProductOption({
-        args: { option_id, product_id, updates: { name } },
+        args: { optionId, productId, updates: { name } },
       });
     }, 500),
     [dashboardRep],
   );
-  const onValuesChange = useCallback(
-    debounce(async (option_id: string, values: string[]) => {
+  const onOptionValuesChange = useCallback(
+    debounce(async (optionId: string, values: string[]) => {
       await dashboardRep?.mutate.updateProductOptionValues({
-        args: { option_id, product_id, new_option_values: values },
+        args: { optionId, productId, newOptionValues: values },
       });
     }, 500),
     [dashboardRep],
@@ -97,15 +97,15 @@ export default function CreateOption({
         {options.map((option) => (
           <div key={option.id} className="flex gap-2">
             <Option
-              onNameChange={onNameChange}
-              onValuesChange={onValuesChange}
+              onOptionNameChange={onOptionNameChange}
+              onOptionValuesChange={onOptionValuesChange}
               option={option}
             />
             <Button
               size="icon"
               className="bg-red-300 hover:bg-red-400 "
               onClick={async () =>
-                await deleteOption({ id: option.id, productId: product_id })
+                await deleteOption({ id: option.id, productId: productId })
               }
             >
               <Trash2Icon className="text-red-500" />

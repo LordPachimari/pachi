@@ -86,7 +86,7 @@ export function Table({ data, createProduct }: ProductTableProps) {
               {row.original.thumbnail ? (
                 <Image
                   src={row.original.thumbnail.url}
-                  alt={row.original.thumbnail.name || "Uploaded image"}
+                  alt={row.original.thumbnail.altText || "Uploaded image"}
                   className="h-full rounded-soft object-cover"
                 />
               ) : (

@@ -8,32 +8,32 @@ export const addresses = pgTable(
   "addresses",
   {
     id: varchar("id").notNull().primaryKey(),
-    address_1: varchar("address_1"),
-    address_2: varchar("address_2"),
+    address1: varchar("address1"),
+    address2: varchar("address2"),
     city: varchar("city"),
     company: varchar("company"),
-    country_code: varchar("country_code")
+    countryCode: varchar("countryCode")
       .notNull()
-      .references(() => countries.iso_2),
-    created_at: varchar("created_at"),
-    customer_id: varchar("customer_id").references(() => users.id),
-    postal_code: varchar("postal_code"),
+      .references(() => countries.iso2),
+    createdAt: varchar("createdAt"),
+    customerId: varchar("customerId").references(() => users.id),
+    postalCode: varchar("postalCode"),
     province: varchar("province"),
-    updated_at: varchar("updated_at"),
+    updatedAt: varchar("updatedAt"),
     version: integer("version").notNull().default(0),
   },
   (address) => ({
-    customer_id_index: index("customer_id_index").on(address.customer_id),
-    country_code_index: index("country_code_index").on(address.country_code),
+    customerIdIndex: index("customerIdIndex").on(address.customerId),
+    countryCodeIndex: index("countryCodeIndex").on(address.countryCode),
   }),
 );
 export const addressesRelations = relations(addresses, ({ one }) => ({
   customer: one(users, {
-    fields: [addresses.customer_id],
+    fields: [addresses.customerId],
     references: [users.id],
   }),
   country: one(countries, {
-    fields: [addresses.country_code],
-    references: [countries.iso_2],
+    fields: [addresses.countryCode],
+    references: [countries.iso2],
   }),
 }));

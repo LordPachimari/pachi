@@ -40,7 +40,7 @@ const CustomerSummary: React.FC<CustomerSummaryProps> = ({ customer }) => {
           <div className=" flex flex-col border-r-[1px] pr-4">
             <p className=" text-grey-50 mb-1">Last ordered</p>
             <div className=" flex flex-col">
-              {/* <p>{customer.orders[0].created_at || "1231232"}</p> */}
+              {/* <p>{customer.orders[0].createdAt || "1231232"}</p> */}
             </div>
           </div>
           <div className=" flex flex-col border-r-[1px] px-4">

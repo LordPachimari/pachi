@@ -1,11 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import type { ProductOption, ProductVariant } from "@pachi/db";
-import { cn, mapOptionIds } from "@pachi/utils";
+import { cn } from "@pachi/utils";
 
 import { createUrl } from "~/libs/create-url";
 
@@ -40,7 +39,7 @@ export function VariantSelector({
     ...variant.options!.reduce(
       (accumulator, option) => ({
         ...accumulator,
-        [option.option_name.toLowerCase()]: option.value,
+        [option.optionName.toLowerCase()]: option.value,
       }),
       {},
     ),
@@ -51,7 +50,7 @@ export function VariantSelector({
       <dt className="mb-4 text-sm uppercase tracking-wide">{option.name}</dt>
       <dd className="flex flex-wrap gap-3">
         {option.values!.map((optionValue) => {
-          const optionNameLowerCase = option.name.toLowerCase();
+          const optionNameLowerCase = option.name!.toLowerCase();
 
           // Base option params on current params so we can preserve any other param state in the url.
           const optionSearchParams = new URLSearchParams(
@@ -76,7 +75,7 @@ export function VariantSelector({
             ([key, value]) =>
               options.find(
                 (option) =>
-                  option.name.toLowerCase() === key &&
+                  option.name!.toLowerCase() === key &&
                   option.values!.findIndex(
                     (optionValue) => optionValue.value === value,
                   ) !== -1,

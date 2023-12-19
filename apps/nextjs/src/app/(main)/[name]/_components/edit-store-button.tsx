@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Edit2, Edit2Icon, Edit3Icon } from "lucide-react";
+import { Edit3Icon } from "lucide-react";
 
 import { Button } from "~/components/atoms/button";
 import EditStoreModal from "~/components/templates/modals/edit-store";

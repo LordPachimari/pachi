@@ -8,86 +8,83 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-import { price_lists } from "./price-list";
+import { priceLists } from "./price-list";
 import { users } from "./user";
 
-export const customer_groups = pgTable(
-  "customer_groups",
+export const customerGroups = pgTable(
+  "customerGroups",
   {
     id: varchar("id").notNull().primaryKey(),
-    created_at: varchar("created_at"),
-    updated_at: varchar("updated_at"),
+    createdAt: varchar("createdAt"),
+    updatedAt: varchar("updatedAt"),
     name: varchar("name"),
     version: integer("version").notNull().default(0),
     description: text("description"),
   },
-  (customer_group) => ({
-    name_index: index("name_index").on(customer_group.name),
+  (customerGroup) => ({
+    nameIndex: index("nameIndex").on(customerGroup.name),
   }),
 );
-export const customer_group_relations = relations(
-  customer_groups,
-  ({ many }) => ({
-    customers: many(customers_to_groups),
-    price_lists: many(customer_groups_to_price_lists),
-  }),
-);
-export const customers_to_groups = pgTable(
-  "customers_to_groups",
+export const customerGroupRelations = relations(customerGroups, ({ many }) => ({
+  customers: many(customersToGroups),
+  price_lists: many(customerGroupsToPriceLists),
+}));
+export const customersToGroups = pgTable(
+  "customersToGroups",
   {
     id: varchar("id"),
     version: integer("version"),
-    customer_id: varchar("customer_id")
+    customerId: varchar("customerId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    group_id: varchar("group_id")
+    groupId: varchar("groupId")
       .notNull()
-      .references(() => customer_groups.id, { onDelete: "cascade" }),
+      .references(() => customerGroups.id, { onDelete: "cascade" }),
   },
   (t) => ({
-    pk: primaryKey(t.customer_id, t.group_id),
+    pk: primaryKey(t.customerId, t.groupId),
   }),
 );
-export const customers_to_groups_relations = relations(
-  customers_to_groups,
+export const customersToGroupsRelations = relations(
+  customersToGroups,
   ({ one }) => ({
     customer: one(users, {
-      fields: [customers_to_groups.customer_id],
+      fields: [customersToGroups.customerId],
       references: [users.id],
     }),
-    group: one(customer_groups, {
-      fields: [customers_to_groups.group_id],
-      references: [customer_groups.id],
+    group: one(customerGroups, {
+      fields: [customersToGroups.groupId],
+      references: [customerGroups.id],
     }),
   }),
 );
 
-export const customer_groups_to_price_lists = pgTable(
-  "customer_groups_to_price_lists",
+export const customerGroupsToPriceLists = pgTable(
+  "customerGroupsToPriceLists",
   {
     id: varchar("id"),
-    customer_group_id: varchar("customer_group_id")
+    customerGroupId: varchar("customerGroupId")
       .notNull()
-      .references(() => customer_groups.id),
-    price_list_id: varchar("price_list_id")
+      .references(() => customerGroups.id),
+    priceListId: varchar("priceListId")
       .notNull()
-      .references(() => price_lists.id),
+      .references(() => priceLists.id),
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.customer_group_id, t.price_list_id),
+    pk: primaryKey(t.customerGroupId, t.priceListId),
   }),
 );
-export const customer_groups_to_price_lists_relations = relations(
-  customer_groups_to_price_lists,
+export const customerGroupsToPriceListsRelations = relations(
+  customerGroupsToPriceLists,
   ({ one }) => ({
-    customer_group: one(customer_groups, {
-      fields: [customer_groups_to_price_lists.customer_group_id],
-      references: [customer_groups.id],
+    customer_group: one(customerGroups, {
+      fields: [customerGroupsToPriceLists.customerGroupId],
+      references: [customerGroups.id],
     }),
-    price_list: one(price_lists, {
-      fields: [customer_groups_to_price_lists.price_list_id],
-      references: [price_lists.id],
+    price_list: one(priceLists, {
+      fields: [customerGroupsToPriceLists.priceListId],
+      references: [priceLists.id],
     }),
   }),
 );
