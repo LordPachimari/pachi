@@ -17,8 +17,10 @@ export const stores = pgTable(
   {
     id: varchar("id").notNull().primaryKey(),
     name: text("name").notNull(),
-    currencies: json("currencies").$type<Currency[]>(),
-    founder_id: varchar("founder_id").references(() => users.id),
+    currencies: json("currencies").$type<string[]>(),
+    founder_id: varchar("founder_id")
+      .references(() => users.id)
+      .notNull(),
     version: integer("version").notNull(),
     created_at: varchar("created_at").notNull(),
   },

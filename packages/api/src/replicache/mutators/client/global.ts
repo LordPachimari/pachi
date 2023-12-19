@@ -1,10 +1,17 @@
 import type { WriteTransaction } from "replicache";
 import { string } from "valibot";
 
-import { StoreSchema, StoreUpdatesSchema, type Store } from "@pachi/db";
+import {
+  StoreSchema,
+  StoreUpdatesSchema,
+  UserSchema,
+  type Store,
+} from "@pachi/db";
+import { generateId } from "@pachi/utils";
 
 import type {
   CreateStoreProps,
+  CreateUserProps,
   UpdateStoreProps,
 } from "../../../types/mutators";
 
@@ -37,6 +44,19 @@ export const globalMutators = {
   //     });
   //   }
   // },
+  createUser: async (tx: WriteTransaction, { args }: CreateUserProps) => {
+    const { user } = args;
+    const new_store_id = generateId({ prefix: "store", id: user.id });
+    const store: Store = {
+      id: new_store_id,
+      created_at: new Date().toISOString(),
+      name: "My Store",
+      version: 1,
+      founder_id: user.id,
+    };
+    UserSchema._parse(user);
+    await Promise.all([tx.put(user.id, user), tx.put(store.id, store)]);
+  },
 
   createStore: async (tx: WriteTransaction, { args }: CreateStoreProps) => {
     const { store } = args;
@@ -44,15 +64,15 @@ export const globalMutators = {
     await tx.put(store.id, store);
   },
   updateStore: async (tx: WriteTransaction, { args }: UpdateStoreProps) => {
-    const { id, updates } = args;
-    string()._parse(id);
+    const { store_id, updates } = args;
+    string()._parse(store_id);
     StoreUpdatesSchema._parse(updates);
-    const store = (await tx.get(id)) as Store | undefined;
+    const store = (await tx.get(store_id)) as Store | undefined;
     if (!store) {
       console.info(`Store  not found`);
       return;
     }
     const updated = { ...store, ...updates };
-    await tx.put(id, updated);
+    await tx.put(store_id, updated);
   },
 };

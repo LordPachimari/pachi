@@ -35,6 +35,7 @@ const config = {
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/no-empty-function": "warn",
     "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unnecessary-type-assertion": "warn",
   },
   ignorePatterns: [
     "**/.eslintrc.cjs",

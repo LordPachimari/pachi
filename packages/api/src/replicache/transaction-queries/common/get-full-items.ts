@@ -35,6 +35,13 @@ export const getFullItems = async ({
           //   id: true,
           //   name: true,
           // },
+          variants: {
+            with: {
+              options: true,
+            },
+          },
+          options: true,
+          store: true,
         },
       })
       .execute();

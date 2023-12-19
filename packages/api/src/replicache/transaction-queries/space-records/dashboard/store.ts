@@ -19,7 +19,16 @@ export const storeCVD: GetClientViewData = async ({
             with: {
               stores: {
                 with: {
-                  products: true,
+                  products: {
+                    with: {
+                      variants: {
+                        with: {
+                          options: true,
+                        },
+                      },
+                      options: true,
+                    },
+                  },
                 },
               },
             },
@@ -54,10 +63,6 @@ export const storeCVD: GetClientViewData = async ({
       tableName: "products",
     });
   }
-  cvd.push({
-    cvd: (user?.stores ?? []) as ClientViewDataWithTable[0]["cvd"],
-    tableName: "stores",
-  });
 
   return cvd;
 };

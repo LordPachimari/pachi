@@ -22,6 +22,10 @@ export const env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_REPLICACHE_KEY: z.string(),
+    NEXT_PUBLIC_HANKO_API_URL: z.string(),
+    NEXT_PUBLIC_WORKER_LOCAL_URL: z.string(),
+    NEXT_PUBLIC_WORKER_DEV_URL: z.string(),
   },
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
@@ -29,6 +33,11 @@ export const env = createEnv({
   runtimeEnv: {
     VERCEL_URL: process.env["VERCEL_URL"],
     PORT: process.env["PORT"],
+    NEXT_PUBLIC_REPLICACHE_KEY: process.env["NEXT_PUBLIC_REPLICACHE_KEY"],
+    NEXT_PUBLIC_HANKO_API_URL: process.env["NEXT_PUBLIC_HANKO_API_URL"],
+    NEXT_PUBLIC_WORKER_LOCAL_URL: process.env["NEXT_PUBLIC_WORKER_LOCAL_URL"],
+    NEXT_PUBLIC_WORKER_DEV_URL: process.env["NEXT_PUBLIC_WORKER_DEV_URL"],
+
     // DATABASE_URL: process.env.DATABASE_URL,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },

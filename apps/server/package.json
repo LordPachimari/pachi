@@ -1,0 +1,38 @@
+{
+  "name": "@pachi/server",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "beautify": "prettier \"**/*.{mjs,ts,tsx,md,json}\" --write --log-level error",
+    "dev": "wrangler dev --env dev src/index.ts",
+    "deploy": "wrangler deploy --minify src/index.ts",
+    "deploy-dev": "wrangler deploy --minify --env dev src/index.ts",
+    "test": "vitest run",
+    "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
+    "local-generate": "wrangler d1 execute pachi-db-dev  --local --file=../../packages/db/migrations/0000_chilly_warlock.sql",
+    "login": "wrangler login",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pachi/api": "^0.1.0",
+    "@pachi/db": "^0.1.0",
+    "@pachi/types": "^0.1.0",
+    "@pachi/utils": "^0.1.0",
+    "drizzle-orm": "^0.29.0",
+    "hono": "^3.7.2",
+    "jose": "^4.15.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230922.0",
+    "@pachi/eslint-config": "workspace:^0.1.0",
+    "@pachi/prettier-config": "workspace:^0.1.0",
+    "@pachi/tsconfig": "workspace:^0.1.0",
+    "eslint": "^8.53.0",
+    "miniflare": "^3.20230922.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6",
+    "vitest-environment-miniflare": "^2.14.1",
+    "wrangler": "^3.10.1"
+  }
+}

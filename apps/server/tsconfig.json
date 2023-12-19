@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "paths": {
+      "~/*": ["./src/*"]
+    },
+    "lib": ["esnext"],
+    "types": [
+      "@cloudflare/workers-types",
+      "vitest-environment-miniflare/globals"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx"
+  },
+
+  "extends": "@pachi/tsconfig/base.json",
+
+  "exclude": ["node_modules"]
+}
