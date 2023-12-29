@@ -22,9 +22,12 @@ export function AddToCart({
   const [isPending, startTransition] = useTransition();
   const defaultVariant = variants[0]!;
   const variant = variants.find((variant: ProductVariant) =>
-    (variant.options ?? []).every(
-      (option) =>
-        option.value === searchParams.get(option.optionName.toLowerCase()),
+    (variant.optionValues ?? []).every(
+      (optionValue) =>
+        optionValue.optionValue.value ===
+        searchParams.get(
+          (optionValue.optionValue.option?.name ?? "").toLowerCase(),
+        ),
     ),
   );
   const selectedVariantId = variant?.id ?? defaultVariant.id;

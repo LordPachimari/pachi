@@ -12,10 +12,10 @@ import {
 import type { Image } from "../validators/common";
 import { prices } from "./price";
 import { products } from "./product";
-import { productOptionValues } from "./product-option-value";
+import { productOptionValuesToProductVariants } from "./product-option-value";
 
 export const productVariants = pgTable(
-  "productVariants",
+  "product_variants",
   {
     id: varchar("id").notNull().primaryKey(),
     barcode: varchar("barcode"),
@@ -58,6 +58,8 @@ export const productVariantRelations = relations(
       relationName: "product.variants",
     }),
     prices: many(prices),
-    options: many(productOptionValues),
+    optionValues: many(productOptionValuesToProductVariants, {
+      relationName: "variant.optionValues",
+    }),
   }),
 );

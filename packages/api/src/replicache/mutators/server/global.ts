@@ -89,7 +89,7 @@ export const globalMutators_ = {
       founderId: user.id,
     };
 
-    await repositories?.userRepository.insertUser({user});
+    await repositories?.userRepository.insertUser({ user });
     await tx.put(store.id, store, "stores");
   },
   createStore: async (

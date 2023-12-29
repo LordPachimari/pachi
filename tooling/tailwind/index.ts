@@ -319,9 +319,9 @@ export default {
   presets: [uiPreset],
   plugins: [
     tailwindTypography,
+    tailwindAnimate,
     //@ts-ignore
     tailwindContainerQueries,
-    tailwindAnimate,
     pluginForm({ strategy: "class" }),
 
     plugin(({ matchUtilities, theme }) => {

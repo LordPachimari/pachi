@@ -8,18 +8,15 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-import {
-  swapFulfillmentStatus,
-  swapPaymentStatus
-} from "../validators/common";
+import { swapFulfillmentStatus, swapPaymentStatus } from "../validators/common";
 import { addresses } from "./address";
 import { carts } from "./cart";
+import { cartItems } from "./cart-item";
 import { fulfillments } from "./fulfillment";
 import { orders } from "./order";
 import { payments } from "./payment";
 import { returns } from "./return";
 import { shippingMethods } from "./shipping-method";
-import { cartItems } from "./cart-item";
 
 export const swaps = pgTable(
   "swaps",

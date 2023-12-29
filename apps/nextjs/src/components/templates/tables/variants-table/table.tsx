@@ -17,6 +17,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+import type { ProductVariant } from "@pachi/db";
+
 import { Button } from "~/components/atoms/button";
 import { ScrollArea } from "~/components/atoms/scroll-area";
 import {
@@ -29,6 +31,7 @@ import {
 } from "~/components/atoms/table";
 import { DataTableToolbar } from "~/components/organisms/data-table/data-table-toolbar";
 import { useDebounce } from "~/hooks/use-debounce";
+import { createUrl } from "~/libs/create-url";
 import type {
   DataTableFilterableColumn,
   DataTableSearchableColumn,
@@ -43,6 +46,7 @@ interface DataTableProps<TData, TValue> {
   view?: "row" | "grid";
   withToolbar?: boolean;
   additionalToolbarButton?: React.ReactNode;
+  productId: string;
 }
 
 export function VariantsTable<TData, TValue>({
@@ -54,6 +58,7 @@ export function VariantsTable<TData, TValue>({
   view: initialView = "row",
   withToolbar = false,
   additionalToolbarButton,
+  productId,
 }: DataTableProps<TData, TValue>) {
   const router = useRouter();
   const pathname = usePathname();
@@ -291,6 +296,16 @@ export function VariantsTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => {
+                    const newParams = new URLSearchParams(
+                      searchParams.toString(),
+                    );
+                    newParams.set(
+                      "variantId",
+                      (row.original as ProductVariant).id,
+                    );
+                    router.push(createUrl(productId, newParams));
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

@@ -12,14 +12,14 @@ import { CurrencyInput } from "./currency-input";
 interface PricingProps {
   updatePrice: (props: UpdatePriceProps["args"]) => Promise<void>;
   variant: ProductVariant;
-  storeCurrencies: string[];
+  productCurrencies: string[];
   storeId: string;
   productId: string;
 }
 const Pricing = ({
   variant,
   updatePrice,
-  storeCurrencies,
+  productCurrencies,
   storeId,
   productId,
 }: PricingProps) => {
@@ -55,7 +55,7 @@ const Pricing = ({
         )}
         <CurrencyModal close={close} isOpen={isOpen} open={open}>
           <Table
-            storeCurrencies={storeCurrencies}
+            productCurrencies={productCurrencies}
             storeId={storeId}
             variantId={variant.id}
             prices={variant.prices ?? []}

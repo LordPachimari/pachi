@@ -3,7 +3,7 @@ import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
 import { productsToTags } from "./product";
 
-export const productTags = pgTable("productTags", {
+export const productTags = pgTable("product_tags", {
   id: varchar("id").notNull().primaryKey(),
   createdAt: varchar("createdAt").notNull(),
   updatedAt: varchar("updatedAt"),

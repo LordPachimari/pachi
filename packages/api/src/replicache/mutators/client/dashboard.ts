@@ -18,11 +18,14 @@ import {
   ProductVariantSchema,
   ProductVariantUpdatesSchema,
   type CustomerGroup,
+  type Image,
+  type Price,
   type PriceList,
   type Product,
   type ProductCollection,
   type ProductTag,
   type ProductVariant,
+  type Store,
   type User,
 } from "@pachi/db";
 import { generateId, ulid } from "@pachi/utils";
@@ -30,6 +33,7 @@ import { generateId, ulid } from "@pachi/utils";
 import type {
   AddCustomerToGroupProps,
   AddProductToPriceListProps,
+  AssignProductOptionValueToVariantProps,
   CreateCustomerGroupProps,
   CreatePriceListProps,
   CreatePricesProps,
@@ -59,13 +63,21 @@ export type DashboardMutators = typeof dashboardMutators;
 export const dashboardMutators = {
   createProduct: async (tx: WriteTransaction, props: CreateProductProps) => {
     const { args } = props;
-    const { product, defaultVariantId } = args;
+    const { product, defaultVariantId, storeId, prices } = args;
     ProductSchema._parse(product);
+
+    const store = (await tx.get(storeId)) as Store | undefined;
+    if (!store) {
+      console.info(`Store ${storeId} not found`);
+      throw new Error("store not found");
+    }
 
     const defaultVariant: ProductVariant = {
       id: defaultVariantId,
       productId: product.id,
+      prices,
     };
+
     await tx.put(product.id, {
       ...product,
       defaultVariantId: defaultVariant.id,
@@ -87,7 +99,7 @@ export const dashboardMutators = {
     const product = (await tx.get(id)) as Product | undefined;
     if (!product) {
       console.info(`Product ${id} not found`);
-      return;
+      throw new Error("Product ${id} not found");
     }
     await tx.put(id, { ...product, ...updates });
   },
@@ -141,15 +153,31 @@ export const dashboardMutators = {
       console.info(`Product ${productId} not found`);
       return;
     }
-    const images = product.images ? [...product.images] : [];
+    const variant = product.variants?.find((val) => val.id === variantId);
+    if (!variant) {
+      console.log("variant not found");
+      return;
+    }
+    const images = variant.images ? structuredClone(variant.images) : [];
     if (images.length === 0) {
       return;
     }
     for (const image of images) {
-      if (order[image.id]) image.order = order[image.id]!;
+      if (order[image.id] !== undefined) image.order = order[image.id]!;
+    }
+    let thumbnail: Image | undefined = undefined;
+    if (variant.id.startsWith("default")) {
+      for (const image of images) {
+        if (image.order === 0) {
+          thumbnail = image;
+        }
+      }
     }
     await tx.put(productId, {
       ...product,
+      ...(thumbnail &&
+        product.thumbnail &&
+        product.thumbnail.id !== thumbnail.id && { thumbnail }),
       variant: product.variants?.map((variant) => {
         if (variant.id === variantId) {
           return { ...variant, images };
@@ -216,37 +244,25 @@ export const dashboardMutators = {
     });
   },
 
-  createProductOptionValue: async (
-    tx: WriteTransaction,
-    { args }: CreateProductOptionValueProps,
-  ) => {
-    const { optionValue } = args;
-    ProductOptionValueSchema._parse(optionValue);
-    await tx.put(optionValue.id, optionValue);
-  },
   updateProductOptionValues: async (
     tx: WriteTransaction,
     { args }: UpdateProductOptionValuesProps,
   ) => {
     const { optionId, productId, newOptionValues } = args;
 
-    array(string())._parse(newOptionValues);
+    array(ProductOptionValueSchema)._parse(newOptionValues);
     const product = (await tx.get(productId)) as Product | undefined;
     if (!product) {
       console.info(`Product ${productId} not found`);
       return;
     }
-    console.log("new_option_values", newOptionValues);
-    const newValues = newOptionValues.map((value) => ({
-      id: generateId({ id: ulid(), prefix: "opt_val" }),
-      optionId,
-      value,
-    }));
 
     await tx.put(product.id, {
       ...product,
       options: product.options?.map((option) =>
-        option.id === optionId ? { ...option, values: newValues } : option,
+        option.id === optionId
+          ? { ...option, values: newOptionValues }
+          : option,
       ),
     });
   },
@@ -303,9 +319,21 @@ export const dashboardMutators = {
   },
 
   deleteProductVariant: async (tx: WriteTransaction, { args }: DeleteProps) => {
-    const { id } = args;
+    const { id, productId } = args;
     string()._parse(id);
-    await tx.del(id);
+    string()._parse(productId);
+    const product = (await tx.get(productId)) as Product | undefined;
+    if (!product) {
+      console.info(`Product  not found`);
+      return;
+    }
+    const product_variants = product.variants
+      ? product.variants.filter((variant) => variant.id !== id)
+      : [];
+    await tx.put(product.id, {
+      ...product,
+      variants: product_variants,
+    });
   },
   createProductCollection: async (
     tx: WriteTransaction,
@@ -578,6 +606,46 @@ export const dashboardMutators = {
       value: tag,
       createdAt: new Date().toISOString(),
     }));
-    await tx.put(productId, { ...product, tags:newProductTags });
+    await tx.put(productId, { ...product, tags: newProductTags });
+  },
+  assignProductOptionValueToVariant: async (
+    tx: WriteTransaction,
+    { args }: AssignProductOptionValueToVariantProps,
+  ) => {
+    const { optionValueId, variantId, prevOptionValueId, productId } = args;
+    string()._parse(optionValueId);
+    string()._parse(variantId);
+    string()._parse(productId);
+    const product = (await tx.get(productId)) as Product | undefined;
+    if (!product) {
+      console.info(`Product  not found`);
+      return;
+    }
+    const variant = product.variants?.find((val) => val.id === variantId);
+    if (!variant) {
+      console.log("variant not found");
+      return;
+    }
+    const productOptionValue = product.options
+      ?.find((option) => option.values?.some((val) => val.id === optionValueId))
+      ?.values?.find((val) => val.id === optionValueId);
+    const optionValues = variant.optionValues ? [...variant.optionValues] : [];
+    if (prevOptionValueId)
+      optionValues.filter((val) => val.optionValue.id !== prevOptionValueId);
+
+    await tx.put(product.id, {
+      ...product,
+      variants: product.variants?.map((variant_) =>
+        variant_.id === variantId
+          ? {
+              ...variant,
+              optionValues: [
+                ...optionValues,
+                { optionValue: productOptionValue! },
+              ],
+            }
+          : variant_,
+      ),
+    });
   },
 };

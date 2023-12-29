@@ -1,6 +1,6 @@
 import { boolean, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
 
-export const salesChannels = pgTable("salesChannels", {
+export const salesChannels = pgTable("sales_channels", {
   id: varchar("id").notNull().primaryKey(),
   createdAt: varchar("createdAt"),
   description: text("description"),

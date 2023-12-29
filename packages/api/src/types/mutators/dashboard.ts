@@ -16,6 +16,7 @@ import type {
   ProductVariantUpdates,
   UpdateProduct,
 } from "@pachi/db";
+import type { Money } from "@pachi/utils";
 
 import type { MutationBase } from "./base";
 
@@ -23,6 +24,8 @@ export interface CreateProductProps extends MutationBase {
   args: {
     product: Product;
     defaultVariantId: string;
+    storeId: string;
+    prices: Price[];
   };
 }
 
@@ -69,7 +72,7 @@ export interface UpdateProductOptionValuesProps extends MutationBase {
   args: {
     productId: string;
     optionId: string;
-    newOptionValues: string[];
+    newOptionValues: ProductOptionValue[];
   };
 }
 export interface UpdateProductTagsProps extends MutationBase {
@@ -138,4 +141,14 @@ export interface CreateVariantProps extends MutationBase {
 
 export interface DeletePricesProps extends MutationBase {
   args: { ids: string[]; variantId: string; productId: string };
+}
+
+export interface AssignProductOptionValueToVariantProps extends MutationBase {
+  args: {
+    variantId: string;
+    optionValueId: string;
+    prevOptionValueId?: string;
+    productId: string;
+    optionId: string;
+  };
 }

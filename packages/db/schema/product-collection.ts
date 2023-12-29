@@ -10,7 +10,7 @@ import {
 import { products } from "./product";
 
 export const productCollections = pgTable(
-  "productCollections",
+  "product_collections",
   {
     id: varchar("id").notNull().primaryKey(),
     handle: varchar("handle"),

@@ -4,17 +4,24 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { LayoutDashboard } from "lucide-react";
 
-import { ReplicacheInstancesStore } from "~/zustand/replicache";
+import { generateId } from "@pachi/utils";
 
 interface DashboardButtonProps {
   username: string | undefined;
 }
 export function DashboardButton({ username }: DashboardButtonProps) {
   const router = useRouter();
-  const globalRep = ReplicacheInstancesStore((state) => state.globalRep);
   const onClick = useCallback(() => {
-    router.push(`/dashboard/products?storeId=${username}`);
-  }, [ username, router]);
+    if (!username) {
+      return router.push(`/login`);
+    }
+    const storeId = localStorage.getItem("storeId");
+    router.push(
+      `/dashboard/products?storeId=${
+        storeId ?? generateId({ id: username, prefix: "store" })
+      }`,
+    );
+  }, [username, router]);
 
   return (
     <button

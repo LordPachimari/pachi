@@ -29,7 +29,7 @@ interface FileUploadProps extends React.HTMLAttributes<HTMLDivElement> {
   startUpload: (
     files: File[],
     input?: undefined,
-  ) => Promise<UploadFileResponse[] | undefined>;
+  ) => Promise<UploadFileResponse<null>[] | undefined>;
   uploadProductImages: (props: UploadImagesProps["args"]) => Promise<void>;
 }
 

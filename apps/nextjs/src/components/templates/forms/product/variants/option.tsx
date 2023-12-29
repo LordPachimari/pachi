@@ -26,7 +26,6 @@ export default function Option({
     const values = option.values?.map((v) => v.value) ?? [];
     setValues(values);
   }, [option]);
-  console.log("values initial", values);
   return (
     <div className="flex gap-2">
       <Input

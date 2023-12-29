@@ -17,7 +17,7 @@ import { productVariants } from "./product-variant";
 import { swaps } from "./swap";
 
 export const cartItems = pgTable(
-  "cartItems",
+  "cart_items",
   {
     id: varchar("id").notNull(),
     createdAt: varchar("createdAt"),
@@ -106,7 +106,7 @@ export const cartItemsRelations = relations(cartItems, ({ one, many }) => ({
   // tax_lines: many(CartItemTaxLine),
 }));
 export const cartItemAdjustments = pgTable(
-  "cartItemAdjustments",
+  "cart_item_adjustments",
   {
     id: varchar("id").notNull().primaryKey(),
     amount: integer("amount").notNull(),

@@ -14,6 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@lucia-auth/adapter-postgresql": "^2.0.2",
     "@pachi/api": "^0.1.0",
     "@pachi/db": "^0.1.0",
     "@pachi/types": "^0.1.0",

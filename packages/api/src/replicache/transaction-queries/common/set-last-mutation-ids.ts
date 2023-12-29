@@ -25,7 +25,7 @@ export const setLastMutationIdsAndVersions_ = ({
           target: replicacheClients.id,
           set: {
             version,
-            lastMutationID: lastMutationID,
+            lastMutationID,
           },
         }),
     );

@@ -87,6 +87,8 @@ export function Table({ data, createProduct }: ProductTableProps) {
                 <Image
                   src={row.original.thumbnail.url}
                   alt={row.original.thumbnail.altText || "Uploaded image"}
+                  width={100}
+                  height={80}
                   className="h-full rounded-soft object-cover"
                 />
               ) : (

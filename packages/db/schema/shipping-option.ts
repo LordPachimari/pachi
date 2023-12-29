@@ -15,7 +15,7 @@ import { regions } from "./region";
 import { taxRates } from "./tax-rate";
 
 export const shippingOptions = pgTable(
-  "shippingOptions",
+  "shipping_options",
   {
     id: varchar("id").notNull().primaryKey(),
     createdAt: varchar("createdAt"),
@@ -33,7 +33,7 @@ export const shippingOptions = pgTable(
   },
   (t) => ({
     providerIdIndex: index("providerIdIndex").on(t.providerId),
-    regionIdIndex2: index("regionIdIndex2").on(t.regionId),
+    regionIdIndex: index("regionIdIndex").on(t.regionId),
   }),
 );
 export const shippingOptionRelations = relations(
@@ -51,7 +51,7 @@ export const shippingOptionRelations = relations(
   }),
 );
 export const shippingOptionsRequirements = pgTable(
-  "shippingOptionRequirements",
+  "shipping_option_requirements",
   {
     id: varchar("id").notNull().primaryKey(),
     amount: integer("amount"),
@@ -75,7 +75,7 @@ export const shippingOptionRequirementRelations = relations(
   }),
 );
 export const shippingOptionsToTaxRates = pgTable(
-  "shippingOptionsToTaxRates",
+  "shipping_options_to_tax_rates",
   {
     id: varchar("id"),
     rateId: varchar("rateId")

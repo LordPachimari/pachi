@@ -15,7 +15,7 @@ import { shippingOptions } from "./shipping-option";
 import { swaps } from "./swap";
 
 export const shippingMethods = pgTable(
-  "shippingMethods",
+  "shipping_methods",
   {
     id: varchar("id").notNull().primaryKey(),
     cartId: varchar("cartId"),

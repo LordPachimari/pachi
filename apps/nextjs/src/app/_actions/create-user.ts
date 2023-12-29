@@ -37,7 +37,8 @@ export async function createUser(
     // );
     // const hankoUser = (await hankoUserResponse.json()) as { email: string };
     // console.log("hankoUser", JSON.stringify(hankoUser));
-    const createUserReponse = await fetch(
+
+    const createUserResponse = await fetch(
       `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/create-user`,
       {
         method: "POST",
@@ -48,11 +49,13 @@ export async function createUser(
         }),
       },
     );
-    if (createUserReponse.status === 400)
+    if (createUserResponse.status === 400)
       return { message: "User already exists", type: "FAIL" };
-    const userReponse = (await createUserReponse.json()) as { message: string };
+    const userResponse = (await createUserResponse.json()) as {
+      message: string;
+    };
 
-    return { message: userReponse.message, type: "SUCCESS" };
+    return { message: userResponse.message, type: "SUCCESS" };
   } catch (e) {
     console.log(e);
     return { message: "Failed to create user", type: "FAIL" };

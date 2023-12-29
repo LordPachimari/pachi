@@ -13,6 +13,7 @@ export const prefixEnum = enumType([
   "col",
   "cat",
   "var",
+  "default_var",
   "opt",
   "opt_val",
   "draft",

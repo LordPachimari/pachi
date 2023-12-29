@@ -120,11 +120,7 @@ export const productStatus = [
 export const ProductStatusSchema = enumType(productStatus);
 export type ProductStatus = Output<typeof ProductStatusSchema>;
 
-export const discountType = [
-  "offProducts",
-  "offOrder",
-  "buyXGetY",
-] as const;
+export const discountType = ["offProducts", "offOrder", "buyXGetY"] as const;
 export const DiscountTypeSchema = enumType(discountType);
 export type DiscountType = Output<typeof DiscountTypeSchema>;
 

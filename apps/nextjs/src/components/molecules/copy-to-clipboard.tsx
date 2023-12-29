@@ -35,7 +35,7 @@ const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
   }, [isCopied]);
 
   return (
-    <div className="inter-small-regular text-grey-50 flex items-center gap-x-xsmall">
+    <div className="inter-small-regular text-grey-50 gap-x-xsmall flex items-center">
       <Button
         variant="ghost"
         size="icon"

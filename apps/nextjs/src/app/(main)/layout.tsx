@@ -8,9 +8,11 @@ interface HomeLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function MainLayout({ children }: HomeLayoutProps) {
-  const userId = await getUserId();
-  const username = await getUsername(userId);
+export default function MainLayout({ children }: HomeLayoutProps) {
+  // const userId = await getUserId();
+  const userId = "user1";
+  // const username = await getUsername(userId);
+  const username = "pachimari";
   return (
     <div className="relative flex min-h-screen flex-col">
       <MainNav />

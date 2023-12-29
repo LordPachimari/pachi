@@ -35,10 +35,12 @@ export const fulfillments = pgTable(
     version: integer("version").notNull().default(0),
   },
   (fulfillment) => ({
-    claimOrderIdIndex: index("claimOrderIdIndex").on(fulfillment.claimOrderId),
+    claimOrderIdIndex1: index("claimOrderIdIndex1").on(
+      fulfillment.claimOrderId,
+    ),
     orderIdIndex_3: index("orderIdIndex_3").on(fulfillment.orderId),
-    providerIdIndex: index("providerIdIndex").on(fulfillment.providerId),
-    swapIdIndex: index("swapIdIndex").on(fulfillment.swapId),
+    providerIdIndex1: index("providerIdIndex1").on(fulfillment.providerId),
+    swapIdIndex1: index("swapIdIndex1").on(fulfillment.swapId),
   }),
 );
 export const fulfillmentRelations = relations(
@@ -66,7 +68,7 @@ export const fulfillmentRelations = relations(
 );
 
 export const fulfillmentItems = pgTable(
-  "fulfillmentItems",
+  "fulfillment_items",
   {
     itemId: varchar("itemId").notNull(),
     fulfillmentId: varchar("fulfillmentId").notNull(),

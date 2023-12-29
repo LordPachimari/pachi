@@ -145,7 +145,9 @@ export const ProductOptionValueSchema = merge([
   createInsertSchema(productOptionValues),
   object({}),
 ]);
-export type ProductOptionValue = Output<typeof ProductOptionValueSchema>;
+export type ProductOptionValue = Output<typeof ProductOptionValueSchema> & {
+  option?: ProductOption;
+};
 export const ProductOptionValueUpdatesSchema = pick(ProductOptionValueSchema, [
   "value",
 ]);
@@ -153,13 +155,11 @@ export type ProductOptionValueUpdates = Output<
   typeof ProductOptionValueUpdatesSchema
 >;
 
-export const ProductOptionSchema = merge([
-  createInsertSchema(productOptions),
-  object({
-    values: optional(array(ProductOptionValueSchema)),
-  }),
-]);
-export type ProductOption = Output<typeof ProductOptionSchema>;
+export const ProductOptionSchema = createInsertSchema(productOptions);
+
+export type ProductOption = Output<typeof ProductOptionSchema> & {
+  values?: ProductOptionValue[];
+};
 export const ProductOptionUpdatesSchema = pick(ProductOptionSchema, ["name"]);
 export type ProductOptionUpdates = Output<typeof ProductOptionUpdatesSchema>;
 
@@ -169,13 +169,13 @@ export type ProductTag = Output<typeof ProductTagSchema>;
 export const ProductVariantSchema = merge([
   createInsertSchema(productVariants),
   object({
-    options: optional(array(ProductOptionValueSchema)),
     prices: optional(array(PriceSchema)),
     images: optional(array(ImageSchema)),
   }),
 ]);
 export type ProductVariant = Output<typeof ProductVariantSchema> & {
   product?: Product;
+  optionValues?: { optionValue: ProductOptionValue }[];
 };
 export const ProductVariantUpdatesSchema = pick(ProductVariantSchema, [
   "title",
@@ -192,20 +192,19 @@ export const ProductVariantUpdatesSchema = pick(ProductVariantSchema, [
   "width",
   "upc",
   "allowBackorder",
+  "length",
+  "originCountry",
 ]);
 export type ProductVariantUpdates = Output<typeof ProductVariantUpdatesSchema>;
 
 export const ProductSchema = merge([
   createInsertSchema(products),
   object({
-    variants: optional(array(ProductVariantSchema)),
-    options: optional(array(ProductOptionSchema)),
     salesChannels: optional(array(SalesChannelSchema)),
     collection: optional(ProductCollectionSchema),
     tags: optional(array(ProductTagSchema)),
     thumbnail: optional(ImageSchema),
     metadata: optional(record(string(), string())),
-    images: optional(array(ImageSchema)),
     taxRates: optional(array(TaxRateSchema)),
     discountable: boolean(),
   }),
@@ -216,16 +215,16 @@ export const PublishedProductSchema = merge([
     title: string(),
     description: string(),
     thumbnail: ImageSchema,
-    images: array(ImageSchema),
     prices: array(PriceSchema),
     handle: string(),
     status: enumType(["draft", "proposed", "published", "rejected"]),
     discountable: boolean(),
-    variants: array(ProductVariantSchema),
     options: array(ProductOptionSchema),
   }),
 ]);
-export type PublishedProduct = Output<typeof PublishedProductSchema>;
+export type PublishedProduct = Output<typeof PublishedProductSchema> & {
+  variants: ProductVariant[];
+};
 export const ProductUpdatesSchema = partial(
   pick(ProductSchema, [
     "title",
@@ -241,7 +240,10 @@ export const UpdateProductSchema = object({
   updates: ProductUpdatesSchema,
 });
 export type UpdateProduct = Output<typeof UpdateProductSchema>;
-export type Product = Output<typeof ProductSchema>;
+export type Product = Output<typeof ProductSchema> & {
+  variants?: ProductVariant[];
+  options?: ProductOption[];
+};
 
 export const ShippingOptionSchema = createInsertSchema(shippingOptions);
 export type ShippingOption = Output<typeof ShippingOptionSchema>;

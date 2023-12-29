@@ -73,7 +73,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   }),
 }));
 export const productsToSalesChannels = pgTable(
-  "productsToSalesChannels",
+  "products_to_sales_channels",
   {
     id: varchar("id"),
     productId: varchar("productId")
@@ -103,7 +103,7 @@ export const productsToSalesChannelsRelations = relations(
 );
 
 export const productsToTaxRates = pgTable(
-  "productsToTaxRates",
+  "products_to_tax_rates",
   {
     id: varchar("id"),
     productId: varchar("productId")
@@ -133,7 +133,7 @@ export const productsToTaxRatesRelations = relations(
   }),
 );
 export const productsToTags = pgTable(
-  "productsToTags",
+  "products_to_tags",
   {
     id: varchar("id"),
     productId: varchar("productId")

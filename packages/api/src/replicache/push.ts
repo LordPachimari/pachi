@@ -15,6 +15,7 @@ import { ProductRepository } from "../repositories/product";
 import { ProductOptionRepository } from "../repositories/product-option";
 import { ProductTagRepository } from "../repositories/product-tag";
 import { ProductVariantRepository } from "../repositories/product-variant";
+import { StoreRepository } from "../repositories/store";
 import { UserRepository } from "../repositories/user";
 import type { Services_ } from "../services/server";
 import { CartService_ } from "../services/server/cart";
@@ -102,6 +103,7 @@ export const push = async ({
           productVariantRepository: new ProductVariantRepository(transaction),
           userRepository: new UserRepository(transaction),
           productTagRepository: new ProductTagRepository(transaction),
+          storeRepository: new StoreRepository(transaction),
         };
         const services: Services_ = {
           cartService: new CartService_({
@@ -203,7 +205,7 @@ export const push = async ({
           console.log("Nothing to update");
         }
       },
-      { isolationLevel: "serializable", accessMode: "read write" },
+      { isolationLevel: "repeatable read", accessMode: "read write" },
     );
   };
 

@@ -55,15 +55,15 @@ export default function Organize({
       />
       {/* <InputField label="Product collection" /> */}
       <InputHeader label="Product tags" />
-      <TagInput
+      {/* <TagInput
         values={tags}
         onChange={async (values) => {
           setTags(values as string[]);
-          await onTagsChange(values as string[]);
+          // await onTagsChange(values as string[]);
         }}
         className="w-full"
         placeholder="product tags"
-      />
+      /> */}
     </div>
   );
 }

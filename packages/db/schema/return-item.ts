@@ -6,7 +6,7 @@ import { returns } from "./return";
 import { returnReasons } from "./return-reason";
 
 export const returnItems = pgTable(
-  "returnItems",
+  "return_items",
   {
     itemId: varchar("itemId").notNull().primaryKey(),
     isRequested: boolean("isRequested").default(true),

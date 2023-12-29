@@ -1,26 +1,26 @@
 import { useCallback, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
+import { Loader2, XIcon } from "lucide-react";
 
+import type { CartItem } from "@pachi/db";
 
 import { ReplicacheInstancesStore } from "~/zustand/replicache";
-import type { CartItem } from "@pachi/db";
-import { Loader2, XIcon } from "lucide-react";
 
 export default function DeleteItemButton({ item }: { item: CartItem }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const globalRep = ReplicacheInstancesStore((state) => state.globalRep);
-  const deleteItem = useCallback(async(id:string)=>{
-    const cartId= localStorage.getItem('cartId')
-    if(!cartId) return
+  const deleteItem = useCallback(async (id: string) => {
+    const cartId = localStorage.getItem("cartId");
+    if (!cartId) return;
     await globalRep?.mutate.deleteItem({
-      args:{
+      args: {
         cartId,
         id,
-      }
-    })
-  },[])
+      },
+    });
+  }, []);
 
   return (
     <button
@@ -28,7 +28,6 @@ export default function DeleteItemButton({ item }: { item: CartItem }) {
       onClick={() => {
         startTransition(async () => {
           const error = await deleteItem(item.id);
-
         });
       }}
       disabled={isPending}

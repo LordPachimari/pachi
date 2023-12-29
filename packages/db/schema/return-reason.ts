@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const returnReasons = pgTable(
-  "returnReasons",
+  "return_reasons",
   {
     id: varchar("id").notNull().primaryKey(),
     createdAt: varchar("createdAt"),

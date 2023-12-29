@@ -1,6 +1,5 @@
 import type * as Party from "partykit/server";
 
-import { auth } from "@pachi/auth";
 
 export default class Server implements Party.Server {
   constructor(readonly party: Party.Party) {}

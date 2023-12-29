@@ -16,7 +16,6 @@ export function Products() {
       storeId: "m1e",
       description: "dadwwad",
       handle: "dadwad",
-      images: [],
       options: [],
       variants: [],
       prices: [

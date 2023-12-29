@@ -4,7 +4,7 @@ import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
 import { fulfillments } from "./fulfillment";
 
 export const trackingLinks = pgTable(
-  "trackingLinks",
+  "tracking_links",
   {
     id: varchar("id").notNull().primaryKey(),
     fulfillmentId: varchar("fulfillmentId"),
@@ -19,12 +19,9 @@ export const trackingLinks = pgTable(
     fulfillmentIdIndex: index("fulfillmentIdIndex").on(t.fulfillmentId),
   }),
 );
-export const trackingLinksRelations = relations(
-  trackingLinks,
-  ({ one }) => ({
-    fulfillment: one(fulfillments, {
-      fields: [trackingLinks.fulfillmentId],
-      references: [fulfillments.id],
-    }),
+export const trackingLinksRelations = relations(trackingLinks, ({ one }) => ({
+  fulfillment: one(fulfillments, {
+    fields: [trackingLinks.fulfillmentId],
+    references: [fulfillments.id],
   }),
-);
+}));

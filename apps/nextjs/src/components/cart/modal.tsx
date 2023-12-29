@@ -73,7 +73,7 @@ export default function CartModal({ cart }: { cart: Cart | undefined }) {
                 </button>
               </div>
 
-              {!cart || (cart.items??[]).length === 0 ? (
+              {!cart || (cart.items ?? []).length === 0 ? (
                 <div className="mt-20 flex w-full flex-col items-center justify-center overflow-hidden">
                   <ShoppingCartIcon className="h-16" />
                   <p className="mt-6 text-center text-2xl font-bold">
@@ -87,11 +87,11 @@ export default function CartModal({ cart }: { cart: Cart | undefined }) {
                       const merchandiseSearchParams =
                         {} as MerchandiseSearchParams;
 
-                      item.variant!.options!.forEach((option) => {
-                        merchandiseSearchParams[
-                          option.optionName.toLowerCase()
-                        ] = option.value;
-                      });
+                      // item.variant!.options!.forEach((option) => {
+                      //   merchandiseSearchParams[
+                      //     option.optionName.toLowerCase()
+                      //   ] = option.value;
+                      // });
 
                       const merchandiseUrl = createUrl(
                         `/product/${item.variant!.product!.handle}`,

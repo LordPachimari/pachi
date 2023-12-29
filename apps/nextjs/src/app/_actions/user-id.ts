@@ -19,7 +19,9 @@ export async function getUsername(
   userId: string | undefined,
 ): Promise<string | undefined> {
   if (!userId) return undefined;
-  const response = await fetch(`${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/${userId}`);
+  const response = await fetch(
+    `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/username/${userId}`,
+  );
   const usernameObj = (await response.json()) as {
     username: string | undefined;
   };

@@ -24,12 +24,11 @@ export default function GlobalRep({ userId }: GlobalRepProps) {
     const r = new Replicache({
       name: userId,
       licenseKey: env.NEXT_PUBLIC_REPLICACHE_KEY,
-      pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/global`,
-      pullURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/global`,
+      pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/global?userId=${userId}`,
+      pullURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/global?userId=${userId}`,
       mutators: globalMutators,
       pullInterval: null,
     });
-
     setRep(r);
   }, [rep, setRep, userId]);
   return <></>;

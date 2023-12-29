@@ -12,7 +12,7 @@ import { priceLists } from "./price-list";
 import { users } from "./user";
 
 export const customerGroups = pgTable(
-  "customerGroups",
+  "customer_groups",
   {
     id: varchar("id").notNull().primaryKey(),
     createdAt: varchar("createdAt"),
@@ -22,7 +22,7 @@ export const customerGroups = pgTable(
     description: text("description"),
   },
   (customerGroup) => ({
-    nameIndex: index("nameIndex").on(customerGroup.name),
+    cgNameIndex: index("cgNameIndex").on(customerGroup.name),
   }),
 );
 export const customerGroupRelations = relations(customerGroups, ({ many }) => ({
@@ -30,7 +30,7 @@ export const customerGroupRelations = relations(customerGroups, ({ many }) => ({
   price_lists: many(customerGroupsToPriceLists),
 }));
 export const customersToGroups = pgTable(
-  "customersToGroups",
+  "customers_to_groups",
   {
     id: varchar("id"),
     version: integer("version"),
@@ -60,7 +60,7 @@ export const customersToGroupsRelations = relations(
 );
 
 export const customerGroupsToPriceLists = pgTable(
-  "customerGroupsToPriceLists",
+  "customer_groups_to_price_lists",
   {
     id: varchar("id"),
     customerGroupId: varchar("customerGroupId")

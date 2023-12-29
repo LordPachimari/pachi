@@ -29,7 +29,7 @@ import { ReplicacheInstancesStore } from "~/zustand/replicache";
 import { CurrenciesTable } from "./table";
 
 interface CurrencyTableProps {
-  storeCurrencies: string[];
+  productCurrencies: string[];
   storeId: string;
   prices: Price[];
   variantId: string;
@@ -38,7 +38,7 @@ interface CurrencyTableProps {
 }
 
 export function Table({
-  storeCurrencies,
+  productCurrencies,
   storeId,
   prices,
   productId,
@@ -46,10 +46,8 @@ export function Table({
   close,
 }: CurrencyTableProps) {
   const [selectedRowIds, setSelectedRowIds] =
-    React.useState<string[]>(storeCurrencies);
+    React.useState<string[]>(productCurrencies);
   const [saving, setSaving] = React.useState(false);
-  console.log("storeCurrencies", storeCurrencies);
-  console.log("selectedRowIds", selectedRowIds);
   const globalRep = ReplicacheInstancesStore((state) => state.globalRep);
   const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const currencyData = Object.values(currencies);
@@ -112,7 +110,7 @@ export function Table({
       //   enableHiding: true,
       // },
     ],
-    [storeCurrencies],
+    [productCurrencies],
   );
   const saveCurrencies = React.useCallback(async () => {
     setSaving(true);

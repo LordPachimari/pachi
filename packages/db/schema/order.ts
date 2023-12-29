@@ -130,7 +130,7 @@ export const OrderRelations = relations(orders, ({ one, many }) => ({
   swaps: many(swaps),
   // gift_card_transactions: many(GiftCardTransaction),
 }));
-export const ordersToDiscounts = pgTable("ordersToDiscounts", {
+export const ordersToDiscounts = pgTable("orders_to_discounts", {
   discountId: varchar("discountId")
     .notNull()
     .references(() => discounts.id),

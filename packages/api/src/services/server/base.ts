@@ -19,5 +19,4 @@ export class ServiceBase_ {
     this.replicacheTransaction = replicacheTransaction;
     this.storage = storage;
   }
-
 }

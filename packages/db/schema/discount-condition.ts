@@ -13,7 +13,7 @@ import { discountRules } from "./discount-rule";
 import { products } from "./product";
 
 export const discountConditions = pgTable(
-  "discountConditions",
+  "discount_conditions",
   {
     id: varchar("id").notNull().primaryKey(),
     createdAt: varchar("createdAt"),
@@ -53,7 +53,7 @@ export const discountConditionRelations = relations(
   }),
 );
 export const discountConditionsToProducts = pgTable(
-  "discountConditionsToProducts",
+  "discount_conditions_to_products",
   {
     conditionId: varchar("conditionId")
       .notNull()
@@ -80,7 +80,7 @@ export const discountConditionsToProductsRelations = relations(
   }),
 );
 export const discountConditionsToCustomerGroups = pgTable(
-  "discountConditionsToCustomerGroups",
+  "discount_conditions_to_customer_groups",
   {
     conditionId: varchar("conditionId")
       .notNull()
@@ -108,7 +108,7 @@ export const discountConditionsToCustomerGroupsRelations = relations(
 );
 
 export const discountConditionCustomerGroups = pgTable(
-  "discountConditionCustomerGroups",
+  "discount_condition_customer_groups",
   {
     conditionId: varchar("conditionId")
       .notNull()
@@ -142,7 +142,7 @@ export const discountConditionsCustomerGroupsRelations = relations(
 );
 
 export const discountConditionProducts = pgTable(
-  "discountCondition_products",
+  "discount_condition_products",
   {
     conditionId: varchar("conditionId").notNull(),
     createdAt: varchar("createdAt"),

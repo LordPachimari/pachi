@@ -35,9 +35,7 @@ export const CartItemService = {
     //TODO: check for the price list
 
     const prices = variant.prices ?? [];
-    const unitPrice = prices.find(
-      (p) => p.currencyCode === item.currencyCode,
-    );
+    const unitPrice = prices.find((p) => p.currencyCode === item.currencyCode);
     if (!unitPrice) {
       throw new MedusaError(
         MedusaError.Types.INVALID_ARGUMENT,
@@ -58,7 +56,7 @@ export const CartItemService = {
       cartId: item.cartId,
       createdAt: new Date().toISOString(),
       total: unitPrice.amount * (item.quantity || 1),
-      currencyCode:item.currencyCode
+      currencyCode: item.currencyCode,
     };
     return cartItem;
   },
@@ -76,7 +74,7 @@ export const CartItemService = {
     }
     await manager.put(cartId, {
       ...cart,
-      items: (cart.items??[]).filter((i) => i.id !== itemId),
+      items: (cart.items ?? []).filter((i) => i.id !== itemId),
     });
   },
   async updateItem({ args, manager }: { args: UpdateCartItem } & ServiceBase) {
@@ -95,7 +93,7 @@ export const CartItemService = {
 
     return manager.put(cartId, {
       ...cart,
-      items: (cart.items??[]).map((i) => {
+      items: (cart.items ?? []).map((i) => {
         if (i.id === id) {
           return {
             ...i,

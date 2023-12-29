@@ -6,7 +6,7 @@ import { regions } from "./region";
 import { shippingOptionsToTaxRates } from "./shipping-option";
 
 export const taxRates = pgTable(
-  "taxRates",
+  "tax_rates",
   {
     id: varchar("id").notNull().primaryKey(),
     createdAt: varchar("createdAt"),

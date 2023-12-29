@@ -3,7 +3,7 @@ import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
 import { discountConditions } from "./discount-condition";
 
-export const discountRules = pgTable("discountRules", {
+export const discountRules = pgTable("discount_rules", {
   allocation: varchar("allocation", { enum: ["item", "total"] }),
   id: varchar("id").notNull().primaryKey(),
   createdAt: varchar("createdAt"),
@@ -13,10 +13,6 @@ export const discountRules = pgTable("discountRules", {
   value: integer("value").notNull(),
   version: integer("version").notNull().default(0),
 });
-export const discountRulesRelations = relations(
-  discountRules,
-  ({ many }) => ({
-    conditions: many(discountConditions),
-  }),
-);
-
+export const discountRulesRelations = relations(discountRules, ({ many }) => ({
+  conditions: many(discountConditions),
+}));

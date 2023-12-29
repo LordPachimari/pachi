@@ -51,7 +51,7 @@ export const discounts_relations = relations(discounts, ({ one, many }) => ({
   many: many(discountsToRegions),
 }));
 export const discountsToRegions = pgTable(
-  "discountsToRegions",
+  "discounts_to_regions",
   {
     discountId: varchar("discountId")
       .notNull()

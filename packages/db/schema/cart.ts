@@ -47,16 +47,16 @@ export const carts = pgTable(
     version: integer("version").default(0),
   },
   (cart) => ({
-    billingAddressIdIndex: index("billingAddressIdIndex").on(
+    billingAddressIdIndex1: index("billingAddressIdIndex1").on(
       cart.billingAddressId,
     ),
-    shippingAddressIdIndex: index("shippingAddressIdIndex").on(
+    shippingAddressIdIndex1: index("shippingAddressIdIndex1").on(
       cart.shippingAddressId,
     ),
-    regionIdIndex: index("regionIdIndex").on(cart.regionId),
-    customerIdIndex: index("customerIdIndex").on(cart.customerId),
-    paymentIdIndex: index("paymentIdIndex").on(cart.paymentId),
-    salesChannelIdIndex: index("salesChannelIdIndex").on(cart.salesChannelId),
+    regionIdIndex1: index("regionIdIndex1").on(cart.regionId),
+    customerIdIndex1: index("customerIdIndex1").on(cart.customerId),
+    paymentIdIndex1: index("paymentIdIndex1").on(cart.paymentId),
+    salesChannelIdIndex1: index("salesChannelIdIndex1").on(cart.salesChannelId),
   }),
 );
 export const cartsRelations = relations(carts, ({ one, many }) => ({

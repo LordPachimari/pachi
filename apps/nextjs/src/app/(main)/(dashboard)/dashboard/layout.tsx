@@ -7,10 +7,9 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function DashboardLayout({
-  children,
-}: DashboardLayoutProps) {
-  const userId = await getUserId();
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  // const userId = await getUserId();
+  const userId = "user1";
   // const socket = useRef(
   //   new PartySocket({
   //     host: `http://127.0.0.1:1999/parties/push`, // for local development
@@ -33,7 +32,10 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen">
-      <DashboardSidebar items={dashboardConfig.sidebarNav} />
+      <DashboardSidebar
+        items={dashboardConfig.sidebarNav}
+        storeId="pachimari"
+      />
       <main className="ml-14 w-full">{children}</main>
       <DashboardRep userId={userId} />
     </div>

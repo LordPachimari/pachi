@@ -31,10 +31,22 @@ export const getFullItems = async ({
         // },
         variants: {
           with: {
-            options: true,
+            optionValues: {
+              with: {
+                optionValue: {
+                  with: {
+                    option: true,
+                  },
+                },
+              },
+            },
           },
         },
-        options: true,
+        options: {
+          with: {
+            values: true,
+          },
+        },
         store: true,
       },
     });

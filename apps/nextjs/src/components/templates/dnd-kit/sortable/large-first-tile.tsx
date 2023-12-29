@@ -26,7 +26,11 @@ export const LargeFirstTile = ({
   updateProductImagesOrder,
 }: {
   items: ItemProps[];
-  updateProductImagesOrder?: (images: Image[]) => Promise<void>;
+  updateProductImagesOrder?: ({
+    order,
+  }: {
+    order: Record<string, number>;
+  }) => Promise<void>;
 }) => {
   const animateLayoutChanges: AnimateLayoutChanges = (args) =>
     defaultAnimateLayoutChanges({ ...args, wasDragging: true });

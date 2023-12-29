@@ -156,9 +156,7 @@ export function Sortable({
       setItems(initialItems);
     }
   }, [initialItems]);
-
   console.log("items", items);
-  console.log("initialItems", initialItems);
 
   return (
     <DndContext
@@ -182,10 +180,21 @@ export function Sortable({
           if (activeIndex !== overIndex) {
             setItems((items) => {
               const reordered = reorderItems(items, activeIndex, overIndex);
-              if (itemsType === "images" && updateProductImagesOrder)
-                console.log("reordered <=====", reordered);
-              if(updateProductImagesOrder)
-                updateProductImagesOrder(reordered );
+
+              console.log("reordered <=====", reordered);
+              if (
+                itemsType === "images" &&
+                updateProductImagesOrder !== undefined
+              ) {
+                const order: Record<string, number> = {};
+                reordered.forEach((item, index) => {
+                  order[item.id] = index;
+                });
+                updateProductImagesOrder({ order }).catch((err) =>
+                  console.log(err),
+                );
+              }
+
               return reordered;
             });
           }

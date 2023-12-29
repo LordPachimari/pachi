@@ -11,7 +11,7 @@ import {
 import { customerGroups } from "./customer-group";
 import { prices } from "./price";
 
-export const priceLists = pgTable("priceLists", {
+export const priceLists = pgTable("price_lists", {
   id: varchar("id").notNull().primaryKey(),
   createdAt: varchar("createdAt"),
   updatedAt: varchar("updatedAt"),
@@ -35,7 +35,7 @@ export const priceListRelations = relations(priceLists, ({ many }) => ({
   prices: many(prices),
 }));
 export const priceListsToCustomerGroups = pgTable(
-  "priceListsToCustomerGroups",
+  "price_lists_to_customer_groups",
   {
     id: varchar("id"),
     customerGroupId: varchar("customerGroupId")

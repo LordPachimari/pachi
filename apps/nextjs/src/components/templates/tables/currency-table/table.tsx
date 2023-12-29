@@ -17,7 +17,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { Button } from "~/components/atoms/button";
 import { ScrollArea } from "~/components/atoms/scroll-area";
 import {
   Table,

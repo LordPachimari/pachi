@@ -55,6 +55,10 @@ export interface Props {
     id: UniqueIdentifier;
   }): React.CSSProperties;
   isDisabled?(id: UniqueIdentifier): boolean;
-  updateProductImagesOrder?: (images: Image[]) => void;
+  updateProductImagesOrder?: ({
+    order,
+  }: {
+    order: Record<string, number>;
+  }) => Promise<void>;
   itemsType: "images";
 }

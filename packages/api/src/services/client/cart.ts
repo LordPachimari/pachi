@@ -29,7 +29,7 @@ export const CartService = {
     cart.itemTaxTotal = 0;
     cart.shippingTotal = 0;
     cart.shippingTaxTotal = 0;
-    cart.totalQuantity = 0
+    cart.totalQuantity = 0;
 
     cart.items = cartItems.map((item) => {
       cart.subtotal! += item.total;

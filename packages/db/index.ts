@@ -34,6 +34,7 @@ const tableName = [
   "priceLists",
   "prices",
   "stores",
+  "productOptionValuesToProductVariants",
 ] as const;
 export const pool = new Pool({
   connectionString: "",

@@ -51,7 +51,7 @@ export const region_relations = relations(regions, ({ one, many }) => ({
   fulfillmentProviders: many(regionsToFulfillmentProviders),
 }));
 export const regionsToPaymentProviders = pgTable(
-  "regionsToPaymentProviders",
+  "regions_to_payment_providers",
   {
     id: varchar("id"),
     paymentProviderId: varchar("paymentProviderId")

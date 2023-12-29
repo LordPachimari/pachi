@@ -5,7 +5,7 @@ import { products } from "./product";
 import { productOptionValues } from "./product-option-value";
 
 export const productOptions = pgTable(
-  "productOptions",
+  "product_options",
   {
     id: varchar("id").notNull().primaryKey(),
     productId: varchar("productId")

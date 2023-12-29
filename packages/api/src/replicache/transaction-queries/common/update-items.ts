@@ -32,8 +32,6 @@ export const updateItems_ = ({
     }
   } else {
     const table = tableNamesMap[tableName];
-    console.log("table__", table);
-
     for (const { id, value } of items) {
       console.log("value", JSON.stringify(value));
       if (Object.values(value).length > 0)

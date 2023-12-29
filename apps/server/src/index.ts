@@ -1,23 +1,25 @@
-import { pg } from "@lucia-auth/adapter-postgresql";
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
-import { Hono, type Context } from "hono";
+import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import * as jose from "jose";
-import { lucia } from "lucia";
-import { hono } from "lucia/middleware";
-import { number, object, string } from "valibot";
+import { object, string } from "valibot";
 
 import { pull, push, type Bindings } from "@pachi/api";
 import {
-  pool,
   schema,
   type Country,
   type Currency,
   type Store,
   type User,
 } from "@pachi/db";
+import {
+  countries as countriesTable,
+  currencies,
+  stores,
+  users,
+} from "@pachi/db/schema";
 import {
   countries,
   currencies as currencies_values,
@@ -26,22 +28,6 @@ import {
 } from "@pachi/types";
 import { generateId, ulid } from "@pachi/utils";
 
-function getToken(
-  c: Context<
-    {
-      Bindings: Bindings;
-    },
-    "*",
-    {}
-  >,
-): string | undefined {
-  const cookie = getCookie(c, "hanko");
-  const authorization = c.req.raw.headers.get("authorization");
-  if (authorization && authorization.split(" ")[0] === "Bearer")
-    return authorization.split(" ")[1];
-  else if (cookie) return cookie;
-  return undefined;
-}
 const app = new Hono<{ Bindings: Bindings }>();
 app.use("/*", cors());
 app.use("/*", async (c, next) => {
@@ -58,26 +44,29 @@ app.use("/*", async (c, next) => {
   });
   return await next();
 });
-app.use("*", async (c, next) => {
-  const auth = lucia({
-    env: "DEV", // "PROD" if deployed to HTTPS
-    middleware: hono(),
-    adapter: pg(pool, {
-      user: "users",
-      key: "user_key",
-      session: "user_sessions",
-    }),
-  });
-  const authRequest = auth.handleRequest(c);
-  const session = await authRequest.validate();
-  console.log("session", session);
-  c.set("auth" as never, session.user as { userId: string });
-
-  return await next();
-});
+// app.use("*", async (c, next) => {
+//   if (c.env.ENVIRONMENT === "test") {
+//     return await next();
+//   }
+//   const jwt = getCookie(c, "hanko");
+//   const JWKS_ENDPOINT = `${c.env.HANKO_URL}/.well-known/jwks.json`;
+//   const JWKS = jose.createRemoteJWKSet(new URL(JWKS_ENDPOINT), {
+//     cooldownDuration: 120000,
+//   });
+//   if (jwt) {
+//     try {
+//       const { payload } = await jose.jwtVerify(jwt, JWKS);
+//       console.log("what is payload sub?", payload.sub);
+//       c.set("auth" as never, payload.sub);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+//   return await next();
+// });
 app.post("/pull/:spaceId", async (c) => {
   const userId =
-    c.env.ENVIRONMENT === "test"
+    c.env.ENVIRONMENT === "test" || c.env.ENVIRONMENT === "dev"
       ? c.req.query("userId")
       : c.get("auth" as never);
   console.log("userId", userId);
@@ -104,7 +93,7 @@ app.post("/pull/:spaceId", async (c) => {
 });
 app.post("/push/:spaceId", async (c) => {
   const userId =
-    c.env.ENVIRONMENT === "test"
+    c.env.ENVIRONMENT === "test" || c.env.ENVIRONMENT === "dev"
       ? c.req.query("userId")
       : c.get("auth" as never);
   console.log("userId", userId);
@@ -165,7 +154,7 @@ app.post("/countries", async (c) => {
     };
   });
   //@ts-ignore
-  await db.insert(countries_table).values(values);
+  await db.insert(countriesTable).values(values);
   return c.json({}, 200);
 });
 app.get("/username/:id", async (c) => {
@@ -179,6 +168,7 @@ app.get("/username/:id", async (c) => {
   });
   return c.json({ username: user?.username }, 200);
 });
+
 app.post("/create-user", async (c) => {
   const pool = new Pool({ connectionString: c.env.DATABASE_URL });
   const db = drizzle(pool, { schema });
@@ -202,18 +192,16 @@ app.post("/create-user", async (c) => {
       createdAt,
     };
     const newStore: Store = {
-      id: generateId({ id: ulid(), prefix: "store" }),
+      id: generateId({ id: username, prefix: "store" }),
       name: username,
       founderId: userId,
       version: 0,
       createdAt,
     };
-    await Promise.all([
+    //@ts-ignore
+    await db.insert(users).values(newUser),
       //@ts-ignore
-      db.insert(users).values(newUser),
-      //@ts-ignore
-      db.insert(stores).values(newStore),
-    ]);
+      await db.insert(stores).values(newStore);
     return c.json({ message: "Successfully created user" }, 200);
   } catch (error) {
     console.log(error);

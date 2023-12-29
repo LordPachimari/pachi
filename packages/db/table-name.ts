@@ -9,6 +9,7 @@ import {
   productCollections,
   productOptions,
   productOptionValues,
+  productOptionValuesToProductVariants,
   products,
   productsToTags,
   productTags,
@@ -36,6 +37,8 @@ type PriceTable = typeof prices;
 type StoreTable = typeof stores;
 type ProductTagTable = typeof productTags;
 type ProductToTagTable = typeof productsToTags;
+type ProductOptionValuesToProductVariantsTable =
+  typeof productOptionValuesToProductVariants;
 
 export type Table =
   | UserTable
@@ -56,7 +59,8 @@ export type Table =
   | PriceTable
   | StoreTable
   | ProductTagTable
-  | ProductToTagTable;
+  | ProductToTagTable
+  | ProductOptionValuesToProductVariantsTable;
 
 export const tableNamesMap: Record<TableName, Table> = {
   users,
@@ -77,5 +81,6 @@ export const tableNamesMap: Record<TableName, Table> = {
   prices,
   productTags,
   productsToTags,
+  productOptionValuesToProductVariants,
 };
 export type TableNamesMap = typeof tableNamesMap;

@@ -6,6 +6,8 @@ import debounce from "lodash.debounce";
 import { useSubscribe } from "replicache-react";
 
 import type {
+  AssignProductOptionValueToVariantProps,
+  UpdateImagesOrderProps,
   UpdatePriceProps,
   UpdateProductVariantProps,
   UploadImagesProps,
@@ -79,7 +81,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   );
 
   useEffect(() => {
-    if (!storeId ) router.push("/home")
+    if (!storeId) router.push("/home");
   }, [router, storeId]);
   const store = useSubscribe(
     globalRep,
@@ -161,6 +163,18 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     },
     [dashboardRep],
   );
+  const updateProductImagesOrder = useCallback(
+    async ({ order, productId, variantId }: UpdateImagesOrderProps["args"]) => {
+      await dashboardRep?.mutate.updateImagesOrder({
+        args: {
+          productId,
+          variantId,
+          order,
+        },
+      });
+    },
+    [dashboardRep],
+  );
 
   const createVariant = useCallback(async () => {
     if (dashboardRep && product) {
@@ -189,6 +203,28 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     newParams.set("q", value);
     router.push(createUrl(id, newParams));
   };
+  const onOptionValueChange = useCallback(
+    async ({
+      optionId,
+      optionValueId,
+      prevOptionValueId,
+      productId,
+      variantId,
+    }: AssignProductOptionValueToVariantProps["args"]) => {
+      if (dashboardRep) {
+        await dashboardRep.mutate.assignProductOptionValueToVariant({
+          args: {
+            optionId,
+            optionValueId,
+            ...(prevOptionValueId && { prevOptionValueId }),
+            productId,
+            variantId,
+          },
+        });
+      }
+    },
+    [dashboardRep],
+  );
 
   const variantId = searchParams.get("variantId");
   const variant = product?.variants?.find(
@@ -213,10 +249,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           storeId={store.id}
           closeModal={closeModal}
           isOpen={isVariantModalOpen}
+          updateProductImagesOrder={updateProductImagesOrder}
+          onOptionValueChange={onOptionValueChange}
         />
       )}
       <div className="flex h-full w-full flex-col-reverse  md:flex-row ">
-        <section className="static flex h-full w-full max-w-[1020px]  flex-col items-center border-r lg:fixed lg:w-[400px]">
+        <section className="static flex h-full w-full max-w-[1020px]  flex-col items-center border-r lg:fixed lg:w-[450px]">
           <Tabs
             aria-label="Stages"
             className="m-0 w-11/12 pt-4"
@@ -266,6 +304,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                     setFiles={setFiles}
                     uploadProductImages={uploadProductImages}
                     store={store}
+                    updateProductImagesOrder={updateProductImagesOrder}
                   />
                 )}
               </ScrollArea>
@@ -292,7 +331,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </TabsContent>
             <TabsContent key="advanced" value="advanced">
               <ScrollArea className="h-product-input  ">
-                <Advanced />
+                {product && (
+                  <Advanced
+                    variant={product!.variants![0]}
+                    updateVariant={updateVariant}
+                  />
+                )}
               </ScrollArea>
             </TabsContent>
           </Tabs>
@@ -303,7 +347,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </Button>
           </div>
         </section>
-        <section className="flex h-full w-full  flex-col  gap-4 lg:ml-[400px] 2xl:flex-row ">
+        <section className="flex h-full w-full  flex-col  gap-4 lg:ml-[450px] 2xl:flex-row ">
           <Gallery images={files} />
           <ProductOverview />
         </section>
