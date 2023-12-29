@@ -1,9 +1,15 @@
+import { relations } from "drizzle-orm";
 import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
-export const product_tags = pgTable("product_tags", {
+import { productsToTags } from "./product";
+
+export const productTags = pgTable("product_tags", {
   id: varchar("id").notNull().primaryKey(),
-  created_at: varchar("created_at"),
-  updated_at: varchar("updated_at"),
+  createdAt: varchar("createdAt").notNull(),
+  updatedAt: varchar("updatedAt"),
   value: varchar("value").notNull(),
   version: integer("version").notNull().default(0),
 });
+export const productTagsRelations = relations(productTags, ({ many }) => ({
+  products: many(productsToTags),
+}));

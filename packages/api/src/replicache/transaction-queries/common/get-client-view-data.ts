@@ -15,7 +15,7 @@ export const getClientViewDataWithTables = async <T extends SpaceId>({
   transaction,
 }: {
   spaceId: T;
-  userId?: string;
+  userId?: string | undefined;
   subspaceId: SubspaceIds<T>;
   transaction: Transaction;
 }): Promise<ClientViewDataWithTable> => {

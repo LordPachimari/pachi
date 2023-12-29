@@ -1,4 +1,4 @@
-import { getUsername, userId } from "~/app/_actions/user-id";
+import { getUserId } from "~/app/_actions/user-id";
 import DashboardRep from "~/components/other/replicache/dashboard-rep";
 import DashboardSidebar from "~/components/templates/sidebars/dashboard-sidebar";
 import { dashboardConfig } from "~/config/dashboard";
@@ -7,10 +7,9 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function DashboardLayout({
-  children,
-}: DashboardLayoutProps) {
-  const user_id = await userId();
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  // const userId = await getUserId();
+  const userId = "user1";
   // const socket = useRef(
   //   new PartySocket({
   //     host: `http://127.0.0.1:1999/parties/push`, // for local development
@@ -33,9 +32,12 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen">
-      <DashboardSidebar items={dashboardConfig.sidebarNav} />
+      <DashboardSidebar
+        items={dashboardConfig.sidebarNav}
+        storeId="pachimari"
+      />
       <main className="ml-14 w-full">{children}</main>
-      <DashboardRep userId={user_id} />
+      <DashboardRep userId={userId} />
     </div>
   );
 }

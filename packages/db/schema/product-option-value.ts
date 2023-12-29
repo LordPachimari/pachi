@@ -1,37 +1,70 @@
 import { relations } from "drizzle-orm";
-import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import {
+  index,
+  integer,
+  pgTable,
+  primaryKey,
+  varchar,
+} from "drizzle-orm/pg-core";
 
-import { product_options } from "./product-option";
-import { product_variants } from "./product-variant";
+import { productOptions } from "./product-option";
+import { productVariants } from "./product-variant";
 
-export const product_option_values = pgTable(
+export const productOptionValues = pgTable(
   "product_option_values",
   {
     id: varchar("id").notNull().primaryKey(),
-    variant_id: varchar("variant_id").references(() => product_variants.id),
+    variantId: varchar("variantId").references(() => productVariants.id),
     value: varchar("value").notNull(),
-    option_id: varchar("option_id")
+    optionId: varchar("optionId")
       .notNull()
-      .references(() => product_options.id, { onDelete: "cascade" }),
+      .references(() => productOptions.id, { onDelete: "cascade" }),
     version: integer("version").notNull().default(0),
   },
-  (product_option) => ({
-    product_variant_id_index: index("product_variant_id_index").on(
-      product_option.variant_id,
+  (productOption) => ({
+    productVariantIdIndex: index("productVariantIdIndex").on(
+      productOption.variantId,
     ),
-    option_id_index: index("option_id_index").on(product_option.option_id),
+    optionIdIndex: index("optionIdIndex").on(productOption.optionId),
   }),
 );
-export const product_option_values_relations = relations(
-  product_option_values,
-  ({ one }) => ({
-    variant: one(product_variants, {
-      fields: [product_option_values.variant_id],
-      references: [product_variants.id],
+export const productOptionValuesRelations = relations(
+  productOptionValues,
+  ({ one, many }) => ({
+    option: one(productOptions, {
+      fields: [productOptionValues.optionId],
+      references: [productOptions.id],
     }),
-    option: one(product_options, {
-      fields: [product_option_values.option_id],
-      references: [product_options.id],
+    optionValues: many(productOptionValuesToProductVariants),
+  }),
+);
+export const productOptionValuesToProductVariants = pgTable(
+  "product_option_values_to_product_variants",
+  {
+    id: varchar("id"),
+    optionValueId: varchar("optionValueId")
+      .notNull()
+      .references(() => productOptionValues.id, { onDelete: "cascade" }),
+    variantId: varchar("variantId")
+      .notNull()
+      .references(() => productVariants.id, { onDelete: "cascade" }),
+    version: integer("version"),
+  },
+  (t) => ({
+    pk: primaryKey(t.optionValueId, t.variantId),
+  }),
+);
+export const productOptionValuesToProductVariantsRelations = relations(
+  productOptionValuesToProductVariants,
+  ({ one }) => ({
+    variant: one(productVariants, {
+      fields: [productOptionValuesToProductVariants.variantId],
+      references: [productVariants.id],
+      relationName: "variant.optionValues",
+    }),
+    optionValue: one(productOptionValues, {
+      fields: [productOptionValuesToProductVariants.optionValueId],
+      references: [productOptionValues.id],
     }),
   }),
 );

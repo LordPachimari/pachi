@@ -62,7 +62,7 @@
 //             args: {
 //               product: {
 //                 id: "product1",
-//                 created_at: "2023-10-06T03:48:05.047Z",
+//                 createdAt: "2023-10-06T03:48:05.047Z",
 //                 seller_id: "user1",
 //               },
 //             },

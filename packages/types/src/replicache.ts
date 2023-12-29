@@ -76,6 +76,9 @@ export const mutationAffectedSpaces = {
   deleteProduct: {
     dashboard: ["store"] as const,
   },
+  deleteProductVariant: {
+    dashboard: ["store"] as const,
+  },
   publishProduct: {
     dashboard: ["store"] as const,
     products: ["products"] as const,
@@ -124,6 +127,9 @@ export const mutationAffectedSpaces = {
     dashboard: ["store"] as const,
   },
   deletePrices: {
+    dashboard: ["store"] as const,
+  },
+  assignProductOptionValueToVariant: {
     dashboard: ["store"] as const,
   },
 };

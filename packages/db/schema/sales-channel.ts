@@ -1,11 +1,11 @@
 import { boolean, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
 
-export const sales_channels = pgTable("sales_channels", {
+export const salesChannels = pgTable("sales_channels", {
   id: varchar("id").notNull().primaryKey(),
-  created_at: varchar("created_at"),
+  createdAt: varchar("createdAt"),
   description: text("description"),
-  is_disabled: boolean("is_disabled").default(false),
+  isDisabled: boolean("isDisabled").default(false),
   title: varchar("title").notNull(),
-  updated_at: varchar("updated_at"),
+  updatedAt: varchar("updatedAt"),
   version: integer("version").notNull().default(0),
 });

@@ -1,7 +1,8 @@
 import type { WriteTransaction } from "replicache";
-import { string } from "valibot";
+import { number, object, string } from "valibot";
 
 import {
+  CartSchema,
   StoreSchema,
   StoreUpdatesSchema,
   UserSchema,
@@ -9,11 +10,17 @@ import {
 } from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
+import { CartService } from "../../../services/client/cart";
+import { CartItemService } from "../../../services/client/cart-item";
 import type {
+  AddItemToCartProps,
+  CreateCartProps,
   CreateStoreProps,
   CreateUserProps,
+  DeleteItemProps,
+  UpdateItemQuantityProps,
   UpdateStoreProps,
-} from "../../../types/mutators";
+} from "../../../types/mutators/global";
 
 export type GlobalMutators = typeof globalMutators;
 
@@ -46,13 +53,13 @@ export const globalMutators = {
   // },
   createUser: async (tx: WriteTransaction, { args }: CreateUserProps) => {
     const { user } = args;
-    const new_store_id = generateId({ prefix: "store", id: user.id });
+    const newStoreId = generateId({ prefix: "store", id: user.id });
     const store: Store = {
-      id: new_store_id,
-      created_at: new Date().toISOString(),
+      id: newStoreId,
+      createdAt: new Date().toISOString(),
       name: "My Store",
       version: 1,
-      founder_id: user.id,
+      founderId: user.id,
     };
     UserSchema._parse(user);
     await Promise.all([tx.put(user.id, user), tx.put(store.id, store)]);
@@ -64,15 +71,74 @@ export const globalMutators = {
     await tx.put(store.id, store);
   },
   updateStore: async (tx: WriteTransaction, { args }: UpdateStoreProps) => {
-    const { store_id, updates } = args;
-    string()._parse(store_id);
+    const { storeId, updates } = args;
+    string()._parse(storeId);
     StoreUpdatesSchema._parse(updates);
-    const store = (await tx.get(store_id)) as Store | undefined;
+    const store = (await tx.get(storeId)) as Store | undefined;
     if (!store) {
       console.info(`Store  not found`);
       return;
     }
     const updated = { ...store, ...updates };
-    await tx.put(store_id, updated);
+    await tx.put(storeId, updated);
+  },
+
+  createCart: async (tx: WriteTransaction, { args }: CreateCartProps) => {
+    const { cart } = args;
+    CartSchema._parse(cart);
+    await tx.put(cart.id, cart);
+  },
+
+  addItemToCart: async (tx: WriteTransaction, { args }: AddItemToCartProps) => {
+    const { quantity, variantId, currencyCode, cartItemId, productId, cartId } =
+      args;
+    object({
+      quantity: number(),
+      variantId: string(),
+      currencyCode: string(),
+      cartItemId: string(),
+      cartId: string(),
+      productId: string(),
+    })._parse(args);
+    await CartItemService.generateItem({
+      item: {
+        cartId,
+        currencyCode,
+        cartItemId,
+        quantity,
+        variantId,
+        productId,
+      },
+
+      manager: tx,
+    });
+    await CartService.updateCartTotals({ cartId, manager: tx });
+  },
+  updateItemQuantity: async (
+    tx: WriteTransaction,
+    { args }: UpdateItemQuantityProps,
+  ) => {
+    const { quantity, itemId, cartId } = args;
+    object({
+      quantity: number(),
+      itemId: string(),
+      cartId: string(),
+    })._parse(args);
+    await CartItemService.updateItem({
+      args: {
+        id: itemId,
+        updates: { quantity },
+        cartId,
+      },
+      manager: tx,
+    });
+    await CartService.updateCartTotals({ cartId, manager: tx });
+  },
+  deleteItem: async (tx: WriteTransaction, { args }: DeleteItemProps) => {
+    const { id, cartId } = args;
+    string()._parse(id);
+    string()._parse(cartId);
+    await CartItemService.deleteItem({ cartId, itemId: id, manager: tx });
+    await CartService.updateCartTotals({ cartId, manager: tx });
   },
 };

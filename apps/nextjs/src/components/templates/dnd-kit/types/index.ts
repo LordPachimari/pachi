@@ -18,6 +18,8 @@ import type {
 
 import type { Image } from "@pachi/db";
 
+import type { ItemProps } from "../components/Item/Item";
+
 export interface Props {
   activationConstraint: PointerActivationConstraint;
   animateLayoutChanges: AnimateLayoutChanges;
@@ -29,7 +31,7 @@ export interface Props {
   getNewIndex?: NewIndexGetter;
   handle?: boolean;
   itemCount?: number;
-  items: (Image & { id: string })[];
+  items: ItemProps[];
   measuring: MeasuringConfiguration;
   modifiers: Modifiers;
   renderItem?: unknown;
@@ -53,6 +55,10 @@ export interface Props {
     id: UniqueIdentifier;
   }): React.CSSProperties;
   isDisabled?(id: UniqueIdentifier): boolean;
-  updateProductImagesOrder?: (images: Image[]) => void;
+  updateProductImagesOrder?: ({
+    order,
+  }: {
+    order: Record<string, number>;
+  }) => Promise<void>;
   itemsType: "images";
 }

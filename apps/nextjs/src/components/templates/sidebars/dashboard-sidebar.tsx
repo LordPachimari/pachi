@@ -12,11 +12,11 @@ import type { SidebarNavItem } from "~/types";
 
 export interface DashboardSidebarProps {
   items: SidebarNavItem[];
+  storeId: string;
 }
 
-const DashboardSidebar = ({ items }: DashboardSidebarProps) => {
+const DashboardSidebar = ({ items, storeId }: DashboardSidebarProps) => {
   const pathname = usePathname();
-  console.log("pathname", pathname);
 
   return (
     <nav
@@ -37,7 +37,7 @@ const DashboardSidebar = ({ items }: DashboardSidebarProps) => {
             >
               <Link
                 key={item.title}
-                href={item.href}
+                href={`${item.href}?storeId=${storeId}`}
                 target={item.external ? "_blank" : ""}
                 rel={item.external ? "noreferrer" : ""}
                 className="flex w-[350px] gap-2"

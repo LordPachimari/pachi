@@ -6,6 +6,8 @@ import debounce from "lodash.debounce";
 import { useSubscribe } from "replicache-react";
 
 import type {
+  AssignProductOptionValueToVariantProps,
+  UpdateImagesOrderProps,
   UpdatePriceProps,
   UpdateProductVariantProps,
   UploadImagesProps,
@@ -41,7 +43,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const router = useRouter();
   const searchParams = useSearchParams();
-  const store_id = searchParams.get("store_id");
+  const storeId = searchParams.get("storeId");
 
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(true);
 
@@ -61,7 +63,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     },
     [id, router, searchParams],
   );
-  console.log("store_id", store_id);
+  console.log("storeId", storeId);
 
   const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const globalRep = ReplicacheInstancesStore((state) => state.globalRep);
@@ -79,24 +81,18 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   );
 
   useEffect(() => {
-    const user_id = localStorage.getItem("user_id");
-    const local_store_id = localStorage.getItem("store_id");
-    if (!store_id && !user_id) router.push("/");
-    if (!local_store_id && store_id) localStorage.setItem("store_id", store_id);
-  }, [router, store_id]);
+    if (!storeId) router.push("/home");
+  }, [router, storeId]);
   const store = useSubscribe(
     globalRep,
     async (tx) => {
-      const store = store_id
-        ? ((await tx.get(store_id)) as Store | undefined)
+      const store = storeId
+        ? ((await tx.get(storeId)) as Store | undefined)
         : undefined;
-      const stores = await tx.scan({ prefix: "store" }).entries().toArray();
-      console.log("stores", stores);
-      console.log("store", store);
       return store;
     },
     undefined,
-    [store_id],
+    [storeId],
   );
 
   const updateProduct = useCallback(
@@ -122,17 +118,17 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   );
   const updatePrice = useCallback(
     async ({
-      money_amount_id,
+      priceId,
       updates,
-      variant_id,
-      product_id,
+      variantId,
+      productId,
     }: UpdatePriceProps["args"]) => {
       await dashboardRep?.mutate.updatePrice({
         args: {
-          money_amount_id,
+          priceId,
           updates,
-          variant_id,
-          product_id,
+          variantId,
+          productId,
         },
       });
     },
@@ -141,14 +137,14 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const updateVariant = useCallback(
     async ({
       updates,
-      variant_id,
-      product_id,
+      variantId,
+      productId,
     }: UpdateProductVariantProps["args"]) => {
       await dashboardRep?.mutate.updateProductVariant({
         args: {
           updates,
-          variant_id,
-          product_id,
+          variantId,
+          productId,
         },
       });
     },
@@ -156,12 +152,24 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   );
 
   const uploadProductImages = useCallback(
-    async (props: UploadImagesProps["args"]) => {
+    async ({ images, productId, variantId }: UploadImagesProps["args"]) => {
       await dashboardRep?.mutate.uploadProductImages({
         args: {
-          product_id: props.product_id,
-          images: props.images,
-          variant_id: props.product_id,
+          images,
+          productId,
+          variantId,
+        },
+      });
+    },
+    [dashboardRep],
+  );
+  const updateProductImagesOrder = useCallback(
+    async ({ order, productId, variantId }: UpdateImagesOrderProps["args"]) => {
+      await dashboardRep?.mutate.updateImagesOrder({
+        args: {
+          productId,
+          variantId,
+          order,
         },
       });
     },
@@ -175,9 +183,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         args: {
           variant: {
             id: variantId,
-            created_at: new Date().toISOString(),
-            product_id: product.id,
-            inventory_quantity: 0,
+            createdAt: new Date().toISOString(),
+            productId: product.id,
+            inventoryQuantity: 0,
           },
         },
       });
@@ -195,17 +203,40 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     newParams.set("q", value);
     router.push(createUrl(id, newParams));
   };
+  const onOptionValueChange = useCallback(
+    async ({
+      optionId,
+      optionValueId,
+      prevOptionValueId,
+      productId,
+      variantId,
+    }: AssignProductOptionValueToVariantProps["args"]) => {
+      if (dashboardRep) {
+        await dashboardRep.mutate.assignProductOptionValueToVariant({
+          args: {
+            optionId,
+            optionValueId,
+            ...(prevOptionValueId && { prevOptionValueId }),
+            productId,
+            variantId,
+          },
+        });
+      }
+    },
+    [dashboardRep],
+  );
 
-  const variant_id = searchParams.get("variantId");
+  const variantId = searchParams.get("variantId");
   const variant = product?.variants?.find(
-    (variant) => variant.id === variant_id,
+    (variant) => variant.id === variantId,
   );
   console.log("store currencies", store?.currencies);
-  console.log("is it true", !!(variant_id && variant && product && store));
+  console.log("store", store);
+  console.log("is it true", !!(variantId && variant && product && store));
 
   return (
     <>
-      {variant_id && variant && product && store && (
+      {variantId && variant && product && store && (
         <VariantModal
           updatePrice={updatePrice}
           updateVariant={updateVariant}
@@ -213,15 +244,17 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           variant={variant}
           images={[]}
           options={product.options ?? []}
-          product_id={product.id}
+          productId={product.id}
           currencies={store.currencies ?? []}
           storeId={store.id}
           closeModal={closeModal}
           isOpen={isVariantModalOpen}
+          updateProductImagesOrder={updateProductImagesOrder}
+          onOptionValueChange={onOptionValueChange}
         />
       )}
       <div className="flex h-full w-full flex-col-reverse  md:flex-row ">
-        <section className="static flex h-full w-full max-w-[1020px]  flex-col items-center border-r lg:fixed lg:w-[400px]">
+        <section className="static flex h-full w-full max-w-[1020px]  flex-col items-center border-r lg:fixed lg:w-[450px]">
           <Tabs
             aria-label="Stages"
             className="m-0 w-11/12 pt-4"
@@ -259,7 +292,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               value="general"
               className=" w-full  "
             >
-              <ScrollArea className="h-product-input   ">
+              <ScrollArea className="h-product-input">
                 {product && store && (
                   <General
                     product={product}
@@ -271,6 +304,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                     setFiles={setFiles}
                     uploadProductImages={uploadProductImages}
                     store={store}
+                    updateProductImagesOrder={updateProductImagesOrder}
                   />
                 )}
               </ScrollArea>
@@ -278,7 +312,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <TabsContent key="variants" value="variants">
               <ScrollArea className="h-product-input ">
                 <Variants
-                  product_id={id}
+                  productId={id}
                   options={product?.options ?? []}
                   variants={product?.variants ?? []}
                   createVariant={createVariant}
@@ -288,12 +322,21 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </TabsContent>
             <TabsContent key="organize" value="organize">
               <ScrollArea className="h-product-input  ">
-                <Organize />
+                <Organize
+                  onInputChange={onInputChange}
+                  productId={id}
+                  productTags={product?.tags ?? []}
+                />
               </ScrollArea>
             </TabsContent>
             <TabsContent key="advanced" value="advanced">
               <ScrollArea className="h-product-input  ">
-                <Advanced />
+                {product && (
+                  <Advanced
+                    variant={product!.variants![0]}
+                    updateVariant={updateVariant}
+                  />
+                )}
               </ScrollArea>
             </TabsContent>
           </Tabs>
@@ -304,7 +347,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </Button>
           </div>
         </section>
-        <section className="flex h-full w-full  flex-col  gap-4 lg:ml-[400px] 2xl:flex-row ">
+        <section className="flex h-full w-full  flex-col  gap-4 lg:ml-[450px] 2xl:flex-row ">
           <Gallery images={files} />
           <ProductOverview />
         </section>

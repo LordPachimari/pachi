@@ -1,4 +1,5 @@
 import type {
+  UpdateImagesOrderProps,
   UpdatePriceProps,
   UpdateProductVariantProps,
   UploadImagesProps,
@@ -25,6 +26,11 @@ interface GeneralProps {
   files: Image[];
   setFiles: React.Dispatch<React.SetStateAction<Image[]>>;
   uploadProductImages: (props: UploadImagesProps["args"]) => Promise<void>;
+  updateProductImagesOrder: ({
+    order,
+    productId,
+    variantId,
+  }: UpdateImagesOrderProps["args"]) => Promise<void>;
   store: Store;
 }
 export function General({
@@ -38,7 +44,9 @@ export function General({
 
   files,
   setFiles,
+  updateProductImagesOrder,
 }: GeneralProps) {
+  console.log("images", product.variants![0]!.images);
   return (
     <div className="px-4 pb-2 pt-0">
       <ProductStatus status={product.status} updateProduct={updateProduct} />
@@ -54,18 +62,23 @@ export function General({
       />
       <Separator className="mb-4 mt-2" />
       <Media
-        product_id={product.id}
-        images={product.images}
+        productId={product.id}
+        images={product.variants![0]!.images}
         files={files}
         setFiles={setFiles}
-        variant_id={product.variants![0]!.id}
+        variantId={product.variants![0]!.id}
         uploadProductImages={uploadProductImages}
+        updateProductImagesOrder={updateProductImagesOrder}
       />
       <Separator className="my-4" />
       <Pricing
         updatePrice={updatePrice}
         variant={product.variants![0]!}
-        store_currencies={store.currencies ?? []}
+        productCurrencies={
+          (product.variants![0]!.prices ?? []).map(
+            (price) => price.currencyCode,
+          ) ?? []
+        }
         storeId={store.id}
         productId={product.id}
       />

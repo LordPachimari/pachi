@@ -8,7 +8,6 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-import type { Currency } from "../validators/schema";
 import { products } from "./product";
 import { users } from "./user";
 
@@ -18,19 +17,21 @@ export const stores = pgTable(
     id: varchar("id").notNull().primaryKey(),
     name: text("name").notNull(),
     currencies: json("currencies").$type<string[]>(),
-    founder_id: varchar("founder_id")
+    founderId: varchar("founderId")
       .references(() => users.id)
       .notNull(),
+    about: text("about"),
     version: integer("version").notNull(),
-    created_at: varchar("created_at").notNull(),
+    createdAt: varchar("createdAt").notNull(),
+    updatedAt: varchar("updatedAt"),
   },
   (t) => ({
-    storeNameIndex: uniqueIndex("store_name_index").on(t.name),
+    storeNameIndex: uniqueIndex("storeNameIndex").on(t.name),
   }),
 );
-export const stores_relations = relations(stores, ({ one, many }) => ({
+export const storesRelations = relations(stores, ({ one, many }) => ({
   founder: one(users, {
-    fields: [stores.founder_id],
+    fields: [stores.founderId],
     references: [users.id],
   }),
   products: many(products),

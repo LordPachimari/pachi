@@ -30,9 +30,10 @@ import { VariantsTable } from "./table";
 
 interface VariantTableProps {
   data: ProductVariant[];
+  productId: string;
 }
 
-export function Table({ data }: VariantTableProps) {
+export function Table({ data, productId }: VariantTableProps) {
   // Memoize the columns so they don't re-render on every render
   const columns = React.useMemo<ColumnDef<ProductVariant, unknown>[]>(
     () => [
@@ -65,8 +66,10 @@ export function Table({ data }: VariantTableProps) {
         header: ({ column }) => <h3 className="text-sm ">Variant</h3>,
         cell: ({ row }) => (
           <div className="w-[50px]">
-            {row.original.options && row.original.options.length > 0
-              ? row.original.options.map((opt) => opt.value).join("/")
+            {row.original.optionValues && row.original.optionValues.length > 0
+              ? row.original.optionValues
+                  .map((opt) => opt.optionValue.value)
+                  .join("/")
               : ""}
           </div>
         ),
@@ -95,7 +98,7 @@ export function Table({ data }: VariantTableProps) {
         cell: ({ row }) => {
           return (
             <div className="flex w-[50px] items-center justify-center">
-              {row.original.inventory_quantity ?? 0}
+              {row.original.inventoryQuantity ?? 0}
             </div>
           );
         },
@@ -153,6 +156,7 @@ export function Table({ data }: VariantTableProps) {
       columns={columns}
       data={productVariants}
       view={"row"}
+      productId={productId}
 
       // pageCount={pageCount}
     />

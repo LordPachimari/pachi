@@ -1,8 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
 
-import type { UploadImagesProps } from "@pachi/api/src/types/mutators";
+import type {
+  UpdateImagesOrderProps,
+  UploadImagesProps,
+} from "@pachi/api/src/types/mutators";
 import type { Image } from "@pachi/db";
 
 import type { OurFileRouter } from "~/app/api/uploadthing/core";
@@ -22,20 +25,26 @@ export interface MediaFormType {
 
 interface Props {
   images: Image[] | undefined;
-  product_id: string;
-  variant_id: string;
+  productId: string;
+  variantId: string;
   files: Image[];
   setFiles: React.Dispatch<React.SetStateAction<Image[]>>;
   uploadProductImages: (props: UploadImagesProps["args"]) => Promise<void>;
+  updateProductImagesOrder: ({
+    order,
+    productId,
+    variantId,
+  }: UpdateImagesOrderProps["args"]) => Promise<void>;
 }
 
 const Media = ({
-  product_id,
-  variant_id,
+  productId,
+  variantId,
   images,
   files,
   setFiles,
   uploadProductImages,
+  updateProductImagesOrder,
 }: Props) => {
   const { useUploadThing } = generateReactHelpers<OurFileRouter>();
   const { isUploading, startUpload } = useUploadThing("imageUploader", {
@@ -47,25 +56,43 @@ const Media = ({
   });
   useEffect(() => {
     if (images) {
-      setFiles(images);
+      setFiles(images.toSorted((a, b) => a.order - b.order));
     }
   }, [images, setFiles]);
+  const updateProductImagesOrder_ = useCallback(
+    async ({ order }: { order: Record<string, number> }) => {
+      if (productId && variantId) {
+        await updateProductImagesOrder({
+          order,
+          productId,
+          variantId,
+        });
+      }
+    },
+    [],
+  );
+  console.log("files", files);
 
   return (
     <div className="w-full">
       <DndContext>
         <FileUpload
-          id={product_id}
+          id={productId}
           setFiles={setFiles}
           uploadProductImages={uploadProductImages}
-          product_id={product_id}
-          variant_id={variant_id}
+          productId={productId}
+          variantId={variantId}
           startUpload={startUpload}
         />
         {files && files.length > 0 && (
           <div className="py-2">
             <div className="gap-y-2x small flex flex-col">
-              {files && <LargeFirstTile items={files} />}
+              {files && (
+                <LargeFirstTile
+                  items={files}
+                  updateProductImagesOrder={updateProductImagesOrder_}
+                />
+              )}
             </div>
           </div>
         )}

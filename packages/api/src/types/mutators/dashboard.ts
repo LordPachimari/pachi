@@ -1,10 +1,10 @@
 import type {
   CustomerGroup,
   Image,
-  MoneyAmount,
-  MoneyAmountUpdates,
+  Price,
   PriceList,
   PriceListUpdates,
+  PriceUpdates,
   Product,
   ProductCollection,
   ProductCollectionUpdates,
@@ -14,17 +14,18 @@ import type {
   ProductOptionValueUpdates,
   ProductVariant,
   ProductVariantUpdates,
-  Store,
-  StoreUpdates,
   UpdateProduct,
 } from "@pachi/db";
+import type { Money } from "@pachi/utils";
 
 import type { MutationBase } from "./base";
 
 export interface CreateProductProps extends MutationBase {
   args: {
     product: Product;
-    default_variant_id: string;
+    defaultVariantId: string;
+    storeId: string;
+    prices: Price[];
   };
 }
 
@@ -37,12 +38,12 @@ export interface UpdateProductProps extends MutationBase {
 }
 
 export interface UploadImagesProps extends MutationBase {
-  args: { variant_id: string; images: Image[]; product_id: string };
+  args: { variantId: string; images: Image[]; productId: string };
 }
 export interface UpdateImagesOrderProps extends MutationBase {
   args: {
-    product_id: string;
-    variant_id: string;
+    productId: string;
+    variantId: string;
     order: Record<string, number>;
   };
 }
@@ -54,14 +55,14 @@ export interface CreateProductOptionProps extends MutationBase {
 }
 export interface UpdateProductOptionProps extends MutationBase {
   args: {
-    option_id: string;
-    product_id: string;
+    optionId: string;
+    productId: string;
     updates: ProductOptionUpdates;
   };
 }
 
 export interface CreateProductOptionValueProps extends MutationBase {
-  args: { option_value: ProductOptionValue };
+  args: { optionValue: ProductOptionValue };
 }
 
 export interface UpdateProductOptionValueProps extends MutationBase {
@@ -69,9 +70,15 @@ export interface UpdateProductOptionValueProps extends MutationBase {
 }
 export interface UpdateProductOptionValuesProps extends MutationBase {
   args: {
-    product_id: string;
-    option_id: string;
-    new_option_values: string[];
+    productId: string;
+    optionId: string;
+    newOptionValues: ProductOptionValue[];
+  };
+}
+export interface UpdateProductTagsProps extends MutationBase {
+  args: {
+    productId: string;
+    tags: string[];
   };
 }
 
@@ -81,9 +88,9 @@ export interface CreateProductVariantProps extends MutationBase {
 
 export interface UpdateProductVariantProps extends MutationBase {
   args: {
-    variant_id: string;
+    variantId: string;
     updates: ProductVariantUpdates;
-    product_id: string;
+    productId: string;
   };
 }
 export interface CreateProductCollectionProps extends MutationBase {
@@ -99,33 +106,33 @@ export interface UpdateCustomerGroupProps extends MutationBase {
   args: { id: string; updates: CustomerGroup };
 }
 export interface AddCustomerToGroupProps extends MutationBase {
-  args: { customer_id: string; group_id: string };
+  args: { customerId: string; groupId: string };
 }
 export interface RemoveCustomerFromGroupProps extends MutationBase {
-  args: { customer_id: string; group_id: string };
+  args: { customerId: string; groupId: string };
 }
 export interface CreatePriceListProps extends MutationBase {
-  args: { price_list: PriceList };
+  args: { priceList: PriceList };
 }
 export interface UpdatePriceListProps extends MutationBase {
   args: { id: string; updates: PriceListUpdates };
 }
 export interface AddProductToPriceListProps extends MutationBase {
-  args: { price: MoneyAmount; price_list_id: string };
+  args: { price: Price; priceListId: string };
 }
 export interface RemoveProductFromPriceListProps extends MutationBase {
-  args: { price_id: string; price_list_id: string };
+  args: { priceId: string; priceListId: string };
 }
 
 export interface CreatePricesProps extends MutationBase {
-  args: { prices: MoneyAmount[]; product_id: string; variant_id: string };
+  args: { prices: Price[]; productId: string; variantId: string };
 }
 export interface UpdatePriceProps extends MutationBase {
   args: {
-    money_amount_id: string;
-    updates: MoneyAmountUpdates;
-    variant_id: string;
-    product_id: string;
+    priceId: string;
+    updates: PriceUpdates;
+    variantId: string;
+    productId: string;
   };
 }
 export interface CreateVariantProps extends MutationBase {
@@ -133,5 +140,15 @@ export interface CreateVariantProps extends MutationBase {
 }
 
 export interface DeletePricesProps extends MutationBase {
-  args: { ids: string[]; variant_id: string; product_id: string };
+  args: { ids: string[]; variantId: string; productId: string };
+}
+
+export interface AssignProductOptionValueToVariantProps extends MutationBase {
+  args: {
+    variantId: string;
+    optionValueId: string;
+    prevOptionValueId?: string;
+    productId: string;
+    optionId: string;
+  };
 }

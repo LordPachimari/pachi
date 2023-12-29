@@ -14,7 +14,7 @@ export const Handle = forwardRef<HTMLButtonElement, ActionProps>(
       >
         <GripVerticalIcon
           size={20}
-          className="text-gray-800 dark:text-gray-400"
+          className="text-gray-800 dark:text-gray-600"
         />
       </Action>
     );

@@ -13,8 +13,13 @@ import { mutationAffectedSpaces, pushRequestSchema } from "@pachi/types";
 import type { Repositories } from "../repositories";
 import { ProductRepository } from "../repositories/product";
 import { ProductOptionRepository } from "../repositories/product-option";
+import { ProductTagRepository } from "../repositories/product-tag";
 import { ProductVariantRepository } from "../repositories/product-variant";
+import { StoreRepository } from "../repositories/store";
 import { UserRepository } from "../repositories/user";
+import type { Services_ } from "../services/server";
+import { CartService_ } from "../services/server/cart";
+import { CartItemService_ } from "../services/server/cart-item";
 import type { Bindings } from "../types/bindings";
 import {
   getClientGroupObject,
@@ -36,9 +41,10 @@ type CustomMutator = Record<
     props: {
       args: unknown;
       requestHeaders: RequestHeaders;
-      userId?: string;
+      userId?: string | undefined;
       repositories: Repositories;
       env: Bindings;
+      services: Services_;
     },
   ) => MutatorReturn
 >;
@@ -53,7 +59,7 @@ export const push = async ({
   env,
 }: {
   body: PushRequest;
-  userId: string;
+  userId: string | undefined;
   db: Db;
   storage: KVNamespace;
   spaceId: SpaceId;
@@ -86,11 +92,30 @@ export const push = async ({
   const processMutations = async () => {
     await db.transaction(
       async (transaction) => {
+        const replicacheTransaction = new ReplicacheTransaction(
+          spaceId,
+          userId,
+          transaction,
+        );
         const repositories: Repositories = {
-          product_option_repository: new ProductOptionRepository(transaction),
-          product_repository: new ProductRepository(transaction),
-          product_variant_repository: new ProductVariantRepository(transaction),
-          user_repository: new UserRepository(transaction),
+          productOptionRepository: new ProductOptionRepository(transaction),
+          productRepository: new ProductRepository(transaction),
+          productVariantRepository: new ProductVariantRepository(transaction),
+          userRepository: new UserRepository(transaction),
+          productTagRepository: new ProductTagRepository(transaction),
+          storeRepository: new StoreRepository(transaction),
+        };
+        const services: Services_ = {
+          cartService: new CartService_({
+            manager: transaction,
+            replicacheTransaction,
+            storage,
+          }),
+          cartItemService: new CartItemService_({
+            manager: transaction,
+            replicacheTransaction,
+            storage,
+          }),
         };
         const lastMutationIdsAndVersions =
           await getClientLastMutationIdsAndVersion({
@@ -106,8 +131,6 @@ export const push = async ({
         );
         console.log("clientId", clientIDs);
 
-        const tx = new ReplicacheTransaction(spaceId, userId, transaction);
-
         for (const mutation of push.mutations) {
           if (!lastMutationIdsAndVersions[mutation.clientID]) {
             lastMutationIdsAndVersions[mutation.clientID] = {
@@ -117,7 +140,7 @@ export const push = async ({
           }
 
           const nextMutationId = await processMutation({
-            tx,
+            tx: replicacheTransaction,
             lastMutationID:
               lastMutationIdsAndVersions[mutation.clientID]!.lastMutationID,
             mutation,
@@ -127,6 +150,7 @@ export const push = async ({
             repositories,
             env,
             userId,
+            services,
           });
           console.log("lastMutationID", lastMutationIdsAndVersions);
 
@@ -175,13 +199,13 @@ export const push = async ({
               clientGroupObject: { ...clientGroupObject, clientVersion },
               storage,
             }),
-            tx.flush(),
+            replicacheTransaction.flush(),
           ]);
         } else {
           console.log("Nothing to update");
         }
       },
-      { isolationLevel: "serializable", accessMode: "read write" },
+      { isolationLevel: "repeatable read", accessMode: "read write" },
     );
   };
 
@@ -217,17 +241,19 @@ const processMutation = async ({
   requestHeaders,
   repositories,
   env,
+  services,
 }: {
   tx: ReplicacheTransaction;
   mutation: Mutation;
   lastMutationID: number;
   error?: unknown;
-  userId: string;
+  userId: string | undefined;
   spaceId: SpaceId;
   storage: KVNamespace;
   requestHeaders: RequestHeaders;
   repositories: Repositories;
   env: Bindings;
+  services: Services_;
 
   isFeatureEnabled?: (feature: string) => boolean;
 }) => {
@@ -270,6 +296,7 @@ const processMutation = async ({
         userId,
         repositories,
         env,
+        services,
       });
     } catch (e) {
       console.error(`Error executing mutator: ${JSON.stringify(mutation)}`, e);

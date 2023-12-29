@@ -1,5 +1,5 @@
 import type { Transaction } from "@pachi/db";
-import { replicache_clients } from "@pachi/db";
+import { replicacheClients } from "@pachi/db/schema";
 
 export const setLastMutationIdsAndVersions_ = ({
   lastMutationIdsAndVersions,
@@ -19,16 +19,15 @@ export const setLastMutationIdsAndVersions_ = ({
   )) {
     queries.push(
       transaction
-        .insert(replicache_clients)
+        .insert(replicacheClients)
         .values({ id: key, lastMutationID, version: 1, clientGroupID })
         .onConflictDoUpdate({
-          target: replicache_clients.id,
+          target: replicacheClients.id,
           set: {
             version,
-            lastMutationID: lastMutationID,
+            lastMutationID,
           },
-        })
-        .execute(),
+        }),
     );
   }
   return queries;

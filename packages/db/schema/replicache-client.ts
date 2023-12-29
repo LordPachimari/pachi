@@ -1,6 +1,6 @@
 import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
-export const replicache_clients = pgTable(
+export const replicacheClients = pgTable(
   "replicache_clients",
   {
     id: varchar("id").notNull().primaryKey(),

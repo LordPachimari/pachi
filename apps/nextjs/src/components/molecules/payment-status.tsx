@@ -8,7 +8,7 @@ export const PaymentStatus = ({ status }: { status: PaymentStatusType }) => {
       return <DotIndicator title="Paid" variant="success" />;
     case "canceled":
       return <DotIndicator title="Canceled" variant="danger" />;
-    case "partially_refunded":
+    case "partiallyRefunded":
       return <DotIndicator title="Requires Action" variant="danger" />;
     case "refunded":
       return <DotIndicator title="Refunded" variant="success" />;

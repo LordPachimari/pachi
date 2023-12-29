@@ -2,7 +2,7 @@ import { enumType, number, object, string, type Output } from "valibot";
 
 export const ImageSchema = object({
   id: string(),
-  name: string(),
+  altText: string(),
   order: number(),
   url: string(),
 });
@@ -30,65 +30,65 @@ export const subcategory = [
   "Other",
 ] as const;
 
-export const fulfillment_status = [
+export const fulfillmentStatus = [
   "fulfilled",
-  "not_fulfilled",
-  "partially_fulfilled",
-  "partially_returned",
-  "partially_shipped",
-  "requires_action",
+  "notFulfilled",
+  "partiallyFulfilled",
+  "partiallyReturned",
+  "partiallyShipped",
+  "requiresAction",
   "returned",
   "shipped",
 ] as const;
-export const FulfillmentStatusSchema = enumType(fulfillment_status);
+export const FulfillmentStatusSchema = enumType(fulfillmentStatus);
 export type FulfillmentStatus = Output<typeof FulfillmentStatusSchema>;
 
-export const swap_fulfillment_status = [
+export const swapFulfillmentStatus = [
   "canceled",
   "fulfilled",
-  "not_fulfilled",
-  "partially_shipped",
-  "requires_action",
+  "notFulfilled",
+  "partiallyShipped",
+  "requiresAction",
 
   "shipped",
 ] as const;
 
-export const payment_status = [
-  "not_paid",
+export const paymentStatus = [
+  "notPaid",
   "awaiting",
   "captured",
-  "partially_refunded",
+  "partiallyRefunded",
   "refunded",
   "canceled",
-  "requires_action",
+  "requiresAction",
 ] as const;
-export const PaymentStatusSchema = enumType(payment_status);
+export const PaymentStatusSchema = enumType(paymentStatus);
 export type PaymentStatus = Output<typeof PaymentStatusSchema>;
 
-export const swap_payment_status = [
+export const swapPaymentStatus = [
   "awaiting",
   "canceled",
   "captured",
   "confirmed",
-  "difference_refunded",
-  "not_paid",
-  "partially_refunded",
+  "differenceRefunded",
+  "notPaid",
+  "partiallyRefunded",
   "refunded",
-  "requires_action",
+  "requiresAction",
 ] as const;
 
-export const order_status = [
+export const orderStatus = [
   "archived",
   "canceled",
   "completed",
   "pending",
-  "requires_action",
+  "requiresAction",
 ] as const;
 
-export const OrderStatusSchema = enumType(order_status);
+export const OrderStatusSchema = enumType(orderStatus);
 export type OrderStatus = Output<typeof OrderStatusSchema>;
 
-export const order_edit_status = [
+export const orderEditStatus = [
   "canceled",
   "confirmed",
   "created",
@@ -96,19 +96,19 @@ export const order_edit_status = [
   "requested",
 ] as const;
 
-export const payment_collection_status = [
+export const paymentCollectionStatus = [
   "authorized",
   "awaiting",
   "canceled",
-  "not_paid",
-  "partially_authorized",
+  "notPaid",
+  "partiallyAuthorized",
 ] as const;
 
-export const return_status = [
+export const returnStatus = [
   "canceled",
   "received",
   "requested",
-  "requires_action",
+  "requiresAction",
 ] as const;
 
 export const productStatus = [
@@ -120,19 +120,15 @@ export const productStatus = [
 export const ProductStatusSchema = enumType(productStatus);
 export type ProductStatus = Output<typeof ProductStatusSchema>;
 
-export const discount_type = [
-  "off_products",
-  "off_order",
-  "buy_x_get_y",
-] as const;
-export const DiscountTypeSchema = enumType(discount_type);
+export const discountType = ["offProducts", "offOrder", "buyXGetY"] as const;
+export const DiscountTypeSchema = enumType(discountType);
 export type DiscountType = Output<typeof DiscountTypeSchema>;
 
 export const CartTypeSchema = enumType([
   "claim",
   "default",
-  "draft_order",
-  "payment_link",
+  "draftOrder",
+  "paymentLink",
   "swap",
 ]);
 export type CartType = Output<typeof CartTypeSchema>;
@@ -140,7 +136,7 @@ export type CartType = Output<typeof CartTypeSchema>;
 export enum DiscountRuleType {
   FIXED = "fixed",
   PERCENTAGE = "percentage",
-  FREE_SHIPPING = "free_shipping",
+  FREE_SHIPPING = "freeShipping",
 }
 
 export enum AllocationType {

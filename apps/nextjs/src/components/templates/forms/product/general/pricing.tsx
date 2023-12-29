@@ -1,20 +1,10 @@
-import { useEffect, useState } from "react";
-import { PlusIcon } from "lucide-react";
+import { useState } from "react";
 
 import type { UpdatePriceProps } from "@pachi/api";
-import { type Currency, type ProductVariant } from "@pachi/db";
+import { type ProductVariant } from "@pachi/db";
 
-import { Button } from "~/components/atoms/button";
 import { Label } from "~/components/atoms/label";
 import { RadioGroup } from "~/components/atoms/radio-group";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetOverlay,
-  SheetTitle,
-  SheetTrigger,
-} from "~/components/atoms/sheet";
 import CurrencyModal from "~/components/templates/modals/currency";
 import { Table } from "~/components/templates/tables/currency-table";
 import { CurrencyInput } from "./currency-input";
@@ -22,14 +12,14 @@ import { CurrencyInput } from "./currency-input";
 interface PricingProps {
   updatePrice: (props: UpdatePriceProps["args"]) => Promise<void>;
   variant: ProductVariant;
-  store_currencies: string[];
+  productCurrencies: string[];
   storeId: string;
   productId: string;
 }
 const Pricing = ({
   variant,
   updatePrice,
-  store_currencies,
+  productCurrencies,
   storeId,
   productId,
 }: PricingProps) => {
@@ -58,16 +48,14 @@ const Pricing = ({
                   className="text-green-500"
                   onClick={() => setActivePrice(price)}
                 />
-                <Label htmlFor={price.currency_code}>
-                  {price.currency_code}
-                </Label>
+                <Label htmlFor={price.currencyCode}>{price.currencyCode}</Label>
               </div>
             ))}
           </RadioGroup>
         )}
         <CurrencyModal close={close} isOpen={isOpen} open={open}>
           <Table
-            store_currencies={store_currencies}
+            productCurrencies={productCurrencies}
             storeId={storeId}
             variantId={variant.id}
             prices={variant.prices ?? []}
@@ -78,8 +66,8 @@ const Pricing = ({
       </span>
       {activePrice && (
         <CurrencyInput
-          code={activePrice.currency_code}
-          symbol={activePrice.currency_code}
+          code={activePrice.currencyCode}
+          symbol={activePrice.currencyCode}
           className="my-1"
           defaultValue={activePrice.amount / 100}
           onChange={async (e) => {
@@ -90,10 +78,10 @@ const Pricing = ({
             }
             console.log("e", valueInCents);
             await updatePrice({
-              money_amount_id: activePrice.id,
+              priceId: activePrice.id,
               updates: { amount: valueInCents },
-              variant_id: variant.id,
-              product_id: variant.product_id,
+              variantId: variant.id,
+              productId: variant.productId,
             });
           }}
         />

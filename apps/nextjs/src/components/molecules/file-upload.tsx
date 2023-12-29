@@ -19,8 +19,8 @@ import { Icons } from "../atoms/icons";
 
 interface FileUploadProps extends React.HTMLAttributes<HTMLDivElement> {
   accept?: Accept;
-  product_id: string;
-  variant_id: string;
+  productId: string;
+  variantId: string;
   maxSize?: number;
   maxFiles?: number;
   setFiles: React.Dispatch<React.SetStateAction<Image[]>>;
@@ -29,13 +29,13 @@ interface FileUploadProps extends React.HTMLAttributes<HTMLDivElement> {
   startUpload: (
     files: File[],
     input?: undefined,
-  ) => Promise<UploadFileResponse[] | undefined>;
+  ) => Promise<UploadFileResponse<null>[] | undefined>;
   uploadProductImages: (props: UploadImagesProps["args"]) => Promise<void>;
 }
 
 export function FileUpload({
-  product_id,
-  variant_id,
+  productId,
+  variantId,
   accept = {
     "image/*": [],
   },
@@ -55,7 +55,7 @@ export function FileUpload({
           id: generateId({ id: ulid(), prefix: "image" }),
           url: URL.createObjectURL(file),
           order: index,
-          name: file.name,
+          altText: file.name,
         };
         setFiles((prev) => [...(prev ?? []), newFile]);
         return newFile;
@@ -72,21 +72,25 @@ export function FileUpload({
           errors[0]?.message && toast.error(errors[0].message);
         });
       }
-      const uploadedFiles = await startUpload(acceptedFiles).then((res) => {
-        const formattedImages = res?.map((image, index) => ({
-          id: files[index]!.id,
-          name: image.key.split("_")[1] ?? image.key,
-          url: image.url,
-          order: index,
-        }));
-        return formattedImages ?? null;
-      });
-      if (uploadedFiles) {
-        await uploadProductImages({
-          product_id,
-          images: uploadedFiles,
-          variant_id,
+      try {
+        const uploadedFiles = await startUpload(acceptedFiles).then((res) => {
+          const formattedImages = res?.map((image, index) => ({
+            id: files[index]!.id,
+            altText: image.key.split("_")[1] ?? image.key,
+            url: image.url,
+            order: index,
+          }));
+          return formattedImages ?? null;
         });
+        if (uploadedFiles) {
+          await uploadProductImages({
+            productId,
+            images: uploadedFiles,
+            variantId,
+          });
+        }
+      } catch (error) {
+        console.log(error);
       }
     },
 

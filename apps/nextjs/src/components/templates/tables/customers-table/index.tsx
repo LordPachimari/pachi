@@ -31,7 +31,7 @@
 
 //         header: ({ column }) => <h3 className="text-md ">Date added</h3>,
 //         cell: ({ row }) => (
-//           <div className="w-[80px]">{row.getValue("created_at")}</div>
+//           <div className="w-[80px]">{row.getValue("createdAt")}</div>
 //         ),
 //         enableSorting: false,
 //         enableHiding: false,

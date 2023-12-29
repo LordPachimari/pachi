@@ -3,10 +3,10 @@ import { array, number, record, string } from "valibot";
 import {
   CustomerGroupSchema,
   CustomerGroupUpdatesSchema,
-  MoneyAmountSchema,
-  MoneyAmountUpdatesSchema,
   PriceListSchema,
   PriceListUpdatesSchema,
+  PriceSchema,
+  PriceUpdatesSchema,
   ProductCollectionSchema,
   ProductCollectionUpdatesSchema,
   ProductOptionSchema,
@@ -16,6 +16,7 @@ import {
   ProductUpdatesSchema,
   ProductVariantSchema,
   ProductVariantUpdatesSchema,
+  type Price,
   type ProductVariant,
 } from "@pachi/db";
 import { generateId, ulid } from "@pachi/utils";
@@ -23,6 +24,7 @@ import { generateId, ulid } from "@pachi/utils";
 import type {
   AddCustomerToGroupProps,
   AddProductToPriceListProps,
+  AssignProductOptionValueToVariantProps,
   CreateCustomerGroupProps,
   CreatePriceListProps,
   CreatePricesProps,
@@ -43,6 +45,7 @@ import type {
   UpdateProductOptionProps,
   UpdateProductOptionValuesProps,
   UpdateProductProps,
+  UpdateProductTagsProps,
   UpdateProductVariantProps,
   UploadImagesProps,
 } from "../../../types/mutators";
@@ -54,20 +57,35 @@ export const dashboardMutators_ = {
     tx: ReplicacheTransaction,
     props: CreateProductProps,
   ) => {
-    const { args, repositories, user } = props;
-    const { product, default_variant_id } = args;
+    const { args, repositories } = props;
+    const { product, defaultVariantId, storeId, prices } = args;
     ProductSchema._parse(product);
 
-    const default_variant: ProductVariant = {
-      id: default_variant_id,
-      product_id: product.id,
+    const defaultVariant: ProductVariant = {
+      id: defaultVariantId,
+      productId: product.id,
     };
-    await repositories?.product_repository.insertProduct({
-      ...product,
-      default_variant_id: default_variant.id,
-      unauthenticated: user?.email ? false : true,
+    const store = await repositories?.storeRepository.getStoreById({
+      id: storeId,
     });
-    await tx.put(default_variant.id, default_variant, "product_variants");
+    if (!store) {
+      return;
+    }
+
+    await repositories?.productRepository.insertProduct({
+      product: {
+        ...product,
+        defaultVariantId: defaultVariant.id,
+      },
+    });
+    await repositories?.productVariantRepository.insertProductVariant({
+      variant: defaultVariant,
+    });
+    await Promise.all(
+      prices.map((price) => {
+        return tx.put(price.id, price, "prices");
+      }),
+    );
   },
 
   deleteProduct: async (tx: ReplicacheTransaction, props: DeleteProps) => {
@@ -92,52 +110,65 @@ export const dashboardMutators_ = {
     props: UpdateImagesOrderProps,
   ) => {
     const { args, repositories } = props;
-    const { order, variant_id } = args;
+    const { order, variantId, productId } = args;
     record(string(), number())._parse(order);
+    console.log("order", order);
     const variant =
-      await repositories?.product_variant_repository.getProductVariantById(
-        variant_id,
-      );
+      await repositories?.productVariantRepository.getProductVariantById({
+        id: variantId,
+      });
     if (!variant) {
       return;
     }
-    const images = variant.images ?? [];
+    const images = structuredClone(variant.images) ?? [];
     if (images.length === 0) {
       return;
     }
     for (const image of images) {
-      if (order[image.id]) image.order = order[image.id]!;
+      if (order[image.id] !== undefined) image.order = order[image.id]!;
     }
-    await tx.update(variant_id, { images: images }, "product_variants");
+    if (variant.id.startsWith("default")) {
+      for (const image of images) {
+        console.log("image", image);
+        if (image.order === 0) {
+          await tx.update(productId, { thumbnail: image }, "products");
+        }
+      }
+    }
+    await tx.update(variantId, { images: images }, "productVariants");
+    await tx.update(productId, {}, "products");
   },
   uploadProductImages: async (
     tx: ReplicacheTransaction,
     props: UploadImagesProps,
   ) => {
     const { args, repositories } = props;
-    const { variant_id, images } = args;
+    const { variantId, images, productId } = args;
     const variant =
-      (await repositories?.product_variant_repository.getProductVariantById(
-        variant_id,
-      )) as ProductVariant | undefined;
+      (await repositories?.productVariantRepository.getProductVariantById({
+        id: variantId,
+      })) as ProductVariant | undefined;
     if (!variant) {
       console.log("no variants");
       return;
     }
-    string()._parse(variant_id);
+    string()._parse(variantId);
 
     if (images.length > 0) {
       string()._parse(images[0]!.id);
-      string()._parse(images[0]!.name);
+      string()._parse(images[0]!.altText);
     }
 
-    await tx.update(
-      variant_id,
-      {
-        images: [...(variant.images ? variant.images : []), ...images],
-      },
-      "products",
-    );
+    await Promise.all([
+      tx.update(
+        variantId,
+        {
+          images: [...(variant.images ? variant.images : []), ...images],
+        },
+        "productVariants",
+      ),
+      tx.update(productId, {}, "products"),
+    ]);
   },
 
   createProductOption: async (
@@ -148,76 +179,73 @@ export const dashboardMutators_ = {
     const { option } = args;
     console.log("creating product option", option);
     ProductOptionSchema._parse(option);
-    await tx.put(option.id, option, "product_options");
+    await Promise.all([
+      tx.put(option.id, option, "productOptions"),
+      tx.update(option.productId, {}, "products"),
+    ]);
   },
 
   updateProductOption: async (
     tx: ReplicacheTransaction,
     { args }: UpdateProductOptionProps,
   ) => {
-    const { option_id, updates } = args;
+    const { optionId, updates, productId } = args;
     ProductOptionUpdatesSchema._parse(updates);
-    await tx.update(option_id, updates, "product_options");
+    await Promise.all([
+      tx.update(optionId, updates, "productOptions"),
+      tx.update(productId, {}, "products"),
+    ]);
   },
 
   deleteProductOption: async (
     tx: ReplicacheTransaction,
     { args }: DeleteProps,
   ) => {
-    const { id } = args;
+    const { id, productId } = args;
     string()._parse(id);
-    await tx.del(id, "product_options");
-  },
-
-  createProductOptionValue: async (
-    tx: ReplicacheTransaction,
-    { args }: CreateProductOptionValueProps,
-  ) => {
-    const { option_value } = args;
-
-    ProductOptionValueSchema._parse(option_value);
-    await tx.put(option_value.id, option_value, "product_option_values");
+    await Promise.all([
+      tx.del(id, "productOptions"),
+      tx.update(productId, {}, "products"),
+    ]);
   },
 
   updateProductOptionValues: async (
     tx: ReplicacheTransaction,
     { args, repositories }: UpdateProductOptionValuesProps,
   ) => {
-    const { option_id, new_option_values } = args;
-    array(string())._parse(new_option_values);
-    const option =
-      await repositories?.product_option_repository.getProductOption(option_id);
+    const { optionId, newOptionValues, productId } = args;
+    array(ProductOptionValueSchema)._parse(newOptionValues);
+    const option = await repositories?.productOptionRepository.getProductOption(
+      { id: optionId },
+    );
     console.log("option from server", option);
     if (!option) {
       return;
     }
     const oldValuesKeys = option.values?.map((value) => value.id) ?? [];
-    console.log("new_option_values", new_option_values);
-    console.log("old values keys", oldValuesKeys);
-    const newValues = new_option_values.map((value) => ({
-      id: generateId({ id: ulid(), prefix: "opt_val" }),
-      option_id,
-      value,
-    }));
     await Promise.all(
-      newValues.map(async (value) => {
-        await tx.put(value.id, value, "product_option_values");
+      newOptionValues.map(async (value) => {
+        await tx.put(value.id, value, "productOptionValues");
       }),
     );
     await Promise.all(
       oldValuesKeys.map(async (id) => {
-        await tx.del(id, "product_option_values");
+        await tx.del(id, "productOptionValues");
       }),
     );
+    await tx.update(productId, {}, "products");
   },
 
   deleteProductOptionValue: async (
     tx: ReplicacheTransaction,
     { args }: DeleteProps,
   ) => {
-    const { id } = args;
+    const { id, productId } = args;
     string()._parse(id);
-    await tx.del(id, "product_option_values");
+    await Promise.all([
+      tx.del(id, "productOptionValues"),
+      tx.update(productId, {}, "products"),
+    ]);
   },
 
   createProductVariant: async (
@@ -228,8 +256,8 @@ export const dashboardMutators_ = {
     ProductVariantSchema._parse(variant);
     console.log("new variant from the server", variant);
     await Promise.all([
-      tx.put(variant.id, variant, "product_variants"),
-      tx.update(variant.product_id, {}, "products"),
+      tx.put(variant.id, variant, "productVariants"),
+      tx.update(variant.productId, {}, "products"),
     ]);
   },
 
@@ -237,18 +265,24 @@ export const dashboardMutators_ = {
     tx: ReplicacheTransaction,
     { args }: UpdateProductVariantProps,
   ) => {
-    const { variant_id, updates } = args;
+    const { variantId, updates, productId } = args;
     ProductVariantUpdatesSchema._parse(updates);
-    await tx.update(variant_id, updates, "product_variants");
+    await Promise.all([
+      tx.update(variantId, updates, "productVariants"),
+      tx.update(productId, {}, "products"),
+    ]);
   },
 
   deleteProductVariant: async (
     tx: ReplicacheTransaction,
     { args }: DeleteProps,
   ) => {
-    const { id } = args;
+    const { id, productId } = args;
     string()._parse(id);
-    await tx.del(id, "product_variants");
+    await Promise.all([
+      tx.del(id, "productVariants"),
+      tx.update(productId, {}, "products"),
+    ]);
   },
 
   createProductCollection: async (
@@ -257,7 +291,7 @@ export const dashboardMutators_ = {
   ) => {
     const { collection } = args;
     ProductCollectionSchema._parse(collection);
-    await tx.put(collection.id, collection, "product_collections");
+    await tx.put(collection.id, collection, "productCollections");
   },
   updateProductCollection: async (
     tx: ReplicacheTransaction,
@@ -265,7 +299,7 @@ export const dashboardMutators_ = {
   ) => {
     const { id, updates } = args;
     ProductCollectionUpdatesSchema._parse(updates);
-    await tx.update(id, updates, "product_collections");
+    await tx.update(id, updates, "productCollections");
   },
   deleteProductCollection: async (
     tx: ReplicacheTransaction,
@@ -273,7 +307,7 @@ export const dashboardMutators_ = {
   ) => {
     const { id } = args;
     string()._parse(id);
-    await tx.del(id, "product_collections");
+    await tx.del(id, "productCollections");
   },
   removeProductFromCollection: async (
     tx: ReplicacheTransaction,
@@ -289,7 +323,7 @@ export const dashboardMutators_ = {
   ) => {
     const { group } = args;
     CustomerGroupSchema._parse(group);
-    await tx.put(group.id, group, "customer_groups");
+    await tx.put(group.id, group, "customerGroups");
   },
   updateCustomerGroup: async (
     tx: ReplicacheTransaction,
@@ -297,7 +331,7 @@ export const dashboardMutators_ = {
   ) => {
     const { id, updates } = args;
     CustomerGroupUpdatesSchema._parse(updates);
-    await tx.update(id, updates, "customer_groups");
+    await tx.update(id, updates, "customerGroups");
   },
   deleteCustomerGroup: async (
     tx: ReplicacheTransaction,
@@ -305,47 +339,47 @@ export const dashboardMutators_ = {
   ) => {
     const { id } = args;
     string()._parse(id);
-    await tx.del(id, "customer_groups");
+    await tx.del(id, "customerGroups");
   },
   addCustomerToGroup: async (
     tx: ReplicacheTransaction,
     { args }: AddCustomerToGroupProps,
   ) => {
-    const { customer_id, group_id } = args;
-    string()._parse(customer_id);
-    string()._parse(group_id);
+    const { customerId, groupId } = args;
+    string()._parse(customerId);
+    string()._parse(groupId);
     await tx.put(
-      { customer_id, group_id },
-      { customer_id, group_id },
-      "customers_to_groups",
+      { customerId, groupId },
+      { customerId, groupId },
+      "customersToGroups",
     );
   },
   removeCustomerFromGroup: async (
     tx: ReplicacheTransaction,
     { args }: RemoveCustomerFromGroupProps,
   ) => {
-    const { customer_id } = args;
-    string()._parse(customer_id);
-    await tx.del(customer_id, "customers_to_groups");
+    const { customerId } = args;
+    string()._parse(customerId);
+    await tx.del(customerId, "customersToGroups");
   },
 
   createPriceList: async (
     tx: ReplicacheTransaction,
     { args }: CreatePriceListProps,
   ) => {
-    const { price_list } = args;
-    PriceListSchema._parse(price_list);
-    const prices = price_list.prices;
-    delete price_list.prices;
+    const { priceList } = args;
+    PriceListSchema._parse(priceList);
+    const prices = priceList.prices;
+    delete priceList.prices;
     if (prices && prices.length > 0) {
       await Promise.all(
         prices.map(async (price) => {
-          price.price_list_id = price_list.id;
-          await tx.put(price.id, price, "money_amount");
+          price.priceListId = priceList.id;
+          await tx.put(price.id, price, "prices");
         }),
       );
     }
-    await tx.put(price_list.id, price_list, "price_lists");
+    await tx.put(priceList.id, priceList, "priceLists");
   },
   updatePriceList: async (
     tx: ReplicacheTransaction,
@@ -353,68 +387,142 @@ export const dashboardMutators_ = {
   ) => {
     const { id, updates } = args;
     PriceListUpdatesSchema._parse(updates);
-    await tx.update(id, updates, "price_lists");
+    await tx.update(id, updates, "priceLists");
   },
   deletePriceList: async (tx: ReplicacheTransaction, { args }: DeleteProps) => {
     const { id } = args;
     string()._parse(id);
-    await tx.del(id, "price_lists");
+    await tx.del(id, "priceLists");
   },
   addProductToPriceList: async (
     tx: ReplicacheTransaction,
     { args }: AddProductToPriceListProps,
   ) => {
-    const { price, price_list_id } = args;
-    string()._parse(price_list_id);
-    MoneyAmountSchema._parse(price);
-    price.price_list_id = price_list_id;
-    await tx.put(price.id, price, "money_amount");
+    const { price, priceListId } = args;
+    string()._parse(priceListId);
+    PriceSchema._parse(price);
+    price.priceListId = priceListId;
+    await tx.put(price.id, price, "prices");
   },
   removeProductFromPriceList: async (
     tx: ReplicacheTransaction,
     { args }: RemoveProductFromPriceListProps,
   ) => {
-    const { price_id } = args;
-    string()._parse(price_id);
-    await tx.del(price_id, "money_amount");
+    const { priceId } = args;
+    string()._parse(priceId);
+    await tx.del(priceId, "prices");
   },
   createPrices: async (
     tx: ReplicacheTransaction,
     { args }: CreatePricesProps,
   ) => {
-    const { prices, product_id } = args;
-    string()._parse(product_id);
-    array(MoneyAmountSchema)._parse(prices);
+    const { prices, productId } = args;
+    string()._parse(productId);
+    array(PriceSchema)._parse(prices);
     console.log("prices to create", prices);
     await Promise.all(
       prices.map(async (price) => {
-        await tx.put(price.id, price, "money_amount");
+        await tx.put(price.id, price, "prices");
       }),
     );
+    await tx.update(productId, {}, "products");
   },
   updatePrice: async (
     tx: ReplicacheTransaction,
     { args }: UpdatePriceProps,
   ) => {
-    const { money_amount_id, updates, product_id } = args;
-    string()._parse(money_amount_id);
-    MoneyAmountUpdatesSchema._parse(updates);
+    const { priceId, updates, productId } = args;
+    string()._parse(priceId);
+    PriceUpdatesSchema._parse(updates);
 
     await Promise.all([
-      tx.update(money_amount_id, updates, "money_amount"),
-      tx.update(product_id, {}, "products"),
+      tx.update(priceId, updates, "prices"),
+      tx.update(productId, {}, "products"),
     ]);
   },
   deletePrices: async (
     tx: ReplicacheTransaction,
     { args }: DeletePricesProps,
   ) => {
-    const { ids } = args;
+    const { ids, productId } = args;
     array(string())._parse(ids);
     await Promise.all(
       ids.map(async (id) => {
-        await tx.del(id, "money_amount");
+        await tx.del(id, "prices");
       }),
     );
+    await tx.update(productId, {}, "products");
+  },
+  updateProductTags: async (
+    tx: ReplicacheTransaction,
+    { args, repositories }: UpdateProductTagsProps,
+  ) => {
+    const checkProductTagExistenceQueries = [];
+    const { productId, tags } = args;
+    for (const tag of tags) {
+      checkProductTagExistenceQueries.push(
+        repositories?.productTagRepository.checkProductTagExists({
+          value: tag,
+        }),
+      );
+    }
+    const productTagExistenceResults = await Promise.all(
+      checkProductTagExistenceQueries,
+    );
+    const productTagsToCreate: { tag: string }[] = [];
+    const productTagsToAssign: { id: string }[] = [];
+    for (let i = 0; i < productTagExistenceResults.length; i++) {
+      const item = productTagExistenceResults[i];
+      if (!item) {
+        productTagsToCreate.push({ tag: tags[i]! });
+      } else {
+        productTagsToAssign.push({ id: item.id });
+      }
+    }
+    const newTags = await repositories?.productTagRepository.createProductTags({
+      tags: productTagsToCreate.map((value) => {
+        return {
+          id: generateId({ id: ulid(), prefix: "p_tag" }),
+          value: value.tag,
+          createdAt: new Date().toISOString(),
+        };
+      }),
+    });
+
+    const productTagAssignmentQueries = productTagsToAssign.map((t) =>
+      tx.put(
+        { productId, tagId: t.id },
+        { productId, tagId: t.id },
+        "productsToTags",
+      ),
+    );
+    for (const newTag of newTags ?? []) {
+      productTagAssignmentQueries.push(
+        tx.put(
+          { productId, tagId: newTag.id },
+          { productId, tagId: newTag.id },
+          "productsToTags",
+        ),
+      );
+    }
+    await Promise.all(productTagAssignmentQueries);
+  },
+  assignProductOptionValueToVariant: async (
+    tx: ReplicacheTransaction,
+    { args }: AssignProductOptionValueToVariantProps,
+  ) => {
+    const { optionValueId, variantId, prevOptionValueId, productId } = args;
+    await Promise.all([
+      tx.put(
+        { optionValueId, variantId },
+        { optionValueId, variantId },
+        "productOptionValuesToProductVariants",
+      ),
+      tx.update(productId, {}, "products"),
+    ]);
+    if (prevOptionValueId)
+      await tx.del(prevOptionValueId, "productOptionValuesToProductVariants");
   },
 };
+
+//if you forgor, then dont do productOptionValue id generated on client

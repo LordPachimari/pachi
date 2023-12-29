@@ -26,7 +26,11 @@ export const LargeFirstTile = ({
   updateProductImagesOrder,
 }: {
   items: ItemProps[];
-  updateProductImagesOrder?: (images: Image[]) => Promise<void>;
+  updateProductImagesOrder?: ({
+    order,
+  }: {
+    order: Record<string, number>;
+  }) => Promise<void>;
 }) => {
   const animateLayoutChanges: AnimateLayoutChanges = (args) =>
     defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -45,7 +49,6 @@ export const LargeFirstTile = ({
         if (index === 0) {
           return {
             fontSize: "2rem",
-            padding: "36px 40px",
           };
         }
 

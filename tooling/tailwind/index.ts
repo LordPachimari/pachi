@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import uiPreset from "@medusajs/ui-preset";
 import tailwindContainerQueries from "@tailwindcss/container-queries";
 import pluginForm from "@tailwindcss/forms";
@@ -35,7 +34,8 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        background: "var(--background)",
+        navbar: "var(--navbar)",
         component: "var(--component)",
         foreground: "hsl(var(--foreground))",
         primary: {
@@ -99,7 +99,7 @@ export default {
           11: "var(--ruby-a11)",
           12: "var(--ruby-a12)",
         },
-        slate: {
+        "slate-alpha": {
           1: "var(--slate-a1)",
           2: "var(--slate-a2)",
           3: "var(--slate-a3)",
@@ -112,6 +112,20 @@ export default {
           10: "var(--slate-a10)",
           11: "var(--slate-a11)",
           12: "var(--slate-a12)",
+        },
+        slate: {
+          1: "var(--slate-1)",
+          2: "var(--slate-2)",
+          3: "var(--slate-3)",
+          4: "var(--slate-4)",
+          5: "var(--slate-5)",
+          6: "var(--slate-6)",
+          7: "var(--slate-7)",
+          8: "var(--slate-8)",
+          9: "var(--slate-9)",
+          10: "var(--slate-10)",
+          11: "var(--slate-11)",
+          12: "var(--slate-12)",
         },
       },
       borderRadius: {
@@ -260,46 +274,12 @@ export default {
         visibility: "visibility",
         padding: "padding-top padding-right padding-bottom padding-left",
       },
-      spacing: {
-        "2xsmall": "0.25rem",
-        xsmall: "0.5rem",
-        small: "0.75rem",
-        base: "1rem",
-        large: "1.5rem",
-        xlarge: "2rem",
-        "2xlarge": "2.5rem",
-        "3xlarge": "3rem",
-        "4xlarge": "3.5rem",
-        "5xlarge": "4rem",
-        "6xlarge": "6rem",
-      },
       minWidth: {
         modal: "520px",
         sidebar: "240px",
       },
       maxWidth: {
         sidebar: "240px",
-      },
-      lineHeight: {
-        xsmall: "1rem",
-        small: "1.25rem",
-        base: "1.5rem",
-        large: "2.25rem",
-        xlarge: "3rem",
-        "2xlarge": "4rem",
-        "3xlarge": "4.5rem",
-        "4xlarge": "6rem",
-      },
-      fontSize: {
-        xsmall: "10px",
-        small: "12px",
-        base: "14px",
-        large: "16px",
-        xlarge: "24px",
-        "2xlarge": "30px",
-        "3xlarge": "40px",
-        "4xlarge": "48px",
-        "5xlarge": "60px",
       },
       fontFamily: {
         sans: [
@@ -336,14 +316,12 @@ export default {
       },
     },
   },
-  //@ts-ignore
   presets: [uiPreset],
   plugins: [
     tailwindTypography,
+    tailwindAnimate,
     //@ts-ignore
     tailwindContainerQueries,
-    tailwindAnimate,
-
     pluginForm({ strategy: "class" }),
 
     plugin(({ matchUtilities, theme }) => {
@@ -351,6 +329,7 @@ export default {
         {
           "animation-delay": (value) => {
             return {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               "animation-delay": value,
             };
           },

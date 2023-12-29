@@ -22,10 +22,10 @@ export function GridTileImage({
   return (
     <div
       className={cn(
-        "group flex h-full w-full items-center justify-center overflow-hidden rounded-lg border bg-white hover:border-blue-600 dark:bg-black",
+        "group flex h-full max-h-[300px] w-full max-w-[300px] items-center justify-center overflow-hidden rounded-lg border bg-component hover:border-brand dark:hover:border-brand",
         {
           relative: label,
-          "border-2 border-blue-600": active,
+          "border-2 border-brand": active,
           "border-neutral-200 dark:border-neutral-800": !active,
         },
       )}

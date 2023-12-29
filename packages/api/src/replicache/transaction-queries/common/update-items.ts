@@ -1,12 +1,8 @@
 import { and, eq, sql } from "drizzle-orm";
 import type { ReadonlyJSONObject } from "replicache";
 
-import {
-  tableNamesMap,
-  users,
-  type TableName,
-  type Transaction,
-} from "@pachi/db";
+import { tableNamesMap, type TableName, type Transaction } from "@pachi/db";
+import { users } from "@pachi/db/schema";
 
 export const updateItems_ = ({
   tableName,
@@ -31,16 +27,12 @@ export const updateItems_ = ({
               ...value,
               version: sql`${users.version} + 1`,
             })
-            .where(and(eq(users.id, id), eq(users.id, userId)))
-            .execute(),
+            .where(and(eq(users.id, id), eq(users.id, userId))),
         );
     }
   } else {
     const table = tableNamesMap[tableName];
-
     for (const { id, value } of items) {
-      console.log("COCONUT");
-      console.log("id", id);
       console.log("value", JSON.stringify(value));
       if (Object.values(value).length > 0)
         queries.push(
@@ -50,8 +42,7 @@ export const updateItems_ = ({
               ...value,
               version: sql`${table.version} + 1`,
             })
-            .where(eq(table.id, id))
-            .execute(),
+            .where(eq(table.id, id)),
         );
     }
   }

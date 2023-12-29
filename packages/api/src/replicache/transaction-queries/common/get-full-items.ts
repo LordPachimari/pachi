@@ -1,11 +1,7 @@
 import { inArray } from "drizzle-orm";
 
-import {
-  tableNamesMap,
-  users,
-  type TableName,
-  type Transaction,
-} from "@pachi/db";
+import { tableNamesMap, type TableName, type Transaction } from "@pachi/db";
+import { users } from "@pachi/db/schema";
 
 export const getFullItems = async ({
   tableName,
@@ -23,28 +19,37 @@ export const getFullItems = async ({
     const result = await transaction
       .select()
       .from(users)
-      .where(inArray(users.id, keys))
-      .execute();
+      .where(inArray(users.id, keys));
     return result;
   } else if (tableName === "products") {
-    const result = await transaction.query.products
-      .findMany({
-        where: (Product) => inArray(Product.id, keys),
-        with: {
-          // seller: {
-          //   id: true,
-          //   name: true,
-          // },
-          variants: {
-            with: {
-              options: true,
+    const result = await transaction.query.products.findMany({
+      where: (Product) => inArray(Product.id, keys),
+      with: {
+        // seller: {
+        //   id: true,
+        //   name: true,
+        // },
+        variants: {
+          with: {
+            optionValues: {
+              with: {
+                optionValue: {
+                  with: {
+                    option: true,
+                  },
+                },
+              },
             },
           },
-          options: true,
-          store: true,
         },
-      })
-      .execute();
+        options: {
+          with: {
+            values: true,
+          },
+        },
+        store: true,
+      },
+    });
     return result;
   } else {
     const table = tableNamesMap[tableName];
@@ -52,8 +57,7 @@ export const getFullItems = async ({
       .select()
       .from(table)
       //@ts-ignore
-      .where(inArray(table.id, keys))
-      .execute();
+      .where(inArray(table.id, keys));
     return result;
   }
 };

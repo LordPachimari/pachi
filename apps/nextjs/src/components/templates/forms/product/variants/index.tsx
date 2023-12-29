@@ -5,14 +5,14 @@ import { Info } from "../info";
 import CreateOption from "./create-option";
 
 interface VariantsProps {
-  product_id: string;
+  productId: string;
   options: ProductOption[];
   variants: ProductVariant[];
   createVariant: () => Promise<void>;
   openVariantModal: (prop: { variantId: string }) => void;
 }
 export default function Variants({
-  product_id,
+  productId,
   options,
   variants,
   createVariant,
@@ -26,7 +26,7 @@ export default function Variants({
       />
       <Separator className="my-2" />
       <CreateOption
-        product_id={product_id}
+        productId={productId}
         options={options}
         variants={variants}
         createVariant={createVariant}

@@ -7,28 +7,33 @@ import debounce from "lodash.debounce";
 import { Trash2Icon } from "lucide-react";
 import { ulid } from "ulid";
 
-import type { ProductOption, ProductVariant } from "@pachi/db";
+import type {
+  ProductOption,
+  ProductOptionValue,
+  ProductVariant,
+} from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/atoms/avatar";
 import { Button } from "~/components/atoms/button";
+import { Card } from "~/components/atoms/card";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "~/components/atoms/tooltip";
-import { Table } from "~/components/templates/tables/variants-table";
 import { ReplicacheInstancesStore } from "~/zustand/replicache";
 import Option from "./option";
 
 interface CreateOptionProps {
-  product_id: string;
+  productId: string;
   options: ProductOption[];
   variants: ProductVariant[];
   createVariant: () => Promise<void>;
   openVariantModal: (prop: { variantId: string }) => void;
 }
 export default function CreateOption({
-  product_id,
+  productId,
   options,
   variants,
   createVariant,
@@ -37,9 +42,9 @@ export default function CreateOption({
   const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const createOption = useCallback(async () => {
     const id = generateId({ id: ulid(), prefix: "opt" });
-    const option: ProductOption = { id, product_id };
+    const option: ProductOption = { id, productId };
     await dashboardRep?.mutate.createProductOption({ args: { option } });
-  }, [dashboardRep, product_id]);
+  }, [dashboardRep, productId]);
   const deleteOption = useCallback(
     async ({ id, productId }: { id: string; productId: string }) => {
       await dashboardRep?.mutate.deleteProductOption({
@@ -48,27 +53,41 @@ export default function CreateOption({
     },
     [dashboardRep],
   );
-  const onNameChange = useCallback(
-    debounce(async (option_id: string, name: string) => {
+  const onOptionNameChange = useCallback(
+    debounce(async (optionId: string, name: string) => {
       await dashboardRep?.mutate.updateProductOption({
-        args: { option_id, product_id, updates: { name } },
+        args: { optionId, productId, updates: { name } },
       });
     }, 500),
     [dashboardRep],
   );
-  const onValuesChange = useCallback(
-    debounce(async (option_id: string, values: string[]) => {
+  const onOptionValuesChange = useCallback(
+    debounce(async (optionId: string, values: string[]) => {
+      const newOptionValues: ProductOptionValue[] = values.map((value) => ({
+        id: generateId({ id: ulid(), prefix: "opt_val" }),
+        optionId,
+        value,
+        option: options.find((o) => o.id === optionId)!,
+      }));
       await dashboardRep?.mutate.updateProductOptionValues({
-        args: { option_id, product_id, new_option_values: values },
+        args: { optionId, productId, newOptionValues },
       });
     }, 500),
+    [dashboardRep],
+  );
+  const deleteVariant = useCallback(
+    async ({ id, productId }: { id: string; productId: string }) => {
+      await dashboardRep?.mutate.deleteProductVariant({
+        args: { id, productId },
+      });
+    },
     [dashboardRep],
   );
 
   const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
   console.log("variants", variants);
   return (
-    <div className="w-full" ref={parent}>
+    <div className="w-full lg:max-w-[380px]" ref={parent}>
       <span className="flex items-center gap-2">
         <h2 className="text-md font-semibold ">Create option</h2>
         <Tooltip>
@@ -93,19 +112,19 @@ export default function CreateOption({
           <label className="text-sm">{"Option values "}</label>
         </span>
       )}
-      <li ref={parent} className="flex list-none flex-col gap-2">
+      <li ref={parent} className="flex list-none flex-col gap-2 ">
         {options.map((option) => (
           <div key={option.id} className="flex gap-2">
             <Option
-              onNameChange={onNameChange}
-              onValuesChange={onValuesChange}
+              onOptionNameChange={onOptionNameChange}
+              onOptionValuesChange={onOptionValuesChange}
               option={option}
             />
             <Button
               size="icon"
               className="bg-red-300 hover:bg-red-400 "
               onClick={async () =>
-                await deleteOption({ id: option.id, productId: product_id })
+                await deleteOption({ id: option.id, productId: productId })
               }
             >
               <Trash2Icon className="text-red-500" />
@@ -116,7 +135,7 @@ export default function CreateOption({
       <h2 className="text-md my-2 font-semibold ">Create variant</h2>
 
       <Button
-        className=" flex w-full gap-2 bg-brand  md:w-fit"
+        className=" my-2 flex w-full gap-2 bg-brand  md:w-fit"
         onClick={createVariant}
         disabled={!!(!options[0]?.name && !options[0]?.values)}
       >
@@ -126,7 +145,58 @@ export default function CreateOption({
       {
         //there is always one default variant
       }
-      {variants.length > 1 && <Table data={variants} />}
+      <div className="flex flex-col gap-1" ref={parent}>
+        {variants.length > 1 &&
+          //skip default variant
+          variants.slice(1).map((variant) => (
+            <Card
+              key={variant.id}
+              className="flex h-14 cursor-pointer flex-row items-center p-2"
+              onClick={() => {
+                openVariantModal({ variantId: variant.id });
+              }}
+            >
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <section className="flex w-full justify-between pl-2">
+                <div>
+                  <span className="flex h-2/5 gap-2">
+                    <p className="w-20 text-sm">Name</p>
+                    <p className="w-20 text-sm">Price</p>
+                  </span>
+                  <span className="flex h-3/5 gap-2">
+                    <p className="w-20 text-sm">
+                      {variant.optionValues
+                        ?.map((ov) => `${ov.optionValue.value}`)
+                        .join("/")}
+                    </p>
+                    <p className="w-20 text-sm">
+                      {`${variant.prices?.[0]?.currencyCode ?? ""} ${
+                        variant.prices?.[0]?.amount ?? 0
+                      }`}
+                    </p>
+                  </span>
+                </div>
+                <div>
+                  <Button
+                    size="icon"
+                    className="bg-red-300 hover:bg-red-400 "
+                    onClick={async () =>
+                      await deleteVariant({
+                        id: variant.id,
+                        productId,
+                      })
+                    }
+                  >
+                    <Trash2Icon className="text-red-500" />
+                  </Button>
+                </div>
+              </section>
+            </Card>
+          ))}
+      </div>
     </div>
   );
 }

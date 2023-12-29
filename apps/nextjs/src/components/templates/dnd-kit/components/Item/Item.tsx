@@ -157,7 +157,7 @@ export const Item = React.memo(
             <div>
               {image ? (
                 <Image
-                  alt={image.name}
+                  alt={image.altText}
                   src={image.url}
                   width={index === 0 ? 200 : 140}
                   height={index === 0 ? 220 : 140}

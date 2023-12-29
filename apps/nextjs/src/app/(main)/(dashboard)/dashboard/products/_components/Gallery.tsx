@@ -72,7 +72,7 @@ const Gallery: FC<GalleryProps> = ({ images }) => {
             >
               <Image
                 src={image.url}
-                alt={image.name}
+                alt={image.altText}
                 width={600}
                 height={500}
                 className="flex h-full items-center  justify-center rounded-2xl bg-white p-4 shadow-lg dark:bg-black"
@@ -86,7 +86,7 @@ const Gallery: FC<GalleryProps> = ({ images }) => {
         <Button
           size="icon"
           onClick={handlePrev}
-          className="   rounded-md bg-slate-4 px-3 py-2 text-white backdrop-blur-md hover:bg-slate-5"
+          className="rounded-md bg-slate-4 px-3 py-2 text-white backdrop-blur-md hover:bg-slate-5"
         >
           <ArrowLeftIcon />
         </Button>

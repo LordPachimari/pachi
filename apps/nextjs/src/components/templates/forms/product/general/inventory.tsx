@@ -18,8 +18,8 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
     debounce(async ({ updates }: { updates: ProductVariantUpdates }) => {
       await updateVariant({
         updates,
-        variant_id: variant.id,
-        product_id: variant.product_id,
+        variantId: variant.id,
+        productId: variant.productId,
       });
     }, 500),
     [updateVariant],
@@ -27,10 +27,10 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
   const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
   const [hasCode, setHasCode] = useState(false);
   useEffect(() => {
-    if (variant.barcode ?? variant.hs_code ?? variant.sku) {
+    if (variant.barcode ?? variant.hsCode ?? variant.sku) {
       setHasCode(true);
     }
-  }, [variant.barcode, variant.hs_code, variant.sku]);
+  }, [variant.barcode, variant.hsCode, variant.sku]);
 
   return (
     <div>
@@ -38,25 +38,25 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
       <Input
         type="number"
         className="my-2"
-        defaultValue={variant.inventory_quantity}
+        defaultValue={variant.inventoryQuantity}
         min={0}
         onChange={async (e) => {
           await onInputChange({
-            updates: { inventory_quantity: e.currentTarget.valueAsNumber },
+            updates: { inventoryQuantity: e.currentTarget.valueAsNumber },
           });
         }}
       />
       <span className="flex items-center gap-2">
         <Checkbox
           className="my-2"
-          defaultChecked={variant.allow_backorder ?? false}
+          defaultChecked={variant.allowBackorder ?? false}
           onCheckedChange={async (e) =>
             await updateVariant({
               updates: {
-                allow_backorder: e as boolean,
+                allowBackorder: e as boolean,
               },
-              variant_id: variant.id,
-              product_id: variant.product_id,
+              variantId: variant.id,
+              productId: variant.productId,
             })
           }
         />

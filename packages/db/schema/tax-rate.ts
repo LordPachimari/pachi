@@ -1,33 +1,31 @@
 import { relations } from "drizzle-orm";
 import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
-import { products_to_tax_rates } from "./product";
-import { product_types_to_tax_rates } from "./product-type";
+import { productsToTaxRates } from "./product";
 import { regions } from "./region";
-import { shipping_options_to_tax_rates } from "./shipping-option";
+import { shippingOptionsToTaxRates } from "./shipping-option";
 
-export const tax_rates = pgTable(
+export const taxRates = pgTable(
   "tax_rates",
   {
     id: varchar("id").notNull().primaryKey(),
-    created_at: varchar("created_at"),
-    updated_at: varchar("updated_at"),
+    createdAt: varchar("createdAt"),
+    updatedAt: varchar("updatedAt"),
     name: varchar("name").notNull(),
     rate: integer("rate"),
-    region_id: varchar("region_id"),
+    regionId: varchar("regionId"),
     version: integer("version").notNull().default(0),
     code: varchar("code").notNull(),
   },
   (t) => ({
-    region_id_index: index("region_id_index").on(t.region_id),
+    regionIdIndex: index("regionIdIndex").on(t.regionId),
   }),
 );
-export const tax_ratesRelations = relations(tax_rates, ({ one, many }) => ({
+export const taxRatesRelations = relations(taxRates, ({ one, many }) => ({
   region: one(regions, {
-    fields: [tax_rates.region_id],
+    fields: [taxRates.regionId],
     references: [regions.id],
   }),
-  products: many(products_to_tax_rates),
-  product_types: many(product_types_to_tax_rates),
-  shipping_options: many(shipping_options_to_tax_rates),
+  products: many(productsToTaxRates),
+  shipping_options: many(shippingOptionsToTaxRates),
 }));

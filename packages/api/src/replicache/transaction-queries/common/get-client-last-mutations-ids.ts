@@ -1,7 +1,7 @@
 import { and, eq, inArray } from "drizzle-orm";
 
-import { replicache_clients } from "@pachi/db";
 import type { Transaction } from "@pachi/db";
+import { replicacheClients } from "@pachi/db/schema";
 
 export const getClientLastMutationIdAndVersion_ = async ({
   clientIDs,
@@ -15,18 +15,17 @@ export const getClientLastMutationIdAndVersion_ = async ({
   console.log("client ids and group", clientIDs, clientGroupID);
   const result = await transaction
     .select({
-      id: replicache_clients.id,
-      version: replicache_clients.version,
-      lastMutationID: replicache_clients.lastMutationID,
+      id: replicacheClients.id,
+      version: replicacheClients.version,
+      lastMutationID: replicacheClients.lastMutationID,
     })
-    .from(replicache_clients)
+    .from(replicacheClients)
     .where(
       and(
-        eq(replicache_clients.clientGroupID, clientGroupID),
-        inArray(replicache_clients.id, clientIDs),
+        eq(replicacheClients.clientGroupID, clientGroupID),
+        inArray(replicacheClients.id, clientIDs),
       ),
-    )
-    .execute();
+    );
   const keys = Object.fromEntries(
     result.map((l) => [
       l.id,

@@ -2,13 +2,13 @@ import { relations } from "drizzle-orm";
 import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
 import { products } from "./product";
-import { product_option_values } from "./product-option-value";
+import { productOptionValues } from "./product-option-value";
 
-export const product_options = pgTable(
+export const productOptions = pgTable(
   "product_options",
   {
     id: varchar("id").notNull().primaryKey(),
-    product_id: varchar("product_id")
+    productId: varchar("productId")
       .references(() => products.id, {
         onDelete: "cascade",
       })
@@ -16,17 +16,17 @@ export const product_options = pgTable(
     name: varchar("name"),
     version: integer("version").notNull().default(0),
   },
-  (product_option) => ({
-    product_id_index2: index("product_id_index2").on(product_option.product_id),
+  (productOption) => ({
+    productIdIndex2: index("productIdIndex2").on(productOption.productId),
   }),
 );
-export const product_option_relations = relations(
-  product_options,
+export const productOptionRelations = relations(
+  productOptions,
   ({ one, many }) => ({
     product: one(products, {
-      fields: [product_options.product_id],
+      fields: [productOptions.productId],
       references: [products.id],
     }),
-    values: many(product_option_values),
+    values: many(productOptionValues),
   }),
 );

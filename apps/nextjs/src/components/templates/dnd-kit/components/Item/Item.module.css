@@ -135,8 +135,8 @@
 /* Actions */
 .Actions {
   position: absolute;
-  right: 10px;
-  top: 20px;
+  right: 0px;
+  top: 2px;
   display: flex;
 
   align-self: flex-start;

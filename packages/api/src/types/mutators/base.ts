@@ -1,11 +1,13 @@
 import type { RequestHeaders } from "@pachi/types";
 
 import type { Repositories } from "../../repositories";
+import type { CartService_ } from "../../services/server/cart";
+import type { CartItemService_ } from "../../services/server/cart-item";
 import type { Bindings } from "../bindings";
 
 // import {
 //   CartService_,
-//   LineItemService_,
+//   CartItemService_,
 //   PriceSelectionService_,
 //   PricingService_,
 //   TaxProviderService_,
@@ -14,7 +16,7 @@ import type { Bindings } from "../bindings";
 // } from "../../services/server";
 
 export interface MutationBase {
-  user?: { id: string; email: string };
+  userId?: string | undefined;
   requestHeaders?: RequestHeaders;
   // services: {
   // taxService: TaxRateService_;
@@ -23,8 +25,12 @@ export interface MutationBase {
   // taxProviderService: TaxProviderService_;
   // transactionService: TransactionBaseService_;
   // cartService: CartService_;
-  // lineItemService: LineItemService_;
+  // lineItemService: CartItemService_;
   // };
+  services?: {
+    cartItemService: CartItemService_;
+    cartService: CartService_;
+  };
   repositories?: Repositories;
   env?: Bindings;
 }

@@ -1,22 +1,25 @@
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
-import { Hono, type Context } from "hono";
+import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import * as jose from "jose";
+import { object, string } from "valibot";
 
 import { pull, push, type Bindings } from "@pachi/api";
 import {
-  countries as countries_table,
-  currencies,
   schema,
-  stores,
-  users,
   type Country,
   type Currency,
   type Store,
   type User,
 } from "@pachi/db";
+import {
+  countries as countriesTable,
+  currencies,
+  stores,
+  users,
+} from "@pachi/db/schema";
 import {
   countries,
   currencies as currencies_values,
@@ -25,22 +28,6 @@ import {
 } from "@pachi/types";
 import { generateId, ulid } from "@pachi/utils";
 
-function getToken(
-  c: Context<
-    {
-      Bindings: Bindings;
-    },
-    "*",
-    {}
-  >,
-): string | undefined {
-  const cookie = getCookie(c, "hanko");
-  const authorization = c.req.raw.headers.get("authorization");
-  if (authorization && authorization.split(" ")[0] === "Bearer")
-    return authorization.split(" ")[1];
-  else if (cookie) return cookie;
-  return undefined;
-}
 const app = new Hono<{ Bindings: Bindings }>();
 app.use("/*", cors());
 app.use("/*", async (c, next) => {
@@ -57,36 +44,32 @@ app.use("/*", async (c, next) => {
   });
   return await next();
 });
-app.use("*", async (c, next) => {
-  if (c.env.ENVIRONMENT === "test" || c.env.ENVIRONMENT === "dev") {
-    return await next();
-  }
-  const jwt = getToken(c);
-  const JWKS_ENDPOINT = `${c.env.HANKO_URL}/.well-known/jwks.json`;
-  const JWKS = jose.createRemoteJWKSet(new URL(JWKS_ENDPOINT), {
-    cooldownDuration: 120000,
-  });
-  if (jwt) {
-    try {
-      const { payload } = await jose.jwtVerify(jwt, JWKS);
-      console.log("what is payload sub?", payload.sub);
-      c.set("auth" as never, payload.sub);
-    } catch (error) {
-      return c.newResponse("Invalid token", { status: 403 });
-    }
-  }
-  return await next();
-});
+// app.use("*", async (c, next) => {
+//   if (c.env.ENVIRONMENT === "test") {
+//     return await next();
+//   }
+//   const jwt = getCookie(c, "hanko");
+//   const JWKS_ENDPOINT = `${c.env.HANKO_URL}/.well-known/jwks.json`;
+//   const JWKS = jose.createRemoteJWKSet(new URL(JWKS_ENDPOINT), {
+//     cooldownDuration: 120000,
+//   });
+//   if (jwt) {
+//     try {
+//       const { payload } = await jose.jwtVerify(jwt, JWKS);
+//       console.log("what is payload sub?", payload.sub);
+//       c.set("auth" as never, payload.sub);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+//   return await next();
+// });
 app.post("/pull/:spaceId", async (c) => {
   const userId =
-    c.env.ENVIRONMENT === "test"
+    c.env.ENVIRONMENT === "test" || c.env.ENVIRONMENT === "dev"
       ? c.req.query("userId")
       : c.get("auth" as never);
   console.log("userId", userId);
-  const allCookies = getCookie(c);
-  console.log("all cookies", allCookies);
-  const unauthenticated_user_id = c.req.query("userId") as string;
-  console.log("unauthenticated_user_id", unauthenticated_user_id);
   try {
     SpaceIdSchema._parse(c.req.param("spaceId"));
   } catch (error) {
@@ -94,7 +77,6 @@ app.post("/pull/:spaceId", async (c) => {
     return c.json({ message: "Invalid spaceId" }, 400);
   }
   const json = await c.req.json();
-  console.log("req.body", json);
 
   const pool = new Pool({ connectionString: c.env.DATABASE_URL });
 
@@ -105,18 +87,16 @@ app.post("/pull/:spaceId", async (c) => {
     db,
     spaceId: c.req.param("spaceId") as SpaceId,
     storage: c.env.PACHI,
-    userId: userId ?? unauthenticated_user_id,
+    userId: userId,
   });
   return c.json(pullResponse, 200);
 });
 app.post("/push/:spaceId", async (c) => {
   const userId =
-    c.env.ENVIRONMENT === "test"
+    c.env.ENVIRONMENT === "test" || c.env.ENVIRONMENT === "dev"
       ? c.req.query("userId")
       : c.get("auth" as never);
-
-  const unauthenticated_user_id = c.req.query("userId") as string;
-  console.log("unauthenticated_user_id", unauthenticated_user_id);
+  console.log("userId", userId);
 
   try {
     SpaceIdSchema._parse(c.req.param("spaceId"));
@@ -136,7 +116,7 @@ app.post("/push/:spaceId", async (c) => {
     db,
     spaceId: c.req.param("spaceId") as SpaceId,
     storage: c.env.PACHI,
-    userId: userId ?? unauthenticated_user_id,
+    userId: userId,
     requestHeaders: {
       ip: c.req.raw.headers.get("cf-connecting-ip"),
       userAgent: c.req.raw.headers.get("user-agent"),
@@ -157,7 +137,7 @@ app.post("/currencies", async (c) => {
     };
   });
   //@ts-ignore
-  await db.insert(currencies).values(values).execute();
+  await db.insert(currencies).values(values);
   return c.json({}, 200);
 });
 
@@ -167,14 +147,14 @@ app.post("/countries", async (c) => {
   const values: Country[] = Object.values(countries).map((value) => {
     return {
       id: generateId({ id: ulid(), prefix: "country" }),
-      iso_2: value.alpha2,
-      iso_3: value.alpha3,
+      iso2: value.alpha2,
+      iso3: value.alpha3,
       name: value.name,
-      display_name: value.name,
+      displayName: value.name,
     };
   });
   //@ts-ignore
-  await db.insert(countries_table).values(values).execute();
+  await db.insert(countriesTable).values(values);
   return c.json({}, 200);
 });
 app.get("/username/:id", async (c) => {
@@ -188,39 +168,50 @@ app.get("/username/:id", async (c) => {
   });
   return c.json({ username: user?.username }, 200);
 });
+
 app.post("/create-user", async (c) => {
   const pool = new Pool({ connectionString: c.env.DATABASE_URL });
   const db = drizzle(pool, { schema });
-  const { email, id, username } = (await c.req.json()) as {
+  const { email, userId, username } = (await c.req.json()) as {
     username: string;
     email: string;
-    id: string;
+    userId: string;
   };
-  const created_at = new Date().toISOString();
-  const new_user: User = {
-    id,
-    username,
-    email,
-    created_at,
-  };
-  const new_store: Store = {
-    id: generateId({ id: ulid(), prefix: "store" }),
-    name: username,
-    founder_id: id,
-    version: 0,
-    created_at,
-  };
+
   try {
-    await Promise.all([
+    object({ username: string(), email: string(), userId: string() })._parse({
+      username,
+      email,
+      userId,
+    });
+    const createdAt = new Date().toISOString();
+    const newUser: User = {
+      id: userId,
+      username,
+      email,
+      createdAt,
+    };
+    const newStore: Store = {
+      id: generateId({ id: username, prefix: "store" }),
+      name: username,
+      founderId: userId,
+      version: 0,
+      createdAt,
+    };
+    //@ts-ignore
+    await db.insert(users).values(newUser),
       //@ts-ignore
-      db.insert(users).values(new_user).execute(),
-      //@ts-ignore
-      db.insert(stores).values(new_store).execute(),
-    ]);
+      await db.insert(stores).values(newStore);
+    return c.json({ message: "Successfully created user" }, 200);
   } catch (error) {
     console.log(error);
+    console.log("CODE", (error as { code: number }).code);
+    if ((error as { code: string }).code === "23505")
+      return c.json({ message: "User already created" }, 400);
     return c.json({ message: "Failed to create user" }, 400);
   }
-  return c.status(200);
+});
+app.get("/hello", async (c) => {
+  return c.text("hello");
 });
 export default app;

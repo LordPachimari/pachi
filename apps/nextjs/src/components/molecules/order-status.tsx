@@ -10,7 +10,7 @@ export const OrderStatus = ({ status }: { status: OrderStatusType }) => {
       return <DotIndicator title="Processing" variant="default" />;
     case "canceled":
       return <DotIndicator title="Canceled" variant="danger" />;
-    case "requires_action":
+    case "requiresAction":
       return <DotIndicator title="Requires action" variant="danger" />;
     default:
       return null;

@@ -10,27 +10,27 @@ import {
 } from "drizzle-orm/pg-core";
 
 import type { Image } from "../validators/common";
-import { money_amount } from "./money-amount";
+import { prices } from "./price";
 import { products } from "./product";
-import { product_option_values } from "./product-option-value";
+import { productOptionValuesToProductVariants } from "./product-option-value";
 
-export const product_variants = pgTable(
+export const productVariants = pgTable(
   "product_variants",
   {
     id: varchar("id").notNull().primaryKey(),
     barcode: varchar("barcode"),
-    created_at: varchar("created_at"),
-    updated_at: varchar("updated_at"),
+    createdAt: varchar("createdAt"),
+    updatedAt: varchar("updatedAt"),
     ean: varchar("ean"),
     height: integer("height"),
-    hs_code: varchar("hs_code"),
-    inventory_quantity: integer("inventory_quantity").notNull().default(0),
+    hsCode: varchar("hs_code"),
+    inventoryQuantity: integer("inventoryQuantity").notNull().default(0),
     length: integer("length"),
     material: varchar("material"),
     metadata: json("metadata").$type<Record<string, unknown>>(),
-    mid_code: varchar("mid_code"),
-    origin_country: text("origin_country"),
-    product_id: varchar("product_id")
+    midCode: varchar("midCode"),
+    originCountry: text("originCountry"),
+    productId: varchar("productId")
       .references(() => products.id, {
         onDelete: "cascade",
       })
@@ -42,21 +42,24 @@ export const product_variants = pgTable(
     width: integer("width"),
     images: json("images").$type<Image[]>(),
     version: integer("version").notNull().default(0),
-    allow_backorder: boolean("allow_backorder").default(false),
+    allowBackorder: boolean("allowBackorder").default(false),
+    available: boolean("available").default(true),
   },
-  (product_variant) => ({
-    product_id_index: index("product_id_index").on(product_variant.product_id),
+  (productVariant) => ({
+    productIdIndex: index("productIdIndex").on(productVariant.productId),
   }),
 );
-export const product_variant_relations = relations(
-  product_variants,
+export const productVariantRelations = relations(
+  productVariants,
   ({ one, many }) => ({
     product: one(products, {
-      fields: [product_variants.product_id],
+      fields: [productVariants.productId],
       references: [products.id],
       relationName: "product.variants",
     }),
-    prices: many(money_amount),
-    options: many(product_option_values),
+    prices: many(prices),
+    optionValues: many(productOptionValuesToProductVariants, {
+      relationName: "variant.optionValues",
+    }),
   }),
 );

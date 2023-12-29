@@ -23,10 +23,22 @@ export const storeCVD: GetClientViewData = async ({
                     with: {
                       variants: {
                         with: {
-                          options: true,
+                          optionValues: {
+                            with: {
+                              optionValue: {
+                                with: {
+                                  option: true,
+                                },
+                              },
+                            },
+                          },
                         },
                       },
-                      options: true,
+                      options: {
+                        with: {
+                          values: true,
+                        },
+                      },
                     },
                   },
                 },
@@ -57,10 +69,16 @@ export const storeCVD: GetClientViewData = async ({
         ])
   ) as [user: User | undefined];
   const cvd: ClientViewDataWithTable = [];
+
   for (const store of user?.stores ?? []) {
     cvd.push({
       cvd: (store.products ?? []) as ClientViewDataWithTable[0]["cvd"],
       tableName: "products",
+    });
+    delete store.products;
+    cvd.push({
+      cvd: [store],
+      tableName: "stores",
     });
   }
 

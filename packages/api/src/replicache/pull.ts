@@ -24,7 +24,7 @@ export async function pull({
 }: {
   spaceId: SpaceId;
   body: PullRequest;
-  userId: string;
+  userId: string | undefined;
   db: Db;
   storage: KVNamespace;
 }): Promise<PullResponseOKV1> {
@@ -35,11 +35,9 @@ export async function pull({
   const pull = pullRequestSchema._parse(body).output!;
   string()._parse(userId);
 
-  console.log("pull cookie", pull.cookie);
   const requestCookie = pull.cookie
     ? cookieSchema._parse(pull.cookie).output
     : undefined;
-  console.log("requestCookie", requestCookie);
 
   const startTransact = Date.now();
 
