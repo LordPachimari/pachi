@@ -1,6 +1,12 @@
-import type { MutatorReturn } from "replicache";
-import { string } from "valibot";
-
+import {
+  getClientGroupObject,
+  getClientLastMutationIdsAndVersion,
+  ReplicacheTransaction,
+  server,
+  setClientGroupObject,
+  setLastMutationIdsAndVersions,
+  type Server,
+} from "@pachi/core";
 import type { Db } from "@pachi/db";
 import type {
   Mutation,
@@ -10,70 +16,28 @@ import type {
 } from "@pachi/types";
 import { mutationAffectedSpaces, pushRequestSchema } from "@pachi/types";
 
-import type { Repositories } from "../repositories";
-import { ProductRepository } from "../repositories/product";
-import { ProductOptionRepository } from "../repositories/product-option";
-import { ProductTagRepository } from "../repositories/product-tag";
-import { ProductVariantRepository } from "../repositories/product-variant";
-import { StoreRepository } from "../repositories/store";
-import { UserRepository } from "../repositories/user";
-import type { Services_ } from "../services/server";
-import { CartService_ } from "../services/server/cart";
-import { CartItemService_ } from "../services/server/cart-item";
-import type { Bindings } from "../types/bindings";
-import {
-  getClientGroupObject,
-  getClientLastMutationIdsAndVersion,
-  setClientGroupObject,
-  setLastMutationIdsAndVersions,
-} from "./data/data";
-import {
-  dashboardMutators_,
-  globalMutators_,
-  productMutators_,
-} from "./mutators";
-import { ReplicacheTransaction } from "./replicache-transaction/transaction";
-
-type CustomMutator = Record<
-  string,
-  (
-    tx: ReplicacheTransaction,
-    props: {
-      args: unknown;
-      requestHeaders: RequestHeaders;
-      userId?: string | undefined;
-      repositories: Repositories;
-      env: Bindings;
-      services: Services_;
-    },
-  ) => MutatorReturn
->;
-
 export const push = async ({
   body: push,
   userId,
   db,
-  storage,
   spaceId,
   requestHeaders,
-  env,
 }: {
   body: PushRequest;
   userId: string | undefined;
   db: Db;
-  storage: KVNamespace;
   spaceId: SpaceId;
-  requestHeaders: {
-    ip: string | null;
-    userAgent: string | null;
-  };
-  env: Bindings;
+  requestHeaders: RequestHeaders;
 }): Promise<void> => {
   console.log("---------------------------------------------------");
 
   console.log("Processing push");
-  pushRequestSchema._parse(push);
-  string()._parse(userId);
+  try {
+    pushRequestSchema.parse(push);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Invalid push request");
+  }
   if (push.mutations.length === 0) {
     console.log("no mutations");
     return;
@@ -82,41 +46,51 @@ export const push = async ({
   const affectedSpaces = new Map<SpaceId, Set<string>>();
   const t0 = Date.now();
   const clientIDs = [...new Set(push.mutations.map((m) => m.clientID))];
-  const clientGroupObject = await getClientGroupObject({
-    clientGroupID: push.clientGroupID,
-    storage,
-  });
-  console.log("getting from clientGroupObject cache time", Date.now() - t0);
-  let clientVersion = clientGroupObject.clientVersion;
 
   const processMutations = async () => {
     await db.transaction(
       async (transaction) => {
+        const clientGroupObject = await getClientGroupObject({
+          clientGroupID: push.clientGroupID,
+          transaction,
+        });
+        let clientVersion = clientGroupObject.clientVersion;
         const replicacheTransaction = new ReplicacheTransaction(
           spaceId,
           userId,
           transaction,
         );
-        const repositories: Repositories = {
-          productOptionRepository: new ProductOptionRepository(transaction),
-          productRepository: new ProductRepository(transaction),
-          productVariantRepository: new ProductVariantRepository(transaction),
-          userRepository: new UserRepository(transaction),
-          productTagRepository: new ProductTagRepository(transaction),
-          storeRepository: new StoreRepository(transaction),
+        const repositories: server.Repositories = {
+          productOptionRepository: new server.ProductOptionRepository(
+            transaction,
+          ),
+          productRepository: new server.ProductRepository(transaction),
+          productVariantRepository: new server.ProductVariantRepository(
+            transaction,
+          ),
+          userRepository: new server.UserRepository(transaction),
+          productTagRepository: new server.ProductTagRepository(transaction),
+          storeRepository: new server.StoreRepository(transaction),
         };
-        const services: Services_ = {
-          cartService: new CartService_({
+        const services: server.Services = {
+          cartService: new server.CartService({
             manager: transaction,
             replicacheTransaction,
-            storage,
-          }),
-          cartItemService: new CartItemService_({
-            manager: transaction,
-            replicacheTransaction,
-            storage,
           }),
         };
+        const props: server.ServerProps = {
+          transaction,
+          userId,
+          requestHeaders,
+          services,
+          repositories,
+          replicacheTransaction,
+        };
+
+        const replicacheServer =
+          spaceId === "dashboard"
+            ? server.initDashboardServer(props)
+            : undefined;
         const lastMutationIdsAndVersions =
           await getClientLastMutationIdsAndVersion({
             clientGroupID: push.clientGroupID,
@@ -140,17 +114,10 @@ export const push = async ({
           }
 
           const nextMutationId = await processMutation({
-            tx: replicacheTransaction,
             lastMutationID:
               lastMutationIdsAndVersions[mutation.clientID]!.lastMutationID,
             mutation,
-            storage,
-            spaceId,
-            requestHeaders,
-            repositories,
-            env,
-            userId,
-            services,
+            replicacheServer: replicacheServer as Server<any>,
           });
           console.log("lastMutationID", lastMutationIdsAndVersions);
 
@@ -176,7 +143,6 @@ export const push = async ({
           }
           for (const [spaceId_, subspaces_] of Object.entries(spaces)) {
             const space = spaceId_ as SpaceId;
-            console.log("space inside", space);
             const affectedSubSpaces = affectedSpaces.get(space) ?? new Set();
 
             for (const subspace of subspaces_) {
@@ -195,9 +161,8 @@ export const push = async ({
               transaction,
             }),
             setClientGroupObject({
-              clientGroupID: push.clientGroupID,
               clientGroupObject: { ...clientGroupObject, clientVersion },
-              storage,
+              transaction,
             }),
             replicacheTransaction.flush(),
           ]);
@@ -232,30 +197,15 @@ export const push = async ({
 };
 
 const processMutation = async ({
-  tx,
   mutation,
   error,
-  userId,
   lastMutationID,
-  spaceId,
-  requestHeaders,
-  repositories,
-  env,
-  services,
+  replicacheServer,
 }: {
-  tx: ReplicacheTransaction;
   mutation: Mutation;
   lastMutationID: number;
   error?: unknown;
-  userId: string | undefined;
-  spaceId: SpaceId;
-  storage: KVNamespace;
-  requestHeaders: RequestHeaders;
-  repositories: Repositories;
-  env: Bindings;
-  services: Services_;
-
-  isFeatureEnabled?: (feature: string) => boolean;
+  replicacheServer: Server<any>;
 }) => {
   const expectedMutationID = lastMutationID + 1;
   if (mutation.id < expectedMutationID) {
@@ -276,28 +226,10 @@ const processMutation = async ({
     const t1 = Date.now();
     // For each possible mutation, run the server-side logic to apply the
     // mutation.
-
-    const mutator =
-      spaceId === "products"
-        ? (productMutators_ as CustomMutator)[mutation.name]
-        : spaceId === "dashboard"
-        ? (dashboardMutators_ as CustomMutator)[mutation.name]
-        : (globalMutators_ as CustomMutator)[mutation.name];
-
-    if (!mutator) {
-      console.error(`Unknown mutator: ${mutation.name} - skipping`);
-      return lastMutationID;
-    }
+    const { name, args } = mutation;
 
     try {
-      await mutator(tx, {
-        args: mutation.args.args,
-        requestHeaders,
-        userId,
-        repositories,
-        env,
-        services,
-      });
+      await replicacheServer.execute(name, args);
     } catch (e) {
       console.error(`Error executing mutator: ${JSON.stringify(mutation)}`, e);
     }

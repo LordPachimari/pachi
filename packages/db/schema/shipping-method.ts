@@ -12,7 +12,6 @@ import { carts } from "./cart";
 import { orders } from "./order";
 import { returns } from "./return";
 import { shippingOptions } from "./shipping-option";
-import { swaps } from "./swap";
 
 export const shippingMethods = pgTable(
   "shipping_methods",
@@ -27,7 +26,6 @@ export const shippingMethods = pgTable(
     returnId: varchar("returnId"),
     shippingOptionId: varchar("shippingOptionId").notNull(),
     subtotal: integer("subtotal"),
-    swapId: varchar("swapId"),
     taxTotal: integer("taxTotal"),
     total: integer("total"),
 
@@ -41,7 +39,6 @@ export const shippingMethods = pgTable(
     shippingOptionIdIndex: index("shipping_optionIdIndex").on(
       t.shippingOptionId,
     ),
-    swapIdIndex1: index("swapIdIndex1").on(t.swapId),
   }),
 );
 export const ShippingMethodRelations = relations(
@@ -66,10 +63,6 @@ export const ShippingMethodRelations = relations(
     shippingOption: one(shippingOptions, {
       fields: [shippingMethods.shippingOptionId],
       references: [shippingOptions.id],
-    }),
-    swap: one(swaps, {
-      fields: [shippingMethods.swapId],
-      references: [swaps.id],
     }),
     // tax_lines: many(ShippingMethodTaxLine),
   }),

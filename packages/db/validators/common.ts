@@ -1,10 +1,10 @@
-import { enumType, number, object, string, type Output } from "valibot";
+import { z } from "zod";
 
-export const ImageSchema = object({
-  id: string(),
-  altText: string(),
-  order: number(),
-  url: string(),
+export const ImageSchema = z.object({
+  id: z.string(),
+  altText: z.string(),
+  order: z.number(),
+  url: z.string(),
 });
 
 export const product_status = [
@@ -13,7 +13,7 @@ export const product_status = [
   "published",
   "rejected",
 ] as const;
-export type Image = Output<typeof ImageSchema>;
+export type Image = z.infer<typeof ImageSchema>;
 export const category = [
   "Electronics",
   "Clothing",
@@ -40,8 +40,8 @@ export const fulfillmentStatus = [
   "returned",
   "shipped",
 ] as const;
-export const FulfillmentStatusSchema = enumType(fulfillmentStatus);
-export type FulfillmentStatus = Output<typeof FulfillmentStatusSchema>;
+export const FulfillmentStatusSchema = z.enum(fulfillmentStatus);
+export type FulfillmentStatus = z.infer<typeof FulfillmentStatusSchema>;
 
 export const swapFulfillmentStatus = [
   "canceled",
@@ -62,8 +62,8 @@ export const paymentStatus = [
   "canceled",
   "requiresAction",
 ] as const;
-export const PaymentStatusSchema = enumType(paymentStatus);
-export type PaymentStatus = Output<typeof PaymentStatusSchema>;
+export const PaymentStatusSchema = z.enum(paymentStatus);
+export type PaymentStatus = z.infer<typeof PaymentStatusSchema>;
 
 export const swapPaymentStatus = [
   "awaiting",
@@ -85,8 +85,8 @@ export const orderStatus = [
   "requiresAction",
 ] as const;
 
-export const OrderStatusSchema = enumType(orderStatus);
-export type OrderStatus = Output<typeof OrderStatusSchema>;
+export const OrderStatusSchema = z.enum(orderStatus);
+export type OrderStatus = z.infer<typeof OrderStatusSchema>;
 
 export const orderEditStatus = [
   "canceled",
@@ -117,21 +117,21 @@ export const productStatus = [
   "proposed",
   "rejected",
 ] as const;
-export const ProductStatusSchema = enumType(productStatus);
-export type ProductStatus = Output<typeof ProductStatusSchema>;
+export const ProductStatusSchema = z.enum(productStatus);
+export type ProductStatus = z.infer<typeof ProductStatusSchema>;
 
 export const discountType = ["offProducts", "offOrder", "buyXGetY"] as const;
-export const DiscountTypeSchema = enumType(discountType);
-export type DiscountType = Output<typeof DiscountTypeSchema>;
+export const DiscountTypeSchema = z.enum(discountType);
+export type DiscountType = z.infer<typeof DiscountTypeSchema>;
 
-export const CartTypeSchema = enumType([
+export const CartTypeSchema = z.enum([
   "claim",
   "default",
   "draftOrder",
   "paymentLink",
   "swap",
 ]);
-export type CartType = Output<typeof CartTypeSchema>;
+export type CartType = z.infer<typeof CartTypeSchema>;
 
 export enum DiscountRuleType {
   FIXED = "fixed",

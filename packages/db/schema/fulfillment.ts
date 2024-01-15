@@ -12,7 +12,6 @@ import {
 import { cartItems } from "./cart-item";
 import { fulfillmentProviders } from "./fulfillment-provider";
 import { orders } from "./order";
-import { swaps } from "./swap";
 import { trackingLinks } from "./tracking-link";
 
 export const fulfillments = pgTable(
@@ -60,10 +59,6 @@ export const fulfillmentRelations = relations(
     }),
     items: many(fulfillmentItems),
     trackingLinks: many(trackingLinks),
-    swap: one(swaps, {
-      fields: [fulfillments.swapId],
-      references: [swaps.id],
-    }),
   }),
 );
 

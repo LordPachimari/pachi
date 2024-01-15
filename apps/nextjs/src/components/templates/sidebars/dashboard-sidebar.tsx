@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+
 // components/Sidebar.js
-import { HomeIcon } from "lucide-react";
 
 import { cn } from "@pachi/utils";
 

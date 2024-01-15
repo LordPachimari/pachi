@@ -8,13 +8,11 @@ export const addresses = pgTable(
   "addresses",
   {
     id: varchar("id").notNull().primaryKey(),
-    address1: varchar("address1"),
-    address2: varchar("address2"),
+    address: varchar("address1"),
     city: varchar("city"),
-    company: varchar("company"),
     countryCode: varchar("countryCode")
       .notNull()
-      .references(() => countries.iso2),
+      .references(() => countries.countryCode),
     createdAt: varchar("createdAt"),
     customerId: varchar("customerId").references(() => users.id),
     postalCode: varchar("postalCode"),
@@ -34,6 +32,6 @@ export const addressesRelations = relations(addresses, ({ one }) => ({
   }),
   country: one(countries, {
     fields: [addresses.countryCode],
-    references: [countries.iso2],
+    references: [countries.countryCode],
   }),
 }));

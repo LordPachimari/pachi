@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="flex min-h-screen">
       <DashboardSidebar
         items={dashboardConfig.sidebarNav}
-        storeId="pachimari"
+        storeId="store_pachimari"
       />
       <main className="ml-14 w-full">{children}</main>
       <DashboardRep userId={userId} />

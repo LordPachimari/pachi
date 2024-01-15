@@ -24,7 +24,7 @@ export const productVariants = pgTable(
     ean: varchar("ean"),
     height: integer("height"),
     hsCode: varchar("hs_code"),
-    inventoryQuantity: integer("inventoryQuantity").notNull().default(0),
+    quantity: integer("quantity").notNull().default(0),
     length: integer("length"),
     material: varchar("material"),
     metadata: json("metadata").$type<Record<string, unknown>>(),

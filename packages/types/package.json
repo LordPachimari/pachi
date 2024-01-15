@@ -8,12 +8,13 @@
   "dependencies": {
     "@pachi/db": "^0.1.0",
     "replicache": "13.0.1",
-    "valibot": "^0.17.1"
+    "valibot": "^0.17.1",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@pachi/tsconfig": "workspace:^0.1.0",
     "@pachi/eslint-config": "workspace:^0.1.0",
     "@pachi/prettier-config": "workspace:^0.1.0",
+    "@pachi/tsconfig": "workspace:^0.1.0",
     "dotenv-cli": "^7.3.0",
     "eslint": "^8.53.0",
     "prettier": "^3.0.3",
