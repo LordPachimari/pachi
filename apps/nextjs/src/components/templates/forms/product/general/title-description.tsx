@@ -1,7 +1,7 @@
 import type { ProductUpdates } from "@pachi/db";
 
-import { Textarea } from "~/components/atoms/textarea";
 import TitleField from "~/components/molecules/title-field";
+import { Textarea } from "~/components/ui/textarea";
 import type { DebouncedFunc } from "~/types";
 
 interface TitleAndDescriptionProps {

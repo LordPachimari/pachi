@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 
 import { cn } from "@pachi/utils";
 
-import { Button } from "~/components/atoms/button";
-import { Icons } from "../atoms/icons";
+import { Button } from "~/components/ui/button";
+import { Icons } from "../ui/icons";
 
 interface DialogShellProps
   extends React.DetailedHTMLProps<

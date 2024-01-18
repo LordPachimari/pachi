@@ -5,9 +5,9 @@ import debounce from "lodash.debounce";
 import type { UpdateProductVariantProps } from "@pachi/api";
 import type { ProductVariant, ProductVariantUpdates } from "@pachi/db";
 
-import { Checkbox } from "~/components/atoms/checkbox";
-import { Input } from "~/components/atoms/input";
 import InputField from "~/components/molecules/input-field";
+import { Checkbox } from "~/components/ui/checkbox";
+import { Input } from "~/components/ui/input";
 
 interface InventoryProps {
   updateVariant: (props: UpdateProductVariantProps["args"]) => Promise<void>;

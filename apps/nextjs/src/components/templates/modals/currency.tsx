@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusIcon, SidebarClose } from "lucide-react";
 
-import { Button } from "~/components/atoms/button";
+import { Button } from "~/components/ui/button";
 
 interface CurrencyModalProps {
   children: React.ReactNode;

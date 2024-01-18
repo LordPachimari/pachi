@@ -1,6 +1,6 @@
 import type { OrderStatus as OrderStatusType } from "@pachi/db";
 
-import DotIndicator from "../atoms/dot-indicator";
+import DotIndicator from "../ui/dot-indicator";
 
 export const OrderStatus = ({ status }: { status: OrderStatusType }) => {
   switch (status) {

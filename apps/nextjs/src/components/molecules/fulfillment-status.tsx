@@ -1,6 +1,6 @@
 import type { FulfillmentStatus as FulfillmentStatusType } from "@pachi/db";
 
-import DotIndicator from "../atoms/dot-indicator";
+import DotIndicator from "../ui/dot-indicator";
 
 export const FulfillmentStatus = ({
   status,

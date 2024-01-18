@@ -3,10 +3,10 @@ import { useState } from "react";
 import type { UpdatePriceProps } from "@pachi/api";
 import { type ProductVariant } from "@pachi/db";
 
-import { Label } from "~/components/atoms/label";
-import { RadioGroup } from "~/components/atoms/radio-group";
 import CurrencyModal from "~/components/templates/modals/currency";
 import { Table } from "~/components/templates/tables/currency-table";
+import { Label } from "~/components/ui/label";
+import { RadioGroup } from "~/components/ui/radio-group";
 import { CurrencyInput } from "./currency-input";
 
 interface PricingProps {

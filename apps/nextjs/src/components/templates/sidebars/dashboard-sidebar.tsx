@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@pachi/utils";
 
-import { Icons } from "~/components/atoms/icons";
+import { Icons } from "~/components/ui/icons";
 import type { SidebarNavItem } from "~/types";
 
 export interface DashboardSidebarProps {

@@ -6,7 +6,7 @@ import type {
 } from "@pachi/api";
 import type { Image, Product, ProductUpdates, Store } from "@pachi/db";
 
-import { Separator } from "~/components/atoms/separator";
+import { Separator } from "~/components/ui/separator";
 import type { DebouncedFunc } from "~/types";
 import Discountable from "./discountable";
 import Inventory from "./inventory";

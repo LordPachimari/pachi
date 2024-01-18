@@ -17,7 +17,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { ScrollArea } from "~/components/atoms/scroll-area";
+import { DataTableToolbar } from "~/components/table/toolbar";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -25,8 +26,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/atoms/table";
-import { DataTableToolbar } from "~/components/organisms/data-table/data-table-toolbar";
+} from "~/components/ui/table";
 import { useDebounce } from "~/hooks/use-debounce";
 import type {
   DataTableFilterableColumn,

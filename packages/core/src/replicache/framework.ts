@@ -1,19 +1,12 @@
 import type { WriteTransaction } from "replicache";
 import type { z, ZodSchema } from "zod";
 
-import type { Transaction } from "@pachi/db";
-import type { RequestHeaders } from "@pachi/types";
-
-import type { ReplicacheTransaction, server } from "..";
-
 interface Mutation<Name extends string = string, Input = any> {
   name: Name;
   input: Input;
 }
 
-
-export class Server<Mutations> {
-
+export class ServerMutations<Mutations> {
   private mutations = new Map<
     string,
     {
@@ -31,7 +24,7 @@ export class Server<Mutations> {
     fn: ((input: z.infer<ZodSchema>) => Promise<any>) & {
       schema: Shape;
     },
-  ): Server<Mutations & { [key in Name]: Mutation<Name, Input> }> {
+  ): ServerMutations<Mutations & { [key in Name]: Mutation<Name, Input> }> {
     this.mutations.set(name as string, {
       fn,
       input: fn.schema,
@@ -40,18 +33,17 @@ export class Server<Mutations> {
   }
 
   public execute(name: string, args: unknown) {
-    const mut = this.mutations.get(name as string);
+    const mut = this.mutations.get(name);
     if (!mut) throw new Error(`Mutation "${name}" not found`);
     return mut.fn(args);
   }
 }
 
-type ExtractMutations<S extends Server<any>> = S extends Server<infer M>
-  ? M
-  : never;
+type ExtractMutations<S extends ServerMutations<any>> =
+  S extends ServerMutations<infer M> ? M : never;
 
-export class Client<
-  S extends Server<any>,
+export class ClientMutations<
+  S extends ServerMutations<any>,
   Mutations extends Record<string, Mutation> = ExtractMutations<S>,
 > {
   private mutations = new Map<string, (...input: any) => Promise<void>>();
@@ -73,7 +65,7 @@ export class Client<
       args: Mutations[key]["input"],
     ) => Promise<void>;
   } {
-    return Object.fromEntries(this.mutations) as {
+    return Object.fromEntries(this.mutations.entries()) as {
       [key in keyof Mutations]: (
         ctx: WriteTransaction,
         args: Mutations[key]["input"],

@@ -7,7 +7,7 @@ import React, { useImperativeHandle, useRef } from "react";
 
 import { cn } from "@pachi/utils";
 
-import { Input } from "../atoms/input";
+import { Input } from "../ui/input";
 import type { InputHeaderProps } from "./input-header";
 import InputHeader from "./input-header";
 

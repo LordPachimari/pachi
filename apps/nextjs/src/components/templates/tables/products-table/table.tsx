@@ -20,6 +20,7 @@ import {
 
 import type { Product } from "@pachi/db";
 
+import { DataTableToolbar } from "~/components/table/toolbar";
 import {
   Table,
   TableBody,
@@ -27,8 +28,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/atoms/table";
-import { DataTableToolbar } from "~/components/organisms/data-table/data-table-toolbar";
+} from "~/components/ui/table";
 import { useDebounce } from "~/hooks/use-debounce";
 import { createUrl } from "~/libs/create-url";
 import type {

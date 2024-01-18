@@ -13,9 +13,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "~/components/atoms/alert-dialog";
-import { Label } from "~/components/atoms/label";
-import { RadioGroup } from "~/components/atoms/radio-group";
+} from "~/components/ui/alert-dialog";
+import { Label } from "~/components/ui/label";
+import { RadioGroup } from "~/components/ui/radio-group";
 
 interface ProductStatusProps {
   updateProduct: ({ updates }: { updates: ProductUpdates }) => Promise<void>;

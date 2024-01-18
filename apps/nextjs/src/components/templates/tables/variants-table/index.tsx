@@ -17,15 +17,15 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import type { ProductVariant } from "@pachi/db";
 
-import { Button } from "~/components/atoms/button";
-import { Checkbox } from "~/components/atoms/checkbox";
+import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/components/atoms/dropdown-menu";
+} from "~/components/ui/dropdown-menu";
 import { VariantsTable } from "./table";
 
 interface VariantTableProps {

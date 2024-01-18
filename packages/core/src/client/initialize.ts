@@ -1,13 +1,13 @@
 import { client } from "..";
-import { Client } from "../replicache";
-import type { DashboardServerType } from "../server/initialize";
+import { ClientMutations } from "../replicache";
+import type { DashboardMutationsType } from "../server/initialize";
 
 export interface ClientProps {
   services: client.Services;
 }
 
-export function initDashboardClient(props: ClientProps) {
-  return new Client<DashboardServerType>()
+export function initDashboardMutations() {
+  return new ClientMutations<DashboardMutationsType>()
     .expose("createProduct", client.Product.createProduct)
     .expose("deleteProduct", client.Product.deleteProduct)
     .expose("updateProduct", client.Product.updateProduct)
@@ -27,4 +27,11 @@ export function initDashboardClient(props: ClientProps) {
     .expose("createProductPrices", client.Product.createProductPrices)
     .expose("updateProductPrice", client.Product.updateProductPrice)
     .expose("deleteProductPrices", client.Product.deleteProductPrices);
+}
+
+export function initGlobalMutations() {
+  return new ClientMutations()
+    .expose("createUser", client.User.createUser)
+    .expose("createStore", client.Store.createStore)
+    .expose("updateStore", client.Store.updateStore);
 }

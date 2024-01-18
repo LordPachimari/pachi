@@ -1,6 +1,6 @@
 import type { PaymentStatus as PaymentStatusType } from "@pachi/db";
 
-import DotIndicator from "../atoms/dot-indicator";
+import DotIndicator from "../ui/dot-indicator";
 
 export const PaymentStatus = ({ status }: { status: PaymentStatusType }) => {
   switch (status) {

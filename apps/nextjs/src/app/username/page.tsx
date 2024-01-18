@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 import { useFormState, useFormStatus } from "react-dom";
 import { toast as sonnerToast } from "sonner";
 
-import { Button } from "~/components/atoms/button";
-import { Card, CardContent, CardHeader } from "~/components/atoms/card";
-import { Icons } from "~/components/atoms/icons";
-import { Input } from "~/components/atoms/input";
-import { createUser } from "../_actions/create-user";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardHeader } from "~/components/ui/card";
+import { Icons } from "~/components/ui/icons";
+import { Input } from "~/components/ui/input";
+import { createUser } from "../_actions/user/create-user";
 
 function SubmitButton() {
   const { pending } = useFormStatus();

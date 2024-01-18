@@ -156,6 +156,9 @@ importers:
       '@pachi/api':
         specifier: ^0.1.0
         version: link:../../packages/api
+      '@pachi/core':
+        specifier: ^0.1.0
+        version: link:../../packages/core
       '@pachi/db':
         specifier: ^0.1.0
         version: link:../../packages/db
@@ -235,8 +238,8 @@ importers:
         specifier: ^0.3.6
         version: 0.3.6(@types/react@18.2.37)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-table':
-        specifier: ^8.10.3
-        version: 8.10.3(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^8.11.6
+        version: 8.11.6(react-dom@18.2.0)(react@18.2.0)
       '@teamhanko/hanko-elements':
         specifier: ^0.8.3
         version: 0.8.3
@@ -303,6 +306,12 @@ importers:
       react-wrap-balancer:
         specifier: ^1.1.0
         version: 1.1.0(react@18.2.0)
+      remeda:
+        specifier: ^1.36.0
+        version: 1.36.0
+      replicache:
+        specifier: 13.0.1
+        version: 13.0.1
       replicache-react:
         specifier: ^3.1.0
         version: 3.1.0(react-dom@18.2.0)(react@18.2.0)
@@ -5942,14 +5951,14 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  /@tanstack/react-table@8.10.3(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Qya1cJ+91arAlW7IRDWksRDnYw28O446jJ/ljkRSc663EaftJoBCAU10M+VV1K6MpCBLrXq1BD5IQc1zj/ZEjA==}
+  /@tanstack/react-table@8.11.6(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-i0heTVZtuHF9VPMwcYoZ21hbzGDmLjxHYemDMvbGpjk5fUZ8nLF3S8qjVRU79XfPW8KK9o7iTU2fGFVQQmxMSQ==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
     dependencies:
-      '@tanstack/table-core': 8.10.3
+      '@tanstack/table-core': 8.11.6
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -5958,8 +5967,8 @@ packages:
     resolution: {integrity: sha512-GnolmC8Fr4mvsHE1fGQmR3Nm0eBO3KnZjDU0a+P3TeQNM/dDscFGxtA7p31NplQNW3KwBw4t1RVFmz0VeKLxcw==}
     dev: false
 
-  /@tanstack/table-core@8.10.3:
-    resolution: {integrity: sha512-hJ55YfJlWbfzRROfcyA/kC1aZr/shsLA8XNAwN8jXylhYWGLnPmiJJISrUfj4dMMWRiFi0xBlnlC7MLH+zSrcw==}
+  /@tanstack/table-core@8.11.6:
+    resolution: {integrity: sha512-69WEY1PaZROaGYUrseng4/4sMYnRGhDe1vM6888CnWekGz/wuCnvqwOoOuKGYivnaiI4BVmZq4WKWhvahyj3/g==}
     engines: {node: '>=12'}
     dev: false
 
@@ -13516,6 +13525,10 @@ packages:
     resolution: {integrity: sha512-dQUtn90WanSNl+7mQKcXAgZxvUe7Z0SqXlgzv0za4LwiUhyzBC58yQO3liFoUgu8GiJVInAhJjkj1N0EtQ5nkQ==}
     dependencies:
       jsesc: 0.5.0
+
+  /remeda@1.36.0:
+    resolution: {integrity: sha512-/efIZnW0BfcLGvhVVxodQI9DGUVRXUUTv8JncpRUIlOK6u9o7OSZssMVwJ/8+6asTy1+Zt97AxphCB12+D9OKA==}
+    dev: false
 
   /remove-trailing-slash@0.1.1:
     resolution: {integrity: sha512-o4S4Qh6L2jpnCy83ysZDau+VORNvnFw07CKSAymkd6ICNVEPisMyzlc00KlvvicsxKck94SEwhDnMNdICzO+tA==}

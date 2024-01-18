@@ -24,7 +24,7 @@ import {
   type UpdateProductPrice,
   type UpdateProductVariant,
   type UploadProductImages,
-} from "../../common/schema/product";
+} from "../../schema/product";
 
 async function createProduct(tx: WriteTransaction, input: CreateProduct) {
   const { product, defaultVariantId, storeId, prices } = input;

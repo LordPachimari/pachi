@@ -1,7 +1,7 @@
 import type { Transaction } from "@pachi/db";
 import type { RequestHeaders } from "@pachi/types";
 
-import { type ReplicacheTransaction, Server, server } from "..";
+import { server, ServerMutations, type ReplicacheTransaction } from "..";
 
 export interface ServerProps {
   transaction: Transaction;
@@ -12,8 +12,8 @@ export interface ServerProps {
   replicacheTransaction: ReplicacheTransaction;
 }
 
-export function initDashboardServer(props: ServerProps) {
-  const newServer = new Server()
+export function initDashboardMutations(props: ServerProps) {
+  const newServer = new ServerMutations()
     .expose("createProduct", server.Product.createProduct(props))
     .expose("deleteProduct", server.Product.deleteProduct(props))
     .expose("updateProduct", server.Product.updateProduct(props))
@@ -39,4 +39,13 @@ export function initDashboardServer(props: ServerProps) {
 
   return newServer;
 }
-export type DashboardServerType = ReturnType<typeof initDashboardServer>;
+export type DashboardMutationsType = ReturnType<typeof initDashboardMutations>;
+
+export function initGlobalMutations(props: ServerProps) {
+  const newServer = new ServerMutations()
+    .expose("createUser", server.User.createUser(props))
+    .expose("createStore", server.Store.createStore(props))
+    .expose("updateStore", server.Store.updateStore(props));
+
+  return newServer;
+}

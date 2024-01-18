@@ -14,14 +14,14 @@ import type {
 } from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/atoms/avatar";
-import { Button } from "~/components/atoms/button";
-import { Card } from "~/components/atoms/card";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "~/components/atoms/tooltip";
+} from "~/components/ui/tooltip";
 import { ReplicacheInstancesStore } from "~/zustand/replicache";
 import Option from "./option";
 

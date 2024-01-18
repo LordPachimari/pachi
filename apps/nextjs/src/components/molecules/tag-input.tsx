@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import { cn } from "@pachi/utils";
 
-import { inputBaseStyles } from "../atoms/input";
+import { inputBaseStyles } from "../ui/input";
 import InputHeader from "./input-header";
 
 const ENTER_KEY = 13;

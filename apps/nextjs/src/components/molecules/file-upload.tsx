@@ -9,11 +9,11 @@ import { toast } from "sonner";
 import { ulid } from "ulid";
 import type { UploadFileResponse } from "uploadthing/client";
 
-import type { UploadImagesProps } from "@pachi/api/src/types/mutators";
+import type { UploadProductImages } from "@pachi/core";
 import type { Image } from "@pachi/db";
 import { cn, formatBytes, generateId } from "@pachi/utils";
 
-import { Icons } from "../atoms/icons";
+import { Icons } from "../ui/icons";
 
 // FIXME Your proposed upload exceeds the maximum allowed size, this should trigger toast.error too
 
@@ -30,7 +30,7 @@ interface FileUploadProps extends React.HTMLAttributes<HTMLDivElement> {
     files: File[],
     input?: undefined,
   ) => Promise<UploadFileResponse<null>[] | undefined>;
-  uploadProductImages: (props: UploadImagesProps["args"]) => Promise<void>;
+  uploadProductImages: (props: UploadProductImages) => Promise<void>;
 }
 
 export function FileUpload({
@@ -94,7 +94,7 @@ export function FileUpload({
       }
     },
 
-    [maxSize, setFiles, startUpload, uploadProductImages],
+    [maxSize, setFiles, startUpload, uploadProductImages, productId, variantId],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

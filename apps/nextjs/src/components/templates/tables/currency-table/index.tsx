@@ -22,9 +22,9 @@ import type { Currency, Price } from "@pachi/db";
 import { currencies } from "@pachi/types";
 import { generateId } from "@pachi/utils";
 
-import { Button } from "~/components/atoms/button";
-import { Checkbox } from "~/components/atoms/checkbox";
-import { DataTableColumnHeader } from "~/components/organisms/data-table/data-table-column-header";
+import { DataTableColumnHeader } from "~/components/table/column-header";
+import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import { ReplicacheInstancesStore } from "~/zustand/replicache";
 import { CurrenciesTable } from "./table";
 

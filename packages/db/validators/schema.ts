@@ -174,7 +174,7 @@ export const ProductSchema = createInsertSchema(products).extend({
   thumbnail: ImageSchema.optional(),
   metadata: z.record(z.string(), z.string()),
   taxRates: z.array(TaxRateSchema).optional(),
-  discountable: z.boolean(),
+  discountable: z.boolean().optional(),
   variants: z.array(ProductVariantSchema).optional(),
 });
 export const PublishedProductSchema = ProductSchema.required({

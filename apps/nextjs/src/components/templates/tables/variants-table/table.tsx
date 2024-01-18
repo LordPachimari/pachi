@@ -19,8 +19,9 @@ import {
 
 import type { ProductVariant } from "@pachi/db";
 
-import { Button } from "~/components/atoms/button";
-import { ScrollArea } from "~/components/atoms/scroll-area";
+import { DataTableToolbar } from "~/components/table/toolbar";
+import { Button } from "~/components/ui/button";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -28,8 +29,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/atoms/table";
-import { DataTableToolbar } from "~/components/organisms/data-table/data-table-toolbar";
+} from "~/components/ui/table";
 import { useDebounce } from "~/hooks/use-debounce";
 import { createUrl } from "~/libs/create-url";
 import type {

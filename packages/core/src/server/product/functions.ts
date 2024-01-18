@@ -17,7 +17,7 @@ import {
   UpdateProductSchema,
   UpdateProductVariantSchema,
   UploadProductImagesSchema,
-} from "../../common/schema/product";
+} from "../../schema/product";
 import { zod } from "../../util/zod";
 import type { ServerProps } from "../initialize";
 

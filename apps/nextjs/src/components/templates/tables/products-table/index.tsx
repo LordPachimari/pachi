@@ -28,17 +28,17 @@ import { CircleIcon, PlusIcon } from "lucide-react";
 import type { Product } from "@pachi/db";
 import { product_status } from "@pachi/db";
 
-import { Button } from "~/components/atoms/button";
-import { Checkbox } from "~/components/atoms/checkbox";
+import ImagePlaceholder from "~/components/molecules/image-placeholder";
+import { DataTableColumnHeader } from "~/components/table/column-header";
+import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/components/atoms/dropdown-menu";
-import ImagePlaceholder from "~/components/molecules/image-placeholder";
-import { DataTableColumnHeader } from "~/components/organisms/data-table/data-table-column-header";
+} from "~/components/ui/dropdown-menu";
 import { ProductsTable } from "./table";
 
 interface ProductTableProps {

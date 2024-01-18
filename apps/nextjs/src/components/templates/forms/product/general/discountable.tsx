@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import type { ProductUpdates } from "@pachi/db";
 
-import { Switch } from "../../../../atoms/switch";
+import { Switch } from "../../../../ui/switch";
 
 export type DiscountableFormType = {
   value: boolean;
