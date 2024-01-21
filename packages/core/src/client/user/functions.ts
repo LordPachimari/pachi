@@ -15,6 +15,6 @@ async function createUser(tx: WriteTransaction, input: CreateUser) {
     version: 1,
     founderId: user.id,
   };
-  await Promise.all([tx.put(user.id, user), tx.put(store.id, store)]);
+  await Promise.all([tx.set(user.id, user), tx.set(store.id, store)]);
 }
 export { createUser };

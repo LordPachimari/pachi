@@ -20,7 +20,7 @@ import {
   getClientViewDataWithTables,
   getFullItems,
   getLastMutationIDChanges,
-  putItems_,
+  setItems_,
   updateItems_,
 } from "../transaction-queries";
 import { getClientLastMutationIdAndVersion_ } from "../transaction-queries/get-client-last-mutations-ids";
@@ -72,7 +72,7 @@ export const getPatch = async <T extends SpaceId>({
     ClientViewDataWithTable
   > = {} as Record<keyof SpaceRecords[T], ClientViewDataWithTable>;
 
-  const putKeys = new Map<TableName, string[]>();
+  const setKeys = new Map<TableName, string[]>();
   const delKeys = [];
 
   try {
@@ -113,7 +113,7 @@ export const getPatch = async <T extends SpaceId>({
       });
 
       for (const { cvd, tableName } of clientViewDataWithTable) {
-        const keys = putKeys.get(tableName) ?? [];
+        const keys = setKeys.get(tableName) ?? [];
         for (const { id, version } of cvd) {
           const prevVersion = (
             spaceRecord[subspaceId] as Record<string, number | undefined>
@@ -122,7 +122,7 @@ export const getPatch = async <T extends SpaceId>({
             keys.push(id);
           }
         }
-        putKeys.set(tableName, keys);
+        setKeys.set(tableName, keys);
       }
       for (const key of Object.keys(
         spaceRecord[subspaceId] as Record<string, number>,
@@ -136,7 +136,7 @@ export const getPatch = async <T extends SpaceId>({
     }
 
     const fullItemsPromises: Promise<Record<string, unknown>[]>[] = [];
-    for (const [tableName, keys] of putKeys.entries()) {
+    for (const [tableName, keys] of setKeys.entries()) {
       fullItemsPromises.push(getFullItems({ tableName, keys, transaction }));
     }
     const fullItems = (await Promise.all(fullItemsPromises)).flat();
@@ -230,7 +230,7 @@ const getResetPatch = async <T extends SpaceId>({
   }
 };
 
-export const putItems = async (
+export const setItems = async (
   props: Map<TableName, { id: string; value: ReadonlyJSONObject }[]>,
 
   userId: string | undefined,
@@ -239,14 +239,14 @@ export const putItems = async (
   if (!userId) return;
   try {
     const queries = [];
-    console.log("put items", props);
+    console.log("set items", props);
     for (const [tableName, items] of props.entries()) {
-      queries.push(putItems_({ tableName, items, transaction }));
+      queries.push(setItems_({ tableName, items, transaction }));
     }
     return await Promise.all(queries);
   } catch (error) {
     console.log(error);
-    throw new Error("failed to put items");
+    throw new Error("failed to set items");
   }
 };
 export const updateItems = async (
@@ -354,7 +354,7 @@ export const setClientGroupObject = async ({
     });
   } catch (error) {
     console.log(error);
-    throw new Error("Failed to put clientGroupObject");
+    throw new Error("Failed to set clientGroupObject");
   }
 };
 

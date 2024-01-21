@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   getCoreRowModel,
   getFacetedRowModel,
@@ -13,7 +13,6 @@ import {
   type ColumnDef,
   type ColumnFiltersState,
   type PaginationState,
-  type SortingState,
   type VisibilityState,
 } from "@tanstack/react-table";
 
@@ -74,21 +73,21 @@ function useTable<TData, TValue>({
   filterableColumns = [],
 }: UseDataTableProps<TData, TValue>) {
   const router = useRouter();
-  const queryOptions = useQueryOptions();
+  const params = useSearchParams();
+  const queryOptions = useQueryOptions(params);
   const keys = Object.entries(queryOptions)
     .filter(([_, value]) => value.length > 0)
     .map(([key]) => key);
 
   // Search params
-  const page_ = queryOptions.page.length > 0 ? queryOptions.page[0]! : "1";
-  const pageAsNumber = Number(page_);
-  const page = isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
-  const perPage_ =
-    queryOptions.perPage.length > 0 ? queryOptions.perPage[0]! : "1";
-  const perPageAsNumber = Number(perPage_);
-  const perPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
-  const sort = queryOptions.sort.length > 0 ? queryOptions.sort[0]! : null;
-  const [column, order] = sort?.split(".") ?? [];
+  const page = queryOptions.page[0] ?? "1";
+  const pageAsNumber = Number(page);
+  const fallbackPage =
+    isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
+  const perPage = queryOptions.per_page[0] ?? "1";
+  const perPageAsNumber = Number(perPage);
+  const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
+
   const buildQueryOption = useBuildExistingQueryOption();
 
   // Table states
@@ -102,8 +101,8 @@ function useTable<TData, TValue>({
   // Handle server-side pagination
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
-      pageIndex: page - 1,
-      pageSize: perPage,
+      pageIndex: fallbackPage - 1,
+      pageSize: fallbackPerPage,
     });
 
   const pagination = React.useMemo(
@@ -116,16 +115,16 @@ function useTable<TData, TValue>({
 
   React.useEffect(() => {
     setPagination({
-      pageIndex: page - 1,
-      pageSize: perPage,
+      pageIndex: fallbackPage - 1,
+      pageSize: fallbackPage,
     });
-  }, [page, perPage]);
+  }, [fallbackPage, fallbackPerPage]);
 
   React.useEffect(() => {
     router.push(
       buildQueryOption({
         page: [String(pageIndex + 1)],
-        perPage: [String(pageSize)],
+        per_page: [String(pageSize)],
       }),
       {
         scroll: false,
@@ -135,26 +134,7 @@ function useTable<TData, TValue>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageIndex, pageSize]);
 
-  // Handle server-side sorting
-  const [sorting, setSorting] = React.useState<SortingState>([
-    {
-      id: column ?? "",
-      desc: order === "desc",
-    },
-  ]);
 
-  React.useEffect(() => {
-    router.push(
-      buildQueryOption({
-        sort: [`${sorting[0]?.id}.${sorting[0]?.desc ? "desc" : "asc"}`],
-      }),
-      {
-        scroll: false,
-      },
-    );
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sorting]);
 
   const filteredSearchableColumns = JSON.parse(
     useDebounce(
@@ -225,13 +205,12 @@ function useTable<TData, TValue>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterableColumnFilters)]);
 
-  const dataTable = useReactTable({
+  const table = useReactTable({
     data,
     columns,
     pageCount: pageCount ?? -1,
     state: {
       pagination,
-      sorting,
       columnVisibility,
       rowSelection,
       columnFilters,
@@ -239,7 +218,6 @@ function useTable<TData, TValue>({
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
-    onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
@@ -253,6 +231,6 @@ function useTable<TData, TValue>({
     manualFiltering: true,
   });
 
-  return { dataTable };
+  return { table };
 }
 export { useTable };

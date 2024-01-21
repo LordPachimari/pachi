@@ -16,14 +16,15 @@
     "@pachi/db": "^0.1.0",
     "@pachi/types": "^0.1.0",
     "@pachi/utils": "^0.1.0",
-    "replicache": "13.0.1",
     "drizzle-orm": "^0.29.0",
+    "remeda": "^1.36.0",
+    "replicache": "14.0.3",
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@pachi/tsconfig": "workspace:^0.1.0",
     "@pachi/eslint-config": "workspace:^0.1.0",
     "@pachi/prettier-config": "workspace:^0.1.0",
+    "@pachi/tsconfig": "workspace:^0.1.0",
     "eslint": "^8.53.0",
     "prettier": "^3.0.3",
     "typescript": "^5.3.3"

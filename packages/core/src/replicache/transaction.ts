@@ -1,32 +1,18 @@
 /* eslint-disable @typescript-eslint/require-await */
-import type {
-  KeyTypeForScanOptions,
-  ReadonlyJSONObject,
-  ScanOptions,
-  ScanResult,
-} from "replicache";
+import { isObject, isString } from "remeda";
+import type { ReadonlyJSONObject } from "replicache";
 
 import { type TableName, type Transaction } from "@pachi/db";
-import { isObject, isString } from "@pachi/utils";
 
-import { deleteItems, putItems, updateItems } from "./data/data";
+import { deleteItems, setItems, updateItems } from "./data/data";
 
 const DELETE = "DELETE" as const;
-const PUT = "PUT" as const;
-const REDIS_PUT = "REDIS_PUT" as const;
+const SET = "set" as const;
 const UPDATE = "UPDATE" as const;
 
 interface CustomWriteTransaction {
-  put(
-    key: string,
-    value: ReadonlyJSONObject,
-    tableName: TableName,
-  ): void;
-  update(
-    key: string,
-    value: ReadonlyJSONObject,
-    tableName: TableName,
-  ): void;
+  set(key: string, value: ReadonlyJSONObject, tableName: TableName): void;
+  update(key: string, value: ReadonlyJSONObject, tableName: TableName): void;
   del(key: string, tableName: TableName): void;
 }
 
@@ -36,7 +22,7 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
   private readonly _cache = new Map<
     string,
     {
-      method: typeof PUT | typeof UPDATE | typeof REDIS_PUT | typeof DELETE;
+      method: typeof SET | typeof UPDATE | typeof DELETE;
       value?: ReadonlyJSONObject;
       tableName?: TableName;
     }
@@ -54,15 +40,15 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
     this._transaction = transaction;
   }
 
-  put(
+  set(
     key: string | Record<string, string>,
     value: ReadonlyJSONObject,
     tableName: TableName,
   ) {
-    if (isString(key)) this._cache.set(key, { method: PUT, value, tableName });
+    if (isString(key)) this._cache.set(key, { method: SET, value, tableName });
     else if (isObject(key))
       this._cache.set(Object.values(key).join(), {
-        method: PUT,
+        method: SET,
         value,
         tableName,
       });
@@ -98,12 +84,6 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
   isEmpty() {
     return true;
   }
-  scan(): ScanResult<string>;
-  scan<Options extends ScanOptions>(
-    _options?: Options,
-  ): ScanResult<KeyTypeForScanOptions<Options>> {
-    throw new Error("Method scan not implemented.");
-  }
   /* --------------------- */
 
   async flush(): Promise<void> {
@@ -112,7 +92,7 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
       return;
     }
 
-    const itemsToPut = new Map<
+    const itemsToSet = new Map<
       TableName,
       { id: string; value: ReadonlyJSONObject }[]
     >();
@@ -123,13 +103,13 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
 
     const itemsToDel = new Map<TableName, string[]>();
     for (const item of items) {
-      if (item[1].method === PUT && item[1].value && item[1].tableName) {
-        const tableItems = itemsToPut.get(item[1].tableName) ?? [];
+      if (item[1].method === SET && item[1].value && item[1].tableName) {
+        const tableItems = itemsToSet.get(item[1].tableName) ?? [];
         tableItems.push({
           id: item[0],
           value: item[1].value,
         });
-        itemsToPut.set(item[1].tableName, tableItems);
+        itemsToSet.set(item[1].tableName, tableItems);
       } else if (
         item[1].method === UPDATE &&
         item[1].value &&
@@ -150,7 +130,7 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
 
     await Promise.all([
       deleteItems(itemsToDel, this._userId, this._transaction),
-      putItems(itemsToPut, this._userId, this._transaction),
+      setItems(itemsToSet, this._userId, this._transaction),
       updateItems(itemsToUpdate, this._userId, this._transaction),
     ]);
     this._cache.clear();

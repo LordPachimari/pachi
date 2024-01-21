@@ -25,9 +25,9 @@ function createProduct(props: ServerProps) {
   const { repositories, replicacheTransaction } = props;
 
   return zod(CreateProductSchema, async (input) => {
-    const { product, storeId, defaultVariantId, prices } = input;
+    const { product, storeId, prices } = input;
     const defaultVariant: ProductVariant = {
-      id: defaultVariantId,
+      id: product.defaultVariantId,
       productId: product.id,
     };
     const store = await repositories.storeRepository.getStoreById({
@@ -69,9 +69,9 @@ function updateImagesOrder(props: ServerProps) {
   return zod(UpdateImagesOrderSchema, async (input) => {
     const { productId, order, variantId } = input;
     const variant =
-      await repositories.productVariantRepository.getProductVariantById({
-        id: variantId,
-      });
+      await repositories.productVariantRepository.getProductVariantById(
+        variantId,
+      );
     if (!variant) {
       throw new Error("Variant not found");
     }
@@ -111,9 +111,9 @@ function uploadProductImages(props: ServerProps) {
       return;
     }
     const variant =
-      (await repositories?.productVariantRepository.getProductVariantById({
-        id: variantId,
-      })) as ProductVariant | undefined;
+      await repositories.productVariantRepository.getProductVariantById(
+        variantId,
+      );
     if (!variant) {
       throw new Error("Variant not found");
     }
@@ -160,9 +160,8 @@ function updateProductOptionValues(props: ServerProps) {
   const { replicacheTransaction, repositories } = props;
   return zod(UpdateProductOptionValuesSchema, async (input) => {
     const { optionId, newOptionValues, productId } = input;
-    const option = await repositories.productOptionRepository.getProductOption({
-      id: optionId,
-    });
+    const option =
+      await repositories.productOptionRepository.getProductOption(optionId);
     if (!option) {
       return;
     }

@@ -2,7 +2,7 @@ import type { ReadonlyJSONObject } from "replicache";
 
 import { tableNamesMap, type TableName, type Transaction } from "@pachi/db";
 
-export const putItems_ = ({
+export const setItems_ = ({
   tableName,
   items,
   transaction,

@@ -1,4 +1,8 @@
-import { usePathname, useSearchParams } from "next/navigation";
+import {
+  ReadonlyURLSearchParams,
+  usePathname,
+  useSearchParams,
+} from "next/navigation";
 import { forEachObj } from "remeda";
 
 import { QUERY_OPTION_NAMES } from "./constants";
@@ -20,7 +24,7 @@ export type UseBuildQueryOptionParams = Partial<
 function useBuildExistingQueryOption() {
   const params = useSearchParams();
   const pathname = usePathname();
-  const queryOptions = useQueryOptions();
+  const queryOptions = useQueryOptions(params);
   const searchParams = new URLSearchParams(params);
 
   return (queryOption: UseBuildQueryOptionParams) => {
@@ -56,14 +60,12 @@ function useBuildNewQueryOptions(queryOptionParams: UseBuildQueryOptionParams) {
 
   return `${pathname}?${queryOptions}`;
 }
-function useQueryOptions() {
-  const params = useSearchParams();
-
+function useQueryOptions(searchParams: ReadonlyURLSearchParams) {
   return QUERY_OPTION_NAMES.reduce<
     Record<(typeof QUERY_OPTION_NAMES)[number], string[]>
   >(
     (acc, name) => {
-      acc[name] = params
+      acc[name] = searchParams
         .getAll(name)
         .flatMap((values) =>
           values.replace(/\s/g, "").split(",").filter(Boolean),
@@ -73,8 +75,7 @@ function useQueryOptions() {
     },
     {
       page: [],
-      perPage: [],
-      sort: [],
+      per_page: [],
       title: [],
       status: [],
     },

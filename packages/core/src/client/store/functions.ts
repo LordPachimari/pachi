@@ -6,7 +6,7 @@ import type { CreateStore, UpdateStore } from "../../schema/store";
 
 async function createStore(tx: WriteTransaction, input: CreateStore) {
   const { store } = input;
-  await tx.put(store.id, store);
+  await tx.set(store.id, store);
 }
 async function updateStore(tx: WriteTransaction, input: UpdateStore) {
   const { id, updates } = input;
@@ -16,6 +16,6 @@ async function updateStore(tx: WriteTransaction, input: UpdateStore) {
     return;
   }
   const updated = { ...store, ...updates };
-  await tx.put(id, updated);
+  await tx.set(id, updated);
 }
 export { createStore, updateStore };

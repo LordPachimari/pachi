@@ -21,24 +21,16 @@ import { TableToolbar } from "./toolbar";
 type TableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   table: TanstackTable<TData>;
-  filterableColumns?: DataTableFilterableColumn<TData>[];
-  searchableColumns?: DataTableSearchableColumn<TData>[];
+  filterableColumns: DataTableFilterableColumn<TData>[] | undefined;
+  searchableColumns: DataTableSearchableColumn<TData>[] | undefined;
   withToolbar?: boolean;
   additionalToolbarButton?: React.ReactNode;
   deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
   view?: "row" | "grid";
   floatingBarContent?: React.ReactNode | null;
-} & (
-  | {
-      withGridView: false;
-      gridViewComponent: React.ReactNode;
-    }
-  | {
-      withGridView: true;
-      gridViewComponent: React.ReactNode;
-    }
-);
-
+  withGridView?: boolean;
+  gridViewComponent?: React.ReactNode;
+};
 export function Table<TData, TValue>({
   columns,
   table,

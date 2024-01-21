@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { isDefined } from "remeda";
 import { useSubscribe } from "replicache-react";
 import { ulid } from "ulid";
 
@@ -9,91 +10,44 @@ import type { Price, Product, Store } from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
 import { PageHeaderHeading } from "~/components/molecules/page-header";
-import { Table } from "~/components/table/table";
 import { Shell } from "~/components/ui/shell";
+import { PREFICES } from "~/constants";
 import { createUrl } from "~/libs/create-url";
-import { ReplicacheInstancesStore } from "~/zustand/replicache";
+import { useDashboardRep } from "~/providers/replicache/dashboard";
+import { useQueryOptions } from "~/routing/router";
+import { ProductsTable } from "./_components/table";
 
 const Page = () => {
   const searchParams = useSearchParams();
+
+  const { page, per_page, status, title } = useQueryOptions(searchParams);
+  const pageAsNumber = page[0] ? Number(page[0]) : 1;
+  const fallbackPage = isNaN(pageAsNumber) ? 1 : pageAsNumber;
+  const perPageAsNumber = per_page[0] ? Number(per_page[0]) : 10;
+  const fallbackPerPage = isNaN(perPageAsNumber) ? 10 : perPageAsNumber;
+
   const storeId = searchParams.get("storeId");
-  const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const router = useRouter();
+  const statusSet = new Set(status);
 
-  const store = useSubscribe(
-    dashboardRep,
-    async (tx) => {
-      if (storeId) {
-        const store = (await tx.get(storeId)) as Store | undefined;
-        const stores = await tx.scan({ prefix: "store" }).values().toArray();
-        console.log("stores", stores);
-        return store;
-      }
-      return undefined;
-    },
-    undefined,
-    [],
-  );
-  const createProduct = useCallback(async () => {
-    console.log("dashboardRep", dashboardRep, storeId, store);
-    if (dashboardRep && storeId && store) {
-      const defaultVariantId = generateId({
-        id: ulid(),
-        prefix: "default_var",
-      });
-      const id = generateId({
-        id: ulid(),
-        prefix: "p",
-        filterId: storeId,
-      });
-      await dashboardRep.mutate.createProduct({
-        args: {
-          product: {
-            id,
-            createdAt: new Date().toISOString(),
-            status: "draft",
-            discountable: true,
-            storeId,
-          },
-          defaultVariantId,
-          storeId,
-          prices: (store.currencies ?? []).map((currencyCode) => {
-            const price: Price = {
-              id: generateId({ id: ulid(), prefix: "price" }),
-              currencyCode,
-              amount: 0,
-              variantId: defaultVariantId,
-            };
-            return price;
-          }),
-        },
-      });
-      router.push(createUrl(`/dashboard/products/${id}`, searchParams));
-    }
-  }, [dashboardRep, router, storeId, searchParams, store]);
-  const products = useSubscribe(
-    dashboardRep,
-    async (tx) => {
-      const products = (await tx
-        .scan({ prefix: "p_" })
-        .values()
-        .toArray()) as Product[];
-      return products;
-    },
-    [],
-  );
-
-  console.log("products", products);
   useEffect(() => {
     if (!storeId) router.push("/");
   }, [router, storeId]);
+
+  if (!storeId) return <></>;
 
   return (
     <Shell>
       <PageHeaderHeading size="sm" className="mt-2 flex-1">
         Products
       </PageHeaderHeading>
-      <Table data={products} createProduct={createProduct} />
+      <ProductsTable
+        perPage={fallbackPerPage}
+        page={fallbackPage}
+        status={statusSet}
+        title={title[0] ?? ""}
+        storeId={storeId}
+      />
     </Shell>
   );
 };

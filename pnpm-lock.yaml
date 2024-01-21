@@ -310,8 +310,8 @@ importers:
         specifier: ^1.36.0
         version: 1.36.0
       replicache:
-        specifier: 13.0.1
-        version: 13.0.1
+        specifier: 14.0.3
+        version: 14.0.3
       replicache-react:
         specifier: ^3.1.0
         version: 3.1.0(react-dom@18.2.0)(react@18.2.0)
@@ -484,8 +484,8 @@ importers:
         specifier: ^4.5.0
         version: 4.5.0
       replicache:
-        specifier: 13.0.1
-        version: 13.0.1
+        specifier: 14.0.3
+        version: 14.0.3
       superjson:
         specifier: 2.2.0
         version: 2.2.0
@@ -532,9 +532,12 @@ importers:
       drizzle-orm:
         specifier: ^0.29.0
         version: 0.29.0(@neondatabase/serverless@0.6.0)(pg@8.11.3)
+      remeda:
+        specifier: ^1.36.0
+        version: 1.36.0
       replicache:
-        specifier: 13.0.1
-        version: 13.0.1
+        specifier: 14.0.3
+        version: 14.0.3
       zod:
         specifier: ^3.22.2
         version: 3.22.2
@@ -576,8 +579,8 @@ importers:
         specifier: ^8.11.3
         version: 8.11.3
       replicache:
-        specifier: 13.0.1
-        version: 13.0.1
+        specifier: 14.0.3
+        version: 14.0.3
       valibot:
         specifier: ^0.17.1
         version: 0.17.1
@@ -616,8 +619,8 @@ importers:
         specifier: ^0.1.0
         version: link:../db
       replicache:
-        specifier: 13.0.1
-        version: 13.0.1
+        specifier: 14.0.3
+        version: 14.0.3
       valibot:
         specifier: ^0.17.1
         version: 0.17.1
@@ -2204,6 +2207,11 @@ packages:
       react-native: '*'
     dependencies:
       react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.23.2)(react@18.2.0)
+    dev: false
+
+  /@badrap/valita@0.3.0:
+    resolution: {integrity: sha512-bvsH70aYKOdB3rXVZXhJgGpHqxt+TcVperVvXCo9Dotpj9u0jBgQP5jgPmZNbIz0FyTvMP/oPUzqn6WS2L0l3w==}
+    engines: {node: '>= 16'}
     dev: false
 
   /@clerk/backend@0.29.3:
@@ -13544,11 +13552,12 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /replicache@13.0.1:
-    resolution: {integrity: sha512-dgGHxpCubx2woDyXsh6AeqZ3KwU0IEqyXU6IZ13f6YAH+Ik5P969CxsnTmxZmPdX7WQseZ4jQotCkWLeJlEeJg==}
+  /replicache@14.0.3:
+    resolution: {integrity: sha512-BXj8Wg2LS15h+3H66ws5XDHlNT88mLjqEkvxhecg4OaqnfNMBJRr5/gM9Chu4gVciH5w90G1X6JTsshgvW2FBg==}
     engines: {node: '>=14.8.0'}
     hasBin: true
     dependencies:
+      '@badrap/valita': 0.3.0
       '@rocicorp/lock': 1.0.3
       '@rocicorp/logger': 5.2.1
       '@rocicorp/resolver': 1.0.1

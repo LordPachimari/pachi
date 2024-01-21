@@ -20,7 +20,7 @@ export class ProductTagRepository extends RepositoryBase {
           products: true,
         },
       }),
-    })) as ProductOption | undefined;
+    }))
   }
 
   async createProductTag({ tag }: { tag: ProductTag }) {

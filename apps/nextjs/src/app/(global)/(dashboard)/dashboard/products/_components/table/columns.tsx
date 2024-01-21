@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 "use client";
 
 import * as React from "react";
@@ -14,9 +13,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { CircleIcon } from "lucide-react";
 
 import type { Product } from "@pachi/db";
+import { products } from "@pachi/db/schema";
 
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
-import { DataTableColumnHeader } from "~/components/table/column-header";
+import { TableColumnHeader } from "~/components/table/column-header";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import {
@@ -26,6 +26,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import type { DataTableFilterableColumn, DataTableSearchableColumn } from "~/types";
 
 function StatusIcon({ status }: { status: Product["status"] }) {
   return status === "draft" ? (
@@ -56,14 +57,7 @@ function StatusIcon({ status }: { status: Product["status"] }) {
   );
 }
 
-type GetProductsColumnsProps = {
-  pending: boolean;
-  startTransition: React.TransitionStartFunction;
-};
-export function getProductsColumns({
-  pending,
-  startTransition,
-}: GetProductsColumnsProps): ColumnDef<Product, unknown>[] {
+export function getProductsColumns(): ColumnDef<Product, unknown>[] {
   return [
     {
       id: "select",
@@ -89,7 +83,7 @@ export function getProductsColumns({
     {
       accessorKey: "thumbnail",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Thumbnail" />
+        <TableColumnHeader column={column} title="Thumbnail" />
       ),
       cell: ({ row }) => (
         <div className="w-[80px]">
@@ -114,7 +108,7 @@ export function getProductsColumns({
     {
       accessorKey: "title",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Title" />
+        <TableColumnHeader column={column} title="Title" />
       ),
       cell: (info) => {
         return <div className="w-[80px]">{info.getValue() as string}</div>;
@@ -125,7 +119,7 @@ export function getProductsColumns({
     {
       accessorKey: "collection",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Collection" />
+        <TableColumnHeader column={column} title="Collection" />
       ),
       cell: ({ row }) => (
         <div className="w-[80px]">{row.original.collection?.handle}</div>
@@ -136,7 +130,7 @@ export function getProductsColumns({
     {
       accessorKey: "status",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Status" />
+        <TableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => {
         const status = row.original.status;
@@ -160,7 +154,7 @@ export function getProductsColumns({
     {
       accessorKey: "quantity",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Quantity" />
+        <TableColumnHeader column={column} title="Quantity" />
       ),
       cell: (info) => {
         return <div className="w-[80px]">{info.getValue() as number}</div>;
@@ -194,3 +188,21 @@ export function getProductsColumns({
     },
   ];
 }
+
+export const filterableColumns: DataTableFilterableColumn<Product>[] = [
+  {
+    id: "status",
+    title: "Status",
+    options: products.status.enumValues.map((status) => ({
+      label: status[0]?.toUpperCase() + status.slice(1),
+      value: status,
+    })),
+  },
+];
+
+export const searchableColumns: DataTableSearchableColumn<Product>[] = [
+  {
+    id: "title",
+    title: "titles",
+  },
+];

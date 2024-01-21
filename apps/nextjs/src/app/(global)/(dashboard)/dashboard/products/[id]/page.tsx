@@ -5,13 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import debounce from "lodash.debounce";
 import { useSubscribe } from "replicache-react";
 
-import type {
-  AssignProductOptionValueToVariantProps,
-  UpdateImagesOrderProps,
-  UpdatePriceProps,
-  UpdateProductVariantProps,
-  UploadImagesProps,
-} from "@pachi/api";
 import {
   UpdateProductSchema,
   type Image,
@@ -32,7 +25,6 @@ import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { createUrl } from "~/libs/create-url";
-import { ReplicacheInstancesStore } from "~/zustand/replicache";
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -58,10 +50,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     },
     [id, router, searchParams],
   );
-  console.log("storeId", storeId);
 
-  const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
-  const globalRep = ReplicacheInstancesStore((state) => state.globalRep);
 
   const [files, setFiles] = useState<Image[]>([]);
   const product = useSubscribe(

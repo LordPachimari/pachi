@@ -6,20 +6,12 @@ import { productVariants } from "@pachi/db/schema";
 import { RepositoryBase } from "../base/repository";
 
 export class ProductVariantRepository extends RepositoryBase {
-  async getProductVariantById({
-    id,
-    withProduct,
-  }: {
-    id: string;
-    withProduct?: boolean;
-  }) {
+  async getProductVariantById(id: string) {
     return await this.manager.query.productVariants.findFirst({
       where: (variant) => eq(variant.id, id),
-      ...(withProduct && {
-        with: {
-          product: true,
-        },
-      }),
+      with: {
+        product: true,
+      },
     });
   }
   async insertProductVariant({ variant }: { variant: ProductVariant }) {

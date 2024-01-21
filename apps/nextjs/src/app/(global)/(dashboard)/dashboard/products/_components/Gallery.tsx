@@ -3,9 +3,7 @@
 import { useEffect, useState, type FC } from "react";
 import Image from "next/image";
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
-
 import type { Image as ImageType } from "@pachi/db";
-
 import { Button } from "~/components/ui/button";
 
 interface GalleryProps {

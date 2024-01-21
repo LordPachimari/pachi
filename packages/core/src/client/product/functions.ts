@@ -27,7 +27,7 @@ import {
 } from "../../schema/product";
 
 async function createProduct(tx: WriteTransaction, input: CreateProduct) {
-  const { product, defaultVariantId, storeId, prices } = input;
+  const { product, storeId, prices } = input;
 
   const store = (await tx.get(storeId)) as Store | undefined;
   if (!store) {
@@ -36,12 +36,12 @@ async function createProduct(tx: WriteTransaction, input: CreateProduct) {
   }
 
   const defaultVariant: ProductVariant = {
-    id: defaultVariantId,
+    id: product.defaultVariantId,
     productId: product.id,
     prices,
   };
 
-  await tx.put(product.id, {
+  await tx.set(product.id, {
     ...product,
     defaultVariantId: defaultVariant.id,
     variants: [defaultVariant],
@@ -58,7 +58,7 @@ async function updateProduct(tx: WriteTransaction, input: UpdateProduct) {
     console.info(`Product ${id} not found`);
     throw new Error(`Product ${id} not found`);
   }
-  await tx.put(id, { ...product, ...updates });
+  await tx.set(id, { ...product, ...updates });
 }
 async function updateImagesOrder(
   tx: WriteTransaction,
@@ -90,7 +90,7 @@ async function updateImagesOrder(
       }
     }
   }
-  await tx.put(productId, {
+  await tx.set(productId, {
     ...product,
     ...(thumbnail &&
       product.thumbnail &&
@@ -127,7 +127,7 @@ async function uploadProductImages(
       return variant;
     }),
   };
-  await tx.put(productId, newProduct);
+  await tx.set(productId, newProduct);
 }
 
 async function createProductOption(
@@ -141,7 +141,7 @@ async function createProductOption(
     throw new Error(`Product ${option.productId} not found`);
   }
   const product_options = product.options ? product.options : [];
-  await tx.put(product.id, {
+  await tx.set(product.id, {
     ...product,
     options: [...product_options, option],
   });
@@ -158,7 +158,7 @@ async function updateProductOption(
     console.error(`Product ${productId} not found`);
     throw new Error(`Product ${productId} not found`);
   }
-  await tx.put(product.id, {
+  await tx.set(product.id, {
     ...product,
     options: product.options?.map((option) =>
       option.id === optionId ? { ...option, ...updates } : option,
@@ -179,7 +179,7 @@ async function deleteProductOption(
   const product_options = product.options
     ? product.options.filter((option) => option.id !== optionId)
     : [];
-  await tx.put(product.id, {
+  await tx.set(product.id, {
     ...product,
     options: product_options,
   });
@@ -197,7 +197,7 @@ async function updateProductOptionValues(
     throw new Error(`Product ${productId} not found`);
   }
 
-  await tx.put(product.id, {
+  await tx.set(product.id, {
     ...product,
     options: product.options?.map((option) =>
       option.id === optionId ? { ...option, values: newOptionValues } : option,
@@ -215,7 +215,7 @@ async function deleteProductOptionValue(
     console.info(`Product ${productId} not found`);
     throw new Error(`Product ${productId} not found`);
   }
-  await tx.put(product.id, {
+  await tx.set(product.id, {
     ...product,
     options: product.options?.map((option) =>
       option.id === optionValueId
@@ -242,7 +242,7 @@ async function createProductVariant(
   }
   const variants = product.variants ? [...product.variants] : [];
   variants.push(variant);
-  await tx.put(product.id, {
+  await tx.set(product.id, {
     ...product,
     variants,
   });
@@ -268,7 +268,7 @@ async function updateProductVariant(
     }
     return variant;
   });
-  await tx.put(product.id, { ...product, variants });
+  await tx.set(product.id, { ...product, variants });
 }
 
 async function deleteProductVariant(
@@ -284,7 +284,7 @@ async function deleteProductVariant(
   const variants = product.variants
     ? product.variants.filter((variant) => variant.id !== variantId)
     : [];
-  await tx.put(product.id, {
+  await tx.set(product.id, {
     ...product,
     variants,
   });
@@ -307,7 +307,7 @@ async function createProductPrices(
   for (const price of prices) {
     variantPrices.push(price);
   }
-  await tx.put(product.id, {
+  await tx.set(product.id, {
     ...product,
     variants: product.variants?.map((variant) =>
       variant.id === variantId
@@ -342,7 +342,7 @@ async function updateProductPrice(
       })
     : [];
 
-  await tx.put(product.id, {
+  await tx.set(product.id, {
     ...product,
     variants: product.variants?.map((variant_) =>
       variant_.id === variantId
@@ -370,7 +370,7 @@ async function deleteProductPrices(
   const variant_prices = variant.prices
     ? variant.prices.filter((price) => !priceIds.includes(price.id))
     : [];
-  await tx.put(product.id, {
+  await tx.set(product.id, {
     ...product,
     variants: product.variants?.map((variant_) =>
       variant_.id === variantId

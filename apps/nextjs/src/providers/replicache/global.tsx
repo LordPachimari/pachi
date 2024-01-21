@@ -5,11 +5,9 @@ import { client } from "@pachi/core";
 
 import { env } from "~/env.mjs";
 
-const ReplicacheGlobalContext = createContext<{
-  globalRep: Replicache | undefined;
-}>({
-  globalRep: undefined,
-});
+const ReplicacheGlobalContext = createContext<Replicache | undefined>(
+  undefined,
+);
 
 function GlobalReplicacheProvider({ children }: { children: React.ReactNode }) {
   const [globalRep, setGlobalRep] = useState<Replicache | undefined>(undefined);
@@ -32,9 +30,19 @@ function GlobalReplicacheProvider({ children }: { children: React.ReactNode }) {
     setGlobalRep(r);
   }, [userId, globalRep, mutators]);
   return (
-    <ReplicacheGlobalContext.Provider value={{ globalRep }}>
+    <ReplicacheGlobalContext.Provider value={globalRep}>
       {children}
     </ReplicacheGlobalContext.Provider>
   );
 }
-export { GlobalReplicacheProvider, ReplicacheGlobalContext };
+
+function useGlobalRep() {
+  const context = createContext(ReplicacheGlobalContext);
+  if (context === undefined) {
+    throw new Error(
+      "useGlobalRep must be used within a GlobalReplicacheProvider",
+    );
+  }
+  return context;
+}
+export { GlobalReplicacheProvider, ReplicacheGlobalContext, useGlobalRep };

@@ -172,7 +172,7 @@ export const ProductSchema = createInsertSchema(products).extend({
   collection: ProductCollectionSchema.optional(),
   tags: z.array(ProductTagSchema).optional(),
   thumbnail: ImageSchema.optional(),
-  metadata: z.record(z.string(), z.string()),
+  metadata: z.record(z.string(), z.string()).optional(),
   taxRates: z.array(TaxRateSchema).optional(),
   discountable: z.boolean().optional(),
   variants: z.array(ProductVariantSchema).optional(),

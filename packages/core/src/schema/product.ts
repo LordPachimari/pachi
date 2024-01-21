@@ -15,7 +15,6 @@ export const CreateProductSchema = z.object({
   product: ProductSchema,
   prices: z.array(PriceSchema),
   storeId: z.string(),
-  defaultVariantId: z.string(),
 });
 export type CreateProduct = z.infer<typeof CreateProductSchema>;
 
