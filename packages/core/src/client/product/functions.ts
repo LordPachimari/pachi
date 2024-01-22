@@ -8,6 +8,7 @@ import {
 } from "@pachi/db";
 
 import {
+  type AssignProductOptionValueToVariant,
   type CreateProduct,
   type CreateProductOption,
   type CreateProductPrices,
@@ -17,14 +18,14 @@ import {
   type DeleteProductOptionValue,
   type DeleteProductPrices,
   type DeleteProductVariant,
-  type UpdateImagesOrder,
   type UpdateProduct,
+  type UpdateProductImagesOrder,
   type UpdateProductOption,
   type UpdateProductOptionValues,
   type UpdateProductPrice,
   type UpdateProductVariant,
   type UploadProductImages,
-} from "../../schema/product";
+} from "../../input-schema/product";
 
 async function createProduct(tx: WriteTransaction, input: CreateProduct) {
   const { product, storeId, prices } = input;
@@ -60,9 +61,9 @@ async function updateProduct(tx: WriteTransaction, input: UpdateProduct) {
   }
   await tx.set(id, { ...product, ...updates });
 }
-async function updateImagesOrder(
+async function updateProductImagesOrder(
   tx: WriteTransaction,
-  input: UpdateImagesOrder,
+  input: UpdateProductImagesOrder,
 ) {
   const { order, productId, variantId } = input;
   const product = (await tx.get(productId)) as Product | undefined;
@@ -379,11 +380,51 @@ async function deleteProductPrices(
     ),
   });
 }
+
+async function assignProductOptionValueToVariant(
+  tx: WriteTransaction,
+  input: AssignProductOptionValueToVariant,
+) {
+  const { optionValueId, variantId, prevOptionValueId, productId } = input;
+  const product = (await tx.get<Product>(productId)) as Product | undefined;
+  if (!product) {
+    console.info(`Product  not found`);
+    return;
+  }
+  const variant = product.variants?.find((val) => val.id === variantId);
+  if (!variant) {
+    console.log("variant not found");
+    return;
+  }
+  const productOptionValue = product.options
+    ?.find((option) => option.values?.some((val) => val.id === optionValueId))
+    ?.values?.find((val) => val.id === optionValueId);
+  let optionValues = variant.optionValues ? [...variant.optionValues] : [];
+  if (prevOptionValueId)
+    optionValues = optionValues.filter(
+      (val) => val.optionValue.id !== prevOptionValueId,
+    );
+
+  await tx.set(product.id, {
+    ...product,
+    variants: product.variants?.map((variant_) =>
+      variant_.id === variantId
+        ? {
+            ...variant,
+            optionValues: [
+              ...optionValues,
+              { optionValue: productOptionValue! },
+            ],
+          }
+        : variant_,
+    ),
+  });
+}
 export {
   createProduct,
   deleteProduct,
   updateProduct,
-  updateImagesOrder,
+  updateProductImagesOrder,
   uploadProductImages,
   createProductOption,
   updateProductOption,
@@ -396,4 +437,5 @@ export {
   createProductPrices,
   updateProductPrice,
   deleteProductPrices,
+  assignProductOptionValueToVariant,
 };

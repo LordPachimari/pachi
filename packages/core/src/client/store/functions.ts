@@ -2,7 +2,7 @@ import type { WriteTransaction } from "replicache";
 
 import type { Store } from "@pachi/db";
 
-import type { CreateStore, UpdateStore } from "../../schema/store";
+import type { CreateStore, UpdateStore } from "../../input-schema/store";
 
 async function createStore(tx: WriteTransaction, input: CreateStore) {
   const { store } = input;

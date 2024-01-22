@@ -3,7 +3,7 @@ import type { WriteTransaction } from "replicache";
 import type { Store } from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
-import type { CreateUser } from "../../schema/user";
+import type { CreateUser } from "../../input-schema/user";
 
 async function createUser(tx: WriteTransaction, input: CreateUser) {
   const { user } = input;

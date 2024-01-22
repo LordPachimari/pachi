@@ -3,12 +3,12 @@ import { Dialog, Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 
 import type {
-  AssignProductOptionValueToVariantProps,
-  UpdateImagesOrderProps,
-  UpdatePriceProps,
-  UpdateProductVariantProps,
-  UploadImagesProps,
-} from "@pachi/api";
+  AssignProductOptionValueToVariant,
+  UpdateProductImagesOrder,
+  UpdateProductPrice,
+  UpdateProductVariant,
+  UploadProductImages,
+} from "@pachi/core";
 import type {
   Image,
   ProductOption,
@@ -29,23 +29,22 @@ interface VariantModalProps {
   options: ProductOption[];
   variant: ProductVariant;
   storeId: string;
-  uploadProductImages: (props: UploadImagesProps["args"]) => Promise<void>;
-  updatePrice: (props: UpdatePriceProps["args"]) => Promise<void>;
+  uploadProductImages: (props: UploadProductImages) => Promise<void>;
+  updatePrice: (props: UpdateProductPrice) => Promise<void>;
 
-  updateVariant: (props: UpdateProductVariantProps["args"]) => Promise<void>;
+  updateVariant: (props: UpdateProductVariant) => Promise<void>;
   currencies: string[];
   updateProductImagesOrder: ({
     order,
     productId,
     variantId,
-  }: UpdateImagesOrderProps["args"]) => Promise<void>;
+  }: UpdateProductImagesOrder) => Promise<void>;
   onOptionValueChange: ({
-    optionId,
     optionValueId,
     prevOptionValueId,
     productId,
     variantId,
-  }: AssignProductOptionValueToVariantProps["args"]) => Promise<void>;
+  }: AssignProductOptionValueToVariant) => Promise<void>;
 }
 export default function VariantModal({
   closeModal,
@@ -67,17 +66,10 @@ export default function VariantModal({
     Record<string, { id: string; value: string }>
   >({});
 
-  console.log("options", options);
-  console.log("variant", variant);
   useEffect(() => {
     if (variant.optionValues && variant.optionValues.length > 0) {
       const variantOptionsMap = variant.optionValues.reduce(
         (acc, optionValue) => {
-          console.log(
-            "check check",
-            optionValue.optionValue.option?.name,
-            optionValue.optionValue.value,
-          );
           if (
             optionValue.optionValue.option?.name &&
             optionValue.optionValue.value
@@ -92,7 +84,6 @@ export default function VariantModal({
         },
         {} as Record<string, { id: string; value: string }>,
       );
-      console.log("setting variant options", variantOptionsMap);
       setVariantOptions(variantOptionsMap);
     }
   }, [variant.optionValues]);
@@ -114,10 +105,8 @@ export default function VariantModal({
       optionValue: { id: string; value: string };
       optionId: string;
     }) => {
-      console.log("on click", optionId, optionValue);
       if (optionId && optionValue) {
         await onOptionValueChange({
-          optionId,
           optionValueId: optionValue.id,
           ...(variantOptions[optionId] !== undefined && {
             prevOptionValueId: variantOptions[optionId]!.id,
@@ -135,9 +124,6 @@ export default function VariantModal({
     },
     [onOptionValueChange, productId, variant.id, variantOptions],
   );
-
-  console.log("optionsMap", optionsMap);
-  console.log("variant options", variantOptions);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -187,7 +173,7 @@ export default function VariantModal({
                             variantOptions[option.name]
                               ? {
                                   optionValue: {
-                                    id: variantOptions[option.name]!.id!,
+                                    id: variantOptions[option.name]!.id,
                                     value:
                                       variantOptions[option.name]!.value ?? "",
                                   },

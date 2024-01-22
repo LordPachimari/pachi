@@ -29,12 +29,14 @@ export const UpdateProductSchema = z.object({
 });
 export type UpdateProduct = z.infer<typeof UpdateProductSchema>;
 
-export const UpdateImagesOrderSchema = z.object({
+export const UpdateProductImagesOrderSchema = z.object({
   productId: z.string(),
   variantId: z.string(),
   order: z.record(z.number()),
 });
-export type UpdateImagesOrder = z.infer<typeof UpdateImagesOrderSchema>;
+export type UpdateProductImagesOrder = z.infer<
+  typeof UpdateProductImagesOrderSchema
+>;
 
 export const UploadProductImagesSchema = z.object({
   variantId: z.string(),
@@ -117,3 +119,19 @@ export const DeleteProductPricesSchema = z.object({
   variantId: z.string(),
 });
 export type DeleteProductPrices = z.infer<typeof DeleteProductPricesSchema>;
+
+export const AssignProductOptionValueToVariantSchema = z.object({
+  optionValueId: z.string(),
+  productId: z.string(),
+  variantId: z.string(),
+  prevOptionValueId: z.string().optional(),
+});
+export type AssignProductOptionValueToVariant = z.infer<
+  typeof AssignProductOptionValueToVariantSchema
+>;
+
+export const UpdateProductTagsSchema = z.object({
+  productId: z.string(),
+  tags: z.array(z.string()),
+});
+export type UpdateProductTags = z.infer<typeof UpdateProductTagsSchema>;

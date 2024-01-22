@@ -3,15 +3,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import debounce from "lodash.debounce";
-import { useSubscribe } from "replicache-react";
 
-import {
-  UpdateProductSchema,
-  type Image,
-  type Product,
-  type ProductUpdates,
-  type Store,
-} from "@pachi/db";
+import type {
+  UpdateProductImagesOrder,
+  UpdateProductPrice,
+  UpdateProductVariant,
+  UploadProductImages,
+} from "@pachi/core";
+import type { AssignProductOptionValueToVariant } from "@pachi/core/src/input-schema/product";
+import { type Image, type ProductUpdates } from "@pachi/db";
 import { generateId, ulid } from "@pachi/utils";
 
 import Gallery from "~/app/(global)/(dashboard)/dashboard/products/_components/Gallery";
@@ -25,12 +25,18 @@ import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { createUrl } from "~/libs/create-url";
+import { useDashboardRep } from "~/providers/replicache/dashboard";
+import { ProductStore, UserStore } from "~/replicache/stores";
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const router = useRouter();
   const searchParams = useSearchParams();
   const storeId = searchParams.get("storeId");
+
+  const dashboardRep = useDashboardRep();
+  const product = ProductStore.get(dashboardRep, id);
+  const store = storeId ? UserStore.get(dashboardRep, storeId) : undefined;
 
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(true);
 
@@ -51,43 +57,18 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     [id, router, searchParams],
   );
 
-
   const [files, setFiles] = useState<Image[]>([]);
-  const product = useSubscribe(
-    dashboardRep,
-    async (tx) => {
-      const product = (await tx.get(id)) as Product | undefined;
-      console.log("product", product);
-      return product;
-    },
-    undefined,
-    [id],
-  );
 
   useEffect(() => {
     if (!storeId) router.push("/home");
   }, [router, storeId]);
-  const store = useSubscribe(
-    globalRep,
-    async (tx) => {
-      const store = storeId
-        ? ((await tx.get(storeId)) as Store | undefined)
-        : undefined;
-      return store;
-    },
-    undefined,
-    [storeId],
-  );
 
   const updateProduct = useCallback(
     async ({ updates }: { updates: ProductUpdates }) => {
       if (dashboardRep) {
-        UpdateProductSchema._parse({ id, updates });
         await dashboardRep.mutate.updateProduct({
-          args: {
-            id,
-            updates,
-          },
+          id,
+          updates,
         });
       }
     },
@@ -101,60 +82,43 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     [updateProduct],
   );
   const updatePrice = useCallback(
-    async ({
-      priceId,
-      updates,
-      variantId,
-      productId,
-    }: UpdatePriceProps["args"]) => {
-      await dashboardRep?.mutate.updatePrice({
-        args: {
-          priceId,
-          updates,
-          variantId,
-          productId,
-        },
+    async ({ priceId, updates, variantId, productId }: UpdateProductPrice) => {
+      await dashboardRep?.mutate.updateProductPrice({
+        priceId,
+        updates,
+        variantId,
+        productId,
       });
     },
     [dashboardRep],
   );
   const updateVariant = useCallback(
-    async ({
-      updates,
-      variantId,
-      productId,
-    }: UpdateProductVariantProps["args"]) => {
+    async ({ updates, variantId, productId }: UpdateProductVariant) => {
       await dashboardRep?.mutate.updateProductVariant({
-        args: {
-          updates,
-          variantId,
-          productId,
-        },
+        updates,
+        variantId,
+        productId,
       });
     },
     [dashboardRep],
   );
 
   const uploadProductImages = useCallback(
-    async ({ images, productId, variantId }: UploadImagesProps["args"]) => {
+    async ({ images, productId, variantId }: UploadProductImages) => {
       await dashboardRep?.mutate.uploadProductImages({
-        args: {
-          images,
-          productId,
-          variantId,
-        },
+        images,
+        productId,
+        variantId,
       });
     },
     [dashboardRep],
   );
   const updateProductImagesOrder = useCallback(
-    async ({ order, productId, variantId }: UpdateImagesOrderProps["args"]) => {
+    async ({ order, productId, variantId }: UpdateProductImagesOrder) => {
       await dashboardRep?.mutate.updateImagesOrder({
-        args: {
-          productId,
-          variantId,
-          order,
-        },
+        productId,
+        variantId,
+        order,
       });
     },
     [dashboardRep],
@@ -164,13 +128,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     if (dashboardRep && product) {
       const variantId = generateId({ id: ulid(), prefix: "var" });
       await dashboardRep.mutate.createProductVariant({
-        args: {
-          variant: {
-            id: variantId,
-            createdAt: new Date().toISOString(),
-            productId: product.id,
-            inventoryQuantity: 0,
-          },
+        variant: {
+          id: variantId,
+          createdAt: new Date().toISOString(),
+          productId: product.id,
         },
       });
       const newParams = new URLSearchParams(searchParams.toString());
@@ -189,23 +150,17 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   };
   const onOptionValueChange = useCallback(
     async ({
-      optionId,
       optionValueId,
       prevOptionValueId,
       productId,
       variantId,
-    }: AssignProductOptionValueToVariantProps["args"]) => {
-      if (dashboardRep) {
-        await dashboardRep.mutate.assignProductOptionValueToVariant({
-          args: {
-            optionId,
-            optionValueId,
-            ...(prevOptionValueId && { prevOptionValueId }),
-            productId,
-            variantId,
-          },
-        });
-      }
+    }: AssignProductOptionValueToVariant) => {
+      await dashboardRep?.mutate.assignProductOptionValueToVariant({
+        optionValueId,
+        ...(prevOptionValueId && { prevOptionValueId }),
+        productId,
+        variantId,
+      });
     },
     [dashboardRep],
   );
@@ -214,9 +169,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const variant = product?.variants?.find(
     (variant) => variant.id === variantId,
   );
-  console.log("store currencies", store?.currencies);
-  console.log("store", store);
-  console.log("is it true", !!(variantId && variant && product && store));
 
   return (
     <>
@@ -245,31 +197,17 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             defaultValue={searchParams.get("q") ?? "general"}
           >
             <TabsList className=" grid w-full grid-cols-4 border-b">
-              <TabsTrigger
-                value="general"
-                onClick={() => onTabClick("general")}
-              >
-                General
-              </TabsTrigger>
-              <TabsTrigger
-                value="variants"
-                onClick={() => onTabClick("variants")}
-              >
-                Variants
-              </TabsTrigger>
-              <TabsTrigger
-                value="organize"
-                onClick={() => onTabClick("organize")}
-              >
-                Organize
-              </TabsTrigger>
-              <TabsTrigger
-                value="advanced"
-                onClick={() => onTabClick("advanced")}
-              >
-                Advanced
-              </TabsTrigger>
+              {tabs.map((tab) => (
+                <TabsTrigger
+                  key={tab.title}
+                  value={tab.title}
+                  onClick={() => onTabClick(tab.title)}
+                >
+                  {tab.title[0]!.toUpperCase() + tab.title.slice(1)}
+                </TabsTrigger>
+              ))}
             </TabsList>
+
             <TabsContent
               key="general"
               title="General"
@@ -315,9 +253,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </TabsContent>
             <TabsContent key="advanced" value="advanced">
               <ScrollArea className="h-product-input  ">
-                {product && (
+                {product?.variants?.[0] && (
                   <Advanced
-                    variant={product!.variants![0]}
+                    variant={product.variants[0]}
                     updateVariant={updateVariant}
                   />
                 )}
@@ -339,3 +277,17 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     </>
   );
 }
+const tabs: { title: "general" | "variants" | "organize" | "advanced" }[] = [
+  {
+    title: "general",
+  },
+  {
+    title: "variants",
+  },
+  {
+    title: "organize",
+  },
+  {
+    title: "advanced",
+  },
+];

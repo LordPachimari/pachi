@@ -30,6 +30,7 @@ import { List } from "../components/List";
 import { Wrapper } from "../components/Wrapper";
 import type { Props } from "../types";
 import { createRange } from "../utilities";
+import { isDefined } from "remeda";
 
 const dropAnimationConfig: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -65,7 +66,7 @@ export function Sortable({
   style,
   useDragOverlay = true,
   wrapperStyle = () => ({}),
-  updateProductImagesOrder,
+  updateImagesOrder,
   itemsType,
 }: Props) {
   const map = new Map();
@@ -180,17 +181,15 @@ export function Sortable({
           if (activeIndex !== overIndex) {
             setItems((items) => {
               const reordered = reorderItems(items, activeIndex, overIndex);
-
-              console.log("reordered <=====", reordered);
               if (
                 itemsType === "images" &&
-                updateProductImagesOrder !== undefined
+                isDefined(updateImagesOrder )
               ) {
                 const order: Record<string, number> = {};
                 reordered.forEach((item, index) => {
                   order[item.id] = index;
                 });
-                updateProductImagesOrder({ order }).catch((err) =>
+                updateImagesOrder({ order }).catch((err) =>
                   console.log(err),
                 );
               }

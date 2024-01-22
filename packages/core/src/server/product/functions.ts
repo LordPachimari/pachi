@@ -1,6 +1,8 @@
 import { type ProductVariant } from "@pachi/db";
+import { generateId, ulid } from "@pachi/utils";
 
 import {
+  AssignProductOptionValueToVariantSchema,
   CreateProductOptionSchema,
   CreateProductPricesSchema,
   CreateProductSchema,
@@ -10,14 +12,15 @@ import {
   DeleteProductOptionValueSchema,
   DeleteProductPricesSchema,
   DeleteProductVariantSchema,
-  UpdateImagesOrderSchema,
+  UpdateProductImagesOrderSchema,
   UpdateProductOptionSchema,
   UpdateProductOptionValuesSchema,
   UpdateProductPriceSchema,
   UpdateProductSchema,
+  UpdateProductTagsSchema,
   UpdateProductVariantSchema,
   UploadProductImagesSchema,
-} from "../../schema/product";
+} from "../../input-schema/product";
 import { zod } from "../../util/zod";
 import type { ServerProps } from "../initialize";
 
@@ -46,7 +49,7 @@ function createProduct(props: ServerProps) {
       variant: defaultVariant,
     });
     prices.forEach((price) => {
-      replicacheTransaction.put(price.id, price, "prices");
+      replicacheTransaction.set(price.id, price, "prices");
     });
   });
 }
@@ -61,12 +64,12 @@ function updateProduct(props: ServerProps) {
   const { replicacheTransaction } = props;
   return zod(UpdateProductSchema, (input) => {
     const { updates, id } = input;
-    replicacheTransaction.put(id, updates, "products");
+    replicacheTransaction.set(id, updates, "products");
   });
 }
-function updateImagesOrder(props: ServerProps) {
+function updateProductImagesOrder(props: ServerProps) {
   const { replicacheTransaction, repositories } = props;
-  return zod(UpdateImagesOrderSchema, async (input) => {
+  return zod(UpdateProductImagesOrderSchema, async (input) => {
     const { productId, order, variantId } = input;
     const variant =
       await repositories.productVariantRepository.getProductVariantById(
@@ -133,7 +136,7 @@ function createProductOption(props: ServerProps) {
   const { replicacheTransaction } = props;
   return zod(CreateProductOptionSchema, (input) => {
     const { option } = input;
-    replicacheTransaction.put(option.id, option, "productOptions");
+    replicacheTransaction.set(option.id, option, "productOptions");
     replicacheTransaction.update(option.productId, {}, "products");
   });
 }
@@ -166,13 +169,13 @@ function updateProductOptionValues(props: ServerProps) {
       return;
     }
     const oldValuesKeys = option.values?.map((value) => value.id) ?? [];
-    newOptionValues.map((value) => {
-      replicacheTransaction.put(value.id, value, "productOptionValues");
-    }),
-      oldValuesKeys.map((id) => {
-        replicacheTransaction.del(id, "productOptionValues");
-      }),
-      replicacheTransaction.update(productId, {}, "products");
+    newOptionValues.forEach((value) => {
+      replicacheTransaction.set(value.id, value, "productOptionValues");
+    });
+    oldValuesKeys.forEach((id) => {
+      replicacheTransaction.del(id, "productOptionValues");
+    });
+    replicacheTransaction.update(productId, {}, "products");
   });
 }
 
@@ -189,7 +192,7 @@ function createProductVariant(props: ServerProps) {
   const { replicacheTransaction } = props;
   return zod(CreateProductVariantSchema, (input) => {
     const { variant } = input;
-    replicacheTransaction.put(variant.id, variant, "productVariants");
+    replicacheTransaction.set(variant.id, variant, "productVariants");
     replicacheTransaction.update(variant.productId, {}, "products");
   });
 }
@@ -216,8 +219,8 @@ function createProductPrices(props: ServerProps) {
   const { replicacheTransaction } = props;
   return zod(CreateProductPricesSchema, (input) => {
     const { prices, productId } = input;
-    prices.map((price) => {
-      replicacheTransaction.put(price.id, price, "prices");
+    prices.forEach((price) => {
+      replicacheTransaction.set(price.id, price, "prices");
     });
     replicacheTransaction.update(productId, {}, "products");
   });
@@ -236,13 +239,79 @@ function deleteProductPrices(props: ServerProps) {
   const { replicacheTransaction } = props;
   return zod(DeleteProductPricesSchema, (input) => {
     const { priceIds, productId } = input;
-    priceIds.map((id) => {
+    priceIds.forEach((id) => {
       replicacheTransaction.del(id, "prices");
     });
     replicacheTransaction.update(productId, {}, "products");
   });
 }
+
+function assignProductOptionValueToVariant(props: ServerProps) {
+  const { replicacheTransaction } = props;
+  return zod(AssignProductOptionValueToVariantSchema, (input) => {
+    const { optionValueId, variantId, prevOptionValueId, productId } = input;
+    replicacheTransaction.set(
+      { optionValueId, variantId },
+      { optionValueId, variantId },
+      "productOptionValuesToProductVariants",
+    );
+    replicacheTransaction.update(productId, {}, "products");
+    if (prevOptionValueId)
+      replicacheTransaction.del(
+        prevOptionValueId,
+        "productOptionValuesToProductVariants",
+      );
+  });
+}
+
+function updateProductTags(props: ServerProps) {
+  const { replicacheTransaction, repositories } = props;
+  return zod(UpdateProductTagsSchema, async (input) => {
+    const { productId, tags } = input;
+    const productTagExistenceResults = await Promise.all(
+      tags.map(async (tag) => {
+        return await repositories.productTagRepository.checkProductTagExists({
+          value: tag,
+        });
+      }),
+    );
+    const productTagsToCreate: { tag: string }[] = [];
+    const productTagsToAssign: { id: string }[] = [];
+    for (let i = 0; i < productTagExistenceResults.length; i++) {
+      const item = productTagExistenceResults[i];
+      if (!item) {
+        productTagsToCreate.push({ tag: tags[i]! });
+      } else {
+        productTagsToAssign.push({ id: item.id });
+      }
+    }
+    const newTags = await repositories.productTagRepository.createProductTags({
+      tags: productTagsToCreate.map((value) => {
+        return {
+          id: generateId({ id: ulid(), prefix: "p_tag" }),
+          value: value.tag,
+          createdAt: new Date().toISOString(),
+        };
+      }),
+    });
+    productTagsToAssign.forEach((tag) =>
+      replicacheTransaction.set(
+        { productId, tagId: tag.id },
+        { productId, tagId: tag.id },
+        "productsToTags",
+      ),
+    );
+    for (const newTag of newTags ?? []) {
+      replicacheTransaction.set(
+        { productId, tagId: newTag.id },
+        { productId, tagId: newTag.id },
+        "productsToTags",
+      );
+    }
+  });
+}
 export {
+  assignProductOptionValueToVariant,
   createProduct,
   createProductOption,
   createProductPrices,
@@ -250,13 +319,13 @@ export {
   deleteProduct,
   deleteProductOption,
   deleteProductOptionValue,
+  deleteProductPrices,
   deleteProductVariant,
-  updateImagesOrder,
   updateProduct,
+  updateProductImagesOrder,
   updateProductOption,
   updateProductOptionValues,
+  updateProductPrice,
   updateProductVariant,
   uploadProductImages,
-  updateProductPrice,
-  deleteProductPrices,
 };

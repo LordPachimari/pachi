@@ -1,19 +1,10 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { isDefined } from "remeda";
-import { useSubscribe } from "replicache-react";
-import { ulid } from "ulid";
-
-import type { Price, Product, Store } from "@pachi/db";
-import { generateId } from "@pachi/utils";
 
 import { PageHeaderHeading } from "~/components/molecules/page-header";
 import { Shell } from "~/components/ui/shell";
-import { PREFICES } from "~/constants";
-import { createUrl } from "~/libs/create-url";
-import { useDashboardRep } from "~/providers/replicache/dashboard";
 import { useQueryOptions } from "~/routing/router";
 import { ProductsTable } from "./_components/table";
 

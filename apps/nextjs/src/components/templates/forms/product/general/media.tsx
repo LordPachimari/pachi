@@ -3,21 +3,14 @@ import { DndContext } from "@dnd-kit/core";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
 
 import type {
-  UpdateImagesOrderProps,
-  UploadImagesProps,
-} from "@pachi/api/src/types/mutators";
+  UpdateProductImagesOrder,
+  UploadProductImages,
+} from "@pachi/core";
 import type { Image } from "@pachi/db";
 
 import type { OurFileRouter } from "~/app/api/uploadthing/core";
-// import { generateReactHelpers } from "@uploadthing/react/hooks";
-
-// import type { Image, Image as ImageType } from "@acme/types";
-
 import { FileUpload } from "~/components/molecules/file-upload";
 import { LargeFirstTile } from "~/components/templates/dnd-kit/sortable/large-first-tile";
-
-// import type { OurFileRouter } from "~/app/api/uploadthing/core";
-// import { ReplicacheInstancesStore } from "~/zustand/replicache";
 
 export interface MediaFormType {
   images: Image[];
@@ -29,12 +22,8 @@ interface Props {
   variantId: string;
   files: Image[];
   setFiles: React.Dispatch<React.SetStateAction<Image[]>>;
-  uploadProductImages: (props: UploadImagesProps["args"]) => Promise<void>;
-  updateProductImagesOrder: ({
-    order,
-    productId,
-    variantId,
-  }: UpdateImagesOrderProps["args"]) => Promise<void>;
+  uploadProductImages: (props: UploadProductImages) => Promise<void>;
+  updateProductImagesOrder: (props: UpdateProductImagesOrder) => Promise<void>;
 }
 
 const Media = ({
@@ -47,31 +36,25 @@ const Media = ({
   updateProductImagesOrder,
 }: Props) => {
   const { useUploadThing } = generateReactHelpers<OurFileRouter>();
-  const { isUploading, startUpload } = useUploadThing("imageUploader", {
+  const { startUpload } = useUploadThing("imageUploader", {
     onUploadProgress: (p) => console.log("p", p),
-    onUploadBegin: (name) => console.log("name", name),
-    onClientUploadComplete: (res) => {
-      console.log("res", res);
-    },
   });
   useEffect(() => {
     if (images) {
       setFiles(images.toSorted((a, b) => a.order - b.order));
     }
   }, [images, setFiles]);
-  const updateProductImagesOrder_ = useCallback(
-    async ({ order }: { order: Record<string, number> }) => {
-      if (productId && variantId) {
-        await updateProductImagesOrder({
-          order,
-          productId,
-          variantId,
-        });
-      }
-    },
-    [],
-  );
-  console.log("files", files);
+  const updateImagesOrder = async ({
+    order,
+  }: {
+    order: Record<string, number>;
+  }) => {
+    await updateProductImagesOrder({
+      order,
+      productId,
+      variantId,
+    });
+  };
 
   return (
     <div className="w-full">
@@ -90,7 +73,7 @@ const Media = ({
               {files && (
                 <LargeFirstTile
                   items={files}
-                  updateProductImagesOrder={updateProductImagesOrder_}
+                  updateImagesOrder={updateImagesOrder}
                 />
               )}
             </div>

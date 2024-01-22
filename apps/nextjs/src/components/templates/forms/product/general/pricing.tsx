@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import type { UpdatePriceProps } from "@pachi/api";
 import { type ProductVariant } from "@pachi/db";
 
 import CurrencyModal from "~/components/templates/modals/currency";
@@ -8,9 +7,10 @@ import { Table } from "~/components/templates/tables/currency-table";
 import { Label } from "~/components/ui/label";
 import { RadioGroup } from "~/components/ui/radio-group";
 import { CurrencyInput } from "./currency-input";
+import type { UpdateProductPrice } from "@pachi/core";
 
 interface PricingProps {
-  updatePrice: (props: UpdatePriceProps["args"]) => Promise<void>;
+  updatePrice: (props: UpdateProductPrice) => Promise<void>;
   variant: ProductVariant;
   productCurrencies: string[];
   storeId: string;
@@ -31,8 +31,6 @@ const Pricing = ({
   const [activePrice, setActivePrice] = useState(
     variant.prices?.[0] ? variant.prices[0] : undefined,
   );
-
-  console.log("variant", variant);
 
   return (
     <div>

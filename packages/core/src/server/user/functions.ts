@@ -1,7 +1,7 @@
 import type { Store } from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
-import { CreateUserSchema } from "../../schema/user";
+import { CreateUserSchema } from "../../input-schema/user";
 import { zod } from "../../util/zod";
 import type { ServerProps } from "../initialize";
 
@@ -20,7 +20,7 @@ function createUser(props: ServerProps) {
     };
 
     await repositories.userRepository.insertUser({ user });
-    replicacheTransaction.put(store.id, store, "stores");
+    replicacheTransaction.set(store.id, store, "stores");
   });
 }
 export { createUser };

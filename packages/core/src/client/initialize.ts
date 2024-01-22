@@ -11,7 +11,7 @@ export function initDashboardMutations() {
     .expose("createProduct", client.Product.createProduct)
     .expose("deleteProduct", client.Product.deleteProduct)
     .expose("updateProduct", client.Product.updateProduct)
-    .expose("updateImagesOrder", client.Product.updateImagesOrder)
+    .expose("updateImagesOrder", client.Product.updateProductImagesOrder)
     .expose("uploadProductImages", client.Product.uploadProductImages)
     .expose("createProductOption", client.Product.createProductOption)
     .expose("updateProductOption", client.Product.updateProductOption)
@@ -26,7 +26,11 @@ export function initDashboardMutations() {
     .expose("deleteProductVariant", client.Product.deleteProductVariant)
     .expose("createProductPrices", client.Product.createProductPrices)
     .expose("updateProductPrice", client.Product.updateProductPrice)
-    .expose("deleteProductPrices", client.Product.deleteProductPrices);
+    .expose("deleteProductPrices", client.Product.deleteProductPrices)
+    .expose(
+      "assignProductOptionValueToVariant",
+      client.Product.assignProductOptionValueToVariant,
+    );
 }
 
 export function initGlobalMutations() {

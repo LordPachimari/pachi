@@ -1,13 +1,11 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { LockClosedIcon } from "@radix-ui/react-icons";
 import { FolderClosed } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import { SheetClose } from "~/components/ui/sheet";
 import { Textarea } from "~/components/ui/textarea";
 
 interface EditStoreModalProps {

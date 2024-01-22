@@ -17,7 +17,7 @@ export function initDashboardMutations(props: ServerProps) {
     .expose("createProduct", server.Product.createProduct(props))
     .expose("deleteProduct", server.Product.deleteProduct(props))
     .expose("updateProduct", server.Product.updateProduct(props))
-    .expose("updateImagesOrder", server.Product.updateImagesOrder(props))
+    .expose("updateImagesOrder", server.Product.updateProductImagesOrder(props))
     .expose("uploadProductImages", server.Product.uploadProductImages(props))
     .expose("createProductOption", server.Product.createProductOption(props))
     .expose("updateProductOption", server.Product.updateProductOption(props))
@@ -35,7 +35,11 @@ export function initDashboardMutations(props: ServerProps) {
     .expose("deleteProductVariant", server.Product.deleteProductVariant(props))
     .expose("createProductPrices", server.Product.createProductPrices(props))
     .expose("updateProductPrice", server.Product.updateProductPrice(props))
-    .expose("deleteProductPrices", server.Product.deleteProductPrices(props));
+    .expose("deleteProductPrices", server.Product.deleteProductPrices(props))
+    .expose(
+      "assignProductOptionValueToVariant",
+      server.Product.assignProductOptionValueToVariant(props),
+    );
 
   return newServer;
 }

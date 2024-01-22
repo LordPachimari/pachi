@@ -1,4 +1,3 @@
-import React from "react";
 import type {
   Active,
   CollisionDetection,
@@ -11,12 +10,12 @@ import type {
 } from "@dnd-kit/core";
 import type {
   AnimateLayoutChanges,
-  arrayMove,
   NewIndexGetter,
   SortingStrategy,
+  arrayMove,
 } from "@dnd-kit/sortable";
+import type React from "react";
 
-import type { Image } from "@pachi/db";
 
 import type { ItemProps } from "../components/Item/Item";
 
@@ -55,7 +54,7 @@ export interface Props {
     id: UniqueIdentifier;
   }): React.CSSProperties;
   isDisabled?(id: UniqueIdentifier): boolean;
-  updateProductImagesOrder?: ({
+  updateImagesOrder?: ({
     order,
   }: {
     order: Record<string, number>;

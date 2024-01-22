@@ -1,4 +1,4 @@
-import { CreateStoreSchema, UpdateStoreSchema } from "../../schema/store";
+import { CreateStoreSchema, UpdateStoreSchema } from "../../input-schema/store";
 import { zod } from "../../util/zod";
 import type { ServerProps } from "../initialize";
 
@@ -6,7 +6,7 @@ function createStore(props: ServerProps) {
   const { replicacheTransaction } = props;
   return zod(CreateStoreSchema, (input) => {
     const { store } = input;
-    replicacheTransaction.put(store.id, store, "stores");
+    replicacheTransaction.set(store.id, store, "stores");
   });
 }
 
