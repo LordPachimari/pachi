@@ -75,7 +75,7 @@ function useQueryOptions(searchParams: ReadonlyURLSearchParams) {
     },
     {
       page: [],
-      per_page: [],
+      pageSize: [],
       title: [],
       status: [],
     },

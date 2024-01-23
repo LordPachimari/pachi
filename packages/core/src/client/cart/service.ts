@@ -5,7 +5,7 @@ import { ServiceBase } from "../base/service";
 
 export class CartService extends ServiceBase {
   async createCart({ cart }: { cart: Cart } & ServiceBase): Promise<void> {
-    await this.manager.put(cart.id, cart);
+    await this.manager.set(cart.id, cart);
   }
 
   async updateCartTotals({
@@ -40,6 +40,6 @@ export class CartService extends ServiceBase {
 
     cart.total =
       cart.subtotal + cart.shippingTotal + cart.taxTotal - cart.discountTotal;
-    await this.manager.put(cart.id, cart);
+    await this.manager.set(cart.id, cart);
   }
 }

@@ -53,3 +53,4 @@ export function initGlobalMutations(props: ServerProps) {
 
   return newServer;
 }
+export type GlobalMutationsType = ReturnType<typeof initGlobalMutations>;

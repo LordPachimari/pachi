@@ -17,13 +17,11 @@ import {
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
-  pageSizeOptions?: number[];
 }
 
 export function TablePagination<TData>({
   table,
-  pageSizeOptions = [10, 20, 30, 40, 50],
-}: DataTablePaginationProps<TData>) {
+}: Readonly<DataTablePaginationProps<TData>>) {
   return (
     <div className="flex w-full flex-col items-center justify-between gap-4 overflow-auto px-2 py-1 sm:flex-row sm:gap-8">
       <div className="flex-1 whitespace-nowrap text-sm text-muted-foreground">
@@ -43,7 +41,7 @@ export function TablePagination<TData>({
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {pageSizeOptions.map((pageSize) => (
+              {[10, 20, 30, 40, 50].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>

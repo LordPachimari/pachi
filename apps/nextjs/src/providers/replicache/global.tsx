@@ -1,18 +1,20 @@
-import { createContext, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Replicache } from "replicache";
 
 import { client } from "@pachi/core";
 
 import { env } from "~/env.mjs";
+import { ReplicacheInstancesStore } from "~/zustand/replicache";
 
-const ReplicacheGlobalContext = createContext<Replicache | undefined>(
-  undefined,
-);
-
+export function getGlobalMutators() {
+  return client.initGlobalMutations().build();
+}
+export type GlobalMutators = ReturnType<typeof getGlobalMutators>;
 function GlobalReplicacheProvider({ children }: { children: React.ReactNode }) {
-  const [globalRep, setGlobalRep] = useState<Replicache | undefined>(undefined);
+  const mutators = getGlobalMutators();
   const userId = "user1";
-  const mutators = client.initGlobalMutations().build();
+  const globalRep = ReplicacheInstancesStore((state) => state.globalRep);
+  const setGlobalRep = ReplicacheInstancesStore((state) => state.setGlobalRep);
   useEffect(() => {
     if (globalRep) {
       return;
@@ -28,21 +30,8 @@ function GlobalReplicacheProvider({ children }: { children: React.ReactNode }) {
       pullInterval: null,
     });
     setGlobalRep(r);
-  }, [userId, globalRep, mutators]);
-  return (
-    <ReplicacheGlobalContext.Provider value={globalRep}>
-      {children}
-    </ReplicacheGlobalContext.Provider>
-  );
+  }, [userId, globalRep, mutators, setGlobalRep]);
+  return <>{children}</>;
 }
 
-function useGlobalRep() {
-  const context = createContext(ReplicacheGlobalContext);
-  if (context === undefined) {
-    throw new Error(
-      "useGlobalRep must be used within a GlobalReplicacheProvider",
-    );
-  }
-  return context;
-}
-export { GlobalReplicacheProvider, ReplicacheGlobalContext, useGlobalRep };
+export { GlobalReplicacheProvider };

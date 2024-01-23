@@ -60,7 +60,7 @@ export default function VariantModal({
   variant,
   updateProductImagesOrder,
   onOptionValueChange,
-}: VariantModalProps) {
+}: Readonly<VariantModalProps>) {
   const [files, setFiles] = useState<Image[]>([]);
   const [variantOptions, setVariantOptions] = useState<
     Record<string, { id: string; value: string }>
@@ -277,7 +277,7 @@ export default function VariantModal({
                 <Pricing
                   updatePrice={updatePrice}
                   variant={variant}
-                  productCurrencies={
+                  productCurrencyCodes={
                     (variant.prices ?? []).map((price) => price.currencyCode) ??
                     []
                   }

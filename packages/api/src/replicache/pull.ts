@@ -1,10 +1,6 @@
 import type { PullResponseOKV1 } from "replicache";
 import { z } from "zod";
 
-import type { Db } from "@pachi/db";
-import type { Cookie, PullRequest, SpaceId } from "@pachi/types";
-import { cookieSchema, pullRequestSchema } from "@pachi/types";
-
 import {
   deleteSpaceRecord,
   getClientGroupObject,
@@ -13,7 +9,10 @@ import {
   getPrevSpaceRecord,
   setClientGroupObject,
   setSpaceRecord,
-} from "./data/data";
+} from "@pachi/core";
+import type { Db } from "@pachi/db";
+import type { Cookie, PullRequest, SpaceId } from "@pachi/types";
+import { cookieSchema, pullRequestSchema } from "@pachi/types";
 
 export async function pull({
   spaceId,

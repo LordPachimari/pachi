@@ -1,3 +1,4 @@
+import type React from "react";
 import type {
   Active,
   CollisionDetection,
@@ -10,12 +11,10 @@ import type {
 } from "@dnd-kit/core";
 import type {
   AnimateLayoutChanges,
+  arrayMove,
   NewIndexGetter,
   SortingStrategy,
-  arrayMove,
 } from "@dnd-kit/sortable";
-import type React from "react";
-
 
 import type { ItemProps } from "../components/Item/Item";
 

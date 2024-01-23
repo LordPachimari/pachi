@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import type { PublishedProduct } from "@pachi/db";
 
-import { GridTileImage } from "~/components/molecules/grid-tile-image";
 import Grid from "~/components/ui/grid";
+import { GridTileImage } from "./tile";
 
 export default function ProductGridItems({
   products,
@@ -22,8 +22,9 @@ export default function ProductGridItems({
               alt={product.title}
               label={{
                 title: product.title,
-                amount: product.prices[0]!.amount,
-                currencyCode: product.prices[0]!.currencyCode,
+                amount: 12,
+                currencyCode: "USD",
+                position: "bottom",
               }}
               src={product.thumbnail.url}
               fill

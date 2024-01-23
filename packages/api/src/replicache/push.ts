@@ -5,8 +5,8 @@ import {
   server,
   setClientGroupObject,
   setLastMutationIdsAndVersions,
-  type Server,
 } from "@pachi/core";
+import type { DashboardMutationsType } from "@pachi/core/src/server";
 import type { Db } from "@pachi/db";
 import type {
   Mutation,
@@ -89,7 +89,7 @@ export const push = async ({
 
         const replicacheServer =
           spaceId === "dashboard"
-            ? server.initDashboardServer(props)
+            ? server.initDashboardMutations(props)
             : undefined;
         const lastMutationIdsAndVersions =
           await getClientLastMutationIdsAndVersion({
@@ -117,7 +117,7 @@ export const push = async ({
             lastMutationID:
               lastMutationIdsAndVersions[mutation.clientID]!.lastMutationID,
             mutation,
-            replicacheServer: replicacheServer as Server<any>,
+            replicacheServer: replicacheServer,
           });
           console.log("lastMutationID", lastMutationIdsAndVersions);
 
@@ -205,7 +205,7 @@ const processMutation = async ({
   mutation: Mutation;
   lastMutationID: number;
   error?: unknown;
-  replicacheServer: Server<any>;
+  replicacheServer: DashboardMutationsType | undefined;
 }) => {
   const expectedMutationID = lastMutationID + 1;
   if (mutation.id < expectedMutationID) {
@@ -229,7 +229,7 @@ const processMutation = async ({
     const { name, args } = mutation;
 
     try {
-      await replicacheServer.execute(name, args);
+      if (replicacheServer) await replicacheServer.execute(name, args);
     } catch (e) {
       console.error(`Error executing mutator: ${JSON.stringify(mutation)}`, e);
     }

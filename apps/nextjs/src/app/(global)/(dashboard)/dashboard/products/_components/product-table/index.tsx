@@ -2,7 +2,6 @@ import { useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PlusIcon } from "@radix-ui/react-icons";
 import type { ColumnDef } from "@tanstack/react-table";
-import { isDefined, toPairs } from "remeda";
 
 import type { Price, Product } from "@pachi/db";
 import { generateId, ulid } from "@pachi/utils";
@@ -11,8 +10,8 @@ import { Table } from "~/components/table/table";
 import { useTable } from "~/components/table/use-table";
 import { Button } from "~/components/ui/button";
 import { createUrl } from "~/libs/create-url";
-import { useDashboardRep } from "~/providers/replicache/dashboard";
 import { ProductStore, UserStore } from "~/replicache/stores";
+import { ReplicacheInstancesStore } from "~/zustand/replicache";
 import {
   filterableColumns,
   getProductsColumns,
@@ -20,35 +19,11 @@ import {
 } from "./columns";
 
 interface ProductsTableProps {
-  perPage: number;
-  page: number;
-  status: Set<string>;
-  title: string;
   storeId: string | undefined;
 }
-type Filters = Pick<ProductsTableProps, "status">;
 
-function filter(products: Product[], filters: Filters): Product[] {
-  const filterPairs = toPairs.strict(filters);
-  products.filter((product) => {
-    return filterPairs.every(([key, values]) => {
-      if (values.size === 0) return true;
-      const value = product[key];
-      if (isDefined(value)) return values.has(value);
-      return false;
-    });
-  });
-  return products;
-}
-
-function ProductsTable({
-  perPage,
-  page,
-  status,
-  title,
-  storeId,
-}: ProductsTableProps) {
-  const dashboardRep = useDashboardRep();
+function ProductsTable({ storeId }: Readonly<ProductsTableProps>) {
+  const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const data = ProductStore.scan(dashboardRep, "p_");
   const store = UserStore.get(dashboardRep, "store");
   const searchParams = useSearchParams();
@@ -59,15 +34,10 @@ function ProductsTable({
     () => getProductsColumns(),
     [],
   );
-  const filteredData = filter(data, { status });
-  const paginatedData = paginate(filteredData, { per_page: perPage, page });
 
   const { table } = useTable({
     columns,
-    data: paginatedData,
-    pageCount: Math.ceil(data.length / perPage),
-    filterableColumns,
-    searchableColumns,
+    data,
   });
 
   const createProduct = useCallback(async () => {

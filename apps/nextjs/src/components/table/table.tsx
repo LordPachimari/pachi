@@ -21,8 +21,8 @@ import { TableToolbar } from "./toolbar";
 type TableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   table: TanstackTable<TData>;
-  filterableColumns: DataTableFilterableColumn<TData>[] | undefined;
-  searchableColumns: DataTableSearchableColumn<TData>[] | undefined;
+  filterableColumns?: DataTableFilterableColumn<TData>[];
+  searchableColumns?: DataTableSearchableColumn<TData>[];
   withToolbar?: boolean;
   additionalToolbarButton?: React.ReactNode;
   deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
@@ -43,14 +43,13 @@ export function Table<TData, TValue>({
   withToolbar = false,
   additionalToolbarButton,
   floatingBarContent,
-}: TableProps<TData, TValue>) {
+}: Readonly<TableProps<TData, TValue>>) {
   const [view, setView] = React.useState<"row" | "grid">("row");
   React.useEffect(() => {
     setView(initialView);
   }, [initialView]);
-  console.log(view);
   return (
-    <div className="w-full space-y-2.5 overflow-auto">
+    <div className="space-y-4">
       {withToolbar ?? (
         <TableToolbar
           table={table}

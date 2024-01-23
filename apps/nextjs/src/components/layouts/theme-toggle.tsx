@@ -9,7 +9,7 @@ export function ThemeToggle() {
 
   return (
     <button
-      className="group flex h-18 w-18 flex-col items-center justify-center text-sm   "
+      className="h-18 w-18 group flex flex-col items-center justify-center text-sm   "
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
     >
       <Icons.sun

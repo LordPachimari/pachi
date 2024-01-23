@@ -21,7 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { useDashboardRep } from "~/providers/replicache/dashboard";
+import { ReplicacheInstancesStore } from "~/zustand/replicache";
 import Option from "./option";
 
 interface CreateOptionProps {
@@ -38,7 +38,7 @@ export default function CreateOption({
   createVariant,
   openVariantModal,
 }: CreateOptionProps) {
-  const dashboardRep = useDashboardRep();
+  const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const createOption = useCallback(async () => {
     const id = generateId({ id: ulid(), prefix: "opt" });
     const option: ProductOption = { id, productId };
@@ -72,15 +72,18 @@ export default function CreateOption({
         option: options.find((o) => o.id === optionId)!,
       }));
       await dashboardRep?.mutate.updateProductOptionValues({
-        optionId, productId, newOptionValues 
+        optionId,
+        productId,
+        newOptionValues,
       });
     }, 500),
     [dashboardRep],
   );
   const deleteVariant = useCallback(
-    async ({ variantId, productId }:DeleteProductVariant) => {
+    async ({ variantId, productId }: DeleteProductVariant) => {
       await dashboardRep?.mutate.deleteProductVariant({
-        variantId, productId 
+        variantId,
+        productId,
       });
     },
     [dashboardRep],
@@ -126,7 +129,10 @@ export default function CreateOption({
               size="icon"
               className="bg-red-300 hover:bg-red-400 "
               onClick={async () =>
-                await deleteOption({ optionId: option.id, productId: productId })
+                await deleteOption({
+                  optionId: option.id,
+                  productId: productId,
+                })
               }
             >
               <Trash2Icon className="text-red-500" />

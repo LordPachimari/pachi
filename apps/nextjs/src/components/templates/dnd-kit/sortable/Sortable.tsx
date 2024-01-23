@@ -23,6 +23,7 @@ import {
   type NewIndexGetter,
 } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
+import { isDefined } from "remeda";
 
 import { Item } from "../components/Item";
 import type { ItemProps } from "../components/Item/Item";
@@ -30,7 +31,6 @@ import { List } from "../components/List";
 import { Wrapper } from "../components/Wrapper";
 import type { Props } from "../types";
 import { createRange } from "../utilities";
-import { isDefined } from "remeda";
 
 const dropAnimationConfig: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -181,17 +181,12 @@ export function Sortable({
           if (activeIndex !== overIndex) {
             setItems((items) => {
               const reordered = reorderItems(items, activeIndex, overIndex);
-              if (
-                itemsType === "images" &&
-                isDefined(updateImagesOrder )
-              ) {
+              if (itemsType === "images" && isDefined(updateImagesOrder)) {
                 const order: Record<string, number> = {};
                 reordered.forEach((item, index) => {
                   order[item.id] = index;
                 });
-                updateImagesOrder({ order }).catch((err) =>
-                  console.log(err),
-                );
+                updateImagesOrder({ order }).catch((err) => console.log(err));
               }
 
               return reordered;

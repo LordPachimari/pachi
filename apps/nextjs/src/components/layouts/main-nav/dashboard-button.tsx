@@ -26,7 +26,7 @@ export function DashboardButton({ username }: DashboardButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="group flex h-18 w-18 flex-col items-center justify-center text-sm   "
+      className="h-18 w-18 group flex flex-col items-center justify-center text-sm   "
     >
       <LayoutDashboard className="text-slate-11 group-hover:text-slate-9" />
       <p className="text-[10px] text-slate-11 group-hover:text-slate-9">

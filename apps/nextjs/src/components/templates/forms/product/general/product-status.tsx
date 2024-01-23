@@ -30,7 +30,7 @@ export default function ProductStatus({
     setValue(status as "published" | "draft");
     setOpen(false);
   }, [status]);
-  
+
   return (
     <div className="mt-2 flex w-full justify-between">
       <h2 className="prone text-md font-semibold">Status</h2>

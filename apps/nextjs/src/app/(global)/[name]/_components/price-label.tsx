@@ -1,8 +1,8 @@
 import clsx from "clsx";
 
-import Price from "../price";
+import Price from "~/components/price";
 
-const Label = ({
+const PriceLabel = ({
   title,
   amount,
   currencyCode,
@@ -27,7 +27,7 @@ const Label = ({
           {title}
         </h3>
         <Price
-          className="flex-none rounded-full bg-fuchsia-500 p-2 text-white"
+          className="flex-none rounded-full bg-blue-600 p-2 text-white"
           amount={amount}
           currencyCode={currencyCode}
           currencyCodeClassName="hidden @[275px]/label:inline"
@@ -37,4 +37,4 @@ const Label = ({
   );
 };
 
-export default Label;
+export default PriceLabel;

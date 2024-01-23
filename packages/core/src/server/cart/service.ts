@@ -1,9 +1,10 @@
+import { eq } from "drizzle-orm";
+
 import type { Cart, CartItem } from "@pachi/db";
+import { cartItems } from "@pachi/db/schema";
 import { MedusaError } from "@pachi/utils";
 
 import { ServiceBase } from "../base/service";
-import { cartItems } from "@pachi/db/schema";
-import { eq } from "drizzle-orm";
 
 export class CartService extends ServiceBase {
   async updateCartTotals({ cartId }: { cartId: string }): Promise<void> {
@@ -44,7 +45,7 @@ export class CartService extends ServiceBase {
 
     cart.total =
       cart.subtotal + cart.shippingTotal + cart.taxTotal - cart.discountTotal;
-    this.replicacheTransaction.put(cart.id, cart, "carts");
+    this.replicacheTransaction.set(cart.id, cart, "carts");
   }
   async generateCartItem({
     item,

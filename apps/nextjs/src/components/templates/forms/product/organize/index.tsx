@@ -6,8 +6,8 @@ import type { ProductTag, ProductUpdates } from "@pachi/db";
 
 import InputField from "~/components/molecules/input-field";
 import InputHeader from "~/components/molecules/input-header";
-import { useDashboardRep } from "~/providers/replicache/dashboard";
 import type { DebouncedFunc } from "~/types";
+import { ReplicacheInstancesStore } from "~/zustand/replicache";
 
 interface OrganizeProps {
   productId: string;
@@ -22,7 +22,7 @@ export default function Organize({
   productTags,
 }: OrganizeProps) {
   const [tags, setTags] = useState<string[]>([]);
-  const dashboardRep = useDashboardRep();
+  const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   //TODO: fix this
   // const onTagsChange = useCallback(
   //   debounce(async (tags: string[]) => {

@@ -14,7 +14,6 @@ import type { AssignProductOptionValueToVariant } from "@pachi/core/src/input-sc
 import { type Image, type ProductUpdates } from "@pachi/db";
 import { generateId, ulid } from "@pachi/utils";
 
-import Gallery from "~/app/(global)/(dashboard)/dashboard/products/_components/Gallery";
 import ProductOverview from "~/app/(global)/(dashboard)/dashboard/products/_components/product-overview";
 import Advanced from "~/components/templates/forms/product/advanced";
 import { General } from "~/components/templates/forms/product/general";
@@ -25,8 +24,8 @@ import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { createUrl } from "~/libs/create-url";
-import { useDashboardRep } from "~/providers/replicache/dashboard";
 import { ProductStore, UserStore } from "~/replicache/stores";
+import { ReplicacheInstancesStore } from "~/zustand/replicache";
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -34,9 +33,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const searchParams = useSearchParams();
   const storeId = searchParams.get("storeId");
 
-  const dashboardRep = useDashboardRep();
+  const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const product = ProductStore.get(dashboardRep, id);
-  const store = storeId ? UserStore.get(dashboardRep, storeId) : undefined;
+  const store = UserStore.get(dashboardRep, storeId ?? "");
 
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(true);
 
@@ -270,7 +269,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           </div>
         </section>
         <section className="flex h-full w-full  flex-col  gap-4 lg:ml-[450px] 2xl:flex-row ">
-          <Gallery images={files} />
+          {/* <Gallery images={files} /> */}
           <ProductOverview />
         </section>
       </div>

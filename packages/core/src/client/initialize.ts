@@ -1,6 +1,9 @@
 import { client } from "..";
 import { ClientMutations } from "../replicache";
-import type { DashboardMutationsType } from "../server/initialize";
+import type {
+  DashboardMutationsType,
+  GlobalMutationsType,
+} from "../server/initialize";
 
 export interface ClientProps {
   services: client.Services;
@@ -34,7 +37,7 @@ export function initDashboardMutations() {
 }
 
 export function initGlobalMutations() {
-  return new ClientMutations()
+  return new ClientMutations<GlobalMutationsType>()
     .expose("createUser", client.User.createUser)
     .expose("createStore", client.Store.createStore)
     .expose("updateStore", client.Store.updateStore);

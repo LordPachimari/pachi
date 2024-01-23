@@ -1,6 +1,8 @@
 import TextareaAutosize from "react-textarea-autosize";
+
 import type { ProductUpdates } from "@pachi/db";
 import type { FieldError as FieldErrorType } from "@pachi/types";
+
 import type { DebouncedFunc } from "~/types";
 
 export interface TitleProps {

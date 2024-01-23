@@ -6,7 +6,7 @@ interface MainSidebarProps {
 }
 export default function MainSidebar({ username }: MainSidebarProps) {
   return (
-    <div className="sticky hidden w-18  flex-col  items-center  bg-navbar pt-10 md:flex ">
+    <div className="w-18 sticky hidden  flex-col  items-center  bg-navbar pt-10 md:flex ">
       <DashboardButton username={username} />
       <ThemeToggle />
     </div>

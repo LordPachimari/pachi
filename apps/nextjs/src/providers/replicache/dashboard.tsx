@@ -1,25 +1,25 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Replicache } from "replicache";
 
 import { client } from "@pachi/core";
 
 import { env } from "~/env.mjs";
+import { ReplicacheInstancesStore } from "~/zustand/replicache";
 
-const ReplicacheDashboardContext = createContext<Replicache<ReturnType<typeof getMutators>> | undefined>(
-  undefined,
-);
-function getMutators() {
-    return client.initDashboardMutations().build();
+export function getDashboardMutators() {
+  return client.initDashboardMutations().build();
 }
+export type DashboardMutators = ReturnType<typeof getDashboardMutators>;
 function DashboardReplicacheProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const mutators = getMutators();
-  const [dashboardRep, setDashboardRep] = useState<
-    Replicache<typeof mutators> | undefined
-  >(undefined);
+  const mutators = getDashboardMutators();
+  const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
+  const setDashboardRep = ReplicacheInstancesStore(
+    (state) => state.setDashboardRep,
+  );
   const userId = "user1";
   useEffect(() => {
     if (dashboardRep) {
@@ -36,21 +36,8 @@ function DashboardReplicacheProvider({
       pullInterval: null,
     });
     setDashboardRep(r);
-  }, [userId, dashboardRep, mutators]);
-  return (
-    <ReplicacheDashboardContext.Provider value={dashboardRep }>
-      {children}
-    </ReplicacheDashboardContext.Provider>
-  );
+  }, [userId, dashboardRep, mutators, setDashboardRep]);
+  return <>{children}</>;
 }
 
-function useDashboardRep() {
-  const context = useContext(ReplicacheDashboardContext);
-  if (context === undefined) {
-    throw new Error(
-      "useDashboardRep must be used within a DashboardReplicacheProvider",
-    );
-  }
-  return context;
-}
-export { DashboardReplicacheProvider, ReplicacheDashboardContext, useDashboardRep };
+export { DashboardReplicacheProvider };

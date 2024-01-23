@@ -1,2 +1,1 @@
-
-export * as Product from './functions'
+export * as Product from "./functions";

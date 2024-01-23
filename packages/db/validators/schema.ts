@@ -142,7 +142,9 @@ export type ProductTag = z.infer<typeof ProductTagSchema>;
 export const ProductVariantSchema = createInsertSchema(productVariants).extend({
   prices: z.array(PriceSchema).optional(),
   images: z.array(ImageSchema).optional(),
-  optionValues:z.array(z.object({optionValue:ProductOptionValueSchema})).optional(),
+  optionValues: z
+    .array(z.object({ optionValue: ProductOptionValueSchema }))
+    .optional(),
 });
 export type ProductVariant = z.infer<typeof ProductVariantSchema> & {
   product?: Product;
@@ -186,6 +188,8 @@ export const PublishedProductSchema = ProductSchema.required({
   status: true,
   discountable: true,
   options: true,
+}).extend({
+  title: z.string(),
 });
 export type PublishedProduct = z.infer<typeof PublishedProductSchema> & {
   variants: ProductVariant[];
@@ -205,8 +209,8 @@ export const UpdateProductSchema = z.object({
 });
 export type UpdateProduct = z.infer<typeof UpdateProductSchema>;
 export type Product = z.infer<typeof ProductSchema> & {
-  variants?: ProductVariant[] |undefined
-  options?: ProductOption[] 
+  variants?: ProductVariant[] | undefined;
+  options?: ProductOption[];
 };
 
 export const ShippingOptionSchema = createInsertSchema(shippingOptions);

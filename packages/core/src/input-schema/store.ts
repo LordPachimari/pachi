@@ -8,7 +8,7 @@ export const CreateStoreSchema = z.object({
 export type CreateStore = z.infer<typeof CreateStoreSchema>;
 
 export const UpdateStoreSchema = z.object({
-    updates: StoreSchema.pick({ name: true }),
-    id: z.string(),
-    });
+  updates: StoreSchema.pick({ name: true, currencies: true }).partial(),
+  id: z.string(),
+});
 export type UpdateStore = z.infer<typeof UpdateStoreSchema>;

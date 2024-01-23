@@ -34,7 +34,7 @@ export function TableToolbar<TData>({
   withViewToolbar = true,
   deleteRowsAction,
   additionalToolbarButton,
-}: DataTableToolbar<TData>) {
+}: Readonly<DataTableToolbar<TData>>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (

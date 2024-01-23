@@ -29,7 +29,7 @@ export interface FilterOption {
 }
 
 interface FacetedFilter<TData, TValue> {
-  column?: Column<TData, TValue> | undefined;
+  column: Column<TData, TValue> | undefined;
   title?: string;
   options: FilterOption[];
 }
@@ -38,7 +38,7 @@ export function TableFacetedFilter<TData, TValue>({
   column,
   title,
   options,
-}: FacetedFilter<TData, TValue>) {
+}: Readonly<FacetedFilter<TData, TValue>>) {
   const selectedValues = new Set(column?.getFilterValue() as string[]);
 
   return (

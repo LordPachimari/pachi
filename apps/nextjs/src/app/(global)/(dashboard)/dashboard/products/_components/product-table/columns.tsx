@@ -1,11 +1,9 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
 import {
   CheckCircledIcon,
   CrossCircledIcon,
-  DotsHorizontalIcon,
   QuestionMarkCircledIcon,
   StopwatchIcon,
 } from "@radix-ui/react-icons";
@@ -17,16 +15,12 @@ import { products } from "@pachi/db/schema";
 
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { TableColumnHeader } from "~/components/table/column-header";
-import { Button } from "~/components/ui/button";
+import { DataTableRowActions } from "~/components/table/row-actions";
 import { Checkbox } from "~/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import type { DataTableFilterableColumn, DataTableSearchableColumn } from "~/types";
+import type {
+  DataTableFilterableColumn,
+  DataTableSearchableColumn,
+} from "~/types";
 
 function StatusIcon({ status }: { status: Product["status"] }) {
   return status === "draft" ? (
@@ -94,7 +88,7 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
                 alt={row.original.thumbnail.altText || "Uploaded image"}
                 width={100}
                 height={80}
-                className="h-full rounded-soft object-cover"
+                className="rounded-soft h-full object-cover"
               />
             ) : (
               <ImagePlaceholder />
@@ -165,26 +159,7 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
     },
     {
       id: "actions",
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              aria-label="Open menu"
-              variant="ghost"
-              className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
-            >
-              <DotsHorizontalIcon className="h-4 w-4" aria-hidden="true" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[160px]">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Publish</DropdownMenuItem>
-            <DropdownMenuItem>Duplicacte</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
-            <DropdownMenuSeparator />
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
+      cell: ({ row }) => <DataTableRowActions row={row} />,
     },
   ];
 }

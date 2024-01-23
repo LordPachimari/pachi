@@ -73,7 +73,7 @@ export function General({
       <Pricing
         updatePrice={updatePrice}
         variant={product.variants![0]!}
-        productCurrencies={
+        productCurrencyCodes={
           (product.variants?.[0]?.prices ?? []).map(
             (price) => price.currencyCode,
           ) ?? []

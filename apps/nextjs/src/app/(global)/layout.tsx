@@ -17,7 +17,7 @@ export default function MainLayout({ children }: HomeLayoutProps) {
           <MainSidebar username={username} />
 
           <main className="z-0 max-h-screen flex-1 bg-navbar">
-            <ScrollArea className="z-10 h-content w-full border bg-background  shadow-inner md:rounded-tl-2xl">
+            <ScrollArea className="h-content z-10 w-full border bg-background  shadow-inner md:rounded-tl-2xl">
               {children}
             </ScrollArea>
           </main>

@@ -1,12 +1,12 @@
 import { useCallback } from "react";
 import debounce from "lodash.debounce";
 
+import type { UpdateProductVariant } from "@pachi/core";
 import type { ProductVariant, ProductVariantUpdates } from "@pachi/db";
 
 import InputField from "~/components/molecules/input-field";
 import { Separator } from "~/components/ui/separator";
 import { Info } from "../info";
-import type { UpdateProductVariant } from "@pachi/core";
 
 interface AdvancedProps {
   updateVariant: (props: UpdateProductVariant) => Promise<void>;

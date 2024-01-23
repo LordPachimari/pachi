@@ -1,6 +1,6 @@
 import type { Product } from "@pachi/db";
 
-const TABLE_QUERY_OPTIONS = ["page", "per_page"] as const;
+const TABLE_QUERY_OPTIONS = ["page", "pageSize"] as const;
 const PRODUCT_QUERY_OPTIONS: (keyof Pick<Product, "title" | "status">)[] = [
   "title",
   "status",

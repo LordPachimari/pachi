@@ -13,14 +13,14 @@ export class ProductTagRepository extends RepositoryBase {
     id: string;
     withProducts?: boolean;
   }) {
-    return (await this.manager.query.productTags.findFirst({
+    return await this.manager.query.productTags.findFirst({
       where: (tag) => eq(tag.id, id),
       ...(withProducts && {
         with: {
           products: true,
         },
       }),
-    }))
+    });
   }
 
   async createProductTag({ tag }: { tag: ProductTag }) {

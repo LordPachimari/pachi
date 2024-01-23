@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import debounce from "lodash.debounce";
 
+import type { UpdateProductVariant } from "@pachi/core";
 import type { ProductVariant, ProductVariantUpdates } from "@pachi/db";
 
 import InputField from "~/components/molecules/input-field";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
-import type { UpdateProductVariant } from "@pachi/core";
 
 interface InventoryProps {
   updateVariant: (props: UpdateProductVariant) => Promise<void>;
