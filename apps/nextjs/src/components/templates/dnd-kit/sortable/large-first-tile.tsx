@@ -5,8 +5,6 @@ import {
   type AnimateLayoutChanges,
 } from "@dnd-kit/sortable";
 
-import type { Image } from "@pachi/db";
-
 import { GridContainer } from "../components/GridContainer";
 import type { ItemProps } from "../components/Item/Item";
 import type { Props as SortableProps } from "../types";
@@ -23,10 +21,10 @@ const props: Partial<SortableProps> = {
 };
 export const LargeFirstTile = ({
   items,
-  updateProductImagesOrder,
+  updateImagesOrder,
 }: {
   items: ItemProps[];
-  updateProductImagesOrder?: ({
+  updateImagesOrder?: ({
     order,
   }: {
     order: Record<string, number>;
@@ -41,7 +39,7 @@ export const LargeFirstTile = ({
       removable
       items={items}
       itemsType="images"
-      updateProductImagesOrder={updateProductImagesOrder}
+      updateImagesOrder={updateImagesOrder}
       handle
       animateLayoutChanges={animateLayoutChanges}
       measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}

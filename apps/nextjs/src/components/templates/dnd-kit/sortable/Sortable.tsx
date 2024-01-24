@@ -23,6 +23,7 @@ import {
   type NewIndexGetter,
 } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
+import { isDefined } from "remeda";
 
 import { Item } from "../components/Item";
 import type { ItemProps } from "../components/Item/Item";
@@ -65,7 +66,7 @@ export function Sortable({
   style,
   useDragOverlay = true,
   wrapperStyle = () => ({}),
-  updateProductImagesOrder,
+  updateImagesOrder,
   itemsType,
 }: Props) {
   const map = new Map();
@@ -180,19 +181,12 @@ export function Sortable({
           if (activeIndex !== overIndex) {
             setItems((items) => {
               const reordered = reorderItems(items, activeIndex, overIndex);
-
-              console.log("reordered <=====", reordered);
-              if (
-                itemsType === "images" &&
-                updateProductImagesOrder !== undefined
-              ) {
+              if (itemsType === "images" && isDefined(updateImagesOrder)) {
                 const order: Record<string, number> = {};
                 reordered.forEach((item, index) => {
                   order[item.id] = index;
                 });
-                updateProductImagesOrder({ order }).catch((err) =>
-                  console.log(err),
-                );
+                updateImagesOrder({ order }).catch((err) => console.log(err));
               }
 
               return reordered;

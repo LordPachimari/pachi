@@ -5,10 +5,10 @@ import { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { toast as sonnerToast } from "sonner";
 
-import { Button } from "~/components/atoms/button";
-import { Card, CardContent, CardHeader } from "~/components/atoms/card";
-import { Icons } from "~/components/atoms/icons";
-import { testApi } from "../_actions/test-api";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardHeader } from "~/components/ui/card";
+import { Icons } from "~/components/ui/icons";
+import { testApi } from "../_actions/test/test-api";
 
 function SubmitButton() {
   const { pending } = useFormStatus();

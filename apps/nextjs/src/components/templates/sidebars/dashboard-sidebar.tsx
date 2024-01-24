@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+
 // components/Sidebar.js
-import { HomeIcon } from "lucide-react";
 
 import { cn } from "@pachi/utils";
 
-import { Icons } from "~/components/atoms/icons";
+import { Icons } from "~/components/ui/icons";
 import type { SidebarNavItem } from "~/types";
 
 export interface DashboardSidebarProps {

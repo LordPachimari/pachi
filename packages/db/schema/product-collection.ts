@@ -16,7 +16,6 @@ export const productCollections = pgTable(
     handle: varchar("handle"),
     createdAt: varchar("createdAt"),
     title: varchar("title"),
-    updatedAt: varchar("updatedAt"),
     version: integer("version").notNull().default(0),
     storeId: varchar("storeId").notNull(),
   },

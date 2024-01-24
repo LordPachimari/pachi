@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import type {
   Active,
   CollisionDetection,
@@ -15,8 +15,6 @@ import type {
   NewIndexGetter,
   SortingStrategy,
 } from "@dnd-kit/sortable";
-
-import type { Image } from "@pachi/db";
 
 import type { ItemProps } from "../components/Item/Item";
 
@@ -55,7 +53,7 @@ export interface Props {
     id: UniqueIdentifier;
   }): React.CSSProperties;
   isDisabled?(id: UniqueIdentifier): boolean;
-  updateProductImagesOrder?: ({
+  updateImagesOrder?: ({
     order,
   }: {
     order: Record<string, number>;

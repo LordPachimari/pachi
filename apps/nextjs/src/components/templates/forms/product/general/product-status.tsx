@@ -1,5 +1,3 @@
-// import { Radio, RadioGroup } from "@nextui-org/radio";
-
 import { useEffect, useState } from "react";
 
 import type { Product, ProductUpdates } from "@pachi/db";
@@ -13,9 +11,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "~/components/atoms/alert-dialog";
-import { Label } from "~/components/atoms/label";
-import { RadioGroup } from "~/components/atoms/radio-group";
+} from "~/components/ui/alert-dialog";
+import { Label } from "~/components/ui/label";
+import { RadioGroup } from "~/components/ui/radio-group";
 
 interface ProductStatusProps {
   updateProduct: ({ updates }: { updates: ProductUpdates }) => Promise<void>;
@@ -30,7 +28,9 @@ export default function ProductStatus({
   const [value, setValue] = useState<"published" | "draft">("published");
   useEffect(() => {
     setValue(status as "published" | "draft");
+    setOpen(false);
   }, [status]);
+
   return (
     <div className="mt-2 flex w-full justify-between">
       <h2 className="prone text-md font-semibold">Status</h2>
@@ -51,7 +51,6 @@ export default function ProductStatus({
               onClick={async () => {
                 setValue("published");
                 await updateProduct({ updates: { status: "published" } });
-                setOpen(false);
               }}
             >
               Continue

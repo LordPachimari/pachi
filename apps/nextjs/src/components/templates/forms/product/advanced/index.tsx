@@ -1,15 +1,15 @@
 import { useCallback } from "react";
 import debounce from "lodash.debounce";
 
-import type { UpdateProductVariantProps } from "@pachi/api";
+import type { UpdateProductVariant } from "@pachi/core";
 import type { ProductVariant, ProductVariantUpdates } from "@pachi/db";
 
-import { Separator } from "~/components/atoms/separator";
 import InputField from "~/components/molecules/input-field";
+import { Separator } from "~/components/ui/separator";
 import { Info } from "../info";
 
 interface AdvancedProps {
-  updateVariant: (props: UpdateProductVariantProps["args"]) => Promise<void>;
+  updateVariant: (props: UpdateProductVariant) => Promise<void>;
   variant: ProductVariant | undefined;
 }
 export default function Advanced({ updateVariant, variant }: AdvancedProps) {

@@ -13,3 +13,8 @@ export const replicacheClients = pgTable(
     versionIndex: index("versionIndex").on(client.version),
   }),
 );
+export const replicacheClientGroups = pgTable("replicache_client_groups", {
+  id: varchar("id").notNull().primaryKey(),
+  spaceRecordVersion: integer("spaceRecordVersion").notNull(),
+  clientVersion: integer("clientVersion").notNull(),
+});

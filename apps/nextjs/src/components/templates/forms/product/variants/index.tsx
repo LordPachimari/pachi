@@ -1,6 +1,6 @@
 import type { ProductOption, ProductVariant } from "@pachi/db";
 
-import { Separator } from "~/components/atoms/separator";
+import { Separator } from "~/components/ui/separator";
 import { Info } from "../info";
 import CreateOption from "./create-option";
 

@@ -24,7 +24,6 @@ import { refunds } from "./refund";
 import { regions } from "./region";
 import { returns } from "./return";
 import { shippingMethods } from "./shipping-method";
-import { swaps } from "./swap";
 import { users } from "./user";
 
 export const orders = pgTable(
@@ -127,7 +126,6 @@ export const OrderRelations = relations(orders, ({ one, many }) => ({
   // claims: many(ClaimOrder),
   refunds: many(refunds),
   items: many(cartItems),
-  swaps: many(swaps),
   // gift_card_transactions: many(GiftCardTransaction),
 }));
 export const ordersToDiscounts = pgTable("orders_to_discounts", {

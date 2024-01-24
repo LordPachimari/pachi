@@ -14,8 +14,6 @@ export const prices = pgTable(
     currencyCode: varchar("currencyCode")
       .notNull()
       .references(() => currencies.code),
-    maxQuantity: integer("maxQuantity"),
-    minQuantity: integer("minQuantity"),
     priceListId: varchar("priceListId").references(() => priceLists.id, {
       onDelete: "cascade",
     }),

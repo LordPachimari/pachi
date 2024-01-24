@@ -10,7 +10,6 @@ export const trackingLinks = pgTable(
     fulfillmentId: varchar("fulfillmentId"),
     idempotencyKey: varchar("idempotencyKey"),
     createdAt: varchar("createdAt"),
-    updatedAt: varchar("updatedAt"),
     trackingNumber: varchar("trackingNumber"),
     url: varchar("url"),
     version: integer("version").notNull().default(0),

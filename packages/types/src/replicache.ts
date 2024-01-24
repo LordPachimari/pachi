@@ -1,63 +1,40 @@
-import type { PatchOperation } from "replicache";
-import {
-  any,
-  array,
-  enumType,
-  keyof,
-  nullable,
-  nullType,
-  number,
-  object,
-  optional,
-  record,
-  string,
-  union,
-  type Output,
-} from "valibot";
+import { type PatchOperation } from "replicache";
+import { z } from "zod";
 
 import type { TableName } from "@pachi/db";
 
 type Literal = boolean | null | number | string;
-export const ClientViewDataSchema = record(string(), number());
-export type ClientViewData = ({ id: string; version: number } & Record<
-  string,
-  unknown
->)[];
 export type ClientViewDataWithTable = {
   tableName: TableName;
-  cvd: ({ id: string; version: number } & Record<string, unknown>)[];
+  cvd: ClientViewData[];
 }[];
 
-// export const SpaceId = enumType(["user", "product", "dashboard"] as const);
-export const SubspacesIds = {
-  global: ["user"] as const,
-  products: ["products"] as const,
-  dashboard: ["store"] as const,
-};
-export const SpaceRecordsSchema = object({
-  global: optional(
-    object({
-      user: ClientViewDataSchema,
-    }),
-  ),
-  dashboard: optional(
-    object({
-      store: ClientViewDataSchema,
-    }),
-  ),
-  products: optional(
-    object({
-      products: ClientViewDataSchema,
-    }),
-  ),
+export const ClientViewDataSchema = z
+  .record(z.string(), z.unknown())
+  .and(z.object({ id: z.string(), version: z.number() }));
+
+type ClientViewData = z.infer<typeof ClientViewDataSchema>;
+
+export const SpaceRecordsSchema = z.object({
+  global: z.object({
+    user: ClientViewDataSchema,
+  }),
+  dashboard: z.object({
+    store: ClientViewDataSchema,
+  }),
 });
-export type SpaceRecords = Output<typeof SpaceRecordsSchema>;
+export type SpaceRecords = z.infer<typeof SpaceRecordsSchema>;
+export const SpaceIdSchema = SpaceRecordsSchema.keyof();
+export type SpaceId = z.infer<typeof SpaceIdSchema>;
 
-export const SpaceIdSchema = keyof(SpaceRecordsSchema);
-
-export type SpaceId = Output<typeof SpaceIdSchema>;
-export type SpaceRecord<K extends SpaceId> = SpaceRecords[K];
-export type SubspaceIds<K extends SpaceId> = keyof SpaceRecord<K>;
+export const spaceRecords: SpaceRecords = {
+  global: {
+    user:{} as ClientViewData
+  } ,
+  dashboard: {
+    store: {} as ClientViewData,
+  },
+};
 
 export const mutationNames = [
   "createProduct",
@@ -134,31 +111,31 @@ export const mutationAffectedSpaces = {
   },
 };
 
-export const MutationNamesSchema = enumType(mutationNames);
+export const MutationNamesSchema = z.enum(mutationNames);
 
-export type Mutation = Output<typeof mutationSchema>;
+export type Mutation = z.infer<typeof mutationSchema>;
 
-export const mutationSchema = object({
-  id: number(),
+export const mutationSchema = z.object({
+  id: z.number(),
   name: MutationNamesSchema,
-  args: object({ args: record(string(), any()) }),
-  clientID: string(),
+  args: z.object({ args: z.record(z.string(), z.any()) }),
+  clientID: z.string(),
 });
 
-export const pushRequestSchema = object({
-  clientGroupID: string(),
-  mutations: array(mutationSchema),
+export const pushRequestSchema = z.object({
+  clientGroupID: z.string(),
+  mutations: z.array(mutationSchema),
 });
 
-export const ClientGroupObjectSchema = object({
-  id: string(),
-  spaceRecordVersion: number(),
-  clientVersion: number(),
+export const ClientGroupObjectSchema = z.object({
+  id: z.string(),
+  spaceRecordVersion: z.number(),
+  clientVersion: z.number(),
 });
 
-export type ClientGroupObject = Output<typeof ClientGroupObjectSchema>;
+export type ClientGroupObject = z.infer<typeof ClientGroupObjectSchema>;
 
-export type PushRequest = Output<typeof pushRequestSchema>;
+export type PushRequest = z.infer<typeof pushRequestSchema>;
 
 export type PullResponse = {
   cookie: string;
@@ -166,24 +143,24 @@ export type PullResponse = {
   patch: PatchOperation[];
 };
 
-export const cookieSchema = object({
-  productsSpaceRecordKey: optional(string()),
-  globalSpaceRecordKey: optional(string()),
-  dashboardSpaceRecordKey: optional(string()),
-  order: number(),
+export const cookieSchema = z.object({
+  productsSpaceRecordKey: z.optional(z.string()),
+  globalSpaceRecordKey: z.optional(z.string()),
+  dashboardSpaceRecordKey: z.optional(z.string()),
+  order: z.number(),
 });
 
-export type Cookie = Output<typeof cookieSchema>;
+export type Cookie = z.infer<typeof cookieSchema>;
 
-export const pullRequestSchema = object({
-  clientGroupID: string(),
-  cookie: union([cookieSchema, nullType()]),
+export const pullRequestSchema = z.object({
+  clientGroupID: z.string(),
+  cookie: z.union([cookieSchema, z.null()]),
 });
 
-export type PullRequest = Output<typeof pullRequestSchema>;
+export type PullRequest = z.infer<typeof pullRequestSchema>;
 
-export const RequestHeadersSchema = object({
-  ip: nullable(string()),
-  userAgent: nullable(string()),
+export const RequestHeadersSchema = z.object({
+  ip: z.string().nullable(),
+  userAgent: z.string().nullable(),
 });
-export type RequestHeaders = Output<typeof RequestHeadersSchema>;
+export type RequestHeaders = z.infer<typeof RequestHeadersSchema>;

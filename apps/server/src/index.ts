@@ -1,9 +1,7 @@
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
 import { Hono } from "hono";
-import { getCookie } from "hono/cookie";
 import { cors } from "hono/cors";
-import * as jose from "jose";
 import { object, string } from "valibot";
 
 import { pull, push, type Bindings } from "@pachi/api";
@@ -70,10 +68,9 @@ app.post("/pull/:spaceId", async (c) => {
       ? c.req.query("userId")
       : c.get("auth" as never);
   console.log("userId", userId);
-  try {
-    SpaceIdSchema._parse(c.req.param("spaceId"));
-  } catch (error) {
-    console.log(error);
+  const spaceId = c.req.param("spaceId");
+  const { success } = SpaceIdSchema.safeParse(spaceId);
+  if (!success) {
     return c.json({ message: "Invalid spaceId" }, 400);
   }
   const json = await c.req.json();
@@ -85,8 +82,7 @@ app.post("/pull/:spaceId", async (c) => {
   const pullResponse = await pull({
     body: json,
     db,
-    spaceId: c.req.param("spaceId") as SpaceId,
-    storage: c.env.PACHI,
+    spaceId: spaceId as SpaceId,
     userId: userId,
   });
   return c.json(pullResponse, 200);
@@ -98,10 +94,9 @@ app.post("/push/:spaceId", async (c) => {
       : c.get("auth" as never);
   console.log("userId", userId);
 
-  try {
-    SpaceIdSchema._parse(c.req.param("spaceId"));
-  } catch (error) {
-    console.log(error);
+  const spaceId = c.req.param("spaceId");
+  const { success } = SpaceIdSchema.safeParse(spaceId);
+  if (!success) {
     return c.json({ message: "Invalid spaceId" }, 400);
   }
   const json = await c.req.json();
@@ -114,14 +109,12 @@ app.post("/push/:spaceId", async (c) => {
   await push({
     body: json,
     db,
-    spaceId: c.req.param("spaceId") as SpaceId,
-    storage: c.env.PACHI,
+    spaceId: spaceId as SpaceId,
     userId: userId,
     requestHeaders: {
       ip: c.req.raw.headers.get("cf-connecting-ip"),
       userAgent: c.req.raw.headers.get("user-agent"),
     },
-    env: c.env,
   });
   return c.json({}, 200);
 });

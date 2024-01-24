@@ -156,6 +156,9 @@ importers:
       '@pachi/api':
         specifier: ^0.1.0
         version: link:../../packages/api
+      '@pachi/core':
+        specifier: ^0.1.0
+        version: link:../../packages/core
       '@pachi/db':
         specifier: ^0.1.0
         version: link:../../packages/db
@@ -235,8 +238,8 @@ importers:
         specifier: ^0.3.6
         version: 0.3.6(@types/react@18.2.37)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-table':
-        specifier: ^8.10.3
-        version: 8.10.3(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^8.11.6
+        version: 8.11.6(react-dom@18.2.0)(react@18.2.0)
       '@teamhanko/hanko-elements':
         specifier: ^0.8.3
         version: 0.8.3
@@ -303,6 +306,12 @@ importers:
       react-wrap-balancer:
         specifier: ^1.1.0
         version: 1.1.0(react@18.2.0)
+      remeda:
+        specifier: ^1.36.0
+        version: 1.36.0
+      replicache:
+        specifier: 14.0.3
+        version: 14.0.3
       replicache-react:
         specifier: ^3.1.0
         version: 3.1.0(react-dom@18.2.0)(react@18.2.0)
@@ -325,8 +334,8 @@ importers:
         specifier: ^3.22.2
         version: 3.22.2
       zustand:
-        specifier: ^4.4.1
-        version: 4.4.1(@types/react@18.2.37)(immer@10.0.2)(react@18.2.0)
+        specifier: ^4.5.0
+        version: 4.5.0(@types/react@18.2.37)(immer@10.0.2)(react@18.2.0)
     devDependencies:
       '@pachi/eslint-config':
         specifier: workspace:^0.1.0
@@ -453,6 +462,9 @@ importers:
 
   packages/api:
     dependencies:
+      '@pachi/core':
+        specifier: ^0.1.0
+        version: link:../core
       '@pachi/db':
         specifier: ^0.1.0
         version: link:../db
@@ -472,8 +484,8 @@ importers:
         specifier: ^4.5.0
         version: 4.5.0
       replicache:
-        specifier: 13.0.1
-        version: 13.0.1
+        specifier: 14.0.3
+        version: 14.0.3
       superjson:
         specifier: 2.2.0
         version: 2.2.0
@@ -506,6 +518,49 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3
 
+  packages/core:
+    dependencies:
+      '@pachi/db':
+        specifier: ^0.1.0
+        version: link:../db
+      '@pachi/types':
+        specifier: ^0.1.0
+        version: link:../types
+      '@pachi/utils':
+        specifier: ^0.1.0
+        version: link:../utils
+      drizzle-orm:
+        specifier: ^0.29.0
+        version: 0.29.0(@neondatabase/serverless@0.6.0)(pg@8.11.3)
+      remeda:
+        specifier: ^1.36.0
+        version: 1.36.0
+      replicache:
+        specifier: 14.0.3
+        version: 14.0.3
+      zod:
+        specifier: ^3.22.2
+        version: 3.22.2
+    devDependencies:
+      '@pachi/eslint-config':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/eslint
+      '@pachi/prettier-config':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/prettier
+      '@pachi/tsconfig':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/typescript
+      eslint:
+        specifier: ^8.53.0
+        version: 8.53.0
+      prettier:
+        specifier: ^3.0.3
+        version: 3.0.3
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+
   packages/db:
     dependencies:
       '@neondatabase/serverless':
@@ -517,15 +572,21 @@ importers:
       drizzle-valibot:
         specifier: ^0.1.1
         version: 0.1.1(drizzle-orm@0.29.0)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.29.0)(zod@3.22.2)
       pg:
         specifier: ^8.11.3
         version: 8.11.3
       replicache:
-        specifier: 13.0.1
-        version: 13.0.1
+        specifier: 14.0.3
+        version: 14.0.3
       valibot:
         specifier: ^0.17.1
         version: 0.17.1
+      zod:
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       '@pachi/eslint-config':
         specifier: workspace:^0.1.0
@@ -558,11 +619,14 @@ importers:
         specifier: ^0.1.0
         version: link:../db
       replicache:
-        specifier: 13.0.1
-        version: 13.0.1
+        specifier: 14.0.3
+        version: 14.0.3
       valibot:
         specifier: ^0.17.1
         version: 0.17.1
+      zod:
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       '@pachi/eslint-config':
         specifier: workspace:^0.1.0
@@ -2143,6 +2207,11 @@ packages:
       react-native: '*'
     dependencies:
       react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.23.2)(react@18.2.0)
+    dev: false
+
+  /@badrap/valita@0.3.0:
+    resolution: {integrity: sha512-bvsH70aYKOdB3rXVZXhJgGpHqxt+TcVperVvXCo9Dotpj9u0jBgQP5jgPmZNbIz0FyTvMP/oPUzqn6WS2L0l3w==}
+    engines: {node: '>= 16'}
     dev: false
 
   /@clerk/backend@0.29.3:
@@ -5890,14 +5959,14 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  /@tanstack/react-table@8.10.3(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Qya1cJ+91arAlW7IRDWksRDnYw28O446jJ/ljkRSc663EaftJoBCAU10M+VV1K6MpCBLrXq1BD5IQc1zj/ZEjA==}
+  /@tanstack/react-table@8.11.6(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-i0heTVZtuHF9VPMwcYoZ21hbzGDmLjxHYemDMvbGpjk5fUZ8nLF3S8qjVRU79XfPW8KK9o7iTU2fGFVQQmxMSQ==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
     dependencies:
-      '@tanstack/table-core': 8.10.3
+      '@tanstack/table-core': 8.11.6
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -5906,8 +5975,8 @@ packages:
     resolution: {integrity: sha512-GnolmC8Fr4mvsHE1fGQmR3Nm0eBO3KnZjDU0a+P3TeQNM/dDscFGxtA7p31NplQNW3KwBw4t1RVFmz0VeKLxcw==}
     dev: false
 
-  /@tanstack/table-core@8.10.3:
-    resolution: {integrity: sha512-hJ55YfJlWbfzRROfcyA/kC1aZr/shsLA8XNAwN8jXylhYWGLnPmiJJISrUfj4dMMWRiFi0xBlnlC7MLH+zSrcw==}
+  /@tanstack/table-core@8.11.6:
+    resolution: {integrity: sha512-69WEY1PaZROaGYUrseng4/4sMYnRGhDe1vM6888CnWekGz/wuCnvqwOoOuKGYivnaiI4BVmZq4WKWhvahyj3/g==}
     engines: {node: '>=12'}
     dev: false
 
@@ -8307,6 +8376,16 @@ packages:
       drizzle-orm: '>=0.23.13'
     dependencies:
       drizzle-orm: 0.29.0(@neondatabase/serverless@0.6.0)(pg@8.11.3)
+    dev: false
+
+  /drizzle-zod@0.5.1(drizzle-orm@0.29.0)(zod@3.22.2):
+    resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
+    peerDependencies:
+      drizzle-orm: '>=0.23.13'
+      zod: '*'
+    dependencies:
+      drizzle-orm: 0.29.0(@neondatabase/serverless@0.6.0)(pg@8.11.3)
+      zod: 3.22.2
     dev: false
 
   /ee-first@1.1.1:
@@ -13455,6 +13534,10 @@ packages:
     dependencies:
       jsesc: 0.5.0
 
+  /remeda@1.36.0:
+    resolution: {integrity: sha512-/efIZnW0BfcLGvhVVxodQI9DGUVRXUUTv8JncpRUIlOK6u9o7OSZssMVwJ/8+6asTy1+Zt97AxphCB12+D9OKA==}
+    dev: false
+
   /remove-trailing-slash@0.1.1:
     resolution: {integrity: sha512-o4S4Qh6L2jpnCy83ysZDau+VORNvnFw07CKSAymkd6ICNVEPisMyzlc00KlvvicsxKck94SEwhDnMNdICzO+tA==}
     dev: false
@@ -13469,11 +13552,12 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /replicache@13.0.1:
-    resolution: {integrity: sha512-dgGHxpCubx2woDyXsh6AeqZ3KwU0IEqyXU6IZ13f6YAH+Ik5P969CxsnTmxZmPdX7WQseZ4jQotCkWLeJlEeJg==}
+  /replicache@14.0.3:
+    resolution: {integrity: sha512-BXj8Wg2LS15h+3H66ws5XDHlNT88mLjqEkvxhecg4OaqnfNMBJRr5/gM9Chu4gVciH5w90G1X6JTsshgvW2FBg==}
     engines: {node: '>=14.8.0'}
     hasBin: true
     dependencies:
+      '@badrap/valita': 0.3.0
       '@rocicorp/lock': 1.0.3
       '@rocicorp/logger': 5.2.1
       '@rocicorp/resolver': 1.0.1
@@ -15667,12 +15751,12 @@ packages:
   /zod@3.22.2:
     resolution: {integrity: sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==}
 
-  /zustand@4.4.1(@types/react@18.2.37)(immer@10.0.2)(react@18.2.0):
-    resolution: {integrity: sha512-QCPfstAS4EBiTQzlaGP1gmorkh/UL1Leaj2tdj+zZCZ/9bm0WS7sI2wnfD5lpOszFqWJ1DcPnGoY8RDL61uokw==}
+  /zustand@4.5.0(@types/react@18.2.37)(immer@10.0.2)(react@18.2.0):
+    resolution: {integrity: sha512-zlVFqS5TQ21nwijjhJlx4f9iGrXSL0o/+Dpy4txAP22miJ8Ti6c1Ol1RLNN98BMib83lmDH/2KmLwaNXpjrO1A==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
       '@types/react': '>=16.8'
-      immer: '>=9.0'
+      immer: '>=9.0.6'
       react: '>=16.8'
     peerDependenciesMeta:
       '@types/react':

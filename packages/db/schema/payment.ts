@@ -5,7 +5,6 @@ import { carts } from "./cart";
 import { currencies } from "./currency";
 import { orders } from "./order";
 import { paymentProviders } from "./payment-provider";
-import { swaps } from "./swap";
 
 export const payments = pgTable(
   "payments",
@@ -22,7 +21,6 @@ export const payments = pgTable(
     idempotencyKey: varchar("idempotencyKey"),
     orderId: varchar("orderId"),
     providerId: varchar("providerId"),
-    swapId: varchar("swapId"),
     updatedAt: varchar("updatedAt"),
     version: integer("version").notNull().default(0),
   },
@@ -31,7 +29,6 @@ export const payments = pgTable(
     currencyCodeIndex: index("currencyCodeIndex").on(payment.currencyCode),
     orderIdIndex_6: index("orderIdIndex_6").on(payment.orderId),
     providerIdIndex: index("providerIdIndex").on(payment.providerId),
-    swapIdIndex_3: index("swapIdIndex_3").on(payment.swapId),
   }),
 );
 export const PaymentRelations = relations(payments, ({ one }) => ({
@@ -46,10 +43,6 @@ export const PaymentRelations = relations(payments, ({ one }) => ({
   provider: one(paymentProviders, {
     fields: [payments.providerId],
     references: [paymentProviders.id],
-  }),
-  swap: one(swaps, {
-    fields: [payments.swapId],
-    references: [swaps.id],
   }),
   currency: one(currencies, {
     fields: [payments.currencyCode],

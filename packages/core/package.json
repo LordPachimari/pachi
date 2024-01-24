@@ -1,0 +1,39 @@
+{
+  "name": "@pachi/core",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "license": "MIT",
+  "scripts": {
+    "beautify": "prettier \"**/*.{mjs,ts,tsx,md,json}\" --write --log-level error",
+    "clean": "rm -rf .turbo node_modules",
+    "lint": "eslint .",
+    "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pachi/db": "^0.1.0",
+    "@pachi/types": "^0.1.0",
+    "@pachi/utils": "^0.1.0",
+    "drizzle-orm": "^0.29.0",
+    "remeda": "^1.36.0",
+    "replicache": "14.0.3",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@pachi/eslint-config": "workspace:^0.1.0",
+    "@pachi/prettier-config": "workspace:^0.1.0",
+    "@pachi/tsconfig": "workspace:^0.1.0",
+    "eslint": "^8.53.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.3.3"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@pachi/eslint-config/base"
+    ]
+  },
+  "prettier": "@pachi/prettier-config"
+}

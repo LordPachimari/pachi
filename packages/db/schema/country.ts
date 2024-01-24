@@ -14,8 +14,7 @@ export const countries = pgTable(
   {
     id: varchar("id").notNull().primaryKey(),
     displayName: varchar("displayName"),
-    iso2: varchar("iso2"),
-    iso3: varchar("iso3"),
+    countryCode: varchar("countryCode"),
     name: varchar("name"),
     numCode: varchar("numCode"),
     regionId: varchar("regionId").references(() => regions.id),
@@ -23,8 +22,7 @@ export const countries = pgTable(
   },
   (country) => ({
     regionIdIndex: index("regionIdIndex").on(country.regionId),
-    iso2Index: uniqueIndex("iso2Index").on(country.iso2),
-    iso3Index: uniqueIndex("iso3Index").on(country.iso3),
+    countryCodeIndex: uniqueIndex("countryCodeIndex").on(country.countryCode),
   }),
 );
 export const countryRelations = relations(countries, ({ one }) => ({

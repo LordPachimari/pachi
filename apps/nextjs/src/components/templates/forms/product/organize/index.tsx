@@ -1,13 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import debounce from "lodash.debounce";
+import { useEffect, useState } from "react";
 
-import type { Product, ProductTag, ProductUpdates } from "@pachi/db";
+import type { ProductTag, ProductUpdates } from "@pachi/db";
 
 import InputField from "~/components/molecules/input-field";
 import InputHeader from "~/components/molecules/input-header";
-import TagInput from "~/components/molecules/tag-input";
 import type { DebouncedFunc } from "~/types";
 import { ReplicacheInstancesStore } from "~/zustand/replicache";
 
@@ -25,17 +23,18 @@ export default function Organize({
 }: OrganizeProps) {
   const [tags, setTags] = useState<string[]>([]);
   const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
-  const onTagsChange = useCallback(
-    debounce(async (tags: string[]) => {
-      await dashboardRep?.mutate.updateProductTags({
-        args: {
-          productId,
-          tags,
-        },
-      });
-    }, 500),
-    [dashboardRep, productId],
-  );
+  //TODO: fix this
+  // const onTagsChange = useCallback(
+  //   debounce(async (tags: string[]) => {
+  //     await dashboardRep?.mutate.updateProductTags({
+  //       args: {
+  //         productId,
+  //         tags,
+  //       },
+  //     });
+  //   }, 500),
+  //   [dashboardRep, productId],
+  // );
   useEffect(() => {
     const tags = productTags.map((t) => t.value) ?? [];
     setTags(tags);

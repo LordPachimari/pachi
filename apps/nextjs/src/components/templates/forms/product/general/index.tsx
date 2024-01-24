@@ -1,12 +1,12 @@
 import type {
-  UpdateImagesOrderProps,
-  UpdatePriceProps,
-  UpdateProductVariantProps,
-  UploadImagesProps,
-} from "@pachi/api";
+  UpdateProductImagesOrder,
+  UpdateProductPrice,
+  UpdateProductVariant,
+  UploadProductImages,
+} from "@pachi/core";
 import type { Image, Product, ProductUpdates, Store } from "@pachi/db";
 
-import { Separator } from "~/components/atoms/separator";
+import { Separator } from "~/components/ui/separator";
 import type { DebouncedFunc } from "~/types";
 import Discountable from "./discountable";
 import Inventory from "./inventory";
@@ -21,16 +21,16 @@ interface GeneralProps {
     ({ updates }: { updates: ProductUpdates }) => Promise<void>
   >;
   updateProduct: (props: { updates: ProductUpdates }) => Promise<void>;
-  updatePrice: (props: UpdatePriceProps["args"]) => Promise<void>;
-  updateVariant: (props: UpdateProductVariantProps["args"]) => Promise<void>;
+  updatePrice: (props: UpdateProductPrice) => Promise<void>;
+  updateVariant: (props: UpdateProductVariant) => Promise<void>;
   files: Image[];
   setFiles: React.Dispatch<React.SetStateAction<Image[]>>;
-  uploadProductImages: (props: UploadImagesProps["args"]) => Promise<void>;
+  uploadProductImages: (props: UploadProductImages) => Promise<void>;
   updateProductImagesOrder: ({
     order,
     productId,
     variantId,
-  }: UpdateImagesOrderProps["args"]) => Promise<void>;
+  }: UpdateProductImagesOrder) => Promise<void>;
   store: Store;
 }
 export function General({
@@ -46,7 +46,6 @@ export function General({
   setFiles,
   updateProductImagesOrder,
 }: GeneralProps) {
-  console.log("images", product.variants![0]!.images);
   return (
     <div className="px-4 pb-2 pt-0">
       <ProductStatus status={product.status} updateProduct={updateProduct} />
@@ -74,8 +73,8 @@ export function General({
       <Pricing
         updatePrice={updatePrice}
         variant={product.variants![0]!}
-        productCurrencies={
-          (product.variants![0]!.prices ?? []).map(
+        productCurrencyCodes={
+          (product.variants?.[0]?.prices ?? []).map(
             (price) => price.currencyCode,
           ) ?? []
         }

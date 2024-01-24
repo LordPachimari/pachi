@@ -56,3 +56,7 @@ export const CHECKOUT_PAGE_PROPS = {
   updatedAt: new Date().toISOString(),
   createdAt: new Date().toISOString(),
 };
+
+export const PREFICES = {
+  products: (filterId?: string) => (filterId ? `p_${filterId}` : `p_`),
+};

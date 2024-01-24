@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 
 import type { ProductOption } from "@pachi/db";
 
-import { Input } from "~/components/atoms/input";
 import TagInput from "~/components/molecules/tag-input";
+import { Input } from "~/components/ui/input";
 import type { DebouncedFunc } from "~/types";
 
 interface OptionProps {

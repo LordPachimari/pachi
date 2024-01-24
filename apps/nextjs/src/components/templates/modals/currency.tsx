@@ -1,12 +1,10 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusIcon, SidebarClose } from "lucide-react";
 
-import { Button } from "~/components/atoms/button";
+import { Button } from "~/components/ui/button";
 
 interface CurrencyModalProps {
   children: React.ReactNode;
@@ -26,7 +24,7 @@ export default function CurrencyModal({
         aria-label="Open cart"
         onClick={open}
         size="icon"
-        className="h-4 w-4 bg-brand shadow-ruby-7"
+        className="shadow-ruby-7 h-4 w-4 bg-brand"
       >
         <PlusIcon size={10} />
       </Button>

@@ -3,7 +3,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "~/components/atoms/tooltip";
+} from "~/components/ui/tooltip";
 
 type CustomTooltipProps = {
   children: React.ReactNode;

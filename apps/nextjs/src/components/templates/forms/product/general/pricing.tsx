@@ -1,25 +1,25 @@
 import { useState } from "react";
 
-import type { UpdatePriceProps } from "@pachi/api";
+import type { UpdateProductPrice } from "@pachi/core";
 import { type ProductVariant } from "@pachi/db";
 
-import { Label } from "~/components/atoms/label";
-import { RadioGroup } from "~/components/atoms/radio-group";
+import { CurrenciesTable } from "~/app/(global)/(dashboard)/dashboard/products/_components/currency-table";
 import CurrencyModal from "~/components/templates/modals/currency";
-import { Table } from "~/components/templates/tables/currency-table";
+import { Label } from "~/components/ui/label";
+import { RadioGroup } from "~/components/ui/radio-group";
 import { CurrencyInput } from "./currency-input";
 
 interface PricingProps {
-  updatePrice: (props: UpdatePriceProps["args"]) => Promise<void>;
+  updatePrice: (props: UpdateProductPrice) => Promise<void>;
   variant: ProductVariant;
-  productCurrencies: string[];
+  productCurrencyCodes: string[];
   storeId: string;
   productId: string;
 }
 const Pricing = ({
   variant,
   updatePrice,
-  productCurrencies,
+  productCurrencyCodes,
   storeId,
   productId,
 }: PricingProps) => {
@@ -31,8 +31,6 @@ const Pricing = ({
   const [activePrice, setActivePrice] = useState(
     variant.prices?.[0] ? variant.prices[0] : undefined,
   );
-
-  console.log("variant", variant);
 
   return (
     <div>
@@ -54,8 +52,8 @@ const Pricing = ({
           </RadioGroup>
         )}
         <CurrencyModal close={close} isOpen={isOpen} open={open}>
-          <Table
-            productCurrencies={productCurrencies}
+          <CurrenciesTable
+            productCurrencyCodes={productCurrencyCodes}
             storeId={storeId}
             variantId={variant.id}
             prices={variant.prices ?? []}

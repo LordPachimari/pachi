@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import { cn } from "@pachi/utils";
 
-import { inputBaseStyles } from "../atoms/input";
+import { inputBaseStyles } from "../ui/input";
 import InputHeader from "./input-header";
 
 const ENTER_KEY = 13;
@@ -175,7 +175,7 @@ const TagInput: React.FC<TagInputProps> = ({
             <div
               key={index}
               className={cn(
-                "flex w-max items-center justify-center gap-x-1 whitespace-nowrap rounded-rounded bg-ruby-6 p-2  text-brand ",
+                "rounded-rounded bg-ruby-6 flex w-max items-center justify-center gap-x-1 whitespace-nowrap p-2  text-brand ",
 
                 {
                   ["bg-ruby-8"]: index === highlighted,

@@ -1,24 +1,17 @@
-import { useState } from "react";
-
 import type { ProductUpdates } from "@pachi/db";
 
-import { Switch } from "../../../../atoms/switch";
+import { Switch } from "../../../../ui/switch";
 
 export type DiscountableFormType = {
   value: boolean;
 };
 
 type Props = {
-  discountable: boolean;
-  isGiftCard?: boolean;
+  discountable: boolean | undefined;
   updateProduct: ({ updates }: { updates: ProductUpdates }) => Promise<void>;
 };
 
-const Discountable = ({
-  discountable = false,
-  updateProduct,
-  isGiftCard, //   updateProduct,
-}: Props) => {
+const Discountable = ({ discountable = false, updateProduct }: Props) => {
   return (
     <div className=" my-2 flex items-center justify-between">
       <h2 className="text-sm font-semibold ">Discountable</h2>

@@ -1,6 +1,6 @@
 import { cn } from "@pachi/utils";
 
-import Price from "./price";
+import Price from "../price";
 
 const PriceLabel = ({
   title,

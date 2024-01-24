@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useCallback } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { PlusIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
@@ -7,6 +5,7 @@ import debounce from "lodash.debounce";
 import { Trash2Icon } from "lucide-react";
 import { ulid } from "ulid";
 
+import type { DeleteProductOption, DeleteProductVariant } from "@pachi/core";
 import type {
   ProductOption,
   ProductOptionValue,
@@ -14,14 +13,14 @@ import type {
 } from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/atoms/avatar";
-import { Button } from "~/components/atoms/button";
-import { Card } from "~/components/atoms/card";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "~/components/atoms/tooltip";
+} from "~/components/ui/tooltip";
 import { ReplicacheInstancesStore } from "~/zustand/replicache";
 import Option from "./option";
 
@@ -43,12 +42,13 @@ export default function CreateOption({
   const createOption = useCallback(async () => {
     const id = generateId({ id: ulid(), prefix: "opt" });
     const option: ProductOption = { id, productId };
-    await dashboardRep?.mutate.createProductOption({ args: { option } });
+    await dashboardRep?.mutate.createProductOption({ option });
   }, [dashboardRep, productId]);
   const deleteOption = useCallback(
-    async ({ id, productId }: { id: string; productId: string }) => {
+    async ({ optionId, productId }: DeleteProductOption) => {
       await dashboardRep?.mutate.deleteProductOption({
-        args: { id, productId },
+        optionId,
+        productId,
       });
     },
     [dashboardRep],
@@ -56,7 +56,9 @@ export default function CreateOption({
   const onOptionNameChange = useCallback(
     debounce(async (optionId: string, name: string) => {
       await dashboardRep?.mutate.updateProductOption({
-        args: { optionId, productId, updates: { name } },
+        optionId,
+        productId,
+        updates: { name },
       });
     }, 500),
     [dashboardRep],
@@ -70,21 +72,24 @@ export default function CreateOption({
         option: options.find((o) => o.id === optionId)!,
       }));
       await dashboardRep?.mutate.updateProductOptionValues({
-        args: { optionId, productId, newOptionValues },
+        optionId,
+        productId,
+        newOptionValues,
       });
     }, 500),
     [dashboardRep],
   );
   const deleteVariant = useCallback(
-    async ({ id, productId }: { id: string; productId: string }) => {
+    async ({ variantId, productId }: DeleteProductVariant) => {
       await dashboardRep?.mutate.deleteProductVariant({
-        args: { id, productId },
+        variantId,
+        productId,
       });
     },
     [dashboardRep],
   );
 
-  const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
+  const [parent] = useAutoAnimate(/* optional config */);
   console.log("variants", variants);
   return (
     <div className="w-full lg:max-w-[380px]" ref={parent}>
@@ -124,7 +129,10 @@ export default function CreateOption({
               size="icon"
               className="bg-red-300 hover:bg-red-400 "
               onClick={async () =>
-                await deleteOption({ id: option.id, productId: productId })
+                await deleteOption({
+                  optionId: option.id,
+                  productId: productId,
+                })
               }
             >
               <Trash2Icon className="text-red-500" />
@@ -185,7 +193,7 @@ export default function CreateOption({
                     className="bg-red-300 hover:bg-red-400 "
                     onClick={async () =>
                       await deleteVariant({
-                        id: variant.id,
+                        variantId: variant.id,
                         productId,
                       })
                     }

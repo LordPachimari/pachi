@@ -2,15 +2,15 @@ import { useCallback, useEffect, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import debounce from "lodash.debounce";
 
-import type { UpdateProductVariantProps } from "@pachi/api";
+import type { UpdateProductVariant } from "@pachi/core";
 import type { ProductVariant, ProductVariantUpdates } from "@pachi/db";
 
-import { Checkbox } from "~/components/atoms/checkbox";
-import { Input } from "~/components/atoms/input";
 import InputField from "~/components/molecules/input-field";
+import { Checkbox } from "~/components/ui/checkbox";
+import { Input } from "~/components/ui/input";
 
 interface InventoryProps {
-  updateVariant: (props: UpdateProductVariantProps["args"]) => Promise<void>;
+  updateVariant: (props: UpdateProductVariant) => Promise<void>;
   variant: ProductVariant;
 }
 const Inventory = ({ updateVariant, variant }: InventoryProps) => {
@@ -24,7 +24,7 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
     }, 500),
     [updateVariant],
   );
-  const [parent, enableAnimations] = useAutoAnimate(/* optional config */);
+  const [parent] = useAutoAnimate(/* optional config */);
   const [hasCode, setHasCode] = useState(false);
   useEffect(() => {
     if (variant.barcode ?? variant.hsCode ?? variant.sku) {
@@ -38,11 +38,11 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
       <Input
         type="number"
         className="my-2"
-        defaultValue={variant.inventoryQuantity}
+        defaultValue={variant.quantity ?? 0}
         min={0}
         onChange={async (e) => {
           await onInputChange({
-            updates: { inventoryQuantity: e.currentTarget.valueAsNumber },
+            updates: { quantity: e.currentTarget.valueAsNumber },
           });
         }}
       />
