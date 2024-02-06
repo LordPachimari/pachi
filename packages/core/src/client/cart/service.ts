@@ -1,45 +1,61 @@
+import { Effect } from "effect";
+
 import type { Cart } from "@pachi/db";
-import { MedusaError } from "@pachi/utils";
+import { NotFound } from "@pachi/types";
 
-import { ServiceBase } from "../base/service";
+import { ClientContext } from "../../context/client";
 
-export class CartService extends ServiceBase {
-  async createCart({ cart }: { cart: Cart } & ServiceBase): Promise<void> {
-    await this.manager.set(cart.id, cart);
-  }
+export const CartService = {
+  createCart: ({ cart }: { cart: Cart }) =>
+    Effect.gen(function* (_) {
+      const { manager } = yield* _(ClientContext);
 
-  async updateCartTotals({
-    cartId,
-  }: { cartId: string } & ServiceBase): Promise<void> {
-    const cart = (await this.manager.get(cartId)) as Cart | undefined;
-    if (!cart) {
-      throw new MedusaError(
-        MedusaError.Types.INVALID_ARGUMENT,
-        `Could not find cart with id "${cartId}"`,
+      return yield* _(
+        Effect.tryPromise(() => manager.set(cart.id, cart)).pipe(Effect.orDie),
       );
-    }
-    const cartItems = cart.items ?? [];
+    }),
 
-    cart.subtotal = 0;
-    cart.discountTotal = 0;
-    cart.itemTaxTotal = 0;
-    cart.shippingTotal = 0;
-    cart.shippingTaxTotal = 0;
-    cart.totalQuantity = 0;
+  updateCartTotals: ({ cartId }: { cartId: string }) =>
+    Effect.gen(function* (_) {
+      const { manager } = yield* _(ClientContext);
 
-    cart.items = cartItems.map((item) => {
-      cart.subtotal! += item.total;
-      cart.discountTotal! += item.discountTotal ?? 0;
-      cart.itemTaxTotal! += item.taxTotal ?? 0;
-      cart.totalQuantity! += item.quantity;
-      return item;
-    });
+      const serverCart = yield* _(
+        Effect.tryPromise(() => manager.get<Cart>(cartId)).pipe(Effect.orDie),
+      );
+      const cart = structuredClone(serverCart) as Cart | undefined;
+      if (!cart) {
+        return yield* _(
+          Effect.fail(
+            new NotFound({
+              message: `Cart with id ${cartId} not found`,
+            }),
+          ),
+        );
+      }
+      const cartItems = cart.items ?? [];
 
-    //TODO: shipping tax total, giftcards
-    cart.taxTotal = cart.itemTaxTotal + cart.shippingTaxTotal;
+      cart.subtotal = 0;
+      cart.discountTotal = 0;
+      cart.itemTaxTotal = 0;
+      cart.shippingTotal = 0;
+      cart.shippingTaxTotal = 0;
+      cart.totalQuantity = 0;
 
-    cart.total =
-      cart.subtotal + cart.shippingTotal + cart.taxTotal - cart.discountTotal;
-    await this.manager.set(cart.id, cart);
-  }
-}
+      cart.items = cartItems.map((item) => {
+        cart.subtotal! += item.total;
+        cart.discountTotal! += item.discountTotal ?? 0;
+        cart.itemTaxTotal! += item.taxTotal ?? 0;
+        cart.totalQuantity! += item.quantity;
+        return item;
+      });
+
+      //TODO: shipping tax total, giftcards
+      cart.taxTotal = cart.itemTaxTotal + cart.shippingTaxTotal;
+
+      cart.total =
+        cart.subtotal + cart.shippingTotal + cart.taxTotal - cart.discountTotal;
+      yield* _(
+        Effect.tryPromise(() => manager.set(cart.id, cart)).pipe(Effect.orDie),
+      );
+    }),
+};

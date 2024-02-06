@@ -61,7 +61,6 @@ function ProductsTable({ storeId }: Readonly<ProductsTableProps>) {
           storeId,
           version: 0,
         },
-        storeId,
         prices: (store.currencies ?? []).map((currencyCode) => {
           const price: Price = {
             id: generateId({ id: ulid(), prefix: "price" }),

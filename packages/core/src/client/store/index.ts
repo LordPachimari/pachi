@@ -1,1 +1,1 @@
-export * as Store from "./functions";
+export * as ClientStore from "./functions";

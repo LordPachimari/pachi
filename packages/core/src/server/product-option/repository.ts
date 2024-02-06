@@ -1,16 +1,22 @@
 import { eq } from "drizzle-orm";
+import { Effect } from "effect";
 
-import type { ProductOption } from "@pachi/db";
+import { ServerContext } from "../../context/server";
 
-import { RepositoryBase } from "../base/repository";
-
-export class ProductOptionRepository extends RepositoryBase {
-  async getProductOption(id: string) {
-    return await this.manager.query.productOptions.findFirst({
-      where: (option) => eq(option.id, id),
-      with: {
-        values: true,
-      },
-    });
-  }
-}
+export const ProductOptionRepository = {
+  getProductOption: (id: string) =>
+    Effect.gen(function* (_) {
+      const { manager } = yield* _(ServerContext);
+      return yield* _(
+        Effect.tryPromise(() =>
+          manager.query.productOptions.findFirst({
+            where: (option) => eq(option.id, id),
+            with: {
+              values: true,
+            },
+          }),
+        ).pipe(Effect.orDie),
+      );
+    }),
+};
+export type ProductOptionRepositoryType = typeof ProductOptionRepository;

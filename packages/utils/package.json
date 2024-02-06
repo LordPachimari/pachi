@@ -10,6 +10,7 @@
     "@pachi/types": "^0.1.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.10",
+    "effect": "^2.2.0",
     "randomatic": "^3.1.1",
     "react-highlight-words": "^0.20.0",
     "tailwind-merge": "^1.14.0",
@@ -17,9 +18,9 @@
     "valibot": "^0.17.1"
   },
   "devDependencies": {
-    "@pachi/tsconfig": "workspace:^0.1.0",
     "@pachi/eslint-config": "workspace:^0.1.0",
     "@pachi/prettier-config": "workspace:^0.1.0",
+    "@pachi/tsconfig": "workspace:^0.1.0",
     "@types/react-highlight-words": "^0.16.4",
     "dotenv-cli": "^7.3.0",
     "eslint": "^8.53.0",
