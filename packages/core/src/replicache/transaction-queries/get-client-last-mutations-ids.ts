@@ -1,9 +1,11 @@
 import { and, eq, inArray } from "drizzle-orm";
+import { Effect } from "effect";
 
 import type { Transaction } from "@pachi/db";
 import { replicacheClients } from "@pachi/db/schema";
+import { withDieErrorLogger } from "@pachi/utils";
 
-export const getClientLastMutationIdAndVersion_ = async ({
+export const getClientLastMutationIdAndVersion_ = ({
   clientIDs,
   transaction,
   clientGroupID,
@@ -11,26 +13,38 @@ export const getClientLastMutationIdAndVersion_ = async ({
   clientIDs: string[];
   clientGroupID: string;
   transaction: Transaction;
-}): Promise<Record<string, { lastMutationID: number; version: number }>> => {
-  console.log("client ids and group", clientIDs, clientGroupID);
-  const result = await transaction
-    .select({
-      id: replicacheClients.id,
-      version: replicacheClients.version,
-      lastMutationID: replicacheClients.lastMutationID,
-    })
-    .from(replicacheClients)
-    .where(
-      and(
-        eq(replicacheClients.clientGroupID, clientGroupID),
-        inArray(replicacheClients.id, clientIDs),
+}): Effect.Effect<
+  never,
+  never,
+  Record<string, { lastMutationID: number; version: number }>
+> =>
+  Effect.gen(function* (_) {
+    const result = yield* _(
+      Effect.tryPromise(() =>
+        transaction
+          .select({
+            id: replicacheClients.id,
+            version: replicacheClients.version,
+            lastMutationID: replicacheClients.lastMutationID,
+          })
+          .from(replicacheClients)
+          .where(
+            and(
+              eq(replicacheClients.clientGroupID, clientGroupID),
+              inArray(replicacheClients.id, clientIDs),
+            ),
+          ),
+      ).pipe(
+        Effect.orDieWith((e) =>
+          withDieErrorLogger(e, "getClientLastMutationIdAndVersion error"),
+        ),
       ),
     );
-  const keys = Object.fromEntries(
-    result.map((l) => [
-      l.id,
-      { lastMutationID: l.lastMutationID, version: l.version },
-    ]),
-  );
-  return keys;
-};
+    const keys = Object.fromEntries(
+      result.map((l) => [
+        l.id,
+        { lastMutationID: l.lastMutationID, version: l.version },
+      ]),
+    );
+    return keys;
+  });

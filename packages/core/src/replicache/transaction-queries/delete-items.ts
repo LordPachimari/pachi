@@ -1,8 +1,10 @@
-import { and, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
+import { Effect } from "effect";
 
 import { tableNamesMap, type TableName, type Transaction } from "@pachi/db";
+import { withDieErrorLogger } from "@pachi/utils";
 
-export const deleteItems_ = async ({
+export const deleteItems_ = ({
   tableName,
   keys,
   transaction,
@@ -11,11 +13,14 @@ export const deleteItems_ = async ({
   keys: string[];
   userId: string;
   transaction: Transaction;
-}): Promise<void> => {
-  const table = tableNamesMap[tableName];
-  if (tableName !== "products") {
-    await transaction.delete(table).where(and(inArray(table.id, keys)));
-  } else {
-    await transaction.delete(table).where(inArray(table.id, keys));
-  }
-};
+}): Effect.Effect<never, never, void> =>
+  Effect.gen(function* (_) {
+    const table = tableNamesMap[tableName];
+    yield _(
+      Effect.tryPromise(() =>
+        transaction.delete(table).where(inArray(table.id, keys)),
+      ).pipe(
+        Effect.orDieWith((e) => withDieErrorLogger(e, "delete Items error")),
+      ),
+    );
+  });

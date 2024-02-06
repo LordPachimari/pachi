@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/require-await */
+import { Effect } from "effect";
 import { isObject, isString } from "remeda";
 import type { ReadonlyJSONObject } from "replicache";
 
@@ -86,10 +86,10 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
   }
   /* --------------------- */
 
-  async flush(): Promise<void> {
+  flush() {
     const items = [...this._cache.entries()].map((item) => item);
     if (items.length === 0) {
-      return;
+      return Effect.succeed(1);
     }
 
     const itemsToSet = new Map<
@@ -128,11 +128,15 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
       }
     }
 
-    await Promise.all([
-      deleteItems(itemsToDel, this._userId, this._transaction),
-      setItems(itemsToSet, this._userId, this._transaction),
-      updateItems(itemsToUpdate, this._userId, this._transaction),
-    ]);
+    Effect.all(
+      [
+        deleteItems(itemsToDel, this._userId, this._transaction),
+        setItems(itemsToSet, this._userId, this._transaction),
+        updateItems(itemsToUpdate, this._userId, this._transaction),
+      ],
+      { concurrency: "unbounded" },
+    );
     this._cache.clear();
+    return Effect.succeed(1);
   }
 }

@@ -7,20 +7,21 @@ type Literal = boolean | null | number | string;
 export type ClientViewDataWithTable = {
   tableName: TableName;
   cvd: ClientViewData[];
-}[];
+};
 
 export const ClientViewDataSchema = z
   .record(z.string(), z.unknown())
   .and(z.object({ id: z.string(), version: z.number() }));
 
-type ClientViewData = z.infer<typeof ClientViewDataSchema>;
+export type ClientViewData = z.infer<typeof ClientViewDataSchema>;
 
+export const RecordDataSchema = z.record(z.string(), z.number());
 export const SpaceRecordsSchema = z.object({
   global: z.object({
-    user: ClientViewDataSchema,
+    user: RecordDataSchema,
   }),
   dashboard: z.object({
-    store: ClientViewDataSchema,
+    store: RecordDataSchema,
   }),
 });
 export type SpaceRecords = z.infer<typeof SpaceRecordsSchema>;
@@ -29,17 +30,16 @@ export type SpaceId = z.infer<typeof SpaceIdSchema>;
 
 export const spaceRecords: SpaceRecords = {
   global: {
-    user:{} as ClientViewData
-  } ,
+    user: {},
+  },
   dashboard: {
-    store: {} as ClientViewData,
+    store: {},
   },
 };
 
 export const mutationNames = [
   "createProduct",
   "updateProduct",
-  "publishProduct",
   "deleteProduct",
 ] as const;
 
@@ -118,7 +118,7 @@ export type Mutation = z.infer<typeof mutationSchema>;
 export const mutationSchema = z.object({
   id: z.number(),
   name: MutationNamesSchema,
-  args: z.object({ args: z.record(z.string(), z.any()) }),
+  args: z.any(),
   clientID: z.string(),
 });
 

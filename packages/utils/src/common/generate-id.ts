@@ -27,6 +27,7 @@ export const prefixEnum = enumType([
   "country",
   "unauth",
   "store",
+  "error",
 ] as const);
 export type Prefix = Output<typeof prefixEnum>;
 

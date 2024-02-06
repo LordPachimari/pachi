@@ -36,6 +36,8 @@ const config = {
     "@typescript-eslint/no-empty-function": "warn",
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-unnecessary-type-assertion": "warn",
+    "@typescript-eslint/array-type": "off",
+    "@typescript-eslint/require-await": "warn",
   },
   ignorePatterns: [
     "**/.eslintrc.cjs",

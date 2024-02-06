@@ -4,6 +4,7 @@ import {
   carts,
   customerGroups,
   customersToGroups,
+  jsonTable,
   priceLists,
   prices,
   productCollections,
@@ -39,6 +40,7 @@ type ProductTagTable = typeof productTags;
 type ProductToTagTable = typeof productsToTags;
 type ProductOptionValuesToProductVariantsTable =
   typeof productOptionValuesToProductVariants;
+export type JsonTable = typeof jsonTable;
 
 export type Table =
   | UserTable
@@ -60,7 +62,8 @@ export type Table =
   | StoreTable
   | ProductTagTable
   | ProductToTagTable
-  | ProductOptionValuesToProductVariantsTable;
+  | ProductOptionValuesToProductVariantsTable
+  | JsonTable;
 
 export const tableNamesMap: Record<TableName, Table> = {
   users,
@@ -82,5 +85,6 @@ export const tableNamesMap: Record<TableName, Table> = {
   productTags,
   productsToTags,
   productOptionValuesToProductVariants,
+  json: jsonTable,
 };
 export type TableNamesMap = typeof tableNamesMap;

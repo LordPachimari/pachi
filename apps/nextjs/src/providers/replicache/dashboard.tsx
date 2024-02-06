@@ -3,21 +3,16 @@
 import { useEffect } from "react";
 import { Replicache } from "replicache";
 
-import { client } from "@pachi/core";
+import { ClientDashboardMutators } from "@pachi/core";
 
 import { env } from "~/env.mjs";
 import { ReplicacheInstancesStore } from "~/zustand/replicache";
 
-export function getDashboardMutators() {
-  return client.initDashboardMutations().build();
-}
-export type DashboardMutators = ReturnType<typeof getDashboardMutators>;
 function DashboardReplicacheProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const mutators = getDashboardMutators();
   const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
   const setDashboardRep = ReplicacheInstancesStore(
     (state) => state.setDashboardRep,
@@ -34,11 +29,11 @@ function DashboardReplicacheProvider({
       licenseKey: env.NEXT_PUBLIC_REPLICACHE_KEY,
       pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/dashboard?userId=${userId}`,
       pullURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/dashboard?userId=${userId}`,
-      mutators,
+      mutators: ClientDashboardMutators,
       pullInterval: null,
     });
     setDashboardRep(r);
-  }, [userId, dashboardRep, mutators, setDashboardRep]);
+  }, [userId, dashboardRep, setDashboardRep]);
   return <>{children}</>;
 }
 

@@ -1,11 +1,19 @@
 import { eq } from "drizzle-orm";
+import { Effect } from "effect";
 
-import { RepositoryBase } from "../base/repository";
+import { ServerContext } from "../../context/server";
 
-export class StoreRepository extends RepositoryBase {
-  async getStoreById({ id }: { id: string }) {
-    return await this.manager.query.stores.findFirst({
-      where: (stores) => eq(stores.id, id),
-    });
-  }
-}
+export const StoreRepository = {
+  getStoreById: ({ id }: { id: string }) =>
+    Effect.gen(function* (_) {
+      const { manager } = yield* _(ServerContext);
+      return yield* _(
+        Effect.tryPromise(() =>
+          manager.query.stores.findFirst({
+            where: (stores) => eq(stores.id, id),
+          }),
+        ).pipe(Effect.orDie),
+      );
+    }),
+};
+export type StoreRepositoryType = typeof StoreRepository;

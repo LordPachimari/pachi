@@ -1,68 +1,76 @@
 import { eq } from "drizzle-orm";
+import { Effect } from "effect";
 
-import { type ProductOption, type ProductTag } from "@pachi/db";
+import { type ProductTag } from "@pachi/db";
 import { productsToTags, productTags } from "@pachi/db/schema";
 
-import { RepositoryBase } from "../base/repository";
+import { ServerContext } from "../../context/server";
 
-export class ProductTagRepository extends RepositoryBase {
-  async getProductTag({
-    id,
-    withProducts,
-  }: {
-    id: string;
-    withProducts?: boolean;
-  }) {
-    return await this.manager.query.productTags.findFirst({
-      where: (tag) => eq(tag.id, id),
-      ...(withProducts && {
-        with: {
-          products: true,
-        },
-      }),
-    });
-  }
+export const ProductTagRepository = {
+  getProductTag: ({ id }: { id: string }) =>
+    Effect.gen(function* (_) {
+      const { manager } = yield* _(ServerContext);
+      return yield* _(
+        Effect.tryPromise(() =>
+          manager.query.productTags.findFirst({
+            where: (tag) => eq(tag.id, id),
+            with: {
+              products: true,
+            },
+          }),
+        ).pipe(Effect.orDie),
+      );
+    }),
 
-  async createProductTag({ tag }: { tag: ProductTag }) {
-    //@ts-ignore
-    return await this.manager.insert(productTags).values(tag).returning();
-  }
-  async createProductTags({ tags }: { tags: ProductTag[] }) {
-    //@ts-ignore
-    return await this.manager.insert(productTags).values(tags).returning();
-  }
-  async assignTagToProduct({
+  createProductTag: ({ tag }: { tag: ProductTag }) =>
+    Effect.gen(function* (_) {
+      const { manager } = yield* _(ServerContext);
+      return yield* _(
+        Effect.tryPromise(() =>
+          //@ts-ignore
+          manager.insert(productTags).values(tag).returning(),
+        ).pipe(Effect.orDie),
+      );
+    }),
+  createProductTags: ({ tags }: { tags: ProductTag[] }) =>
+    Effect.gen(function* (_) {
+      const { manager } = yield* _(ServerContext);
+      return yield* _(
+        Effect.tryPromise(() =>
+          //@ts-ignore
+          manager.insert(productTags).values(tags).returning(),
+        ).pipe(Effect.orDie),
+      );
+    }),
+  assignTagToProduct: ({
     tagId,
     productId,
   }: {
     tagId: string;
     productId: string;
-  }) {
-    return await this.manager.insert(productsToTags).values({
-      productId,
-      tagId,
-    });
-  }
-  async checkProductTagExists({ value }: { value: string }) {
-    const productTag = await this.manager.query.productTags.findFirst({
-      where: (tag) => eq(tag.value, value),
-      columns: {
-        id: true,
-      },
-    });
-    return productTag;
-  }
-  async checkProductTagAssigned({
-    productId,
-    tagId,
-  }: {
-    productId: string;
-    tagId: string;
-  }) {
-    const result = await this.manager.query.productsToTags.findFirst({
-      where: (tag, { eq, and }) =>
-        and(eq(tag.productId, productId), eq(tag.tagId, tagId)),
-    });
-    return result;
-  }
-}
+  }) =>
+    Effect.gen(function* (_) {
+      const { manager } = yield* _(ServerContext);
+      yield* _(
+        Effect.tryPromise(() =>
+          manager.insert(productsToTags).values({
+            productId,
+            tagId,
+          }),
+        ).pipe(Effect.orDie),
+      );
+    }),
+  deleteTagsFromProduct: ({ productId }: { productId: string }) =>
+    Effect.gen(function* (_) {
+      const { manager } = yield* _(ServerContext);
+      yield* _(
+        Effect.tryPromise(() =>
+          manager
+            .delete(productsToTags)
+            .where(eq(productsToTags.productId, productId)),
+        ).pipe(Effect.orDie),
+      );
+    }),
+};
+
+export type ProductTagRepositoryType = typeof ProductTagRepository;

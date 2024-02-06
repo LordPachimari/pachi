@@ -13,7 +13,7 @@ async function updateStore(tx: WriteTransaction, input: UpdateStore) {
   const store = (await tx.get(id)) as Store | undefined;
   if (!store) {
     console.info(`Store  not found`);
-    return;
+    throw new Error(`Store not found`);
   }
   const updated = { ...store, ...updates };
   await tx.set(id, updated);
