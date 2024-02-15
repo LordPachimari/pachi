@@ -15,7 +15,7 @@
   "include": [
     ".",
     "../core/src/replicache/framework.ts",
-    "../core/src/client/client.ts"
+    "../core/src/client/context.ts"
   ],
   "exclude": ["node_modules"]
 }

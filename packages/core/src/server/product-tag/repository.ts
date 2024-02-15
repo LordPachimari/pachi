@@ -4,7 +4,7 @@ import { Effect } from "effect";
 import { type ProductTag } from "@pachi/db";
 import { productsToTags, productTags } from "@pachi/db/schema";
 
-import { ServerContext } from "../../context/server";
+import { ServerContext } from "../context";
 
 export const ProductTagRepository = {
   getProductTag: ({ id }: { id: string }) =>

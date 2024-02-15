@@ -1,8 +1,8 @@
 import { Effect } from "effect";
 
-import { ServerContext } from "../../context/server";
 import { ErrorSchema } from "../../input-schema/error";
 import { zod } from "../../util/zod";
+import { ServerContext } from "../context";
 
 const createError = zod(ErrorSchema, (input) =>
   Effect.gen(function* (_) {

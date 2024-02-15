@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
 export const currencies = pgTable("currencies", {
   id: varchar("id"),

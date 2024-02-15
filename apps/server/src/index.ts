@@ -5,7 +5,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { z } from "zod";
 
-import { pull, push, type Bindings } from "@pachi/api";
+import { pull, push } from "@pachi/api";
 import {
   schema,
   type Country,
@@ -26,6 +26,16 @@ import {
   type SpaceId,
 } from "@pachi/types";
 import { generateId, ulid } from "@pachi/utils";
+
+export type Bindings = {
+  ORIGIN_URL: string;
+  DATABASE_URL: string;
+  ENVIRONMENT: "prod" | "test" | "staging" | "dev";
+  PACHI: KVNamespace;
+  PACHI_PROD: KVNamespace;
+  HANKO_URL: string;
+  PACHI_BUCKET: R2Bucket;
+};
 
 const app = new Hono<{ Bindings: Bindings }>();
 app.use("/*", cors());
@@ -70,6 +80,8 @@ app.post("/pull/:spaceId", async (c) => {
       : c.get("auth" as never);
   console.log("userId", userId);
   const spaceId = c.req.param("spaceId");
+  const subspaceId = c.req.query("subspaceId");
+  const SubspaceIdSchema = z.array(z.string()).optional();
   const { success } = SpaceIdSchema.safeParse(spaceId);
   if (!success) {
     return c.json({ message: "Invalid spaceId" }, 400);
@@ -85,6 +97,7 @@ app.post("/pull/:spaceId", async (c) => {
     db,
     spaceId: spaceId as SpaceId,
     userId: userId,
+    subspaceIds: subspaceId ? JSON.parse(subspaceId) : undefined,
   }).pipe(Effect.orDie);
   const pullResponse = await Effect.runPromise(pullEffect);
   return c.json(pullResponse, 200);
@@ -143,8 +156,7 @@ app.post("/countries", async (c) => {
   const values: Country[] = Object.values(countries).map((value) => {
     return {
       id: generateId({ id: ulid(), prefix: "country" }),
-      iso2: value.alpha2,
-      iso3: value.alpha3,
+      countryCode: value.alpha2,
       name: value.name,
       displayName: value.name,
     };

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { Effect } from "effect";
 
-import { ServerContext } from "../../context/server";
+import { ServerContext } from "../context";
 
 export const StoreRepository = {
   getStoreById: ({ id }: { id: string }) =>

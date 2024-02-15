@@ -15,7 +15,6 @@ import {
   type ServerDashboardMutatorsMapType,
   type ServerGlobalMutatorsMapType,
 } from "@pachi/core";
-import { ServerContext } from "@pachi/core/src/context/server";
 import type { Db } from "@pachi/db";
 import type {
   Mutation,
@@ -88,23 +87,23 @@ export const push = ({
               let updated = false;
 
               for (const mutation of push.data.mutations) {
-                if (!lastMutationIdsAndVersions[mutation.clientID]) {
-                  lastMutationIdsAndVersions[mutation.clientID] = {
+                if (!lastMutationIdsAndVersions.has(mutation.clientID)) {
+                  lastMutationIdsAndVersions.set(mutation.clientID, {
                     lastMutationID: 0,
                     version: 0,
-                  };
+                  });
                 }
 
                 const processMutationWithContext = Effect.provideService(
                   processMutation({
-                    lastMutationID:
-                      lastMutationIdsAndVersions[mutation.clientID]!
-                        .lastMutationID,
+                    lastMutationID: lastMutationIdsAndVersions.get(
+                      mutation.clientID,
+                    )!.lastMutationID,
                     mutation,
                     mutators,
                   }),
-                  ServerContext,
-                  ServerContext.of({
+                  server.ServerContext,
+                  server.ServerContext.of({
                     replicacheTransaction,
                     manager: transaction,
                     repositories: server.Repositories,
@@ -120,14 +119,15 @@ export const push = ({
 
                 if (
                   nextMutationId >
-                  lastMutationIdsAndVersions[mutation.clientID]!.lastMutationID
+                  lastMutationIdsAndVersions.get(mutation.clientID)!
+                    .lastMutationID
                 ) {
                   updated = true;
                 }
-                lastMutationIdsAndVersions[mutation.clientID] = {
+                lastMutationIdsAndVersions.set(mutation.clientID, {
                   lastMutationID: nextMutationId,
                   version: clientVersion,
-                };
+                });
                 const spaces = mutationAffectedSpaces[mutation.name];
                 if (spaces === undefined) {
                   Effect.logWarning(
@@ -143,7 +143,7 @@ export const push = ({
                   const affectedSubSpaces =
                     affectedSpaces.get(space) ?? new Set();
 
-                  for (const subspace of subspaces) {
+                  for (const subspace of subspaces as string[]) {
                     affectedSubSpaces.add(subspace);
                   }
                   affectedSpaces.set(space, affectedSubSpaces);

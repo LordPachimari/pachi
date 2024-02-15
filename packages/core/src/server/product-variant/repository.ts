@@ -4,7 +4,7 @@ import { Effect } from "effect";
 import type { ProductVariant } from "@pachi/db";
 import { productVariants } from "@pachi/db/schema";
 
-import { ServerContext } from "../../context/server";
+import { ServerContext } from "../context";
 
 export const ProductVariantRepository = {
   getProductVariantById: (id: string) =>

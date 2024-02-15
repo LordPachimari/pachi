@@ -3,7 +3,7 @@ import { Effect } from "effect";
 import { type User } from "@pachi/db";
 import { users } from "@pachi/db/schema";
 
-import { ServerContext } from "../../context/server";
+import { ServerContext } from "../context";
 
 export const UserRepository = {
   insertUser: ({ user }: { user: User }) =>

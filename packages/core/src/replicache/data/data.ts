@@ -55,7 +55,7 @@ export const getPatch = <T extends SpaceId>({
 }: {
   spaceId: T;
   spaceRecord: SpaceRecords[T] | undefined;
-  subspaceIds?: (keyof SpaceRecords[T])[];
+  subspaceIds: (keyof SpaceRecords[T])[] | undefined;
   userId: string | undefined;
   transaction: Transaction;
 }): Effect.Effect<
@@ -433,7 +433,7 @@ export const setLastMutationIdsAndVersions = ({
   transaction,
 }: {
   clientGroupID: string;
-  lastMutationIdsAndVersions: Record<
+  lastMutationIdsAndVersions: Map<
     string,
     { lastMutationID: number; version: number }
   >;
@@ -458,8 +458,7 @@ export const setLastMutationIdsAndVersions = ({
         },
       })
       .prepare("lm");
-
-    const executionEffects = Object.entries(lastMutationIdsAndVersions).map(
+    const executionEffects = Array.from(lastMutationIdsAndVersions).map(
       ([key, { lastMutationID, version }]) =>
         Effect.tryPromise(() =>
           setLastMutationIdsAndVersionsPrepared.execute({
@@ -474,6 +473,7 @@ export const setLastMutationIdsAndVersions = ({
           ),
         ),
     );
+
     yield* _(Effect.all(executionEffects, { concurrency: "unbounded" }));
   });
 
@@ -519,7 +519,7 @@ export const getClientLastMutationIdsAndVersion = ({
 }): Effect.Effect<
   never,
   never,
-  Record<string, { lastMutationID: number; version: number }>
+  Map<string, { lastMutationID: number; version: number }>
 > =>
   Effect.gen(function* (_) {
     const result = yield* _(

@@ -28,7 +28,6 @@ export * from "./payment-session";
 export * from "./discount";
 export * from "./discount-rule";
 export * from "./discount-condition";
-export * from "./session";
-export * from "./user-key";
+export * from "./user-session";
 export * from "./country";
 export * from "./json";
