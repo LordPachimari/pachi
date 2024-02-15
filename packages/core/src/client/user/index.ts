@@ -1,1 +1,1 @@
-export * as User from "./functions";
+export * as ClientUser from "./functions";

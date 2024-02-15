@@ -114,7 +114,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   );
   const updateProductImagesOrder = useCallback(
     async ({ order, productId, variantId }: UpdateProductImagesOrder) => {
-      await dashboardRep?.mutate.updateImagesOrder({
+      await dashboardRep?.mutate.updateProductImagesOrder({
         productId,
         variantId,
         order,

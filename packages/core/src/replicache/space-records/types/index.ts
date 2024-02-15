@@ -1,11 +1,13 @@
+import type { Effect } from "effect";
+
 import type { Transaction } from "@pachi/db";
 import type { ClientViewDataWithTable } from "@pachi/types";
 
-export type GetClientViewData = ({
+export type GetClientViewDataWithTable = ({
   transaction,
   isFullItems,
 }: {
   transaction: Transaction;
   isFullItems?: boolean;
   userId?: string | undefined;
-}) => Promise<ClientViewDataWithTable>;
+}) => Effect.Effect<never, never, Array<ClientViewDataWithTable>>;

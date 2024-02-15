@@ -1,9 +1,11 @@
 import { inArray } from "drizzle-orm";
+import { Effect, pipe } from "effect";
 
 import { tableNamesMap, type TableName, type Transaction } from "@pachi/db";
 import { users } from "@pachi/db/schema";
+import { withDieErrorLogger } from "@pachi/utils";
 
-export const getFullItems = async ({
+export const getFullItems = ({
   tableName,
   keys,
   transaction,
@@ -11,53 +13,58 @@ export const getFullItems = async ({
   tableName: TableName;
   keys: string[];
   transaction: Transaction;
-}): Promise<Record<string, unknown>[]> => {
+}): Effect.Effect<never, never, Array<Record<string, unknown>>> => {
   if (keys.length === 0) {
-    return Promise.resolve([]);
+    return Effect.succeed([]);
   }
   if (tableName === "users") {
-    const result = await transaction
-      .select()
-      .from(users)
-      .where(inArray(users.id, keys));
-    return result;
+    return pipe(
+      Effect.tryPromise(() =>
+        transaction.select().from(users).where(inArray(users.id, keys)),
+      ),
+      Effect.orDieWith((e) => withDieErrorLogger(e, "get full items error")),
+    );
   } else if (tableName === "products") {
-    const result = await transaction.query.products.findMany({
-      where: (Product) => inArray(Product.id, keys),
-      with: {
-        // seller: {
-        //   id: true,
-        //   name: true,
-        // },
-        variants: {
+    return pipe(
+      Effect.tryPromise(() =>
+        transaction.query.products.findMany({
+          where: (Product) => inArray(Product.id, keys),
           with: {
-            optionValues: {
+            variants: {
               with: {
-                optionValue: {
+                optionValues: {
                   with: {
-                    option: true,
+                    optionValue: {
+                      with: {
+                        option: true,
+                      },
+                    },
                   },
                 },
               },
             },
+            options: {
+              with: {
+                values: true,
+              },
+            },
+            store: true,
           },
-        },
-        options: {
-          with: {
-            values: true,
-          },
-        },
-        store: true,
-      },
-    });
-    return result;
+        }),
+      ),
+      Effect.orDieWith((e) => withDieErrorLogger(e, "get full items error")),
+    );
   } else {
     const table = tableNamesMap[tableName];
-    const result = await transaction
-      .select()
-      .from(table)
-      //@ts-ignore
-      .where(inArray(table.id, keys));
-    return result;
+    return pipe(
+      Effect.tryPromise(() =>
+        transaction
+          .select()
+          .from(table)
+          //@ts-ignore
+          .where(inArray(table.id, keys)),
+      ),
+      Effect.orDieWith((e) => withDieErrorLogger(e, "get full items error")),
+    );
   }
 };

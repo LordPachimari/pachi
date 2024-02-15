@@ -1,11 +1,7 @@
 import type { WriteTransaction } from "replicache";
 
-import {
-  type Image,
-  type Product,
-  type ProductVariant,
-  type Store,
-} from "@pachi/db";
+import { type Image, type Product, type ProductVariant } from "@pachi/db";
+import { generateId, ulid } from "@pachi/utils";
 
 import {
   type AssignProductOptionValueToVariant,
@@ -23,18 +19,21 @@ import {
   type UpdateProductOption,
   type UpdateProductOptionValues,
   type UpdateProductPrice,
+  type UpdateProductTags,
   type UpdateProductVariant,
   type UploadProductImages,
 } from "../../input-schema/product";
 
+function productNotFound(id: string) {
+  console.info(`Product ${id} not found`);
+  throw new Error(`Product ${id} not found`);
+}
+function variantNotFound(id: string) {
+  console.info(`Variant ${id} not found`);
+  throw new Error(`Variant ${id} not found`);
+}
 async function createProduct(tx: WriteTransaction, input: CreateProduct) {
-  const { product, storeId, prices } = input;
-
-  const store = (await tx.get(storeId)) as Store | undefined;
-  if (!store) {
-    console.info(`Store ${storeId} not found`);
-    throw new Error("store not found");
-  }
+  const { product, prices } = input;
 
   const defaultVariant: ProductVariant = {
     id: product.defaultVariantId,
@@ -56,8 +55,7 @@ async function updateProduct(tx: WriteTransaction, input: UpdateProduct) {
   const { updates, id } = input;
   const product = (await tx.get(id)) as Product | undefined;
   if (!product) {
-    console.info(`Product ${id} not found`);
-    throw new Error(`Product ${id} not found`);
+    return productNotFound(id);
   }
   await tx.set(id, { ...product, ...updates });
 }
@@ -68,13 +66,11 @@ async function updateProductImagesOrder(
   const { order, productId, variantId } = input;
   const product = (await tx.get(productId)) as Product | undefined;
   if (!product) {
-    console.info(`Product ${productId} not found`);
-    throw new Error(`Product ${productId} not found`);
+    return productNotFound(productId);
   }
   const variant = product.variants?.find((val) => val.id === variantId);
   if (!variant) {
-    console.log("variant not found");
-    throw new Error("variant not found");
+    return variantNotFound(variantId);
   }
   const images = variant.images ? structuredClone(variant.images) : [];
   if (images.length === 0) {
@@ -114,7 +110,7 @@ async function uploadProductImages(
   }
   const product = (await tx.get(productId)) as Product | undefined;
   if (!product) {
-    throw new Error("Product not found");
+    return productNotFound(productId);
   }
   const newProduct = {
     ...product,
@@ -138,8 +134,7 @@ async function createProductOption(
   const { option } = input;
   const product = (await tx.get(option.productId)) as Product | undefined;
   if (!product) {
-    console.error(`Product ${option.productId} not found`);
-    throw new Error(`Product ${option.productId} not found`);
+    return productNotFound(option.productId);
   }
   const product_options = product.options ? product.options : [];
   await tx.set(product.id, {
@@ -156,8 +151,7 @@ async function updateProductOption(
 
   const product = (await tx.get(productId)) as Product | undefined;
   if (!product) {
-    console.error(`Product ${productId} not found`);
-    throw new Error(`Product ${productId} not found`);
+    return productNotFound(productId);
   }
   await tx.set(product.id, {
     ...product,
@@ -174,8 +168,7 @@ async function deleteProductOption(
   const { optionId, productId } = input;
   const product = (await tx.get(productId)) as Product | undefined;
   if (!product) {
-    console.info(`Product ${productId} not found`);
-    return;
+    return productNotFound(productId);
   }
   const product_options = product.options
     ? product.options.filter((option) => option.id !== optionId)
@@ -194,8 +187,7 @@ async function updateProductOptionValues(
 
   const product = (await tx.get(productId)) as Product | undefined;
   if (!product) {
-    console.info(`Product ${productId} not found`);
-    throw new Error(`Product ${productId} not found`);
+    return productNotFound(productId);
   }
 
   await tx.set(product.id, {
@@ -213,8 +205,7 @@ async function deleteProductOptionValue(
   const { optionValueId, productId } = input;
   const product = (await tx.get(productId)) as Product | undefined;
   if (!product) {
-    console.info(`Product ${productId} not found`);
-    throw new Error(`Product ${productId} not found`);
+    return productNotFound(productId);
   }
   await tx.set(product.id, {
     ...product,
@@ -238,8 +229,7 @@ async function createProductVariant(
   const { variant } = input;
   const product = (await tx.get(variant.productId)) as Product | undefined;
   if (!product) {
-    console.info(`Product  not found`);
-    throw new Error(`Product not found`);
+    return productNotFound(variant.productId);
   }
   const variants = product.variants ? [...product.variants] : [];
   variants.push(variant);
@@ -256,12 +246,10 @@ async function updateProductVariant(
   const { variantId, updates, productId } = input;
   const product = (await tx.get(productId)) as Product | undefined;
   if (!product) {
-    throw new Error("Product not found");
+    return productNotFound(productId);
   }
   if (!product.variants) {
-    console.info(`Product  not found`);
-
-    throw new Error("Product variants not found");
+    return variantNotFound("");
   }
   const variants = product.variants.map((variant) => {
     if (variant.id === variantId) {
@@ -279,8 +267,7 @@ async function deleteProductVariant(
   const { variantId, productId } = input;
   const product = (await tx.get(productId)) as Product | undefined;
   if (!product) {
-    console.info(`Product  not found`);
-    throw new Error(`Product not found`);
+    return productNotFound(productId);
   }
   const variants = product.variants
     ? product.variants.filter((variant) => variant.id !== variantId)
@@ -298,11 +285,11 @@ async function createProductPrices(
   const { prices, productId, variantId } = input;
   const product = (await tx.get(productId)) as Product | undefined;
   if (!product) {
-    throw new Error("Product not found");
+    return productNotFound(productId);
   }
   const variant = product.variants?.find((variant) => variant.id === variantId);
   if (!variant) {
-    throw new Error("Variant not found");
+    return variantNotFound(variantId);
   }
   const variantPrices = variant.prices ? [...variant.prices] : [];
   for (const price of prices) {
@@ -324,17 +311,13 @@ async function updateProductPrice(
 ) {
   const { priceId, updates, variantId, productId } = input;
 
-  console.log("productId", productId);
-
   const product = (await tx.get(productId)) as Product | undefined;
   if (!product) {
-    console.info(`Product  not found`);
-    return;
+    return productNotFound(productId);
   }
   const variant = product.variants?.find((val) => val.id === variantId);
   if (!variant) {
-    console.log("variant not found");
-    return;
+    return variantNotFound(variantId);
   }
   const variantPrices = variant.prices
     ? variant.prices.map((price) => {
@@ -360,13 +343,11 @@ async function deleteProductPrices(
   const { priceIds, productId, variantId } = input;
   const product = (await tx.get(productId)) as Product | undefined;
   if (!product) {
-    console.info(`Product  not found`);
-    throw new Error(`Product not found`);
+    return productNotFound(productId);
   }
   const variant = product.variants?.find((val) => val.id === variantId);
   if (!variant) {
-    console.log("variant not found");
-    throw new Error("variant not found");
+    return variantNotFound(variantId);
   }
   const variant_prices = variant.prices
     ? variant.prices.filter((price) => !priceIds.includes(price.id))
@@ -388,13 +369,11 @@ async function assignProductOptionValueToVariant(
   const { optionValueId, variantId, prevOptionValueId, productId } = input;
   const product = (await tx.get<Product>(productId)) as Product | undefined;
   if (!product) {
-    console.info(`Product  not found`);
-    return;
+    return productNotFound(productId);
   }
   const variant = product.variants?.find((val) => val.id === variantId);
   if (!variant) {
-    console.log("variant not found");
-    return;
+    return variantNotFound(variantId);
   }
   const productOptionValue = product.options
     ?.find((option) => option.values?.some((val) => val.id === optionValueId))
@@ -420,22 +399,47 @@ async function assignProductOptionValueToVariant(
     ),
   });
 }
+
+async function updateProductTags(
+  tx: WriteTransaction,
+  input: UpdateProductTags,
+) {
+  const { productId, tags } = input;
+  const product = (await tx.get(productId)) as Product | undefined;
+  if (!product) {
+    return productNotFound(productId);
+  }
+
+  const newTags = tags.map((value) => {
+    return {
+      id: generateId({ id: ulid(), prefix: "p_tag" }),
+      value,
+      createdAt: new Date().toISOString(),
+    };
+  });
+  await tx.set(productId, {
+    ...product,
+    tags: newTags,
+  });
+}
+
 export {
+  assignProductOptionValueToVariant,
   createProduct,
+  createProductOption,
+  createProductPrices,
+  createProductVariant,
   deleteProduct,
+  deleteProductOption,
+  deleteProductOptionValue,
+  deleteProductPrices,
+  deleteProductVariant,
   updateProduct,
   updateProductImagesOrder,
-  uploadProductImages,
-  createProductOption,
   updateProductOption,
-  deleteProductOption,
   updateProductOptionValues,
-  deleteProductOptionValue,
-  createProductVariant,
-  updateProductVariant,
-  deleteProductVariant,
-  createProductPrices,
   updateProductPrice,
-  deleteProductPrices,
-  assignProductOptionValueToVariant,
+  updateProductVariant,
+  uploadProductImages,
+  updateProductTags,
 };

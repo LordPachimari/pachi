@@ -1,4 +1,6 @@
 import { eq, sql } from "drizzle-orm";
+import { Context, Effect } from "effect";
+import { isDefined } from "remeda";
 import type { PatchOperation, ReadonlyJSONObject } from "replicache";
 
 import type { TableName, Transaction } from "@pachi/db";
@@ -11,9 +13,11 @@ import {
   spaceRecords,
   type ClientGroupObject,
   type ClientViewDataWithTable,
+  type PermissionDenied,
   type SpaceId,
   type SpaceRecords,
 } from "@pachi/types";
+import { withDieErrorLogger } from "@pachi/utils";
 
 import {
   deleteItems_,
@@ -25,27 +29,24 @@ import {
 } from "../transaction-queries";
 import { getClientLastMutationIdAndVersion_ } from "../transaction-queries/get-client-last-mutations-ids";
 
-const year = 31622400;
+export interface Random {
+  readonly next: Effect.Effect<never, never, number>;
+}
 
-export const makeClientViewData = ({
-  items,
-}: {
-  items: {
-    cvd: {
-      id: string;
-      version: number;
-    }[];
-  }[];
-}): Record<string, number> => {
+export const Random = Context.Tag<Random>();
+
+export const makeClientViewData = (
+  data: Array<ClientViewDataWithTable>,
+): Record<string, number> => {
   const clientViewData: Record<string, number> = {};
-  for (const { cvd } of items) {
+  for (const { cvd } of data) {
     for (const item of cvd) {
       clientViewData[item.id] = item.version;
     }
   }
   return clientViewData;
 };
-export const getPatch = async <T extends SpaceId>({
+export const getPatch = <T extends SpaceId>({
   spaceId,
   spaceRecord,
   userId,
@@ -57,89 +58,104 @@ export const getPatch = async <T extends SpaceId>({
   subspaceIds?: (keyof SpaceRecords[T])[];
   userId: string | undefined;
   transaction: Transaction;
-}): Promise<{ patch: PatchOperation[]; newSpaceRecord: SpaceRecords[T] }> => {
+}): Effect.Effect<
+  never,
+  never,
+  { patch: PatchOperation[]; newSpaceRecord: SpaceRecords[T] }
+> => {
   if (!spaceRecord) {
-    const result = await getResetPatch({
+    const result = getResetPatch({
       spaceId,
       transaction,
       userId,
     });
     return result;
   }
-  const newSpaceRecord = spaceRecord;
-  const subspaceClientView: Record<
-    keyof SpaceRecords[T],
-    ClientViewDataWithTable
-  > = {} as Record<keyof SpaceRecords[T], ClientViewDataWithTable>;
-
-  const setKeys = new Map<TableName, string[]>();
-  const delKeys = [];
-
-  try {
-    //if subspaceIds provided only retrieve subspace items, rather than the whole space items
-    if (subspaceIds)
-      await Promise.all(
-        subspaceIds.map(async (subspaceId) => {
-          const clientViewDataWithTable = await getClientViewDataWithTables({
-            spaceId,
-            subspaceId,
-            transaction,
-            userId,
+  return Effect.gen(function* (_) {
+    const newSpaceRecord = spaceRecord;
+    const setKeys = new Map<TableName, string[]>();
+    const delKeys: string[] = [];
+    const subspaces = subspaceIds
+      ? subspaceIds
+      : (Object.keys(spaceRecord) as (keyof SpaceRecords[T])[]);
+    const subspaceClientView = yield* _(
+      Effect.forEach(
+        subspaces,
+        (subspaceId) => {
+          return Effect.gen(function* (_) {
+            const clientViewDataWithTable = yield* _(
+              getClientViewDataWithTables({
+                spaceId,
+                subspaceId,
+                transaction,
+                ...(userId && { userId }),
+                isFullItems: false,
+              }).pipe(
+                Effect.orDieWith((e) =>
+                  withDieErrorLogger(e, "location: data getPatch"),
+                ),
+              ),
+            );
+            return {
+              subspaceId,
+              clientViewDataWithTable,
+            };
           });
-          subspaceClientView[subspaceId] = clientViewDataWithTable;
-        }),
-      );
-    else
-      await Promise.all(
-        Object.keys(spaceRecord).map(async (value) => {
-          const subspaceId = value as keyof SpaceRecords[T];
-          const clientViewDataWithTable = await getClientViewDataWithTables({
-            spaceId,
-            subspaceId,
-            transaction,
-            userId,
+        },
+        {
+          concurrency: "unbounded",
+        },
+      ),
+    );
+    yield* _(
+      Effect.forEach(
+        subspaceClientView,
+        ({ subspaceId, clientViewDataWithTable }) => {
+          return Effect.sync(() => {
+            const cvd = makeClientViewData(clientViewDataWithTable);
+            newSpaceRecord[subspaceId] =
+              cvd as SpaceRecords[T][typeof subspaceId];
+            for (const { cvd, tableName } of clientViewDataWithTable) {
+              const keys = setKeys.get(tableName) ?? [];
+              for (const { id, version } of cvd) {
+                const prevVersion = (
+                  spaceRecord[subspaceId] as Record<string, number>
+                )[id];
+                if (!isDefined(prevVersion) || prevVersion < version) {
+                  keys.push(id);
+                }
+              }
+              setKeys.set(tableName, keys);
+            }
+            for (const key of Object.keys(
+              spaceRecord[subspaceId] as Record<string, number>,
+            )) {
+              if (cvd[key] === undefined) {
+                delKeys.push(key);
+              }
+            }
           });
-          subspaceClientView[subspaceId] = clientViewDataWithTable;
-        }),
-      );
-    for (const [subspaceId_, clientViewDataWithTable_] of Object.entries(
-      subspaceClientView,
-    )) {
-      const subspaceId = subspaceId_ as keyof SpaceRecords[T];
-      const clientViewDataWithTable =
-        clientViewDataWithTable_ as ClientViewDataWithTable;
-      const cvd = makeClientViewData({
-        items: clientViewDataWithTable,
-      });
+        },
+        {
+          concurrency: "unbounded",
+        },
+      ),
+    );
 
-      for (const { cvd, tableName } of clientViewDataWithTable) {
-        const keys = setKeys.get(tableName) ?? [];
-        for (const { id, version } of cvd) {
-          const prevVersion = (
-            spaceRecord[subspaceId] as Record<string, number | undefined>
-          )[id];
-          if (prevVersion === undefined || prevVersion < version) {
-            keys.push(id);
-          }
-        }
-        setKeys.set(tableName, keys);
-      }
-      for (const key of Object.keys(
-        spaceRecord[subspaceId] as Record<string, number>,
-      )) {
-        if (cvd[key] === undefined) {
-          delKeys.push(key);
-        }
-      }
-      newSpaceRecord[subspaceId] =
-        cvd as (typeof spaceRecord)[typeof subspaceId];
-    }
-
-    const fullItemsPromises: Promise<Record<string, unknown>[]>[] = [];
-    for (const [tableName, keys] of setKeys.entries()) {
-      fullItemsPromises.push(getFullItems({ tableName, keys, transaction }));
-    }
-    const fullItems = (await Promise.all(fullItemsPromises)).flat();
+    const fullItems = yield* _(
+      Effect.forEach(
+        setKeys.entries(),
+        ([tableName, keys]) => {
+          return Effect.gen(function* (_) {
+            const fullItems = yield* _(
+              getFullItems({ tableName, keys, transaction }),
+            );
+            return fullItems;
+          });
+        },
+        { concurrency: "unbounded" },
+      ),
+    );
 
     const patch: PatchOperation[] = [];
     for (const key of delKeys) {
@@ -148,23 +164,20 @@ export const getPatch = async <T extends SpaceId>({
         key,
       });
     }
-    for (const item of fullItems) {
+    for (const item of fullItems.flat()) {
       if (item)
         patch.push({
           op: "put",
-          key: item["id"] as string,
+          key: (item as { id: string }).id,
           value: item as ReadonlyJSONObject,
         });
     }
 
     return { patch, newSpaceRecord };
-  } catch (error) {
-    console.log(error);
-    throw new Error("failed to get changed entries");
-  }
+  });
 };
 
-const getResetPatch = async <T extends SpaceId>({
+const getResetPatch = <T extends SpaceId>({
   spaceId,
   transaction,
   userId,
@@ -172,159 +185,174 @@ const getResetPatch = async <T extends SpaceId>({
   spaceId: T;
   userId: string | undefined;
   transaction: Transaction;
-}): Promise<{ patch: PatchOperation[]; newSpaceRecord: SpaceRecords[T] }> => {
-  try {
-    console.log("getting reset patch");
+}): Effect.Effect<
+  never,
+  never,
+  { patch: PatchOperation[]; newSpaceRecord: SpaceRecords[T] }
+> =>
+  Effect.gen(function* (_) {
     const patch: PatchOperation[] = [
       {
-        op: "clear",
+        op: "clear" as const,
       },
     ];
     const newSpaceRecord: SpaceRecords[T] = {} as SpaceRecords[T];
-    const subspaceClientView: Record<
-      keyof SpaceRecords[T],
-      ClientViewDataWithTable
-    > = {} as Record<keyof SpaceRecords[T], ClientViewDataWithTable>;
     const subspaces = Object.keys(
       spaceRecords[spaceId],
     ) as (keyof SpaceRecords[T])[];
-    await Promise.all(
-      subspaces.map(async (subspaceId) => {
-        const clientViewDataWithTable = await getClientViewDataWithTables({
-          spaceId,
-          subspaceId,
-          transaction,
-          userId,
-        });
-        subspaceClientView[subspaceId] = clientViewDataWithTable;
-      }),
-    );
-    for (const [subspaceId_, clientViewDataWithTable_] of Object.entries(
-      subspaceClientView,
-    )) {
-      const subspaceId = subspaceId_ as keyof (typeof spaceRecords)[T];
-      const clientViewDataWithTable =
-        clientViewDataWithTable_ as ClientViewDataWithTable;
-      const cvd = makeClientViewData({
-        items: clientViewDataWithTable,
-      });
-      console.log("cvd", cvd);
-      newSpaceRecord[subspaceId] =
-        cvd as (typeof spaceRecords)[T][typeof subspaceId];
-
-      for (const { cvd } of clientViewDataWithTable) {
-        for (const item of cvd) {
-          patch.push({
-            op: "put",
-            key: item.id,
-            value: item as ReadonlyJSONObject,
+    const subspaceClientView = yield* _(
+      Effect.forEach(
+        subspaces,
+        (subspaceId) => {
+          return Effect.gen(function* (_) {
+            const clientViewDataWithTable = yield* _(
+              getClientViewDataWithTables({
+                spaceId,
+                subspaceId,
+                transaction,
+                ...(userId && { userId }),
+                isFullItems: true,
+              }).pipe(
+                Effect.orDieWith((e) =>
+                  withDieErrorLogger(e, "location: data getPatch"),
+                ),
+              ),
+            );
+            return {
+              subspaceId,
+              clientViewDataWithTable,
+            };
           });
-        }
-      }
-    }
+        },
+        {
+          concurrency: "unbounded",
+        },
+      ),
+    );
+    yield* _(
+      Effect.forEach(
+        subspaceClientView,
+        ({ subspaceId, clientViewDataWithTable }) => {
+          return Effect.sync(() => {
+            const cvd = makeClientViewData(clientViewDataWithTable);
+            newSpaceRecord[subspaceId] =
+              cvd as SpaceRecords[T][typeof subspaceId];
+            for (const { cvd } of clientViewDataWithTable) {
+              for (const item of cvd) {
+                patch.push({
+                  op: "put",
+                  key: item.id,
+                  value: item as ReadonlyJSONObject,
+                });
+              }
+            }
+          });
+        },
+        {
+          concurrency: "unbounded",
+        },
+      ),
+    );
 
     return { patch, newSpaceRecord };
-  } catch (error) {
-    console.log(error);
-    throw new Error("failed to get reset patch");
-  }
-};
+  });
 
-export const setItems = async (
+export const setItems = (
   props: Map<TableName, { id: string; value: ReadonlyJSONObject }[]>,
 
   userId: string | undefined,
   transaction: Transaction,
-) => {
-  if (!userId) return;
-  try {
-    const queries = [];
-    console.log("set items", props);
-    for (const [tableName, items] of props.entries()) {
-      queries.push(setItems_({ tableName, items, transaction }));
-    }
-    return await Promise.all(queries);
-  } catch (error) {
-    console.log(error);
-    throw new Error("failed to set items");
-  }
-};
-export const updateItems = async (
-  props: Map<TableName, { id: string; value: ReadonlyJSONObject }[]>,
-  userId: string | undefined,
-  transaction: Transaction,
-) => {
-  if (!userId) return;
-  const queries = [];
-  for (const [tableName, values] of props.entries()) {
-    queries.push(
-      updateItems_({
-        tableName,
-        items: values,
-        userId,
-        transaction,
-      }),
+): Effect.Effect<never, never, void> => {
+  return Effect.gen(function* (_) {
+    if (!userId) return;
+    yield* _(
+      Effect.forEach(
+        props.entries(),
+        ([tableName, items]) => {
+          return setItems_({ tableName, items, transaction });
+        },
+        {
+          concurrency: "unbounded",
+        },
+      ),
     );
-  }
-  return Promise.all(queries.flat());
+  });
 };
 
-export const deleteItems = async (
+export const updateItems = (
+  props: Map<TableName, { id: string; value: ReadonlyJSONObject }[]>,
+  userId: string | undefined,
+  transaction: Transaction,
+): Effect.Effect<never, PermissionDenied, void> =>
+  Effect.gen(function* (_) {
+    if (!userId) return;
+    const effects: Array<Effect.Effect<never, PermissionDenied, void>> = [];
+    for (const [tableName, items] of props.entries()) {
+      effects.push(updateItems_({ tableName, items, userId, transaction }));
+    }
+    yield* _(Effect.all(effects, { concurrency: "unbounded" }));
+  });
+
+export const deleteItems = (
   props: Map<TableName, string[]>,
   userId: string | undefined,
   transaction: Transaction,
-) => {
-  if (!userId) return;
-  const queries = [];
-  try {
+): Effect.Effect<never, never, void> =>
+  Effect.gen(function* (_) {
+    if (!userId) return;
+    const effects: Array<Effect.Effect<never, never, void>> = [];
     for (const [tableName, keys] of props.entries()) {
-      queries.push(deleteItems_({ tableName, keys, userId, transaction }));
+      effects.push(deleteItems_({ tableName, keys, userId, transaction }));
     }
-    console.log("delete queries", queries);
-    return await Promise.all(queries);
-  } catch (error) {
-    console.log(error);
-    throw new Error("failed to delete items");
-  }
-};
-export const getPrevSpaceRecord = async ({
+    yield* _(Effect.all(effects, { concurrency: "unbounded" }));
+  });
+
+export const getPrevSpaceRecord = <T extends SpaceId>({
   key,
   transaction,
-  spaceId,
 }: {
   key: string | undefined;
   transaction: Transaction;
-  spaceId: SpaceId;
-}) => {
-  if (!key) {
+  spaceId: T;
+}): Effect.Effect<never, never, SpaceRecords[T] | undefined> =>
+  Effect.gen(function* (_) {
+    if (!key) {
+      return undefined;
+    }
+    const spaceRecord = yield* _(
+      Effect.tryPromise(() =>
+        transaction.query.jsonTable.findFirst({
+          where: (json, { eq }) => eq(json.id, key),
+        }),
+      ).pipe(
+        Effect.orDieWith((e) =>
+          withDieErrorLogger(e, "getPrevSpaceRecord error"),
+        ),
+      ),
+    );
+    if (spaceRecord?.value) return spaceRecord.value as SpaceRecords[T];
     return undefined;
-  }
+  });
 
-  try {
-    const spaceRecord = await transaction.query.jsonTable.findFirst({
-      where: (json, { eq }) => eq(json.id, key),
-    });
-    if (spaceRecord) return spaceRecord.value as SpaceRecords[typeof spaceId];
-
-    return undefined;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to get prev clientViewData");
-  }
-};
-
-export const getClientGroupObject = async ({
+export const getClientGroupObject = ({
   clientGroupID,
   transaction,
 }: {
   clientGroupID: string;
   transaction: Transaction;
-}): Promise<ClientGroupObject> => {
-  try {
-    const clientViewData =
-      await transaction.query.replicacheClientGroups.findFirst({
-        where: (clientGroup, { eq }) => eq(clientGroup.id, clientGroupID),
-      });
+}): Effect.Effect<never, never, ClientGroupObject> =>
+  Effect.gen(function* (_) {
+    const clientViewData = yield* _(
+      Effect.tryPromise(() =>
+        transaction.query.replicacheClientGroups.findFirst({
+          where: (clientGroup, { eq }) => eq(clientGroup.id, clientGroupID),
+        }),
+      ).pipe(
+        Effect.orDieWith((e) =>
+          withDieErrorLogger(e, "getClientGroupObject error"),
+        ),
+      ),
+    );
 
     if (clientViewData) return clientViewData;
     else
@@ -333,32 +361,32 @@ export const getClientGroupObject = async ({
         spaceRecordVersion: 0,
         clientVersion: 0,
       };
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to get clientGroupObject");
-  }
-};
+  });
 
-export const setClientGroupObject = async ({
+export const setClientGroupObject = ({
   transaction,
   clientGroupObject,
 }: {
   transaction: Transaction;
   clientGroupObject: ClientGroupObject;
-}) => {
-  try {
-    return await transaction.insert(replicacheClientGroups).values({
-      id: clientGroupObject.id,
-      spaceRecordVersion: clientGroupObject.spaceRecordVersion,
-      clientVersion: clientGroupObject.clientVersion,
-    });
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to set clientGroupObject");
-  }
-};
+}): Effect.Effect<never, never, void> =>
+  Effect.gen(function* (_) {
+    yield* _(
+      Effect.tryPromise(() =>
+        transaction.insert(replicacheClientGroups).values({
+          id: clientGroupObject.id,
+          spaceRecordVersion: clientGroupObject.spaceRecordVersion,
+          clientVersion: clientGroupObject.clientVersion,
+        }),
+      ).pipe(
+        Effect.orDieWith((e) =>
+          withDieErrorLogger(e, "setClientGroupObject error"),
+        ),
+      ),
+    );
+  });
 
-export const setSpaceRecord = async <T extends SpaceId>({
+export const setSpaceRecord = <T extends SpaceId>({
   key,
   spaceRecord,
   transaction,
@@ -366,34 +394,40 @@ export const setSpaceRecord = async <T extends SpaceId>({
   key: string;
   spaceRecord: SpaceRecords[T];
   transaction: Transaction;
-}) => {
-  try {
-    await transaction.insert(jsonTable).values({
-      id: key,
-      value: spaceRecord,
-    });
-  } catch (error) {
-    console.log(error);
-    throw new Error("failed to set clientViewData");
-  }
-};
+}): Effect.Effect<never, never, void> =>
+  Effect.gen(function* (_) {
+    yield* _(
+      Effect.tryPromise(() =>
+        transaction.insert(jsonTable).values({
+          id: key,
+          value: spaceRecord,
+        }),
+      ).pipe(
+        Effect.orDieWith((e) => withDieErrorLogger(e, "setSpaceRecord error")),
+      ),
+    );
+  });
 
-export const deleteSpaceRecord = async ({
+export const deleteSpaceRecord = ({
   key,
   transaction,
 }: {
   key: string | undefined;
   transaction: Transaction;
-}) => {
-  if (!key) return;
-  try {
-    return await transaction.delete(jsonTable).where(eq(jsonTable.id, key));
-  } catch (error) {
-    console.log(error);
-    throw new Error("failed to delete clientViewRecord");
-  }
-};
-export const setLastMutationIdsAndVersions = async ({
+}): Effect.Effect<never, never, void> =>
+  Effect.gen(function* (_) {
+    if (!key) return;
+    yield* _(
+      Effect.tryPromise(() =>
+        transaction.delete(jsonTable).where(eq(jsonTable.id, key)),
+      ).pipe(
+        Effect.orDieWith((e) =>
+          withDieErrorLogger(e, "delete space record error"),
+        ),
+      ),
+    );
+  });
+export const setLastMutationIdsAndVersions = ({
   clientGroupID,
   lastMutationIdsAndVersions,
   transaction,
@@ -404,8 +438,8 @@ export const setLastMutationIdsAndVersions = async ({
     { lastMutationID: number; version: number }
   >;
   transaction: Transaction;
-}) => {
-  try {
+}): Effect.Effect<never, never, void> =>
+  Effect.gen(function* (_) {
     const setLastMutationIdsAndVersionsPrepared = transaction
       .insert(replicacheClients)
       .values({
@@ -425,22 +459,25 @@ export const setLastMutationIdsAndVersions = async ({
       })
       .prepare("lm");
 
-    const executionPromises = Object.entries(lastMutationIdsAndVersions).map(
+    const executionEffects = Object.entries(lastMutationIdsAndVersions).map(
       ([key, { lastMutationID, version }]) =>
-        setLastMutationIdsAndVersionsPrepared.execute({
-          key,
-          lastMutationID,
-          version,
-          clientGroupID,
-        }),
+        Effect.tryPromise(() =>
+          setLastMutationIdsAndVersionsPrepared.execute({
+            key,
+            lastMutationID,
+            version,
+            clientGroupID,
+          }),
+        ).pipe(
+          Effect.orDieWith((e) =>
+            withDieErrorLogger(e, "setLastMutationIdsAndVersions error"),
+          ),
+        ),
     );
-    return Promise.all(executionPromises);
-  } catch (error) {
-    console.log(error);
-    throw new Error("Transact update lastMutationIds failed");
-  }
-};
-export const getLastMutationIdsSince = async ({
+    yield* _(Effect.all(executionEffects, { concurrency: "unbounded" }));
+  });
+
+export const getLastMutationIdsSince = ({
   clientGroupID,
   clientVersion,
   transaction,
@@ -448,30 +485,30 @@ export const getLastMutationIdsSince = async ({
   clientGroupID: string;
   clientVersion: number;
   transaction: Transaction;
-}): Promise<{
-  lastMutationIDChanges: Record<string, number>;
-}> => {
-  try {
+}): Effect.Effect<
+  never,
+  never,
+  { lastMutationIDChanges: Record<string, number> }
+> =>
+  Effect.gen(function* (_) {
     if (clientVersion === 0) {
       return {
         lastMutationIDChanges: {},
       };
     }
-    const lastMutationIDChanges = await getLastMutationIDChanges({
-      clientGroupID,
-      clientVersion,
-      transaction,
-    });
+    const lastMutationIDChanges = yield* _(
+      getLastMutationIDChanges({
+        clientGroupID,
+        clientVersion,
+        transaction,
+      }),
+    );
 
     return {
       lastMutationIDChanges,
     };
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to get client IDS that changed");
-  }
-};
-export const getClientLastMutationIdsAndVersion = async ({
+  });
+export const getClientLastMutationIdsAndVersion = ({
   clientIDs,
   clientGroupID,
   transaction,
@@ -479,16 +516,18 @@ export const getClientLastMutationIdsAndVersion = async ({
   clientIDs: string[];
   clientGroupID: string;
   transaction: Transaction;
-}) => {
-  try {
-    const result = await getClientLastMutationIdAndVersion_({
-      clientGroupID,
-      clientIDs,
-      transaction,
-    });
+}): Effect.Effect<
+  never,
+  never,
+  Record<string, { lastMutationID: number; version: number }>
+> =>
+  Effect.gen(function* (_) {
+    const result = yield* _(
+      getClientLastMutationIdAndVersion_({
+        clientGroupID,
+        clientIDs,
+        transaction,
+      }),
+    );
     return result;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to get client IDS");
-  }
-};
+  });

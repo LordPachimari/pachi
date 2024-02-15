@@ -1,21 +1,22 @@
-import { eq } from "drizzle-orm";
+import { Effect, pipe } from "effect";
+import { log } from "effect/Console";
 
-import { type User } from "@pachi/db";
-import type { ClientViewDataWithTable } from "@pachi/types";
+import { withDieErrorLogger } from "@pachi/utils";
 
-import type { GetClientViewData } from "../types";
+import type { GetClientViewDataWithTable } from "../types";
 
-export const storeCVD: GetClientViewData = async ({
+export const storeCVD: GetClientViewDataWithTable = ({
   transaction,
   userId,
   isFullItems = false,
 }) => {
-  if (!userId) return [{ cvd: [], tableName: "products" }];
-  const [user] = (
-    isFullItems
-      ? await Promise.all([
-          transaction.query.users.findFirst({
-            where: (user) => eq(user.id, userId),
+  if (!userId) return Effect.succeed([{ cvd: [], tableName: "products" }]);
+
+  const cvd = pipe(
+    Effect.tryPromise(() =>
+      isFullItems
+        ? transaction.query.users.findFirst({
+            where: (user, { eq }) => eq(user.id, userId),
             with: {
               stores: {
                 with: {
@@ -44,11 +45,9 @@ export const storeCVD: GetClientViewData = async ({
                 },
               },
             },
-          }),
-        ])
-      : await Promise.all([
-          transaction.query.users.findFirst({
-            where: (users) => eq(users.id, userId),
+          })
+        : transaction.query.users.findFirst({
+            where: (users, { eq }) => eq(users.id, userId),
             with: {
               stores: {
                 columns: {
@@ -66,21 +65,23 @@ export const storeCVD: GetClientViewData = async ({
               },
             },
           }),
-        ])
-  ) as [user: User | undefined];
-  const cvd: ClientViewDataWithTable = [];
-
-  for (const store of user?.stores ?? []) {
-    cvd.push({
-      cvd: store.products ?? [],
-      tableName: "products",
-    });
-    delete store.products;
-    cvd.push({
-      cvd: [store],
-      tableName: "stores",
-    });
-  }
+    ),
+    Effect.map(
+      (data) =>
+        data?.stores.map((store) => [
+          {
+            cvd: [store],
+            tableName: "stores" as const,
+          },
+          {
+            cvd: store.products,
+            tableName: "products" as const,
+          },
+        ]),
+    ),
+    Effect.map((data) => data?.flat() ?? []),
+    Effect.orDieWith((e) => withDieErrorLogger(e, "StoreCVD space record")),
+  );
 
   return cvd;
 };

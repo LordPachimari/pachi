@@ -1,13 +1,15 @@
+import { Effect } from "effect";
+
 import type { Store } from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
+import { ServerContext } from "../../context/server";
 import { CreateUserSchema } from "../../input-schema/user";
 import { zod } from "../../util/zod";
-import type { ServerProps } from "../initialize";
 
-function createUser(props: ServerProps) {
-  const { replicacheTransaction, repositories } = props;
-  return zod(CreateUserSchema, async (input) => {
+const createUser = zod(CreateUserSchema, (input) =>
+  Effect.gen(function* (_) {
+    const { replicacheTransaction, repositories } = yield* _(ServerContext);
     const { user } = input;
 
     const newStoreId = generateId({ prefix: "store", id: user.id });
@@ -19,8 +21,8 @@ function createUser(props: ServerProps) {
       founderId: user.id,
     };
 
-    await repositories.userRepository.insertUser({ user });
+    yield* _(repositories.userRepository.insertUser({ user }));
     replicacheTransaction.set(store.id, store, "stores");
-  });
-}
+  }),
+);
 export { createUser };

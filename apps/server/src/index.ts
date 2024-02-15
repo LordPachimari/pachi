@@ -1,8 +1,9 @@
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
+import { Effect } from "effect";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { object, string } from "valibot";
+import { z } from "zod";
 
 import { pull, push, type Bindings } from "@pachi/api";
 import {
@@ -79,12 +80,13 @@ app.post("/pull/:spaceId", async (c) => {
 
   const db = drizzle(pool, { schema });
 
-  const pullResponse = await pull({
+  const pullEffect = pull({
     body: json,
     db,
     spaceId: spaceId as SpaceId,
     userId: userId,
-  });
+  }).pipe(Effect.orDie);
+  const pullResponse = await Effect.runPromise(pullEffect);
   return c.json(pullResponse, 200);
 });
 app.post("/push/:spaceId", async (c) => {
@@ -106,7 +108,7 @@ app.post("/push/:spaceId", async (c) => {
 
   const db = drizzle(pool, { schema });
 
-  await push({
+  const pushEffect = push({
     body: json,
     db,
     spaceId: spaceId as SpaceId,
@@ -115,7 +117,8 @@ app.post("/push/:spaceId", async (c) => {
       ip: c.req.raw.headers.get("cf-connecting-ip"),
       userAgent: c.req.raw.headers.get("user-agent"),
     },
-  });
+  }).pipe(Effect.orDie);
+  await Effect.runPromise(pushEffect);
   return c.json({}, 200);
 });
 app.post("/currencies", async (c) => {
@@ -172,7 +175,11 @@ app.post("/create-user", async (c) => {
   };
 
   try {
-    object({ username: string(), email: string(), userId: string() })._parse({
+    z.object({
+      username: z.string(),
+      email: z.string(),
+      userId: z.string(),
+    }).parse({
       username,
       email,
       userId,

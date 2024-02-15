@@ -20,10 +20,12 @@
     "@pachi/types": "^0.1.0",
     "@pachi/utils": "^0.1.0",
     "drizzle-orm": "^0.29.0",
+    "effect": "^2.2.0",
     "hono": "^3.7.2",
     "jose": "^4.15.2",
     "lucia": "^2.7.5",
-    "valibot": "^0.17.1"
+    "valibot": "^0.17.1",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230922.0",
