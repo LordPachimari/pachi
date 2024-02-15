@@ -5,7 +5,6 @@ import { type ProductVariant } from "@pachi/db";
 import { NotFound } from "@pachi/types";
 import { generateId, ulid } from "@pachi/utils";
 
-import { ServerContext } from "../../context/server";
 import {
   AssignProductOptionValueToVariantSchema,
   CreateProductOptionSchema,
@@ -27,6 +26,7 @@ import {
   UploadProductImagesSchema,
 } from "../../input-schema/product";
 import { zod } from "../../util/zod";
+import { ServerContext } from "../context";
 
 const createProduct = zod(CreateProductSchema, (input) =>
   Effect.gen(function* (_) {

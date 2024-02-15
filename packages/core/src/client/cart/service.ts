@@ -3,7 +3,7 @@ import { Effect } from "effect";
 import type { Cart } from "@pachi/db";
 import { NotFound } from "@pachi/types";
 
-import { ClientContext } from "../../context/client";
+import { ClientContext } from "../context";
 
 export const CartService = {
   createCart: ({ cart }: { cart: Cart }) =>

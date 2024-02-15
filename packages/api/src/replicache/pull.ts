@@ -12,17 +12,19 @@ import {
   setSpaceRecord,
 } from "@pachi/core";
 import type { Db } from "@pachi/db";
-import type { Cookie, PullRequest, SpaceId } from "@pachi/types";
+import type { Cookie, PullRequest, SpaceId, SpaceRecords } from "@pachi/types";
 import { pullRequestSchema } from "@pachi/types";
 import { withDieErrorLogger } from "@pachi/utils";
 
-export const pull = ({
+export const pull = <T extends SpaceId>({
   spaceId,
   body,
   userId,
   db,
+  subspaceIds,
 }: {
-  spaceId: SpaceId;
+  spaceId: T;
+  subspaceIds: (keyof SpaceRecords[T])[] | undefined;
   body: PullRequest;
   userId: string | undefined;
   db: Db;
@@ -36,8 +38,15 @@ export const pull = ({
     );
 
     const pull = pullRequestSchema.safeParse(body);
+    const parsedSubspaceIds = z
+      .array(z.string())
+      .optional()
+      .safeParse(subspaceIds);
     if (pull.success === false) {
       return yield* _(Effect.fail(pull.error));
+    }
+    if (parsedSubspaceIds.success === false) {
+      return yield* _(Effect.fail(parsedSubspaceIds.error));
     }
 
     const requestCookie = pull.data.cookie;
@@ -80,6 +89,9 @@ export const pull = ({
                 spaceId,
                 userId,
                 transaction,
+                subspaceIds: parsedSubspaceIds.data as
+                  | (keyof SpaceRecords[T])[]
+                  | undefined,
               });
 
               const lastMutationIDsEffect = getLastMutationIdsSince({

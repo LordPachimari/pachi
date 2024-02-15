@@ -3,9 +3,9 @@ import { Effect } from "effect";
 import type { Store } from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
-import { ServerContext } from "../../context/server";
 import { CreateUserSchema } from "../../input-schema/user";
 import { zod } from "../../util/zod";
+import { ServerContext } from "../context";
 
 const createUser = zod(CreateUserSchema, (input) =>
   Effect.gen(function* (_) {

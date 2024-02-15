@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@lucia-auth/adapter-postgresql": "^2.0.2",
+    "@lucia-auth/adapter-postgresql": "^3.0.1",
     "@pachi/api": "^0.1.0",
     "@pachi/db": "^0.1.0",
     "@pachi/types": "^0.1.0",
@@ -23,7 +23,7 @@
     "effect": "^2.2.0",
     "hono": "^3.7.2",
     "jose": "^4.15.2",
-    "lucia": "^2.7.5",
+    "lucia": "^3.0.1",
     "valibot": "^0.17.1",
     "zod": "^3.22.2"
   },

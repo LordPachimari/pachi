@@ -7,7 +7,7 @@ import { cartItems } from "@pachi/db/schema";
 import { NotFound } from "@pachi/types";
 import { withDieErrorLogger } from "@pachi/utils";
 
-import { ServerContext } from "../../context/server";
+import { ServerContext } from "../context";
 
 export const CartService = {
   updateCartTotals: ({ cartId }: { cartId: string }) =>

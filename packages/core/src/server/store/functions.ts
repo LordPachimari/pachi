@@ -1,8 +1,8 @@
 import { Effect } from "effect";
 
-import { ServerContext } from "../../context/server";
 import { CreateStoreSchema, UpdateStoreSchema } from "../../input-schema/store";
 import { zod } from "../../util/zod";
+import { ServerContext } from "../context";
 
 const createStore = zod(CreateStoreSchema, (input) =>
   Effect.gen(function* (_) {

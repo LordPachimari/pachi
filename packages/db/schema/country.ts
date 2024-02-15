@@ -12,9 +12,9 @@ import { regions } from "./region";
 export const countries = pgTable(
   "countries",
   {
-    id: varchar("id").notNull().primaryKey(),
+    id: varchar("id"),
     displayName: varchar("displayName"),
-    countryCode: varchar("countryCode"),
+    countryCode: varchar("countryCode").primaryKey(),
     name: varchar("name"),
     numCode: varchar("numCode"),
     regionId: varchar("regionId").references(() => regions.id),
@@ -22,7 +22,6 @@ export const countries = pgTable(
   },
   (country) => ({
     regionIdIndex: index("regionIdIndex").on(country.regionId),
-    countryCodeIndex: uniqueIndex("countryCodeIndex").on(country.countryCode),
   }),
 );
 export const countryRelations = relations(countries, ({ one }) => ({

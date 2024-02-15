@@ -1,13 +1,13 @@
 import { Context } from "effect";
 
-import type { Transaction } from "@pachi/db";
+import type { Db, Transaction } from "@pachi/db";
 import type { RequestHeaders } from "@pachi/types";
 
+import type { RepositoriesType, ServicesType } from ".";
 import type { ReplicacheTransaction } from "../replicache";
-import type { RepositoriesType, ServicesType } from "../server";
 
 export interface ServerContext {
-  transaction: Transaction;
+  manager: Transaction | Db;
   userId: string | undefined;
   requestHeaders: RequestHeaders | undefined;
   services: ServicesType;

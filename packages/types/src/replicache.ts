@@ -37,12 +37,6 @@ export const spaceRecords: SpaceRecords = {
   },
 };
 
-export const mutationNames = [
-  "createProduct",
-  "updateProduct",
-  "deleteProduct",
-] as const;
-
 export const mutationAffectedSpaces = {
   createProduct: {
     dashboard: ["store"] as const,
@@ -110,7 +104,29 @@ export const mutationAffectedSpaces = {
     dashboard: ["store"] as const,
   },
 };
-
+const mutationNames = [
+  "createProduct",
+  "updateProduct",
+  "deleteProduct",
+  "deleteProductVariant",
+  "publishProduct",
+  "draftProduct",
+  "createProductOption",
+  "updateProductOption",
+  "deleteProductOption",
+  "updateProductOptionValues",
+  "uploadProductImages",
+  "updateImagesOrder",
+  "createProductVariant",
+  "updateProductVariant",
+  "updatePrice",
+  "createStore",
+  "createUser",
+  "updateStore",
+  "createPrices",
+  "deletePrices",
+  "assignProductOptionValueToVariant",
+] as const;
 export const MutationNamesSchema = z.enum(mutationNames);
 
 export type Mutation = z.infer<typeof mutationSchema>;
