@@ -6,7 +6,7 @@ import type { z } from "zod";
 
 import type { NotFound } from "@pachi/types";
 
-import type { ServerContext } from "../server/context";
+import type { ServerContext } from "../server";
 
 export function zod<Schema extends z.ZodSchema<any, any, any>>(
   schema: Schema,

@@ -5,15 +5,12 @@ import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import { generateId, Lucia, verifyRequestOrigin } from "lucia";
-import { Argon2id } from "oslo/password";
 import { z } from "zod";
-
 import { adapter, pull, push } from "@pachi/api";
 import { schema, type Country, type Currency, type User } from "@pachi/db";
 import {
   countries as countriesTable,
   currencies,
-  stores,
   users,
 } from "@pachi/db/schema";
 import {

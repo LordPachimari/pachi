@@ -38,9 +38,9 @@ const tableName = [
   "json",
 ] as const;
 export const pool = new Pool({
-  connectionString: "",
+  connectionString: process.env["DATABASE_URL"],
 });
-const db = drizzle(pool, { schema });
+export const db = drizzle(pool, { schema });
 
 export const TableNameSchema = enumType(tableName);
 export type TableName = Output<typeof TableNameSchema>;

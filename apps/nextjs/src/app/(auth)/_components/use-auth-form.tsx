@@ -3,43 +3,44 @@
 
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
-import { useForm } from "@tanstack/react-form";
-import { zodValidator } from "@tanstack/zod-form-adapter";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
 import { cn } from "@pachi/utils";
 
-import { Button, buttonVariants } from "~/components/ui/button";
+import { buttonVariants } from "~/components/ui/button";
+import { Icons } from "~/components/ui/icons";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { env } from "~/env.mjs";
 
-const userAuthSchema = z.object({
+const UserAuthSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters" }),
 });
-type UserAuthSchema = z.infer<typeof userAuthSchema>;
-
+type UserAuth = z.infer<typeof UserAuthSchema>;
 export function UserAuthForm({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const form = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-    onSubmit: async ({ value, formApi }) => {
-      console.log("value", value);
-    },
-    validatorAdapter: zodValidator,
-  });
-
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
   const searchParams = useSearchParams();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UserAuth>({
+    resolver: zodResolver(UserAuthSchema),
+  });
 
-  async function onSubmit({ value }: { value: UserAuthSchema }) {
+  async function onSubmit(value: UserAuth) {
+    setIsLoading(true);
+    console.log("value", value);
     const registerEffect = fetch(
       `${
         env.VERCEL_URL === "local"
@@ -67,134 +68,94 @@ export function UserAuthForm({
           .parse(data);
       });
     const { message, type } = React.use(registerEffect);
+    setIsLoading(false);
+
     if (type === "FAIL") {
       toast.error(message);
     } else {
       toast.success(message);
     }
+    setIsLoading(false);
   }
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      <form.Provider>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            void form.handleSubmit();
-          }}
-        >
-          <div className="grid gap-2">
-            <form.Field
-              name="email"
-              validators={{
-                onChange: z
-                  .string()
-                  .min(3, "Password must be at least 3 characters"),
-              }}
-              children={({ form, name, state }) => {
-                console.log("errors", state.meta.touchedErrors);
-                return (
-                  <>
-                    <Label className="sr-only" htmlFor="email">
-                      Email
-                    </Label>
-                    <Input
-                      id={name}
-                      placeholder="name@example.com"
-                      type="email"
-                      autoCapitalize="none"
-                      autoComplete="email"
-                      autoCorrect="off"
-                      disabled={form.state.isSubmitting}
-                    />
-                    {state.meta.touchedErrors && (
-                      <p className="px-1 text-xs text-red-600">
-                        {state.meta.touchedErrors}
-                      </p>
-                    )}
-                  </>
-                );
-              }}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid gap-2">
+          <div className="grid gap-1">
+            <Label className="sr-only" htmlFor="email">
+              Email
+            </Label>
+            <Input
+              id="email"
+              placeholder="name@example.com"
+              type="email"
+              autoCapitalize="none"
+              autoComplete="email"
+              autoCorrect="off"
+              disabled={isLoading || isGoogleLoading}
+              {...register("email")}
             />
+            {errors?.email && (
+              <p className="px-1 text-xs text-red-600">
+                {errors.email.message}
+              </p>
+            )}
           </div>
-          <div className="grid gap-2">
-            <form.Field
-              name="password"
-              children={({ form, name, state }) => {
-                return (
-                  <>
-                    <Label className="sr-only" htmlFor="email">
-                      Password
-                    </Label>
-                    <Input
-                      id={name}
-                      placeholder="password"
-                      type="password"
-                      autoCapitalize="none"
-                      autoComplete="email"
-                      autoCorrect="off"
-                      disabled={form.state.isSubmitting}
-                      className={cn({
-                        "border-red-500":
-                          state.meta.touchedErrors.length > 0 &&
-                          state.meta.touchedErrors,
-                      })}
-                    />
-                    {state.meta.touchedErrors && (
-                      <p className="px-1 text-xs text-red-600">
-                        {state.meta.touchedErrors}
-                      </p>
-                    )}
-                  </>
-                );
-              }}
+          <div className="grid gap-1">
+            <Label className="sr-only" htmlFor="email">
+              Password
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="password"
+              disabled={isLoading || isGoogleLoading}
+              {...register("password")}
             />
-          </div>
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
-              <Button
-                variant={"outline"}
-                type="submit"
-                className="w-full"
-                onClick={() => {
-                  setIsGoogleLoading(true);
-                }}
-                disabled={isSubmitting ?? isGoogleLoading}
-              >
-                Enter
-              </Button>
+            {errors?.password && (
+              <p className="px-1 text-xs text-red-600">
+                {errors.password.message}
+              </p>
             )}
-          />
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 py-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
           </div>
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
-              <Button
-                variant={"outline"}
-                type="button"
-                className="w-full"
-                onClick={() => {
-                  setIsGoogleLoading(true);
-                }}
-                disabled={isSubmitting ?? isGoogleLoading}
-              >
-                Google
-              </Button>
+          <button
+            className={cn(buttonVariants())}
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-          />
-        </form>
-      </form.Provider>
+            Enter
+          </button>
+        </div>
+      </form>
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            Or continue with
+          </span>
+        </div>
+      </div>
+      <button
+        type="button"
+        className={cn(buttonVariants({ variant: "outline" }))}
+        onClick={() => {
+          setIsGoogleLoading(true);
+        }}
+        disabled={isLoading || isGoogleLoading}
+      >
+        {isGoogleLoading ? (
+          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <Icons.google className="mr-2 h-4 w-4" />
+        )}{" "}
+        Google
+      </button>
     </div>
   );
 }
