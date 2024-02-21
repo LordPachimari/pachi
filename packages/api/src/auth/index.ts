@@ -5,7 +5,7 @@ import { Lucia } from "lucia";
 const databaseUrl = process.env["DATABASE_URL"]!;
 const sql = neon(databaseUrl);
 
-const adapter = new NeonHTTPAdapter(sql, {
+export const adapter = new NeonHTTPAdapter(sql, {
   user: "user",
   session: "user_session",
 });

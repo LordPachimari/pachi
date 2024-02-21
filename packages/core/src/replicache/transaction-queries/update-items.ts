@@ -17,7 +17,7 @@ export const updateItems_ = ({
   items: { id: string; value: ReadonlyJSONObject }[];
   userId: string;
   transaction: Transaction;
-}): Effect.Effect<never, PermissionDenied, void> =>
+}): Effect.Effect<void, PermissionDenied, never> =>
   Effect.gen(function* (_) {
     const effects = items.map(({ id, value }) => {
       if (tableName === "users")

@@ -12,7 +12,7 @@ export const setItems_ = ({
 
   items: { id: string | Record<string, string>; value: ReadonlyJSONObject }[];
   transaction: Transaction;
-}): Effect.Effect<never, never, void> => {
+}): Effect.Effect<void, never, never> => {
   const table = tableNamesMap[tableName];
   const itemsToPut = items.map(({ value }) => value);
 

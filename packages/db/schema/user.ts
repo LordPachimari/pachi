@@ -16,7 +16,7 @@ export const users = pgTable(
     id: varchar("id").notNull().primaryKey(),
     lastName: varchar("lastName"),
     firstName: varchar("firstName"),
-    username: varchar("username").notNull(),
+    username: varchar("username"),
     createdAt: varchar("createdAt").notNull(),
     email: varchar("email").notNull(),
     about: text("about"),
@@ -27,7 +27,7 @@ export const users = pgTable(
     billingAddressId: varchar("billingAddressId"),
     updatedAt: varchar("updatedAt"),
     phone: varchar("phone"),
-    total: integer("total"),
+    hashedPassword: varchar("hashedPassword").notNull(),
   },
   (users) => ({
     emailIndex: uniqueIndex("emailIndex").on(users.email),

@@ -16,7 +16,7 @@ const createUser = zod(CreateUserSchema, (input) =>
     const store: Store = {
       id: newStoreId,
       createdAt: new Date().toISOString(),
-      name: user.username,
+      name: user.username ?? "store",
       version: 1,
       founderId: user.id,
     };

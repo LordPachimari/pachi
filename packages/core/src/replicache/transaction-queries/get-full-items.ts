@@ -13,7 +13,7 @@ export const getFullItems = ({
   tableName: TableName;
   keys: string[];
   transaction: Transaction;
-}): Effect.Effect<never, never, Array<Record<string, unknown>>> => {
+}): Effect.Effect<Array<Record<string, unknown>>, never, never> => {
   if (keys.length === 0) {
     return Effect.succeed([]);
   }

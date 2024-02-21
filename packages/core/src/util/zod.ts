@@ -12,7 +12,7 @@ export function zod<Schema extends z.ZodSchema<any, any, any>>(
   schema: Schema,
   func: (
     value: z.infer<Schema>,
-  ) => Effect.Effect<ServerContext, NotFound, void>,
+  ) => Effect.Effect<void, NotFound, ServerContext>,
 ) {
   const result = (input: z.infer<Schema>) => {
     const parsed = schema.parse(input);

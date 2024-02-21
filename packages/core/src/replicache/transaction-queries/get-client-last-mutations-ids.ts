@@ -14,9 +14,9 @@ export const getClientLastMutationIdAndVersion_ = ({
   clientGroupID: string;
   transaction: Transaction;
 }): Effect.Effect<
+  Map<string, { lastMutationID: number; version: number }>,
   never,
-  never,
-  Map<string, { lastMutationID: number; version: number }>
+  never
 > =>
   Effect.gen(function* (_) {
     const result = yield* _(

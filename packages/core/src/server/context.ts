@@ -6,12 +6,14 @@ import type { RequestHeaders } from "@pachi/types";
 import type { RepositoriesType, ServicesType } from ".";
 import type { ReplicacheTransaction } from "../replicache";
 
-export interface ServerContext {
-  manager: Transaction | Db;
-  userId: string | undefined;
-  requestHeaders: RequestHeaders | undefined;
-  services: ServicesType;
-  repositories: RepositoriesType;
-  replicacheTransaction: ReplicacheTransaction;
-}
-export const ServerContext = Context.Tag<ServerContext>();
+export class ServerContext extends Context.Tag("ServerContext")<
+  ServerContext,
+  {
+    manager: Transaction | Db;
+    userId: string | undefined;
+    requestHeaders: RequestHeaders | undefined;
+    services: ServicesType;
+    repositories: RepositoriesType;
+    replicacheTransaction: ReplicacheTransaction;
+  }
+>() {}

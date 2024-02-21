@@ -10,4 +10,4 @@ export type GetClientViewDataWithTable = ({
   transaction: Transaction;
   isFullItems?: boolean;
   userId?: string | undefined;
-}) => Effect.Effect<never, never, Array<ClientViewDataWithTable>>;
+}) => Effect.Effect<Array<ClientViewDataWithTable>, never, never>;

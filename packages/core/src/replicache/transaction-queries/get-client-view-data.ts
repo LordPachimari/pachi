@@ -22,7 +22,7 @@ export const getClientViewDataWithTables = <T extends SpaceId>({
   subspaceId: keyof SpaceRecords[T];
   transaction: Transaction;
   isFullItems: boolean;
-}): Effect.Effect<never, InvalidValue, Array<ClientViewDataWithTable>> => {
+}): Effect.Effect<Array<ClientViewDataWithTable>, InvalidValue, never> => {
   const getClientViewData = SpaceRecordGetter[spaceId][subspaceId];
   if (getClientViewData) {
     return getClientViewData({

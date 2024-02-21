@@ -13,7 +13,7 @@ export const deleteItems_ = ({
   keys: string[];
   userId: string;
   transaction: Transaction;
-}): Effect.Effect<never, never, void> =>
+}): Effect.Effect<void, never, never> =>
   Effect.gen(function* (_) {
     const table = tableNamesMap[tableName];
     yield _(

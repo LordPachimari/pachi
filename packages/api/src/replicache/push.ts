@@ -103,14 +103,14 @@ export const push = ({
                     mutators,
                   }),
                   server.ServerContext,
-                  server.ServerContext.of({
+                  {
                     replicacheTransaction,
                     manager: transaction,
                     repositories: server.Repositories,
                     requestHeaders,
                     services: server.Services,
                     userId,
-                  }),
+                  },
                 );
 
                 const nextMutationId = yield* _(processMutationWithContext);

@@ -13,7 +13,7 @@ export const getLastMutationIDChanges = ({
   clientVersion: number;
   clientGroupID: string;
   transaction: Transaction;
-}): Effect.Effect<never, never, Record<string, number>> =>
+}): Effect.Effect<Record<string, number>, never, never> =>
   Effect.gen(function* (_) {
     const result = yield* _(
       Effect.tryPromise(() =>

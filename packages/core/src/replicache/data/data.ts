@@ -29,12 +29,6 @@ import {
 } from "../transaction-queries";
 import { getClientLastMutationIdAndVersion_ } from "../transaction-queries/get-client-last-mutations-ids";
 
-export interface Random {
-  readonly next: Effect.Effect<never, never, number>;
-}
-
-export const Random = Context.Tag<Random>();
-
 export const makeClientViewData = (
   data: Array<ClientViewDataWithTable>,
 ): Record<string, number> => {
@@ -59,9 +53,9 @@ export const getPatch = <T extends SpaceId>({
   userId: string | undefined;
   transaction: Transaction;
 }): Effect.Effect<
+  { patch: PatchOperation[]; newSpaceRecord: SpaceRecords[T] },
   never,
-  never,
-  { patch: PatchOperation[]; newSpaceRecord: SpaceRecords[T] }
+  never
 > => {
   if (!spaceRecord) {
     const result = getResetPatch({
@@ -186,9 +180,9 @@ const getResetPatch = <T extends SpaceId>({
   userId: string | undefined;
   transaction: Transaction;
 }): Effect.Effect<
+  { patch: PatchOperation[]; newSpaceRecord: SpaceRecords[T] },
   never,
-  never,
-  { patch: PatchOperation[]; newSpaceRecord: SpaceRecords[T] }
+  never
 > =>
   Effect.gen(function* (_) {
     const patch: PatchOperation[] = [
@@ -262,7 +256,7 @@ export const setItems = (
 
   userId: string | undefined,
   transaction: Transaction,
-): Effect.Effect<never, never, void> => {
+): Effect.Effect<void, never, never> => {
   return Effect.gen(function* (_) {
     if (!userId) return;
     yield* _(
@@ -283,10 +277,10 @@ export const updateItems = (
   props: Map<TableName, { id: string; value: ReadonlyJSONObject }[]>,
   userId: string | undefined,
   transaction: Transaction,
-): Effect.Effect<never, PermissionDenied, void> =>
+): Effect.Effect<void, PermissionDenied, never> =>
   Effect.gen(function* (_) {
     if (!userId) return;
-    const effects: Array<Effect.Effect<never, PermissionDenied, void>> = [];
+    const effects: Array<Effect.Effect<void, PermissionDenied, never>> = [];
     for (const [tableName, items] of props.entries()) {
       effects.push(updateItems_({ tableName, items, userId, transaction }));
     }
@@ -297,10 +291,10 @@ export const deleteItems = (
   props: Map<TableName, string[]>,
   userId: string | undefined,
   transaction: Transaction,
-): Effect.Effect<never, never, void> =>
+): Effect.Effect<void, never, never> =>
   Effect.gen(function* (_) {
     if (!userId) return;
-    const effects: Array<Effect.Effect<never, never, void>> = [];
+    const effects: Array<Effect.Effect<void, never, never>> = [];
     for (const [tableName, keys] of props.entries()) {
       effects.push(deleteItems_({ tableName, keys, userId, transaction }));
     }
@@ -314,7 +308,7 @@ export const getPrevSpaceRecord = <T extends SpaceId>({
   key: string | undefined;
   transaction: Transaction;
   spaceId: T;
-}): Effect.Effect<never, never, SpaceRecords[T] | undefined> =>
+}): Effect.Effect<SpaceRecords[T] | undefined, never, never> =>
   Effect.gen(function* (_) {
     if (!key) {
       return undefined;
@@ -340,7 +334,7 @@ export const getClientGroupObject = ({
 }: {
   clientGroupID: string;
   transaction: Transaction;
-}): Effect.Effect<never, never, ClientGroupObject> =>
+}): Effect.Effect<ClientGroupObject, never, never> =>
   Effect.gen(function* (_) {
     const clientViewData = yield* _(
       Effect.tryPromise(() =>
@@ -369,7 +363,7 @@ export const setClientGroupObject = ({
 }: {
   transaction: Transaction;
   clientGroupObject: ClientGroupObject;
-}): Effect.Effect<never, never, void> =>
+}): Effect.Effect<void, never, never> =>
   Effect.gen(function* (_) {
     yield* _(
       Effect.tryPromise(() =>
@@ -394,7 +388,7 @@ export const setSpaceRecord = <T extends SpaceId>({
   key: string;
   spaceRecord: SpaceRecords[T];
   transaction: Transaction;
-}): Effect.Effect<never, never, void> =>
+}): Effect.Effect<void, never, never> =>
   Effect.gen(function* (_) {
     yield* _(
       Effect.tryPromise(() =>
@@ -414,7 +408,7 @@ export const deleteSpaceRecord = ({
 }: {
   key: string | undefined;
   transaction: Transaction;
-}): Effect.Effect<never, never, void> =>
+}): Effect.Effect<void, never, never> =>
   Effect.gen(function* (_) {
     if (!key) return;
     yield* _(
@@ -438,7 +432,7 @@ export const setLastMutationIdsAndVersions = ({
     { lastMutationID: number; version: number }
   >;
   transaction: Transaction;
-}): Effect.Effect<never, never, void> =>
+}): Effect.Effect<void, never, never> =>
   Effect.gen(function* (_) {
     const setLastMutationIdsAndVersionsPrepared = transaction
       .insert(replicacheClients)
@@ -486,9 +480,9 @@ export const getLastMutationIdsSince = ({
   clientVersion: number;
   transaction: Transaction;
 }): Effect.Effect<
+  { lastMutationIDChanges: Record<string, number> },
   never,
-  never,
-  { lastMutationIDChanges: Record<string, number> }
+  never
 > =>
   Effect.gen(function* (_) {
     if (clientVersion === 0) {
@@ -517,9 +511,9 @@ export const getClientLastMutationIdsAndVersion = ({
   clientGroupID: string;
   transaction: Transaction;
 }): Effect.Effect<
+  Map<string, { lastMutationID: number; version: number }>,
   never,
-  never,
-  Map<string, { lastMutationID: number; version: number }>
+  never
 > =>
   Effect.gen(function* (_) {
     const result = yield* _(

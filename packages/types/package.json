@@ -7,7 +7,7 @@
   "scripts": {},
   "dependencies": {
     "@pachi/db": "^0.1.0",
-    "effect": "^2.2.0",
+    "effect": "^2.3.8",
     "replicache": "14.0.3",
     "valibot": "^0.17.1",
     "zod": "^3.22.2"
