@@ -17,7 +17,6 @@ interface CustomWriteTransaction {
 }
 
 export class ReplicacheTransaction implements CustomWriteTransaction {
-  private readonly _spaceId: string;
   private readonly _transaction: Transaction;
   private readonly _cache = new Map<
     string,
@@ -31,11 +30,9 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
   private readonly _userId: string | undefined;
 
   constructor(
-    spaceId: string,
     userId: string | undefined,
     transaction: Transaction,
   ) {
-    this._spaceId = spaceId;
     this._userId = userId;
     this._transaction = transaction;
   }

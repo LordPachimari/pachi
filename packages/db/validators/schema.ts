@@ -16,6 +16,7 @@ import {
   productVariants,
   regions,
   salesChannels,
+  session,
   shippingOptions,
   stores,
   taxRates,
@@ -282,3 +283,6 @@ export const CreateCartSchema = CartSchema.pick({
   email: true,
 });
 export type CreateCart = z.infer<typeof CreateCartSchema>;
+
+export const SessionSchema = createInsertSchema(session);
+export type Session = z.infer<typeof SessionSchema>;

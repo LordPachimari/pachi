@@ -1,85 +1,57 @@
-/* eslint-disable react/no-children-prop */
-"use client";
+'use client'
 
-import * as React from "react";
-import { useSearchParams } from "next/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import * as z from "zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter, useSearchParams } from 'next/navigation'
+import * as React from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { UserAuthSchema, type UserAuth } from '@pachi/core'
+import { cn } from '@pachi/utils'
+import { login } from '~/app/_actions/auth/login'
+import { register as registerAction } from '~/app/_actions/auth/register'
+import { buttonVariants } from '~/components/ui/button'
+import { Icons } from '~/components/ui/icons'
+import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
 
-import { cn } from "@pachi/utils";
-
-import { buttonVariants } from "~/components/ui/button";
-import { Icons } from "~/components/ui/icons";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { env } from "~/env.mjs";
-
-const UserAuthSchema = z.object({
-  email: z.string().email(),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
-});
-type UserAuth = z.infer<typeof UserAuthSchema>;
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
+  isLogin: boolean
+}
 export function UserAuthForm({
   className,
+  isLogin,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
-  const searchParams = useSearchParams();
+}: UserAuthFormProps) {
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false)
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<UserAuth>({
     resolver: zodResolver(UserAuthSchema),
-  });
+  })
+  const searchParams = useSearchParams()
+  const router = useRouter()
 
   async function onSubmit(value: UserAuth) {
-    setIsLoading(true);
-    console.log("value", value);
-    const registerEffect = fetch(
-      `${
-        env.VERCEL_URL === "local"
-          ? env.NEXT_PUBLIC_WORKER_LOCAL_URL
-          : env.NEXT_PUBLIC_WORKER_DEV_URL
-      }`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify({
-          email: value.email,
-          password: value.password,
-        }),
-      },
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        return z
-          .object({
-            type: z.enum(["SUCCESS", "FAIL"] as const),
-            message: z.string(),
-          })
-          .parse(data);
-      });
-    const { message, type } = React.use(registerEffect);
-    setIsLoading(false);
-
-    if (type === "FAIL") {
-      toast.error(message);
-    } else {
-      toast.success(message);
+    setIsLoading(true)
+    const { message, type, sessionId } = isLogin
+      ? await login(value)
+      : await registerAction(value)
+    if (sessionId) localStorage.setItem('auth_session', sessionId)
+    if (type === 'ERROR') {
+      toast.error(message)
     }
-    setIsLoading(false);
+    if (type === 'SUCCESS') {
+      toast.success(message)
+      if (isLogin) router.push(searchParams.get('from') ?? '/home')
+    }
+    setIsLoading(false)
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn('grid gap-6', className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
           <div className="grid gap-1">
@@ -94,7 +66,7 @@ export function UserAuthForm({
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading || isGoogleLoading}
-              {...register("email")}
+              {...register('email')}
             />
             {errors?.email && (
               <p className="px-1 text-xs text-red-600">
@@ -111,7 +83,7 @@ export function UserAuthForm({
               type="password"
               placeholder="password"
               disabled={isLoading || isGoogleLoading}
-              {...register("password")}
+              {...register('password')}
             />
             {errors?.password && (
               <p className="px-1 text-xs text-red-600">
@@ -143,9 +115,9 @@ export function UserAuthForm({
       </div>
       <button
         type="button"
-        className={cn(buttonVariants({ variant: "outline" }))}
+        className={cn(buttonVariants({ variant: 'outline' }))}
         onClick={() => {
-          setIsGoogleLoading(true);
+          setIsGoogleLoading(true)
         }}
         disabled={isLoading || isGoogleLoading}
       >
@@ -153,9 +125,9 @@ export function UserAuthForm({
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           <Icons.google className="mr-2 h-4 w-4" />
-        )}{" "}
+        )}{' '}
         Google
       </button>
     </div>
-  );
+  )
 }

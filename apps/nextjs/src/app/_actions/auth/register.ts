@@ -1,55 +1,40 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { generateId } from "lucia";
-import { Argon2id } from "oslo/password";
 import { z } from "zod";
 
-import { lucia } from "@pachi/api";
-import { db, type User } from "@pachi/db";
-import { users } from "@pachi/db/schema";
+import type { UserAuth } from "@pachi/core";
 
-async function register(_: any, formData: FormData) {
-  const email = formData.get("email");
-  const parsedEmail = z.string().email().safeParse(email);
-  if (!parsedEmail.success) {
-    return {
-      error: "Invalid email",
-    };
-  }
-  const password = formData.get("password");
-  if (
-    typeof password !== "string" ||
-    password.length < 6 ||
-    password.length > 255
-  ) {
-    return {
-      error: "Invalid password",
-    };
-  }
+import { LUCIA_COOKIE_NAME } from "~/constants";
+import { env } from "~/env.mjs";
 
-  const hashedPassword = await new Argon2id().hash(password);
-  const userId = generateId(15);
-  const createdAt = new Date().toISOString();
-  const newUser: User = {
-    id: generateId(15),
-    email: parsedEmail.data,
-    createdAt,
-    hashedPassword,
-  };
-  //@ts-ignore
-  await db.insert(users).values(newUser);
-
-  const session = await lucia.createSession(userId, {
-    country: "AU",
-  });
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes,
-  );
-  return redirect("/");
+async function register({ email, password }: UserAuth) {
+  const { message, type, sessionId } = await fetch(
+    `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/register`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Origin: env.NEXT_PUBLIC_APP_URL,
+      },
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+      cache: "no-store",
+    },
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      return z
+        .object({
+          type: z.enum(["SUCCESS", "ERROR"] as const),
+          message: z.string(),
+          sessionId: z.string().optional(),
+        })
+        .parse(data);
+    });
+  if (sessionId) cookies().set(LUCIA_COOKIE_NAME, sessionId);
+  return { message, type, sessionId };
 }
 export { register };

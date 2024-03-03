@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Effect, Either } from "effect";
-import { forEachObj } from "remeda";
+import { Effect, Either } from 'effect'
+import { forEachObj } from 'remeda'
 
 import {
   getClientGroupObject,
@@ -14,20 +14,20 @@ import {
   setLastMutationIdsAndVersions,
   type ServerDashboardMutatorsMapType,
   type ServerGlobalMutatorsMapType,
-} from "@pachi/core";
-import type { Db } from "@pachi/db";
+} from '@pachi/core'
+import type { Db } from '@pachi/db'
 import type {
   Mutation,
   PushRequest,
   RequestHeaders,
   SpaceId,
-} from "@pachi/types";
+} from '@pachi/types'
 import {
   InternalError,
   mutationAffectedSpaces,
   pushRequestSchema,
-} from "@pachi/types";
-import { generateId, ulid } from "@pachi/utils";
+} from '@pachi/types'
+import { generateId, ulid } from '@pachi/utils'
 
 export const push = ({
   body,
@@ -36,24 +36,24 @@ export const push = ({
   spaceId,
   requestHeaders,
 }: {
-  body: PushRequest;
-  userId: string | undefined;
-  db: Db;
-  spaceId: SpaceId;
-  requestHeaders: RequestHeaders;
+  body: PushRequest
+  userId: string | undefined
+  db: Db
+  spaceId: SpaceId
+  requestHeaders: RequestHeaders
 }) =>
   Effect.gen(function* (_) {
-    console.log("---------------------------------------------------");
+    console.log('---------------------------------------------------')
 
-    const push = pushRequestSchema.safeParse(body);
-    if (push.success === false) return yield* _(Effect.fail(push.error));
+    const push = pushRequestSchema.safeParse(body)
+    if (push.success === false) return yield* _(Effect.fail(push.error))
     if (push.data.mutations.length === 0) {
-      return;
+      return
     }
 
-    const affectedSpaces = new Map<SpaceId, Set<string>>();
-    const t0 = Date.now();
-    const clientIDs = [...new Set(push.data.mutations.map((m) => m.clientID))];
+    const affectedSpaces = new Map<SpaceId, Set<string>>()
+    const t0 = Date.now()
+    const clientIDs = [...new Set(push.data.mutations.map((m) => m.clientID))]
 
     const processMutations = yield* _(
       Effect.tryPromise(() =>
@@ -65,33 +65,32 @@ export const push = ({
                   clientGroupID: push.data.clientGroupID,
                   transaction,
                 }),
-              );
-              let clientVersion = clientGroupObject.clientVersion;
+              )
+              let clientVersion = clientGroupObject.clientVersion
               const replicacheTransaction = new ReplicacheTransaction(
-                spaceId,
                 userId,
                 transaction,
-              );
+              )
 
               const mutators =
-                spaceId === "dashboard"
+                spaceId === 'dashboard'
                   ? ServerDashboardMutatorsMap
-                  : ServerGlobalMutatorsMap;
+                  : ServerGlobalMutatorsMap
               const lastMutationIdsAndVersions = yield* _(
                 getClientLastMutationIdsAndVersion({
                   clientGroupID: push.data.clientGroupID,
                   clientIDs,
                   transaction,
                 }),
-              );
-              let updated = false;
+              )
+              let updated = false
 
               for (const mutation of push.data.mutations) {
                 if (!lastMutationIdsAndVersions.has(mutation.clientID)) {
                   lastMutationIdsAndVersions.set(mutation.clientID, {
                     lastMutationID: 0,
                     version: 0,
-                  });
+                  })
                 }
 
                 const processMutationWithContext = Effect.provideService(
@@ -111,43 +110,43 @@ export const push = ({
                     services: server.Services,
                     userId,
                   },
-                );
+                )
 
-                const nextMutationId = yield* _(processMutationWithContext);
+                const nextMutationId = yield* _(processMutationWithContext)
 
-                clientVersion++;
+                clientVersion++
 
                 if (
                   nextMutationId >
                   lastMutationIdsAndVersions.get(mutation.clientID)!
                     .lastMutationID
                 ) {
-                  updated = true;
+                  updated = true
                 }
                 lastMutationIdsAndVersions.set(mutation.clientID, {
                   lastMutationID: nextMutationId,
                   version: clientVersion,
-                });
-                const spaces = mutationAffectedSpaces[mutation.name];
+                })
+                const spaces = mutationAffectedSpaces[mutation.name]
                 if (spaces === undefined) {
                   Effect.logWarning(
                     `you forgot to add a mutationAffectedSpaces entry for ${mutation.name}`,
-                  );
+                  )
                   Effect.fail(
                     new InternalError({
                       message: `you forgot to add a mutationAffectedSpaces entry for ${mutation.name}`,
                     }),
-                  );
+                  )
                 }
                 forEachObj.indexed(spaces, (subspaces, space) => {
                   const affectedSubSpaces =
-                    affectedSpaces.get(space) ?? new Set();
+                    affectedSpaces.get(space) ?? new Set()
 
                   for (const subspace of subspaces as string[]) {
-                    affectedSubSpaces.add(subspace);
+                    affectedSubSpaces.add(subspace)
                   }
-                  affectedSpaces.set(space, affectedSubSpaces);
-                });
+                  affectedSpaces.set(space, affectedSubSpaces)
+                })
                 if (updated) {
                   yield* _(
                     Effect.all(
@@ -167,25 +166,25 @@ export const push = ({
                         replicacheTransaction.flush(),
                       ],
                       {
-                        concurrency: "unbounded",
+                        concurrency: 'unbounded',
                       },
                     ),
-                  );
+                  )
                 } else {
-                  yield* _(Effect.log("Nothing to update"));
+                  yield* _(Effect.log('Nothing to update'))
                 }
               }
             }),
-          { isolationLevel: "serializable", accessMode: "read write" },
+          { isolationLevel: 'serializable', accessMode: 'read write' },
         ),
       ).pipe(Effect.orDie),
-    );
+    )
 
-    yield* _(processMutations);
+    yield* _(processMutations)
 
     //TODO: send poke
-    yield* _(Effect.log(`Processed all mutations in ${Date.now() - t0}`));
-  });
+    yield* _(Effect.log(`Processed all mutations in ${Date.now() - t0}`))
+  })
 
 const processMutation = ({
   mutation,
@@ -193,27 +192,27 @@ const processMutation = ({
   lastMutationID,
   mutators,
 }: {
-  mutation: Mutation;
-  lastMutationID: number;
-  error?: unknown;
-  mutators: ServerDashboardMutatorsMapType | ServerGlobalMutatorsMapType;
+  mutation: Mutation
+  lastMutationID: number
+  error?: unknown
+  mutators: ServerDashboardMutatorsMapType | ServerGlobalMutatorsMapType
 }) =>
   Effect.gen(function* (_) {
-    const expectedMutationID = lastMutationID + 1;
+    const expectedMutationID = lastMutationID + 1
     if (mutation.id < expectedMutationID) {
       yield* _(
         Effect.log(
           `Mutation ${mutation.id} has already been processed - skipping`,
         ),
-      );
-      return lastMutationID;
+      )
+      return lastMutationID
     }
     if (mutation.id > expectedMutationID) {
       yield* _(
         Effect.logWarning(
           `Mutation ${mutation.id} is from the future - aborting`,
         ),
-      );
+      )
 
       yield* _(
         Effect.fail(
@@ -221,20 +220,20 @@ const processMutation = ({
             message: `Mutation ${mutation.id} is from the future - aborting`,
           }),
         ),
-      );
+      )
     }
 
     if (!error) {
       yield* _(
         Effect.log(
-          `Processing mutation: ${JSON.stringify(mutation, null, "")}`,
+          `Processing mutation: ${JSON.stringify(mutation, null, '')}`,
         ),
-      );
-      const t1 = Date.now();
+      )
+      const t1 = Date.now()
 
-      const { name, args } = mutation;
+      const { name, args } = mutation
 
-      const mutator = mutators.get(name);
+      const mutator = mutators.get(name)
       if (!mutator) {
         yield* _(
           Effect.fail(
@@ -242,34 +241,34 @@ const processMutation = ({
               message: `No mutator found for ${name}`,
             }),
           ),
-        );
-        return lastMutationID;
+        )
+        return lastMutationID
       }
-      const result = yield* _(Effect.either(mutator(args)));
+      const result = yield* _(Effect.either(mutator(args)))
       if (Either.isLeft(result)) {
-        const error = result.left;
-        if (error._tag === "NotFound") {
-          yield* _(Effect.logError(error.message));
+        const error = result.left
+        if (error._tag === 'NotFound') {
+          yield* _(Effect.logError(error.message))
           yield* _(
             server.Error.createError({
-              id: generateId({ prefix: "error", id: ulid() }),
-              type: "NotFound",
+              id: generateId({ prefix: 'error', id: ulid() }),
+              type: 'NotFound',
               message: error.message,
             }).pipe(Effect.orDie),
-          );
+          )
         }
       } else {
-        result.right;
+        result.right
       }
-      yield* _(Effect.log(`Processed mutation in ${Date.now() - t1}`));
+      yield* _(Effect.log(`Processed mutation in ${Date.now() - t1}`))
 
-      return expectedMutationID;
+      return expectedMutationID
     } else {
       // TODO: You can store state here in the database to return to clients to
       // provide additional info about errors.
       yield* _(
         Effect.log(`Handling error from mutation ${JSON.stringify(mutation)} `),
-      );
-      return lastMutationID;
+      )
+      return lastMutationID
     }
-  });
+  })

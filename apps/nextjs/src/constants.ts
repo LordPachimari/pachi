@@ -60,3 +60,5 @@ export const CHECKOUT_PAGE_PROPS = {
 export const PREFICES = {
   products: (filterId?: string) => (filterId ? `p_${filterId}` : `p_`),
 };
+
+export const LUCIA_COOKIE_NAME = "auth_session";

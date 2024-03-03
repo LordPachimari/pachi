@@ -1,24 +1,30 @@
-import Link from "next/link";
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
-import { cn } from "@pachi/utils";
+import { cn } from '@pachi/utils'
 
-import { buttonVariants } from "~/components/ui/button";
-import { Icons } from "~/components/ui/icons";
-import { UserAuthForm } from "../_components/use-auth-form";
+import { buttonVariants } from '~/components/ui/button'
+import { Icons } from '~/components/ui/icons'
+import { UserAuthForm } from '../_components/use-auth-form'
+import { validateRequest } from '../../../libs/validate-request'
 
 export const metadata = {
-  title: "Create an account",
-  description: "Create an account to get started.",
-};
+  title: 'Create an account',
+  description: 'Create an account to get started.',
+}
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const { user } = await validateRequest()
+  if (user) {
+    redirect('/home')
+  }
   return (
     <div className="container grid h-screen w-screen flex-col items-center justify-center lg:max-w-none lg:px-0">
       <Link
         href="/login"
         className={cn(
-          buttonVariants({ variant: "ghost" }),
-          "absolute right-4 top-4 md:right-8 md:top-8",
+          buttonVariants({ variant: 'ghost' }),
+          'absolute right-4 top-4 md:right-8 md:top-8',
         )}
       >
         Login
@@ -34,7 +40,7 @@ export default function RegisterPage() {
               Enter your email below to create your account
             </p>
           </div>
-          <UserAuthForm />
+          <UserAuthForm isLogin={false} />
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our
             <Link
@@ -42,8 +48,8 @@ export default function RegisterPage() {
               className="underline underline-offset-4 hover:text-brand"
             >
               Terms of Service
-            </Link>{" "}
-            and{" "}
+            </Link>{' '}
+            and{' '}
             <Link
               href="/privacy"
               className="underline underline-offset-4 hover:text-brand"
@@ -55,5 +61,5 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

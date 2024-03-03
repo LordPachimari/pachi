@@ -367,11 +367,20 @@ export const setClientGroupObject = ({
   Effect.gen(function* (_) {
     yield* _(
       Effect.tryPromise(() =>
-        transaction.insert(replicacheClientGroups).values({
-          id: clientGroupObject.id,
-          spaceRecordVersion: clientGroupObject.spaceRecordVersion,
-          clientVersion: clientGroupObject.clientVersion,
-        }),
+        transaction
+          .insert(replicacheClientGroups)
+          .values({
+            id: clientGroupObject.id,
+            spaceRecordVersion: clientGroupObject.spaceRecordVersion,
+            clientVersion: clientGroupObject.clientVersion,
+          })
+          .onConflictDoUpdate({
+            target: replicacheClientGroups.id,
+            set: {
+              spaceRecordVersion: clientGroupObject.spaceRecordVersion,
+              clientVersion: clientGroupObject.clientVersion,
+            },
+          }),
       ).pipe(
         Effect.orDieWith((e) =>
           withDieErrorLogger(e, "setClientGroupObject error"),

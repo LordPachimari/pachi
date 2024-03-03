@@ -28,6 +28,8 @@ const config = {
   ],
   importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
   importOrderTypeScriptVersion: "4.4.0",
+  singleQuote: true,
+  semi: false,
 };
 
 export default config;
