@@ -1,35 +1,35 @@
-import { useCallback } from "react";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { PlusIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
-import debounce from "lodash.debounce";
-import { Trash2Icon } from "lucide-react";
-import { ulid } from "ulid";
+import { useCallback } from 'react'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { PlusIcon, QuestionMarkCircledIcon } from '@radix-ui/react-icons'
+import debounce from 'lodash.debounce'
+import { Trash2Icon } from 'lucide-react'
+import { ulid } from 'ulid'
 
-import type { DeleteProductOption, DeleteProductVariant } from "@pachi/core";
+import type { DeleteProductOption, DeleteProductVariant } from '@pachi/core'
 import type {
   ProductOption,
   ProductOptionValue,
   ProductVariant,
-} from "@pachi/db";
-import { generateId } from "@pachi/utils";
+} from '@pachi/db'
+import { generateId } from '@pachi/utils'
 
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Button } from "~/components/ui/button";
-import { Card } from "~/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
+import { Button } from '~/components/ui/button'
+import { Card } from '~/components/ui/card'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "~/components/ui/tooltip";
-import { ReplicacheInstancesStore } from "~/zustand/replicache";
-import Option from "./option";
+} from '~/components/ui/tooltip'
+import { useReplicache } from '~/zustand/replicache'
+import Option from './option'
 
 interface CreateOptionProps {
-  productId: string;
-  options: ProductOption[];
-  variants: ProductVariant[];
-  createVariant: () => Promise<void>;
-  openVariantModal: (prop: { variantId: string }) => void;
+  productId: string
+  options: ProductOption[]
+  variants: ProductVariant[]
+  createVariant: () => Promise<void>
+  openVariantModal: (prop: { variantId: string }) => void
 }
 export default function CreateOption({
   productId,
@@ -38,59 +38,59 @@ export default function CreateOption({
   createVariant,
   openVariantModal,
 }: CreateOptionProps) {
-  const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
+  const { dashboardRep } = useReplicache()
   const createOption = useCallback(async () => {
-    const id = generateId({ id: ulid(), prefix: "opt" });
-    const option: ProductOption = { id, productId };
-    await dashboardRep?.mutate.createProductOption({ option });
-  }, [dashboardRep, productId]);
+    const id = generateId({ id: ulid(), prefix: 'opt' })
+    const option: ProductOption = { id, productId }
+    await dashboardRep?.mutate.createProductOption({ option })
+  }, [dashboardRep, productId])
   const deleteOption = useCallback(
     async ({ optionId, productId }: DeleteProductOption) => {
       await dashboardRep?.mutate.deleteProductOption({
         optionId,
         productId,
-      });
+      })
     },
     [dashboardRep],
-  );
+  )
   const onOptionNameChange = useCallback(
     debounce(async (optionId: string, name: string) => {
       await dashboardRep?.mutate.updateProductOption({
         optionId,
         productId,
         updates: { name },
-      });
+      })
     }, 500),
     [dashboardRep],
-  );
+  )
   const onOptionValuesChange = useCallback(
     debounce(async (optionId: string, values: string[]) => {
       const newOptionValues: ProductOptionValue[] = values.map((value) => ({
-        id: generateId({ id: ulid(), prefix: "opt_val" }),
+        id: generateId({ id: ulid(), prefix: 'opt_val' }),
         optionId,
         value,
         option: options.find((o) => o.id === optionId)!,
-      }));
+      }))
       await dashboardRep?.mutate.updateProductOptionValues({
         optionId,
         productId,
         newOptionValues,
-      });
+      })
     }, 500),
     [dashboardRep],
-  );
+  )
   const deleteVariant = useCallback(
     async ({ variantId, productId }: DeleteProductVariant) => {
       await dashboardRep?.mutate.deleteProductVariant({
         variantId,
         productId,
-      });
+      })
     },
     [dashboardRep],
-  );
+  )
 
-  const [parent] = useAutoAnimate(/* optional config */);
-  console.log("variants", variants);
+  const [parent] = useAutoAnimate(/* optional config */)
+  console.log('variants', variants)
   return (
     <div className="w-full lg:max-w-[380px]" ref={parent}>
       <span className="flex items-center gap-2">
@@ -113,8 +113,8 @@ export default function CreateOption({
       </Button>
       {options.length > 0 && (
         <span className="my-2 flex w-full gap-2">
-          <label className="w-full text-sm md:w-[120px]">{"Option name"}</label>
-          <label className="text-sm">{"Option values "}</label>
+          <label className="w-full text-sm md:w-[120px]">{'Option name'}</label>
+          <label className="text-sm">{'Option values '}</label>
         </span>
       )}
       <li ref={parent} className="flex list-none flex-col gap-2 ">
@@ -161,7 +161,7 @@ export default function CreateOption({
               key={variant.id}
               className="flex h-14 cursor-pointer flex-row items-center p-2"
               onClick={() => {
-                openVariantModal({ variantId: variant.id });
+                openVariantModal({ variantId: variant.id })
               }}
             >
               <Avatar>
@@ -178,10 +178,10 @@ export default function CreateOption({
                     <p className="w-20 text-sm">
                       {variant.optionValues
                         ?.map((ov) => `${ov.optionValue.value}`)
-                        .join("/")}
+                        .join('/')}
                     </p>
                     <p className="w-20 text-sm">
-                      {`${variant.prices?.[0]?.currencyCode ?? ""} ${
+                      {`${variant.prices?.[0]?.currencyCode ?? ''} ${
                         variant.prices?.[0]?.amount ?? 0
                       }`}
                     </p>
@@ -206,5 +206,5 @@ export default function CreateOption({
           ))}
       </div>
     </div>
-  );
+  )
 }

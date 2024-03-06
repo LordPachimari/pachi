@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Effect, Either } from 'effect'
-import { forEachObj } from 'remeda'
 
 import {
+  getClient,
   getClientGroupObject,
-  getClientLastMutationIdsAndVersion,
   ReplicacheTransaction,
   server,
   ServerDashboardMutatorsMap,
   ServerGlobalMutatorsMap,
-  setClientGroupObject,
-  setLastMutationIdsAndVersions,
+  setClient,
   type ServerDashboardMutatorsMapType,
   type ServerGlobalMutatorsMapType,
 } from '@pachi/core'
@@ -22,11 +20,7 @@ import type {
   RequestHeaders,
   SpaceId,
 } from '@pachi/types'
-import {
-  InternalError,
-  mutationAffectedSpaces,
-  pushRequestSchema,
-} from '@pachi/types'
+import { InternalError, pushRequestSchema } from '@pachi/types'
 import { generateId, ulid } from '@pachi/utils'
 
 export const push = ({
@@ -51,136 +45,91 @@ export const push = ({
       return
     }
 
-    const affectedSpaces = new Map<SpaceId, Set<string>>()
     const t0 = Date.now()
-    const clientIDs = [...new Set(push.data.mutations.map((m) => m.clientID))]
+    const mutators =
+      spaceId === 'dashboard'
+        ? ServerDashboardMutatorsMap
+        : ServerGlobalMutatorsMap
 
-    const processMutations = yield* _(
+    for (const mutation of push.data.mutations) {
+      // 1: start transaction for each mutation
       Effect.tryPromise(() =>
         db.transaction(
           async (transaction) =>
             Effect.gen(function* (_) {
-              const clientGroupObject = yield* _(
-                getClientGroupObject({
-                  clientGroupID: push.data.clientGroupID,
-                  transaction,
-                }),
-              )
-              let clientVersion = clientGroupObject.clientVersion
               const replicacheTransaction = new ReplicacheTransaction(
                 userId,
                 transaction,
               )
-
-              const mutators =
-                spaceId === 'dashboard'
-                  ? ServerDashboardMutatorsMap
-                  : ServerGlobalMutatorsMap
-              const lastMutationIdsAndVersions = yield* _(
-                getClientLastMutationIdsAndVersion({
+              // 2: check if user has access to the client group
+              yield* _(
+                getClientGroupObject({
                   clientGroupID: push.data.clientGroupID,
-                  clientIDs,
                   transaction,
-                }),
+                  userId,
+                  //TODO: HANDLE ERROR
+                }).pipe(Effect.orDie),
               )
+              // 2: get client row
+              const baseClient = yield* _(
+                getClient({
+                  clientID: mutation.clientID,
+                  transaction,
+                  clientGroupID: push.data.clientGroupID,
+                }).pipe(Effect.orDie),
+              )
+
               let updated = false
 
-              for (const mutation of push.data.mutations) {
-                if (!lastMutationIdsAndVersions.has(mutation.clientID)) {
-                  lastMutationIdsAndVersions.set(mutation.clientID, {
-                    lastMutationID: 0,
-                    version: 0,
-                  })
-                }
+              //provide context to the effect
+              const processMutationWithContext = Effect.provideService(
+                processMutation({
+                  lastMutationID: baseClient.lastMutationID,
+                  mutation,
+                  mutators,
+                }),
+                server.ServerContext,
+                {
+                  manager: transaction,
+                  repositories: server.Repositories,
+                  requestHeaders,
+                  services: server.Services,
+                  userId,
+                  replicacheTransaction,
+                },
+              )
 
-                const processMutationWithContext = Effect.provideService(
-                  processMutation({
-                    lastMutationID: lastMutationIdsAndVersions.get(
-                      mutation.clientID,
-                    )!.lastMutationID,
-                    mutation,
-                    mutators,
-                  }),
-                  server.ServerContext,
-                  {
-                    replicacheTransaction,
-                    manager: transaction,
-                    repositories: server.Repositories,
-                    requestHeaders,
-                    services: server.Services,
-                    userId,
-                  },
-                )
+              // 3: process mutation
+              const nextMutationId = yield* _(
+                processMutationWithContext.pipe(Effect.orDie),
+              )
 
-                const nextMutationId = yield* _(processMutationWithContext)
+              if (baseClient.lastMutationID > nextMutationId) {
+                updated = true
+              }
 
-                clientVersion++
-
-                if (
-                  nextMutationId >
-                  lastMutationIdsAndVersions.get(mutation.clientID)!
-                    .lastMutationID
-                ) {
-                  updated = true
-                }
-                lastMutationIdsAndVersions.set(mutation.clientID, {
-                  lastMutationID: nextMutationId,
-                  version: clientVersion,
-                })
-                const spaces = mutationAffectedSpaces[mutation.name]
-                if (spaces === undefined) {
-                  Effect.logWarning(
-                    `you forgot to add a mutationAffectedSpaces entry for ${mutation.name}`,
-                  )
-                  Effect.fail(
-                    new InternalError({
-                      message: `you forgot to add a mutationAffectedSpaces entry for ${mutation.name}`,
-                    }),
-                  )
-                }
-                forEachObj.indexed(spaces, (subspaces, space) => {
-                  const affectedSubSpaces =
-                    affectedSpaces.get(space) ?? new Set()
-
-                  for (const subspace of subspaces as string[]) {
-                    affectedSubSpaces.add(subspace)
-                  }
-                  affectedSpaces.set(space, affectedSubSpaces)
-                })
-                if (updated) {
-                  yield* _(
-                    Effect.all(
-                      [
-                        setLastMutationIdsAndVersions({
-                          clientGroupID: push.data.clientGroupID,
-                          lastMutationIdsAndVersions,
-                          transaction,
-                        }),
-                        setClientGroupObject({
-                          clientGroupObject: {
-                            ...clientGroupObject,
-                            clientVersion,
-                          },
-                          transaction,
-                        }),
-                        replicacheTransaction.flush(),
-                      ],
-                      {
-                        concurrency: 'unbounded',
+              if (updated) {
+                yield* _(
+                  Effect.all([
+                    setClient({
+                      client: {
+                        clientGroupID: push.data.clientGroupID,
+                        id: mutation.clientID,
+                        lastMutationID: nextMutationId,
                       },
-                    ),
-                  )
-                } else {
-                  yield* _(Effect.log('Nothing to update'))
-                }
+                      transaction,
+                    }),
+                    replicacheTransaction.flush(),
+                  ]),
+                )
+              } else {
+                yield* _(Effect.log('Nothing to update'))
               }
             }),
           { isolationLevel: 'serializable', accessMode: 'read write' },
         ),
-      ).pipe(Effect.orDie),
-    )
-
-    yield* _(processMutations)
+      ).pipe(Effect.orDie)
+    }
 
     //TODO: send poke
     yield* _(Effect.log(`Processed all mutations in ${Date.now() - t0}`))

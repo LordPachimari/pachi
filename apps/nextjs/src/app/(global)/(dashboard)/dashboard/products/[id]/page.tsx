@@ -25,7 +25,7 @@ import { ScrollArea } from "~/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { createUrl } from "~/libs/create-url";
 import { ProductStore, UserStore } from "~/replicache/stores";
-import { ReplicacheInstancesStore } from "~/zustand/replicache";
+import { useReplicache } from "~/zustand/replicache";
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -33,7 +33,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const searchParams = useSearchParams();
   const storeId = searchParams.get("storeId");
 
-  const dashboardRep = ReplicacheInstancesStore((state) => state.dashboardRep);
+  const {dashboardRep} = useReplicache();
   const product = ProductStore.get(dashboardRep, id);
   const store = UserStore.get(dashboardRep, storeId ?? "");
 

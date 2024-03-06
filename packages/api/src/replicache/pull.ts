@@ -4,10 +4,11 @@ import { z } from 'zod'
 
 import {
   deleteSpaceRecord,
+  getClientChanges,
   getClientGroupObject,
-  getLastMutationIdsSince,
-  getPatch,
+  getPrevClientRecord,
   getPrevSpaceRecord,
+  getSpacePatch,
   setClientGroupObject,
   setSpaceRecord,
 } from '@pachi/core'
@@ -16,6 +17,7 @@ import type { Cookie, PullRequest, SpaceId, SpaceRecords } from '@pachi/types'
 import { pullRequestSchema } from '@pachi/types'
 import { withDieErrorLogger } from '@pachi/utils'
 
+const subspacesSchema = z.enum(['store', 'user'] as const)
 export const pull = <T extends SpaceId>({
   spaceId,
   body,
@@ -35,11 +37,9 @@ export const pull = <T extends SpaceId>({
       Effect.log(`Processing mutation pull: ${JSON.stringify(body, null, '')}`),
     )
 
+    //parsing
     const pull = pullRequestSchema.safeParse(body)
-    const parsedSubspaceIds = z
-      .array(z.string())
-      .optional()
-      .safeParse(subspaceIds)
+    const parsedSubspaceIds = subspacesSchema.optional().safeParse(subspaceIds)
     if (pull.success === false) {
       return yield* _(Effect.fail(pull.error))
     }
@@ -51,6 +51,7 @@ export const pull = <T extends SpaceId>({
 
     const startTransact = Date.now()
 
+    // 1: get the space record key, to retrieve the previous space record
     const spaceRecordKey =
       requestCookie && spaceId === 'global'
         ? requestCookie.globalSpaceRecordKey
@@ -58,31 +59,39 @@ export const pull = <T extends SpaceId>({
         ? requestCookie.dashboardSpaceRecordKey
         : undefined
 
+    // 2: begin transaction
     const processPull = yield* _(
       Effect.tryPromise(() =>
         db.transaction(
           async (transaction) =>
             Effect.gen(function* (_) {
-              const [prevSpaceRecord, clientGroupObject] = yield* _(
-                Effect.all(
-                  [
-                    getPrevSpaceRecord({
-                      key: spaceRecordKey,
-                      transaction,
-                      spaceId,
-                    }),
-                    getClientGroupObject({
-                      clientGroupID: pull.data.clientGroupID,
-                      transaction,
-                    }),
-                  ],
-                  {
-                    concurrency: 'unbounded',
-                  },
-                ),
-              )
+              // 3: get previous space record and previous client record, and client group object
+              const [prevSpaceRecord, prevClientRecord, clientGroupObject] =
+                yield* _(
+                  Effect.all(
+                    [
+                      getPrevSpaceRecord({
+                        key: spaceRecordKey,
+                        transaction,
+                        spaceId,
+                      }),
+                      getPrevClientRecord({
+                        transaction,
+                        key: requestCookie?.clientRecordKey,
+                      }),
+                      getClientGroupObject({
+                        clientGroupID: pull.data.clientGroupID,
+                        transaction,
+                        userId
+                      }),
+                    ],
+                    {
+                      concurrency: 'unbounded',
+                    },
+                  ),
+                )
 
-              const patchEffect = getPatch({
+              const patchEffect = getSpacePatch({
                 spaceRecord: prevSpaceRecord,
                 spaceId,
                 userId,
@@ -92,14 +101,16 @@ export const pull = <T extends SpaceId>({
                   | undefined,
               })
 
-              const lastMutationIDsEffect = getLastMutationIdsSince({
-                clientGroupID: pull.data.clientGroupID,
-                clientVersion: clientGroupObject.clientVersion,
+              const lastMutationIDChangesEffect = getClientChanges({
+                clientRecord: prevClientRecord,
                 transaction,
               })
-              const [{ newSpaceRecord, patch }, { lastMutationIDChanges }] =
+
+              // 3: get the patch: the changes to the space record since the last pull
+              // and the lastMutationIDChanges: the changes to the client record since the last pull
+              const [{ newSpaceRecord, patch }, lastMutationIDChanges] =
                 yield* _(
-                  Effect.all([patchEffect, lastMutationIDsEffect], {
+                  Effect.all([patchEffect, lastMutationIDChangesEffect], {
                     concurrency: 'unbounded',
                   }),
                 )

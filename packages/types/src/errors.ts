@@ -18,3 +18,7 @@ export class InternalError extends Data.TaggedError("InternalError")<{
 export class NotFound extends Data.TaggedError("NotFound")<{
   readonly message: string;
 }> {}
+
+export class AuthorizationError extends Data.TaggedError("AuthorizationError")<{
+  readonly message: string;
+}> {}
