@@ -15,7 +15,8 @@ export function DashboardButton({ username }: DashboardButtonProps) {
     if (!username) {
       return router.push(`/login`)
     }
-    const storeId = localStorage.getItem('storeId')
+
+    const storeId = localStorage?.getItem('storeId')
     router.push(
       `/dashboard/products?storeId=${
         storeId ?? generateId({ id: username, prefix: 'store' })

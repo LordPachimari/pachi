@@ -11,7 +11,7 @@ import { useReplicache } from '~/zustand/replicache'
 function GlobalReplicacheProvider({ children }: { children: React.ReactNode }) {
   const userId = 'user1'
   const { globalRep, setGlobalRep } = useReplicache()
-  const token = localStorage.getItem('auth_session')
+  const token = localStorage?.getItem('auth_session')
   useEffect(() => {
     if (globalRep) {
       return
