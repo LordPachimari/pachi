@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react'
-import clsx from 'clsx'
-import { toast } from 'sonner'
+import React, { useEffect } from "react"
+import clsx from "clsx"
+import { toast } from "sonner"
 
-import useClipboard from '~/hooks/use-clipboard'
-import { Button } from '../ui/button'
-import { Icons } from '../ui/icons'
+import useClipboard from "~/hooks/use-clipboard"
+import { Button } from "../ui/button"
+import { Icons } from "../ui/icons"
 
 interface CopyToClipboardProps {
   value: string
@@ -30,7 +30,7 @@ const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
 
   useEffect(() => {
     if (isCopied) {
-      toast.message('Copied!')
+      toast.message("Copied!")
     }
   }, [isCopied])
 
@@ -40,8 +40,8 @@ const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
         variant="ghost"
         size="icon"
         type="button"
-        className={clsx('text-grey-50 p-0', {
-          ['text-violet-60']: isCopied,
+        className={clsx("text-grey-50 p-0", {
+          ["text-violet-60"]: isCopied,
         })}
         onClick={handleCopy}
       >

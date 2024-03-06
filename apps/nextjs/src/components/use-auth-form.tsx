@@ -1,20 +1,20 @@
-'use client'
+"use client"
 
-import * as React from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
+import * as React from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
-import { UserAuthSchema, type UserAuth } from '@pachi/core'
-import { cn } from '@pachi/utils'
+import { UserAuthSchema, type UserAuth } from "@pachi/core"
+import { cn } from "@pachi/utils"
 
-import { login } from '~/app/_actions/auth/login'
-import { register as registerAction } from '~/app/_actions/auth/register'
-import { buttonVariants } from '~/components/ui/button'
-import { Icons } from '~/components/ui/icons'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
+import { login } from "~/app/_actions/auth/login"
+import { register as registerAction } from "~/app/_actions/auth/register"
+import { buttonVariants } from "~/components/ui/button"
+import { Icons } from "~/components/ui/icons"
+import { Input } from "~/components/ui/input"
+import { Label } from "~/components/ui/label"
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   isLogin: boolean
@@ -41,19 +41,19 @@ export function UserAuthForm({
     const { message, type, sessionId } = isLogin
       ? await login(value)
       : await registerAction(value)
-    if (sessionId) localStorage.setItem('auth_session', sessionId)
-    if (type === 'ERROR') {
+    if (sessionId) localStorage.setItem("auth_session", sessionId)
+    if (type === "ERROR") {
       toast.error(message)
     }
-    if (type === 'SUCCESS') {
+    if (type === "SUCCESS") {
       toast.success(message)
-      if (isLogin) router.push(searchParams.get('from') ?? '/home')
+      if (isLogin) router.push(searchParams.get("from") ?? "/home")
     }
     setIsLoading(false)
   }
 
   return (
-    <div className={cn('grid gap-6', className)} {...props}>
+    <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
           <div className="grid gap-1">
@@ -68,7 +68,7 @@ export function UserAuthForm({
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading || isGoogleLoading}
-              {...register('email')}
+              {...register("email")}
             />
             {errors?.email && (
               <p className="px-1 text-xs text-red-600">
@@ -85,7 +85,7 @@ export function UserAuthForm({
               type="password"
               placeholder="password"
               disabled={isLoading || isGoogleLoading}
-              {...register('password')}
+              {...register("password")}
             />
             {errors?.password && (
               <p className="px-1 text-xs text-red-600">
@@ -117,7 +117,7 @@ export function UserAuthForm({
       </div>
       <button
         type="button"
-        className={cn(buttonVariants({ variant: 'outline' }))}
+        className={cn(buttonVariants({ variant: "outline" }))}
         onClick={() => {
           setIsGoogleLoading(true)
         }}
@@ -127,7 +127,7 @@ export function UserAuthForm({
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           <Icons.google className="mr-2 h-4 w-4" />
-        )}{' '}
+        )}{" "}
         Google
       </button>
     </div>

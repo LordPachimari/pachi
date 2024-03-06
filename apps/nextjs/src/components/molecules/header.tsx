@@ -1,24 +1,24 @@
-import { cn } from '@pachi/utils'
+import { cn } from "@pachi/utils"
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string
   description?: string | null
-  size?: 'default' | 'sm'
+  size?: "default" | "sm"
 }
 
 export function Header({
   title,
   description,
-  size = 'default',
+  size = "default",
   className,
   ...props
 }: HeaderProps) {
   return (
-    <div className={cn('grid gap-1', className)} {...props}>
+    <div className={cn("grid gap-1", className)} {...props}>
       <h1
         className={cn(
-          'line-clamp-1 text-3xl font-bold tracking-tight',
-          size === 'default' && 'md:text-4xl',
+          "line-clamp-1 text-3xl font-bold tracking-tight",
+          size === "default" && "md:text-4xl",
         )}
       >
         {title}
@@ -26,8 +26,8 @@ export function Header({
       {description ? (
         <p
           className={cn(
-            'line-clamp-2 text-muted-foreground',
-            size === 'default' && 'text-lg',
+            "line-clamp-2 text-muted-foreground",
+            size === "default" && "text-lg",
           )}
         >
           {description}

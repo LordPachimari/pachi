@@ -1,24 +1,24 @@
-import { cn } from '@pachi/utils'
+import { cn } from "@pachi/utils"
 
-import Price from '../price'
+import Price from "../price"
 
 const PriceLabel = ({
   title,
   amount,
   currencyCode,
-  position = 'bottom',
+  position = "bottom",
 }: {
   title: string
   amount: number
   currencyCode: string
-  position?: 'bottom' | 'center'
+  position?: "bottom" | "center"
 }) => {
   return (
     <div
       className={cn(
-        'absolute bottom-2 left-0 flex w-full px-4 pb-4 @container/label',
+        "absolute bottom-2 left-0 flex w-full px-4 pb-4 @container/label",
         {
-          'lg:px-20 lg:pb-[35%]': position === 'center',
+          "lg:px-20 lg:pb-[35%]": position === "center",
         },
       )}
     >

@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react'
-import Image from 'next/image'
+import React, { useEffect } from "react"
+import Image from "next/image"
 import type {
   DraggableSyntheticListeners,
   UniqueIdentifier,
-} from '@dnd-kit/core'
-import type { Transform } from '@dnd-kit/utilities'
-import { Loader2Icon } from 'lucide-react'
+} from "@dnd-kit/core"
+import type { Transform } from "@dnd-kit/utilities"
+import { Loader2Icon } from "lucide-react"
 
-import type { Image as ImageType } from '@pachi/db'
-import { cn } from '@pachi/utils'
+import type { Image as ImageType } from "@pachi/db"
+import { cn } from "@pachi/utils"
 
-import { Handle, Remove } from './components'
-import styles from './Item.module.css'
+import { Handle, Remove } from "./components"
+import styles from "./Item.module.css"
 
 export type ItemProps = ImageType & {
   id: UniqueIdentifier
@@ -45,9 +45,9 @@ export interface Props {
         listeners: DraggableSyntheticListeners
         ref: React.Ref<HTMLElement>
         style: React.CSSProperties | undefined
-        transform: Props['transform']
-        transition: Props['transition']
-        value: Props['value']
+        transform: Props["transform"]
+        transition: Props["transition"]
+        value: Props["value"]
       }) => React.ReactElement)
     | undefined
 }
@@ -86,10 +86,10 @@ export const Item = React.memo(
           return
         }
 
-        document.body.style.cursor = 'grabbing'
+        document.body.style.cursor = "grabbing"
 
         return () => {
-          document.body.style.cursor = ''
+          document.body.style.cursor = ""
         }
       }, [dragOverlay])
 
@@ -110,43 +110,43 @@ export const Item = React.memo(
       ) : (
         <li
           className={cn(
-            styles['Wrapper'],
-            fadeIn && styles['fadeIn'],
-            sorting && styles['sorting'],
-            dragOverlay && styles['dragOverlay'],
+            styles["Wrapper"],
+            fadeIn && styles["fadeIn"],
+            sorting && styles["sorting"],
+            dragOverlay && styles["dragOverlay"],
           )}
           style={
             {
               ...wrapperStyle,
               transition: [transition, wrapperStyle?.transition]
                 .filter(Boolean)
-                .join(', '),
-              '--translate-x': transform
+                .join(", "),
+              "--translate-x": transform
                 ? `${Math.round(transform.x)}px`
                 : undefined,
-              '--translate-y': transform
+              "--translate-y": transform
                 ? `${Math.round(transform.y)}px`
                 : undefined,
-              '--scale-x': transform?.scaleX
+              "--scale-x": transform?.scaleX
                 ? `${transform.scaleX}`
                 : undefined,
-              '--scale-y': transform?.scaleY
+              "--scale-y": transform?.scaleY
                 ? `${transform.scaleY}`
                 : undefined,
-              '--index': index,
-              '--color': color,
+              "--index": index,
+              "--color": color,
             } as React.CSSProperties
           }
           ref={ref}
         >
           <div
             className={cn(
-              styles['Item'],
-              dragging && styles['dragging'],
-              handle && styles['withHandle'],
-              dragOverlay && styles['dragOverlay'],
-              disabled && styles['disabled'],
-              color && styles['color'],
+              styles["Item"],
+              dragging && styles["dragging"],
+              handle && styles["withHandle"],
+              dragOverlay && styles["dragOverlay"],
+              disabled && styles["disabled"],
+              color && styles["color"],
             )}
             style={style}
             data-cypress="draggable-item"
@@ -165,15 +165,15 @@ export const Item = React.memo(
               ) : (
                 <></>
               )}
-              {image?.url.startsWith('blob') && (
+              {image?.url.startsWith("blob") && (
                 <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black opacity-30 dark:bg-white">
                   <Loader2Icon className="animate-spin text-white dark:text-black" />
                 </div>
               )}
             </div>
-            <span className={styles['Actions']}>
+            <span className={styles["Actions"]}>
               {onRemove ? (
-                <Remove className={styles['Remove']} onClick={onRemove} />
+                <Remove className={styles["Remove"]} onClick={onRemove} />
               ) : null}
               {handle ? <Handle {...handleProps} {...listeners} /> : null}
             </span>

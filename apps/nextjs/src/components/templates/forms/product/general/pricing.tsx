@@ -1,13 +1,13 @@
-import { useState } from 'react'
+import { useState } from "react"
 
-import type { UpdateProductPrice } from '@pachi/core'
-import { type ProductVariant } from '@pachi/db'
+import type { UpdateProductPrice } from "@pachi/core"
+import { type ProductVariant } from "@pachi/db"
 
-import { CurrenciesTable } from '~/app/(global)/(dashboard)/dashboard/products/_components/currency-table'
-import CurrencyModal from '~/components/templates/modals/currency'
-import { Label } from '~/components/ui/label'
-import { RadioGroup } from '~/components/ui/radio-group'
-import { CurrencyInput } from './currency-input'
+import { CurrenciesTable } from "~/app/(global)/(dashboard)/dashboard/products/_components/currency-table"
+import CurrencyModal from "~/components/templates/modals/currency"
+import { Label } from "~/components/ui/label"
+import { RadioGroup } from "~/components/ui/radio-group"
+import { CurrencyInput } from "./currency-input"
 
 interface PricingProps {
   updatePrice: (props: UpdateProductPrice) => Promise<void>
@@ -69,12 +69,12 @@ const Pricing = ({
           className="my-1"
           defaultValue={activePrice.amount / 100}
           onChange={async (e) => {
-            const cleanedValue = e.currentTarget.value.replace(/,/g, '')
+            const cleanedValue = e.currentTarget.value.replace(/,/g, "")
             let valueInCents = Math.floor(parseFloat(cleanedValue) * 100)
             if (isNaN(valueInCents)) {
               valueInCents = 0
             }
-            console.log('e', valueInCents)
+            console.log("e", valueInCents)
             await updatePrice({
               priceId: activePrice.id,
               updates: { amount: valueInCents },

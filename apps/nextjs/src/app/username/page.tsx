@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-'use client'
+"use client"
 
-import { useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
-import { useFormState, useFormStatus } from 'react-dom'
-import { toast as sonnerToast } from 'sonner'
+import { useEffect, useRef } from "react"
+import { useRouter } from "next/navigation"
+import { useFormState, useFormStatus } from "react-dom"
+import { toast as sonnerToast } from "sonner"
 
-import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardHeader } from '~/components/ui/card'
-import { Icons } from '~/components/ui/icons'
-import { Input } from '~/components/ui/input'
-import { createUser } from '../_actions/user/create-user'
+import { Button } from "~/components/ui/button"
+import { Card, CardContent, CardHeader } from "~/components/ui/card"
+import { Icons } from "~/components/ui/icons"
+import { Input } from "~/components/ui/input"
+import { createUser } from "../_actions/user/create-user"
 
 function SubmitButton() {
   const { pending } = useFormStatus()
@@ -31,22 +31,22 @@ function SubmitButton() {
 
 interface UsernameFormState {
   username: string
-  type: Awaited<ReturnType<typeof createUser>>['type']
+  type: Awaited<ReturnType<typeof createUser>>["type"]
 }
 export default function UsernamePage() {
   const initialState: UsernameFormState = {
-    username: '',
-    type: 'NONE',
+    username: "",
+    type: "NONE",
   }
   const [state, formAction] = useFormState(createUser, initialState)
   useEffect(() => {
     //@ts-ignore
-    if (state.type === 'FAIL') {
+    if (state.type === "FAIL") {
       //@ts-ignore
       toast.error(state.message)
     }
     //@ts-ignore
-    if (state.type === 'SUCCESS') {
+    if (state.type === "SUCCESS") {
       //@ts-ignore
       toast.success(state.message)
     }
@@ -64,8 +64,8 @@ export default function UsernamePage() {
             </label>
             <MyInput
               empty={
-                (state as { type: UsernameFormState['type'] }).type ===
-                'SUCCESS'
+                (state as { type: UsernameFormState["type"] }).type ===
+                "SUCCESS"
               }
             />
             <div className="flex w-full justify-end pt-4">
@@ -86,8 +86,8 @@ function MyInput({ empty }: { empty: boolean }) {
 
   useEffect(() => {
     if (inputRef.current && empty) {
-      inputRef.current.value = ''
-      router.push('/home')
+      inputRef.current.value = ""
+      router.push("/home")
     }
   }, [empty, router])
 

@@ -1,22 +1,22 @@
-import { useCallback, useMemo } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { PlusIcon } from '@radix-ui/react-icons'
-import type { ColumnDef } from '@tanstack/react-table'
+import { useCallback, useMemo } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { PlusIcon } from "@radix-ui/react-icons"
+import type { ColumnDef } from "@tanstack/react-table"
 
-import type { Price, Product } from '@pachi/db'
-import { generateId, ulid } from '@pachi/utils'
+import type { Price, Product } from "@pachi/db"
+import { generateId, ulid } from "@pachi/utils"
 
-import { Table } from '~/components/table/table'
-import { useTable } from '~/components/table/use-table'
-import { Button } from '~/components/ui/button'
-import { createUrl } from '~/libs/create-url'
-import { ProductStore, UserStore } from '~/replicache/stores'
-import { useReplicache } from '~/zustand/replicache'
+import { Table } from "~/components/table/table"
+import { useTable } from "~/components/table/use-table"
+import { Button } from "~/components/ui/button"
+import { createUrl } from "~/libs/create-url"
+import { ProductStore, UserStore } from "~/replicache/stores"
+import { useReplicache } from "~/zustand/replicache"
 import {
   filterableColumns,
   getProductsColumns,
   searchableColumns,
-} from './columns'
+} from "./columns"
 
 interface ProductsTableProps {
   storeId: string | undefined
@@ -24,8 +24,8 @@ interface ProductsTableProps {
 
 function ProductsTable({ storeId }: Readonly<ProductsTableProps>) {
   const { dashboardRep } = useReplicache()
-  const data = ProductStore.scan(dashboardRep, 'p_')
-  const store = UserStore.get(dashboardRep, 'store')
+  const data = ProductStore.scan(dashboardRep, "p_")
+  const store = UserStore.get(dashboardRep, "store")
   const searchParams = useSearchParams()
 
   const router = useRouter()
@@ -44,18 +44,18 @@ function ProductsTable({ storeId }: Readonly<ProductsTableProps>) {
     if (dashboardRep && storeId && store) {
       const defaultVariantId = generateId({
         id: ulid(),
-        prefix: 'default_var',
+        prefix: "default_var",
       })
       const id = generateId({
         id: ulid(),
-        prefix: 'p',
+        prefix: "p",
         filterId: storeId,
       })
       await dashboardRep.mutate.createProduct({
         product: {
           id,
           createdAt: new Date().toISOString(),
-          status: 'draft',
+          status: "draft",
           discountable: true,
           defaultVariantId,
           storeId,
@@ -63,7 +63,7 @@ function ProductsTable({ storeId }: Readonly<ProductsTableProps>) {
         },
         prices: (store.currencies ?? []).map((currencyCode) => {
           const price: Price = {
-            id: generateId({ id: ulid(), prefix: 'price' }),
+            id: generateId({ id: ulid(), prefix: "price" }),
             currencyCode,
             amount: 0,
             variantId: defaultVariantId,

@@ -1,15 +1,15 @@
-'use client'
+"use client"
 
-import * as React from 'react'
-import Link from 'next/link'
+import * as React from "react"
+import Link from "next/link"
 
-import { cn } from '@pachi/utils'
+import { cn } from "@pachi/utils"
 
-import { Icons } from '~/components/ui/icons'
-import { NavigationMenuLink } from '~/components/ui/navigation-menu'
-import { productCategories } from '~/config/products'
-import { siteConfig } from '~/config/site'
-import type { MainNavItem } from '~/types'
+import { Icons } from "~/components/ui/icons"
+import { NavigationMenuLink } from "~/components/ui/navigation-menu"
+import { productCategories } from "~/config/products"
+import { siteConfig } from "~/config/site"
+import type { MainNavItem } from "~/types"
 
 interface MainNavProps {
   items?: MainNavItem[]
@@ -45,8 +45,8 @@ export function MainNavContent({ items }: MainNavProps) {
 }
 
 const ListItem = React.forwardRef<
-  React.ElementRef<'a'>,
-  React.ComponentPropsWithoutRef<'a'>
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a">
 >(({ className, title, children, ...props }, ref) => {
   return (
     <li>
@@ -54,7 +54,7 @@ const ListItem = React.forwardRef<
         <a
           ref={ref}
           className={cn(
-            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
             className,
           )}
           {...props}
@@ -68,4 +68,4 @@ const ListItem = React.forwardRef<
     </li>
   )
 })
-ListItem.displayName = 'ListItem'
+ListItem.displayName = "ListItem"

@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect } from 'react'
-import { DndContext } from '@dnd-kit/core'
-import { generateReactHelpers } from '@uploadthing/react/hooks'
+import React, { useCallback, useEffect } from "react"
+import { DndContext } from "@dnd-kit/core"
+import { generateReactHelpers } from "@uploadthing/react/hooks"
 
-import type { UpdateProductImagesOrder, UploadProductImages } from '@pachi/core'
-import type { Image } from '@pachi/db'
+import type { UpdateProductImagesOrder, UploadProductImages } from "@pachi/core"
+import type { Image } from "@pachi/db"
 
-import type { OurFileRouter } from '~/app/api/uploadthing/core'
-import { FileUpload } from '~/components/molecules/file-upload'
-import { LargeFirstTile } from '~/components/templates/dnd-kit/sortable/large-first-tile'
+import type { OurFileRouter } from "~/app/api/uploadthing/core"
+import { FileUpload } from "~/components/molecules/file-upload"
+import { LargeFirstTile } from "~/components/templates/dnd-kit/sortable/large-first-tile"
 
 export interface MediaFormType {
   images: Image[]
@@ -33,8 +33,8 @@ const Media = ({
   updateProductImagesOrder,
 }: Props) => {
   const { useUploadThing } = generateReactHelpers<OurFileRouter>()
-  const { startUpload } = useUploadThing('imageUploader', {
-    onUploadProgress: (p) => console.log('p', p),
+  const { startUpload } = useUploadThing("imageUploader", {
+    onUploadProgress: (p) => console.log("p", p),
   })
   useEffect(() => {
     if (images) {

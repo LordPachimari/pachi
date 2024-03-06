@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react"
 
-import type { ProductTag, ProductUpdates } from '@pachi/db'
+import type { ProductTag, ProductUpdates } from "@pachi/db"
 
-import InputField from '~/components/molecules/input-field'
-import InputHeader from '~/components/molecules/input-header'
-import type { DebouncedFunc } from '~/types'
+import InputField from "~/components/molecules/input-field"
+import InputHeader from "~/components/molecules/input-header"
+import type { DebouncedFunc } from "~/types"
 
 interface OrganizeProps {
   productId: string

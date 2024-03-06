@@ -1,16 +1,16 @@
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from "@tanstack/react-table"
 
-import type { CurrencyType } from '@pachi/types'
+import type { CurrencyType } from "@pachi/types"
 
-import { TableColumnHeader } from '~/components/table/column-header'
-import { Checkbox } from '~/components/ui/checkbox'
+import { TableColumnHeader } from "~/components/table/column-header"
+import { Checkbox } from "~/components/ui/checkbox"
 
 export function getCurrenciesColumns(
   productCurrencyCodes: string[],
 ): ColumnDef<CurrencyType, unknown>[] {
   return [
     {
-      id: 'select',
+      id: "select",
       header: () => <></>,
       cell: ({ row }) => (
         <Checkbox
@@ -26,7 +26,7 @@ export function getCurrenciesColumns(
       enableHiding: false,
     },
     {
-      accessorKey: 'code',
+      accessorKey: "code",
       header: ({ column }) => (
         <TableColumnHeader column={column} title="Code" />
       ),
@@ -37,7 +37,7 @@ export function getCurrenciesColumns(
       enableHiding: false,
     },
     {
-      accessorKey: 'name',
+      accessorKey: "name",
       header: ({ column }) => (
         <TableColumnHeader column={column} title="Name" />
       ),

@@ -3,17 +3,17 @@ import type {
   UpdateProductPrice,
   UpdateProductVariant,
   UploadProductImages,
-} from '@pachi/core'
-import type { Image, Product, ProductUpdates, Store } from '@pachi/db'
+} from "@pachi/core"
+import type { Image, Product, ProductUpdates, Store } from "@pachi/db"
 
-import { Separator } from '~/components/ui/separator'
-import type { DebouncedFunc } from '~/types'
-import Discountable from './discountable'
-import Inventory from './inventory'
-import Media from './media'
-import Pricing from './pricing'
-import ProductStatus from './product-status'
-import TitleAndDescription from './title-description'
+import { Separator } from "~/components/ui/separator"
+import type { DebouncedFunc } from "~/types"
+import Discountable from "./discountable"
+import Inventory from "./inventory"
+import Media from "./media"
+import Pricing from "./pricing"
+import ProductStatus from "./product-status"
+import TitleAndDescription from "./title-description"
 
 interface GeneralProps {
   product: Product

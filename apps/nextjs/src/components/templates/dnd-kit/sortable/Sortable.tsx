@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from "react"
 import {
   closestCenter,
   defaultDropAnimationSideEffects,
@@ -12,7 +12,7 @@ import {
   type Announcements,
   type DropAnimation,
   type UniqueIdentifier,
-} from '@dnd-kit/core'
+} from "@dnd-kit/core"
 import {
   arrayMove,
   rectSortingStrategy,
@@ -21,22 +21,22 @@ import {
   useSortable,
   type AnimateLayoutChanges,
   type NewIndexGetter,
-} from '@dnd-kit/sortable'
-import { createPortal } from 'react-dom'
-import { isDefined } from 'remeda'
+} from "@dnd-kit/sortable"
+import { createPortal } from "react-dom"
+import { isDefined } from "remeda"
 
-import { Item } from '../components/Item'
-import type { ItemProps } from '../components/Item/Item'
-import { List } from '../components/List'
-import { Wrapper } from '../components/Wrapper'
-import type { Props } from '../types'
-import { createRange } from '../utilities'
+import { Item } from "../components/Item"
+import type { ItemProps } from "../components/Item/Item"
+import { List } from "../components/List"
+import { Wrapper } from "../components/Wrapper"
+import type { Props } from "../types"
+import { createRange } from "../utilities"
 
 const dropAnimationConfig: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
     styles: {
       active: {
-        opacity: '0.5',
+        opacity: "0.5",
       },
     },
   }),
@@ -88,7 +88,7 @@ export function Sortable({
     }),
     useSensor(KeyboardSensor, {
       // Disable smooth scrolling in Cypress automated tests
-      scrollBehavior: 'auto',
+      scrollBehavior: "auto",
       coordinateGetter,
     }),
   )
@@ -101,7 +101,7 @@ export function Sortable({
   const activeIndex = activeId ? getIndex(activeId) : -1
   const handleRemove = removable
     ? (id: UniqueIdentifier) => {
-        console.log('actived remove', id)
+        console.log("actived remove", id)
         setItems((items) => items.filter((item) => item.id !== id))
       }
     : undefined
@@ -157,7 +157,7 @@ export function Sortable({
       setItems(initialItems)
     }
   }, [initialItems])
-  console.log('items', items)
+  console.log("items", items)
 
   return (
     <DndContext
@@ -181,7 +181,7 @@ export function Sortable({
           if (activeIndex !== overIndex) {
             setItems((items) => {
               const reordered = reorderItems(items, activeIndex, overIndex)
-              if (itemsType === 'images' && isDefined(updateImagesOrder)) {
+              if (itemsType === "images" && isDefined(updateImagesOrder)) {
                 const order: Record<string, number> = {}
                 reordered.forEach((item, index) => {
                   order[item.id] = index
@@ -270,7 +270,7 @@ interface SortableItemProps {
   onRemove?(id: UniqueIdentifier): void
   style(values: any): React.CSSProperties
   renderItem?(args: any): React.ReactElement
-  wrapperStyle: Props['wrapperStyle']
+  wrapperStyle: Props["wrapperStyle"]
   idMap: Map<UniqueIdentifier, ItemProps>
 }
 export function SortableItem({

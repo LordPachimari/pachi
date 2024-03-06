@@ -1,10 +1,10 @@
-import { cache } from 'react'
-import { cookies } from 'next/headers'
+import { cache } from "react"
+import { cookies } from "next/headers"
 
-import { lucia } from '@pachi/auth'
+import { lucia } from "@pachi/auth"
 
 export const validateRequest = cache(async () => {
-  const sessionId = cookies().get('auth_session')?.value ?? null
+  const sessionId = cookies().get("auth_session")?.value ?? null
 
   if (!sessionId) {
     return {

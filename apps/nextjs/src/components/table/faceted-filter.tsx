@@ -1,11 +1,11 @@
-import * as React from 'react'
-import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons'
-import type { Column } from '@tanstack/react-table'
+import * as React from "react"
+import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons"
+import type { Column } from "@tanstack/react-table"
 
-import { cn } from '@pachi/utils'
+import { cn } from "@pachi/utils"
 
-import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
+import { Badge } from "~/components/ui/badge"
+import { Button } from "~/components/ui/button"
 import {
   Command,
   CommandEmpty,
@@ -14,13 +14,13 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '~/components/ui/command'
+} from "~/components/ui/command"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '~/components/ui/popover'
-import { Separator } from '~/components/ui/separator'
+} from "~/components/ui/popover"
+import { Separator } from "~/components/ui/separator"
 
 export interface FilterOption {
   label: string
@@ -107,13 +107,13 @@ export function TableFacetedFilter<TData, TValue>({
                   >
                     <div
                       className={cn(
-                        'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
                         isSelected
-                          ? 'bg-primary text-primary-foreground'
-                          : 'opacity-50 [&_svg]:invisible',
+                          ? "bg-primary text-primary-foreground"
+                          : "opacity-50 [&_svg]:invisible",
                       )}
                     >
-                      <CheckIcon className={cn('h-4 w-4')} aria-hidden="true" />
+                      <CheckIcon className={cn("h-4 w-4")} aria-hidden="true" />
                     </div>
                     {option.icon && (
                       <option.icon

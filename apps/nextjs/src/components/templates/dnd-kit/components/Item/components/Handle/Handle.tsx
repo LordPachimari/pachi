@@ -1,7 +1,7 @@
-import React, { forwardRef } from 'react'
-import { GripVerticalIcon } from 'lucide-react'
+import React, { forwardRef } from "react"
+import { GripVerticalIcon } from "lucide-react"
 
-import { Action, type ActionProps } from '../Action'
+import { Action, type ActionProps } from "../Action"
 
 export const Handle = forwardRef<HTMLButtonElement, ActionProps>(
   (props, ref) => {
@@ -20,4 +20,4 @@ export const Handle = forwardRef<HTMLButtonElement, ActionProps>(
     )
   },
 )
-Handle.displayName = 'Handle'
+Handle.displayName = "Handle"

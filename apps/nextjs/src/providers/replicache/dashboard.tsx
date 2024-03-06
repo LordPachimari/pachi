@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import { useEffect } from 'react'
-import { Replicache } from 'replicache'
+import { useEffect } from "react"
+import { Replicache } from "replicache"
 
-import { ClientDashboardMutators } from '@pachi/core'
+import { ClientDashboardMutators } from "@pachi/core"
 
-import { env } from '~/env.mjs'
-import { useReplicache } from '~/zustand/replicache'
+import { env } from "~/env.mjs"
+import { useReplicache } from "~/zustand/replicache"
 
 function DashboardReplicacheProvider({
   children,
@@ -14,7 +14,7 @@ function DashboardReplicacheProvider({
   children: React.ReactNode
 }) {
   const { dashboardRep, setDashboardRep } = useReplicache()
-  const userId = 'user1'
+  const userId = "user1"
   useEffect(() => {
     if (dashboardRep) {
       return

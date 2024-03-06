@@ -1,8 +1,8 @@
-import type { ProductOption, ProductVariant } from '@pachi/db'
+import type { ProductOption, ProductVariant } from "@pachi/db"
 
-import { Separator } from '~/components/ui/separator'
-import { Info } from '../info'
-import CreateOption from './create-option'
+import { Separator } from "~/components/ui/separator"
+import { Info } from "../info"
+import CreateOption from "./create-option"
 
 interface VariantsProps {
   productId: string

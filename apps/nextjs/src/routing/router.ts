@@ -2,10 +2,10 @@ import {
   ReadonlyURLSearchParams,
   usePathname,
   useSearchParams,
-} from 'next/navigation'
-import { forEachObj } from 'remeda'
+} from "next/navigation"
+import { forEachObj } from "remeda"
 
-import { QUERY_OPTION_NAMES } from './constants'
+import { QUERY_OPTION_NAMES } from "./constants"
 
 export type UseBuildQueryOptionParams = Partial<
   Record<(typeof QUERY_OPTION_NAMES)[number], string[]>
@@ -35,7 +35,7 @@ function useBuildExistingQueryOption() {
         : []
 
       if (newValue.length) {
-        searchParams.set(name, newValue.join(','))
+        searchParams.set(name, newValue.join(","))
       } else {
         searchParams.delete(name)
       }
@@ -49,7 +49,7 @@ function useBuildNewQueryOptions(queryOptionParams: UseBuildQueryOptionParams) {
   const queryOptions = Object.entries(queryOptionParams)
     .reduce((acc, [name, values = []]) => {
       if (values.length) {
-        acc.set(name, values.join(','))
+        acc.set(name, values.join(","))
       } else {
         acc.delete(name)
       }
@@ -68,7 +68,7 @@ function useQueryOptions(searchParams: ReadonlyURLSearchParams) {
       acc[name] = searchParams
         .getAll(name)
         .flatMap((values) =>
-          values.replace(/\s/g, '').split(',').filter(Boolean),
+          values.replace(/\s/g, "").split(",").filter(Boolean),
         )
 
       return acc

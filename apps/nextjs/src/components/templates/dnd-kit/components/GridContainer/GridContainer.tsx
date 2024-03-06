@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react"
 
-import styles from './GridContainer.module.css'
+import styles from "./GridContainer.module.css"
 
 export interface Props {
   children: React.ReactNode
@@ -10,10 +10,10 @@ export interface Props {
 export function GridContainer({ children, columns }: Props) {
   return (
     <ul
-      className={styles['GridContainer']}
+      className={styles["GridContainer"]}
       style={
         {
-          '--col-count': columns,
+          "--col-count": columns,
         } as React.CSSProperties
       }
     >

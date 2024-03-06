@@ -1,16 +1,16 @@
-import type { PaymentStatus as PaymentStatusType } from '@pachi/db'
+import type { PaymentStatus as PaymentStatusType } from "@pachi/db"
 
-import DotIndicator from '../ui/dot-indicator'
+import DotIndicator from "../ui/dot-indicator"
 
 export const PaymentStatus = ({ status }: { status: PaymentStatusType }) => {
   switch (status) {
-    case 'captured':
+    case "captured":
       return <DotIndicator title="Paid" variant="success" />
-    case 'canceled':
+    case "canceled":
       return <DotIndicator title="Canceled" variant="danger" />
-    case 'partiallyRefunded':
+    case "partiallyRefunded":
       return <DotIndicator title="Requires Action" variant="danger" />
-    case 'refunded':
+    case "refunded":
       return <DotIndicator title="Refunded" variant="success" />
     default:
       return null

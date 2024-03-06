@@ -1,4 +1,4 @@
-import { Image } from 'lucide-react'
+import { Image } from "lucide-react"
 
 const ImagePlaceholder = () => {
   return (

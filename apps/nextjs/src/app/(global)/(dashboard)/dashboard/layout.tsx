@@ -1,6 +1,6 @@
-import DashboardSidebar from '~/components/templates/sidebars/dashboard-sidebar'
-import { dashboardConfig } from '~/config/dashboard'
-import { DashboardReplicacheProvider } from '~/providers/replicache/dashboard'
+import DashboardSidebar from "~/components/templates/sidebars/dashboard-sidebar"
+import { dashboardConfig } from "~/config/dashboard"
+import { DashboardReplicacheProvider } from "~/providers/replicache/dashboard"
 
 interface DashboardLayoutProps {
   children: React.ReactNode

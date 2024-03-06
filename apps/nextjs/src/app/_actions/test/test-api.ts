@@ -1,7 +1,7 @@
-'use server'
+"use server"
 
-import { readFileSync } from 'fs'
-import { join } from 'path'
+import { readFileSync } from "fs"
+import { join } from "path"
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function testApi(
@@ -9,7 +9,7 @@ export async function testApi(
   formData: FormData,
 ): Promise<{
   message: string
-  type: 'SUCCESS' | 'FAIL' | 'NONE'
+  type: "SUCCESS" | "FAIL" | "NONE"
 }> {
   // Define a type for the category structure
   type Category = {
@@ -19,18 +19,18 @@ export async function testApi(
   }
 
   function parseCategories(filePath: string): Category[] {
-    const content = readFileSync(filePath, { encoding: 'utf8' })
-    const lines = content.split('\n')
+    const content = readFileSync(filePath, { encoding: "utf8" })
+    const lines = content.split("\n")
 
     const categories: Category[] = []
     const categoryMap = new Map<string, number>() // Map category name to id
 
     lines.forEach((line, index) => {
-      if (line.trim() === '') return // Skip empty lines
+      if (line.trim() === "") return // Skip empty lines
 
-      const parts = line.split(' - ')
+      const parts = line.split(" - ")
       if (parts.length < 2) return
-      const hierarchy = parts[1]!.split(' > ')
+      const hierarchy = parts[1]!.split(" > ")
       const name = hierarchy[hierarchy.length - 1]!.trim()
       const parentName =
         hierarchy.length > 1 ? hierarchy[hierarchy.length - 2]!.trim() : null
@@ -52,13 +52,13 @@ export async function testApi(
   }
 
   // Example usage
-  const filePath = join(process.cwd(), 'public', 'product-taxonomy.txt')
+  const filePath = join(process.cwd(), "public", "product-taxonomy.txt")
   try {
     const categories = parseCategories(filePath)
-    console.log('categories', categories)
-    return { message: 'Success parsing categories', type: 'SUCCESS' }
+    console.log("categories", categories)
+    return { message: "Success parsing categories", type: "SUCCESS" }
   } catch (error) {
     console.log(error)
-    return { message: 'Error parsing categories', type: 'FAIL' }
+    return { message: "Error parsing categories", type: "FAIL" }
   }
 }

@@ -1,10 +1,10 @@
-import type { Store } from '@pachi/db'
+import type { Store } from "@pachi/db"
 
-import { PageHeaderHeading } from '~/components/molecules/page-header'
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
-import { Card, CardContent, CardFooter } from '~/components/ui/card'
-import { EditStoreButton } from './_components/edit-store-button'
-import { Products } from './_components/products'
+import { PageHeaderHeading } from "~/components/molecules/page-header"
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
+import { Card, CardContent, CardFooter } from "~/components/ui/card"
+import { EditStoreButton } from "./_components/edit-store-button"
+import { Products } from "./_components/products"
 
 export default function StorePage({
   params,
@@ -15,10 +15,10 @@ export default function StorePage({
 }) {
   const name = params.name
   const store: Store = {
-    id: 'm1e',
-    name: 'me',
-    createdAt: '2023-11-21T12:34:56Z',
-    founderId: 'm1e',
+    id: "m1e",
+    name: "me",
+    createdAt: "2023-11-21T12:34:56Z",
+    founderId: "m1e",
     version: 0,
   }
   return (
@@ -62,7 +62,7 @@ function StoreCard({ store }: { store: Store }) {
           <span className="absolute bottom-2 ">
             <h2 className="text-slate-11">Joined 1 January 2024</h2>
             <h2 className="flex gap-[3px] text-[14px] text-slate-11">
-              <p className="font-bold text-black dark:text-white">0</p>{' '}
+              <p className="font-bold text-black dark:text-white">0</p>{" "}
               followers
             </h2>
           </span>

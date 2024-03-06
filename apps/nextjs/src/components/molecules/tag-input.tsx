@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react'
-import { Cross1Icon } from '@radix-ui/react-icons'
-import clsx from 'clsx'
+import React, { useRef, useState } from "react"
+import { Cross1Icon } from "@radix-ui/react-icons"
+import clsx from "clsx"
 
-import { cn } from '@pachi/utils'
+import { cn } from "@pachi/utils"
 
-import { inputBaseStyles } from '../ui/input'
-import InputHeader from './input-header'
+import { inputBaseStyles } from "../ui/input"
+import InputHeader from "./input-header"
 
 const ENTER_KEY = 13
 const TAB_KEY = 9
@@ -39,7 +39,7 @@ const TagInput: React.FC<TagInputProps> = ({
   withTooltip = false,
   tooltipContent,
   tooltip,
-  invalidMessage = 'is not a valid tag',
+  invalidMessage = "is not a valid tag",
   ...props
 }) => {
   const [invalid, setInvalid] = useState(false)
@@ -52,7 +52,7 @@ const TagInput: React.FC<TagInputProps> = ({
     if (update) {
       onChange([...values, update])
       if (inputRef?.current) {
-        inputRef.current.value = ''
+        inputRef.current.value = ""
       }
     } else {
       setInvalid(true)
@@ -71,7 +71,7 @@ const TagInput: React.FC<TagInputProps> = ({
     const { value, selectionStart } = inputRef.current
 
     switch (e.key) {
-      case 'ArrowLeft':
+      case "ArrowLeft":
         if (highlighted !== -1) {
           // highlight previous element
           if (highlighted > 0) {
@@ -83,7 +83,7 @@ const TagInput: React.FC<TagInputProps> = ({
           e.preventDefault()
         }
         break
-      case 'ArrowRight':
+      case "ArrowRight":
         if (highlighted !== -1) {
           // highlight next element
           if (highlighted < values.length - 1) {
@@ -95,17 +95,17 @@ const TagInput: React.FC<TagInputProps> = ({
           }
         }
         break
-      case 'Enter': // Fall through
+      case "Enter": // Fall through
         e.preventDefault()
         break
-      case 'Tab': // Creates new tag
+      case "Tab": // Creates new tag
         if (value) {
           handleAddValue(value)
           e.preventDefault()
         }
         break
 
-      case 'Backspace': // Removes tag
+      case "Backspace": // Removes tag
         // if no element is currently highlighted, highlight last element
         if (!inputRef.current.selectionStart && highlighted === -1) {
           setHighlighted(values.length - 1)
@@ -127,9 +127,9 @@ const TagInput: React.FC<TagInputProps> = ({
 
   const handleRemove = (index: number) => {
     const newValues = [...values]
-    console.log('newValues', newValues)
+    console.log("newValues", newValues)
     newValues.splice(index, 1)
-    console.log('after remove', newValues)
+    console.log("after remove", newValues)
     onChange(newValues)
   }
 
@@ -149,7 +149,7 @@ const TagInput: React.FC<TagInputProps> = ({
 
     const value = inputRef.current.value
 
-    if (value?.endsWith(',')) {
+    if (value?.endsWith(",")) {
       inputRef.current.value = value.slice(0, -1)
       handleAddValue(value.slice(0, -1))
     }
@@ -157,15 +157,15 @@ const TagInput: React.FC<TagInputProps> = ({
 
   return (
     <div className={className}>
-      {label && <InputHeader label={label || 'Tags (comma separated)'} />}
+      {label && <InputHeader label={label || "Tags (comma separated)"} />}
 
       <div
         className={cn(
           inputBaseStyles,
-          'flex h-10 w-full  rounded-md border-[1px]  bg-background  p-1 px-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:outline-fuchsia-400 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white dark:focus-visible:outline-fuchsia-400',
+          "flex h-10 w-full  rounded-md border-[1px]  bg-background  p-1 px-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:outline-fuchsia-400 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white dark:focus-visible:outline-fuchsia-400",
 
           {
-            'focus-within:outline-rose-60/10 shadow-error-border focus-within:shadow-error-border':
+            "focus-within:outline-rose-60/10 shadow-error-border focus-within:shadow-error-border":
               invalid,
           },
         )}
@@ -175,10 +175,10 @@ const TagInput: React.FC<TagInputProps> = ({
             <div
               key={index}
               className={cn(
-                'rounded-rounded bg-ruby-6 flex w-max items-center justify-center gap-x-1 whitespace-nowrap p-2  text-brand ',
+                "rounded-rounded bg-ruby-6 flex w-max items-center justify-center gap-x-1 whitespace-nowrap p-2  text-brand ",
 
                 {
-                  ['bg-ruby-8']: index === highlighted,
+                  ["bg-ruby-8"]: index === highlighted,
                 },
               )}
             >
@@ -196,8 +196,8 @@ const TagInput: React.FC<TagInputProps> = ({
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             onChange={handleInput}
-            className={clsx('w-full flex-1 bg-transparent focus:outline-none')}
-            placeholder={values?.length ? '' : placeholder} // only visible if no tags exist
+            className={clsx("w-full flex-1 bg-transparent focus:outline-none")}
+            placeholder={values?.length ? "" : placeholder} // only visible if no tags exist
             {...props}
           />
         </div>

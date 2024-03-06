@@ -1,34 +1,34 @@
-'use server'
+"use server"
 
-import { cookies } from 'next/headers'
-import { z } from 'zod'
+import { cookies } from "next/headers"
+import { z } from "zod"
 
-import type { UserAuth } from '@pachi/core'
+import type { UserAuth } from "@pachi/core"
 
-import { LUCIA_COOKIE_NAME } from '~/constants'
-import { env } from '~/env.mjs'
+import { LUCIA_COOKIE_NAME } from "~/constants"
+import { env } from "~/env.mjs"
 
 async function login({ email, password }: UserAuth) {
   const { message, type, sessionId } = await fetch(
     `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/login`,
     {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Origin: env.NEXT_PUBLIC_APP_URL,
       },
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({
         email,
         password,
       }),
-      cache: 'no-store',
+      cache: "no-store",
     },
   )
     .then((res) => res.json())
     .then((data) => {
       return z
         .object({
-          type: z.enum(['SUCCESS', 'ERROR'] as const),
+          type: z.enum(["SUCCESS", "ERROR"] as const),
           message: z.string(),
           sessionId: z.string().optional(),
         })

@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-'use client'
+"use client"
 
-import { useEffect } from 'react'
-import { useFormState, useFormStatus } from 'react-dom'
-import { toast as sonnerToast } from 'sonner'
+import { useEffect } from "react"
+import { useFormState, useFormStatus } from "react-dom"
+import { toast as sonnerToast } from "sonner"
 
-import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardHeader } from '~/components/ui/card'
-import { Icons } from '~/components/ui/icons'
-import { testApi } from '../_actions/test/test-api'
+import { Button } from "~/components/ui/button"
+import { Card, CardContent, CardHeader } from "~/components/ui/card"
+import { Icons } from "~/components/ui/icons"
+import { testApi } from "../_actions/test/test-api"
 
 function SubmitButton() {
   const { pending } = useFormStatus()
@@ -29,22 +29,22 @@ function SubmitButton() {
 
 interface UsernameFormState {
   username: string
-  type: Awaited<ReturnType<typeof testApi>>['type']
+  type: Awaited<ReturnType<typeof testApi>>["type"]
 }
 export default function UsernamePage() {
   const initialState: UsernameFormState = {
-    username: '',
-    type: 'NONE',
+    username: "",
+    type: "NONE",
   }
   const [state, formAction] = useFormState(testApi, initialState)
   useEffect(() => {
     //@ts-ignore
-    if (state.type === 'FAIL') {
+    if (state.type === "FAIL") {
       //@ts-ignore
       toast.error(state.message)
     }
     //@ts-ignore
-    if (state.type === 'SUCCESS') {
+    if (state.type === "SUCCESS") {
       //@ts-ignore
       toast.success(state.message)
     }

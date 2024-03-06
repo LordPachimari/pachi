@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import type { PublishedProduct } from '@pachi/db'
+import type { PublishedProduct } from "@pachi/db"
 
-import ProductGridItems from '~/app/(global)/[name]/_components/product-grid-items'
-import Grid from '~/components/ui/grid'
+import ProductGridItems from "~/app/(global)/[name]/_components/product-grid-items"
+import Grid from "~/components/ui/grid"
 
 export function Products() {
   const products: PublishedProduct[] = []

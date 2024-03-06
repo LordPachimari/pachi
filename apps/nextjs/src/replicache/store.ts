@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useEffect, useState } from 'react'
-import type { Replicache } from 'replicache'
+import { useEffect, useState } from "react"
+import type { Replicache } from "replicache"
 
 export class Store<Item> {
   public build() {
@@ -20,13 +20,13 @@ function createGet<T>(key: string, rep: Replicache | null): T | undefined {
       rep.experimentalWatch(
         (diffs) => {
           for (const diff of diffs) {
-            if (diff.op === 'add') {
+            if (diff.op === "add") {
               setData(structuredClone(diff.newValue) as T)
             }
-            if (diff.op === 'change') {
+            if (diff.op === "change") {
               setData(structuredClone(diff.newValue) as T)
             }
-            if (diff.op === 'del') setData(undefined)
+            if (diff.op === "del") setData(undefined)
           }
         },
         { prefix: key, initialValuesInFirstDiff: true },
@@ -41,10 +41,10 @@ function createScan<T>(prefix: string, rep: Replicache | null) {
       rep.experimentalWatch(
         (diffs) => {
           for (const diff of diffs) {
-            if (diff.op === 'add') {
+            if (diff.op === "add") {
               setData((prev) => [...prev, structuredClone(diff.newValue) as T])
             }
-            if (diff.op === 'change') {
+            if (diff.op === "change") {
               setData((prev) => [
                 ...prev.filter(
                   (item) => (item as { id: string }).id !== diff.key,
@@ -52,7 +52,7 @@ function createScan<T>(prefix: string, rep: Replicache | null) {
                 structuredClone(diff.newValue) as T,
               ])
             }
-            if (diff.op === 'del') {
+            if (diff.op === "del") {
               setData((prev) =>
                 prev.filter((item) => (item as { id: string }).id !== diff.key),
               )

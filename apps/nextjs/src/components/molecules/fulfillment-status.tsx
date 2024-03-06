@@ -1,6 +1,6 @@
-import type { FulfillmentStatus as FulfillmentStatusType } from '@pachi/db'
+import type { FulfillmentStatus as FulfillmentStatusType } from "@pachi/db"
 
-import DotIndicator from '../ui/dot-indicator'
+import DotIndicator from "../ui/dot-indicator"
 
 export const FulfillmentStatus = ({
   status,
@@ -8,17 +8,17 @@ export const FulfillmentStatus = ({
   status: FulfillmentStatusType
 }) => {
   switch (status) {
-    case 'shipped':
+    case "shipped":
       return <DotIndicator title="Shipped" variant="success" />
-    case 'fulfilled':
+    case "fulfilled":
       return <DotIndicator title="Fulfilled" variant="warning" />
-    case 'partiallyFulfilled':
+    case "partiallyFulfilled":
       return <DotIndicator title="Partially fulfilled" variant="warning" />
-    case 'requiresAction':
+    case "requiresAction":
       return <DotIndicator title="Requires Action" variant="danger" />
-    case 'notFulfilled':
+    case "notFulfilled":
       return <DotIndicator title="Awaiting fulfillment" variant="danger" />
-    case 'partiallyShipped':
+    case "partiallyShipped":
       return <DotIndicator title="Partially Shipped" variant="warning" />
     default:
       return null

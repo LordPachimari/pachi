@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react"
 
-import type { ProductOption } from '@pachi/db'
+import type { ProductOption } from "@pachi/db"
 
-import TagInput from '~/components/molecules/tag-input'
-import { Input } from '~/components/ui/input'
-import type { DebouncedFunc } from '~/types'
+import TagInput from "~/components/molecules/tag-input"
+import { Input } from "~/components/ui/input"
+import type { DebouncedFunc } from "~/types"
 
 interface OptionProps {
   option: ProductOption
@@ -18,7 +18,7 @@ export default function Option({
   onOptionNameChange,
   onOptionValuesChange,
 }: OptionProps) {
-  console.log('option', option)
+  console.log("option", option)
   const [values, setValues] = useState<string[]>([])
   useEffect(() => {
     const values = option.values?.map((v) => v.value) ?? []
@@ -28,10 +28,10 @@ export default function Option({
     <div className="flex gap-2">
       <Input
         className="w-full md:w-[120px]"
-        defaultValue={option.name ?? ''}
+        defaultValue={option.name ?? ""}
         placeholder="Size, color"
         onChange={async (e) => {
-          console.log('option id', option.id)
+          console.log("option id", option.id)
           await onOptionNameChange(option.id, e.target.value)
         }}
       />

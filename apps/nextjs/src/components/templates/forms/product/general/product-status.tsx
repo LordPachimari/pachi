@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react"
 
-import type { Product, ProductUpdates } from '@pachi/db'
+import type { Product, ProductUpdates } from "@pachi/db"
 
 import {
   AlertDialog,
@@ -11,13 +11,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '~/components/ui/alert-dialog'
-import { Label } from '~/components/ui/label'
-import { RadioGroup } from '~/components/ui/radio-group'
+} from "~/components/ui/alert-dialog"
+import { Label } from "~/components/ui/label"
+import { RadioGroup } from "~/components/ui/radio-group"
 
 interface ProductStatusProps {
   updateProduct: ({ updates }: { updates: ProductUpdates }) => Promise<void>
-  status: Product['status']
+  status: Product["status"]
 }
 export default function ProductStatus({
   updateProduct,
@@ -25,9 +25,9 @@ export default function ProductStatus({
 }: ProductStatusProps) {
   const [open, setOpen] = useState(false)
   const [open1, setOpen1] = useState(false)
-  const [value, setValue] = useState<'published' | 'draft'>('published')
+  const [value, setValue] = useState<"published" | "draft">("published")
   useEffect(() => {
-    setValue(status as 'published' | 'draft')
+    setValue(status as "published" | "draft")
     setOpen(false)
   }, [status])
 
@@ -49,8 +49,8 @@ export default function ProductStatus({
             <AlertDialogAction
               className="bg-brand"
               onClick={async () => {
-                setValue('published')
-                await updateProduct({ updates: { status: 'published' } })
+                setValue("published")
+                await updateProduct({ updates: { status: "published" } })
               }}
             >
               Continue
@@ -72,8 +72,8 @@ export default function ProductStatus({
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
-                setValue('draft')
-                await updateProduct({ updates: { status: 'draft' } })
+                setValue("draft")
+                await updateProduct({ updates: { status: "draft" } })
                 setOpen1(false)
               }}
             >
@@ -87,8 +87,8 @@ export default function ProductStatus({
         className="flex"
         value={value as string}
         onValueChange={(e) => {
-          console.log('e', e)
-          if (e === 'published') {
+          console.log("e", e)
+          if (e === "published") {
             setOpen(true)
           } else {
             setOpen1(true)

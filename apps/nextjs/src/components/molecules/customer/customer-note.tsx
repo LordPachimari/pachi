@@ -1,7 +1,7 @@
-import React from 'react'
+import React from "react"
 
-import InputField from '~/components/molecules/input-field'
-import { Card, CardContent, CardHeader } from '~/components/ui/card'
+import InputField from "~/components/molecules/input-field"
+import { Card, CardContent, CardHeader } from "~/components/ui/card"
 
 type CustomerNoteProps = {
   customer_id: string

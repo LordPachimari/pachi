@@ -1,28 +1,28 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-'use client'
+"use client"
 
-import * as React from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
-import Primitive from 'react-currency-input-field'
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import Primitive from "react-currency-input-field"
 
-import { cn } from '@pachi/utils'
+import { cn } from "@pachi/utils"
 
 const currencyInputVariants = cva(
   cn(
-    'flex items-center gap-x-1',
-    'bg-slate-1 hover:bg-slate-2 border-ui-border-base shadow-buttons-neutral placeholder-ui-fg-muted text-ui-fg-base transition-fg relative w-full rounded-md border',
-    'focus-within:border-brand focus-within:shadow-input-shadow',
+    "flex items-center gap-x-1",
+    "bg-slate-1 hover:bg-slate-2 border-ui-border-base shadow-buttons-neutral placeholder-ui-fg-muted text-ui-fg-base transition-fg relative w-full rounded-md border",
+    "focus-within:border-brand focus-within:shadow-input-shadow",
   ),
   {
     variants: {
       size: {
-        base: 'txt-compact-medium h-10 px-3',
-        small: 'txt-compact-small h-8 px-2',
+        base: "txt-compact-medium h-10 px-3",
+        small: "txt-compact-small h-8 px-2",
       },
     },
     defaultVariants: {
-      size: 'base',
+      size: "base",
     },
   },
 )
@@ -30,7 +30,7 @@ const currencyInputVariants = cva(
 interface CurrencyInputProps
   extends Omit<
       React.ComponentPropsWithoutRef<typeof Primitive>,
-      'prefix' | 'suffix' | 'size'
+      "prefix" | "suffix" | "size"
     >,
     VariantProps<typeof currencyInputVariants> {
   symbol: string
@@ -40,7 +40,7 @@ interface CurrencyInputProps
 const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
   (
     {
-      size = 'base',
+      size = "base",
       symbol,
       code,
       disabled = false,
@@ -78,21 +78,21 @@ const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
           }
         }}
         className={cn(
-          'w-full cursor-text justify-between overflow-hidden',
+          "w-full cursor-text justify-between overflow-hidden",
           currencyInputVariants({ size }),
           {
-            'cursor-not-allowed !border-ui-border-base !bg-ui-bg-disabled text-ui-fg-disabled placeholder-ui-fg-disabled !shadow-none':
+            "cursor-not-allowed !border-ui-border-base !bg-ui-bg-disabled text-ui-fg-disabled placeholder-ui-fg-disabled !shadow-none":
               disabled,
-            'border-ui-border-error focus-within:!shadow-borders-error invalid:focus:!shadow-borders-error':
-              props['aria-invalid'] ?? !valid,
+            "border-ui-border-error focus-within:!shadow-borders-error invalid:focus:!shadow-borders-error":
+              props["aria-invalid"] ?? !valid,
           },
           className,
         )}
       >
         <span
-          className={cn('w-fit', {
-            'py-[9px]': size === 'base',
-            'py-[5px]': size === 'small',
+          className={cn("w-fit", {
+            "py-[9px]": size === "base",
+            "py-[5px]": size === "small",
           })}
           role="presentation"
         >
@@ -108,9 +108,9 @@ const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
           {...props}
         />
         <span
-          className={cn('w-fit min-w-[16px] text-right', {
-            'py-[9px]': size === 'base',
-            'py-[5px]': size === 'small',
+          className={cn("w-fit min-w-[16px] text-right", {
+            "py-[9px]": size === "base",
+            "py-[5px]": size === "small",
           })}
           role="presentation"
         >
@@ -122,6 +122,6 @@ const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
     )
   },
 )
-CurrencyInput.displayName = 'CurrencyInput'
+CurrencyInput.displayName = "CurrencyInput"
 
 export { CurrencyInput }

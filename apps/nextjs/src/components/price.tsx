@@ -1,24 +1,24 @@
-import { cn } from '@pachi/utils'
+import { cn } from "@pachi/utils"
 
 const Price = ({
   amount,
   className,
-  currencyCode = 'USD',
+  currencyCode = "USD",
   currencyCodeClassName,
 }: {
   amount: number
   className?: string
   currencyCode: string
   currencyCodeClassName?: string
-} & React.ComponentProps<'p'>) => (
+} & React.ComponentProps<"p">) => (
   <p suppressHydrationWarning={true} className={className}>
     {`${new Intl.NumberFormat(undefined, {
-      style: 'currency',
+      style: "currency",
       currency: currencyCode,
-      currencyDisplay: 'narrowSymbol',
+      currencyDisplay: "narrowSymbol",
     }).format(amount / 100)}`}
     <span
-      className={cn('ml-1 inline', currencyCodeClassName)}
+      className={cn("ml-1 inline", currencyCodeClassName)}
     >{`${currencyCode}`}</span>
   </p>
 )

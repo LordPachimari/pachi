@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react"
 
-import type { User } from '@pachi/db'
+import type { User } from "@pachi/db"
 
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
-import { Card, CardContent, CardHeader } from '~/components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
+import { Card, CardContent, CardHeader } from "~/components/ui/card"
 
 type CustomerSummaryProps = {
   customer: User
@@ -28,7 +28,7 @@ const CustomerSummary: React.FC<CustomerSummaryProps> = ({ customer }) => {
           </Avatar>
           <div className="flex flex-col pl-4">
             <h2 className="text-lg font-bold">
-              {customer.username ?? 'Anonymous'}
+              {customer.username ?? "Anonymous"}
             </h2>
 
             <p>{customer.email}</p>
@@ -46,7 +46,7 @@ const CustomerSummary: React.FC<CustomerSummaryProps> = ({ customer }) => {
           <div className=" flex flex-col border-r-[1px] px-4">
             <p className=" text-grey-50 mb-1">Phone</p>
             <div className=" flex flex-col">
-              <p>{customer.phone ?? '1231232'}</p>
+              <p>{customer.phone ?? "1231232"}</p>
             </div>
           </div>
 

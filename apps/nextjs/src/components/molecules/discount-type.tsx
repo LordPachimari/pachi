@@ -1,5 +1,5 @@
-import { Label } from '~/components/ui/label'
-import { RadioGroup } from '~/components/ui/radio-group'
+import { Label } from "~/components/ui/label"
+import { RadioGroup } from "~/components/ui/radio-group"
 
 const DiscountType = () => {
   return (

@@ -1,9 +1,9 @@
-import TextareaAutosize from 'react-textarea-autosize'
+import TextareaAutosize from "react-textarea-autosize"
 
-import type { ProductUpdates } from '@pachi/db'
-import type { FieldError as FieldErrorType } from '@pachi/types'
+import type { ProductUpdates } from "@pachi/db"
+import type { FieldError as FieldErrorType } from "@pachi/types"
 
-import type { DebouncedFunc } from '~/types'
+import type { DebouncedFunc } from "~/types"
 
 export interface TitleProps {
   onChange: DebouncedFunc<
@@ -20,7 +20,7 @@ const TitleField = ({ onChange, value, placeholder, error }: TitleProps) => {
       <TextareaAutosize
         id="title"
         defaultValue={value}
-        placeholder={placeholder ?? 'Write title...'}
+        placeholder={placeholder ?? "Write title..."}
         onInput={async (e) =>
           await onChange({ updates: { title: e.currentTarget.value } })
         }

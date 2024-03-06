@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import * as React from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import * as React from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import {
   getCoreRowModel,
   getFacetedRowModel,
@@ -15,9 +15,9 @@ import {
   type PaginationState,
   type SortingState,
   type VisibilityState,
-} from '@tanstack/react-table'
+} from "@tanstack/react-table"
 
-import { useBuildExistingQueryOption, useQueryOptions } from '~/routing/router'
+import { useBuildExistingQueryOption, useQueryOptions } from "~/routing/router"
 
 interface UseDataTableProps<TData, TValue> {
   /**
@@ -44,11 +44,11 @@ function useTable<TData, TValue>({
   const queryOptions = useQueryOptions(params)
 
   // Search params
-  const page = queryOptions.page[0] ?? '1'
+  const page = queryOptions.page[0] ?? "1"
   const pageAsNumber = Number(page)
   const fallbackPage =
     isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber
-  const pageSize_ = queryOptions.pageSize[0] ?? '1'
+  const pageSize_ = queryOptions.pageSize[0] ?? "1"
   const pageSizeAsNumber = Number(pageSize_)
   const fallbackPageSize = isNaN(pageSizeAsNumber) ? 10 : pageSizeAsNumber
 

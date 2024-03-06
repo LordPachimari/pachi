@@ -1,6 +1,6 @@
-import type { ProductUpdates } from '@pachi/db'
+import type { ProductUpdates } from "@pachi/db"
 
-import { Switch } from '../../../../ui/switch'
+import { Switch } from "../../../../ui/switch"
 
 export type DiscountableFormType = {
   value: boolean

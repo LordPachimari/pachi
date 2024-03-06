@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useAutoAnimate } from '@formkit/auto-animate/react'
-import debounce from 'lodash.debounce'
+import { useCallback, useEffect, useState } from "react"
+import { useAutoAnimate } from "@formkit/auto-animate/react"
+import debounce from "lodash.debounce"
 
-import type { UpdateProductVariant } from '@pachi/core'
-import type { ProductVariant, ProductVariantUpdates } from '@pachi/db'
+import type { UpdateProductVariant } from "@pachi/core"
+import type { ProductVariant, ProductVariantUpdates } from "@pachi/db"
 
-import InputField from '~/components/molecules/input-field'
-import { Checkbox } from '~/components/ui/checkbox'
-import { Input } from '~/components/ui/input'
+import InputField from "~/components/molecules/input-field"
+import { Checkbox } from "~/components/ui/checkbox"
+import { Input } from "~/components/ui/input"
 
 interface InventoryProps {
   updateVariant: (props: UpdateProductVariant) => Promise<void>
@@ -77,7 +77,7 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
               <InputField
                 label="SKU (Stock Keeping Unit)"
                 placeholder="SKU"
-                defaultValue={variant.sku ?? ''}
+                defaultValue={variant.sku ?? ""}
                 onChange={async (e) => {
                   await onInputChange({
                     updates: { sku: e.currentTarget.value },
@@ -88,7 +88,7 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
             <span className="w-full">
               <InputField
                 label="Barcode (ISBN, UPC, GTIN, etc.)"
-                defaultValue={variant.barcode ?? ''}
+                defaultValue={variant.barcode ?? ""}
                 placeholder="Barcode"
                 onChange={async (e) => {
                   await onInputChange({

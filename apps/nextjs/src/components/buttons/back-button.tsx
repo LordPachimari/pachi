@@ -1,9 +1,9 @@
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 
-import { cn } from '@pachi/utils'
+import { cn } from "@pachi/utils"
 
-import { Icons } from '../ui/icons'
+import { Icons } from "../ui/icons"
 
 type Props = {
   path?: string
@@ -11,14 +11,14 @@ type Props = {
   className?: string
 }
 
-const BackButton = ({ path, label = 'Go back', className }: Props) => {
+const BackButton = ({ path, label = "Go back", className }: Props) => {
   const router = useRouter()
   if (path)
     return (
       <Link
         href={path}
         className={cn(
-          'text-grey-50 inter-grey-40 inter-small-semibold flex items-center gap-x-2 px-2 py-2',
+          "text-grey-50 inter-grey-40 inter-small-semibold flex items-center gap-x-2 px-2 py-2",
           className,
         )}
       >
@@ -30,7 +30,7 @@ const BackButton = ({ path, label = 'Go back', className }: Props) => {
     <button
       onClick={() => router.back()}
       className={cn(
-        'text-grey-50 inter-grey-40 inter-small-semibold flex items-center gap-x-2 px-2 py-2',
+        "text-grey-50 inter-grey-40 inter-small-semibold flex items-center gap-x-2 px-2 py-2",
         className,
       )}
     >

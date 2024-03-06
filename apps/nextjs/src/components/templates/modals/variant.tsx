@@ -1,6 +1,6 @@
-import { Fragment, useCallback, useEffect, useState } from 'react'
-import { Dialog, Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react'
+import { Fragment, useCallback, useEffect, useState } from "react"
+import { Dialog, Listbox, Transition } from "@headlessui/react"
+import { CheckIcon, ChevronsUpDownIcon } from "lucide-react"
 
 import type {
   AssignProductOptionValueToVariant,
@@ -8,17 +8,17 @@ import type {
   UpdateProductPrice,
   UpdateProductVariant,
   UploadProductImages,
-} from '@pachi/core'
+} from "@pachi/core"
 import type {
   Image,
   ProductOption,
   ProductOptionValue,
   ProductVariant,
-} from '@pachi/db'
+} from "@pachi/db"
 
-import Inventory from '../forms/product/general/inventory'
-import Media from '../forms/product/general/media'
-import Pricing from '../forms/product/general/pricing'
+import Inventory from "../forms/product/general/inventory"
+import Media from "../forms/product/general/media"
+import Pricing from "../forms/product/general/pricing"
 
 interface VariantModalProps {
   closeModal: () => void
@@ -175,14 +175,14 @@ export default function VariantModal({
                                   optionValue: {
                                     id: variantOptions[option.name]!.id,
                                     value:
-                                      variantOptions[option.name]!.value ?? '',
+                                      variantOptions[option.name]!.value ?? "",
                                   },
                                   optionId: option.id,
                                 }
                               : {
                                   optionValue: {
-                                    id: '',
-                                    value: '',
+                                    id: "",
+                                    value: "",
                                   },
                                   optionId: option.id,
                                 }
@@ -197,7 +197,7 @@ export default function VariantModal({
                           <div className="relative  w-[100px]">
                             <Listbox.Button className="relative h-[30px] w-full cursor-default rounded-sm border bg-white  text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2  sm:text-sm">
                               <span className="block truncate">
-                                {variantOptions[option.name]?.value ?? ''}
+                                {variantOptions[option.name]?.value ?? ""}
                               </span>
                               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                 <ChevronsUpDownIcon
@@ -215,15 +215,15 @@ export default function VariantModal({
                               <Listbox.Options className="absolute mt-1 max-h-60 w-full  overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
                                 {(optionsMap[option.name] ?? []).map(
                                   (optionValue) => {
-                                    console.log('value', optionValue)
+                                    console.log("value", optionValue)
                                     return (
                                       <Listbox.Option
                                         key={optionValue.value}
                                         className={({ active }) =>
                                           `relative z-20   cursor-default select-none bg-white py-2 ${
                                             active
-                                              ? 'bg-amber-100 text-amber-900'
-                                              : 'text-gray-900'
+                                              ? "bg-amber-100 text-amber-900"
+                                              : "text-gray-900"
                                           }`
                                         }
                                         value={{
@@ -236,8 +236,8 @@ export default function VariantModal({
                                             <span
                                               className={`block w-[200px] truncate ${
                                                 selected
-                                                  ? 'font-medium'
-                                                  : 'font-normal'
+                                                  ? "font-medium"
+                                                  : "font-normal"
                                               }`}
                                             >
                                               {optionValue.value}

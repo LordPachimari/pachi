@@ -1,4 +1,4 @@
-import type React from 'react'
+import type React from "react"
 import type {
   Active,
   CollisionDetection,
@@ -8,15 +8,15 @@ import type {
   Modifiers,
   PointerActivationConstraint,
   UniqueIdentifier,
-} from '@dnd-kit/core'
+} from "@dnd-kit/core"
 import type {
   AnimateLayoutChanges,
   arrayMove,
   NewIndexGetter,
   SortingStrategy,
-} from '@dnd-kit/sortable'
+} from "@dnd-kit/sortable"
 
-import type { ItemProps } from '../components/Item/Item'
+import type { ItemProps } from "../components/Item/Item"
 
 export interface Props {
   activationConstraint: PointerActivationConstraint
@@ -47,7 +47,7 @@ export interface Props {
     isDragging: boolean
   }): React.CSSProperties
   wrapperStyle?(args: {
-    active: Pick<Active, 'id'> | null
+    active: Pick<Active, "id"> | null
     index: number
     isDragging: boolean
     id: UniqueIdentifier
@@ -58,5 +58,5 @@ export interface Props {
   }: {
     order: Record<string, number>
   }) => Promise<void>
-  itemsType: 'images'
+  itemsType: "images"
 }

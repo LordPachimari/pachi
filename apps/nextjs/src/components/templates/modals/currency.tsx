@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
-import { Fragment } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { PlusIcon, SidebarClose } from 'lucide-react'
+import { Fragment } from "react"
+import { Dialog, Transition } from "@headlessui/react"
+import { PlusIcon, SidebarClose } from "lucide-react"
 
-import { Button } from '~/components/ui/button'
+import { Button } from "~/components/ui/button"
 
 interface CurrencyModalProps {
   children: React.ReactNode

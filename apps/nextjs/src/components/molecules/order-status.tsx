@@ -1,16 +1,16 @@
-import type { OrderStatus as OrderStatusType } from '@pachi/db'
+import type { OrderStatus as OrderStatusType } from "@pachi/db"
 
-import DotIndicator from '../ui/dot-indicator'
+import DotIndicator from "../ui/dot-indicator"
 
 export const OrderStatus = ({ status }: { status: OrderStatusType }) => {
   switch (status) {
-    case 'completed':
+    case "completed":
       return <DotIndicator title="Completed" variant="success" />
-    case 'pending' || 'archived':
+    case "pending" || "archived":
       return <DotIndicator title="Processing" variant="default" />
-    case 'canceled':
+    case "canceled":
       return <DotIndicator title="Canceled" variant="danger" />
-    case 'requiresAction':
+    case "requiresAction":
       return <DotIndicator title="Requires action" variant="danger" />
     default:
       return null

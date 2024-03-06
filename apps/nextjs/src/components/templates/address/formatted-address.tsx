@@ -1,4 +1,4 @@
-import type { Address } from '@pachi/db'
+import type { Address } from "@pachi/db"
 
 type FormattedAddressProps = {
   title: string
@@ -22,8 +22,8 @@ export const FormattedAddress = ({ title, addr }: FormattedAddressProps) => {
         <span>{addr?.address}</span>
         <span>
           {addr?.postalCode} {addr?.city}
-          {', '}
-          {addr?.province ? `${addr.province} ` : ''}
+          {", "}
+          {addr?.province ? `${addr.province} ` : ""}
           {addr?.countryCode?.toUpperCase()}
         </span>
       </div>

@@ -1,11 +1,11 @@
-import { enableMapSet } from 'immer'
-import type { Replicache } from 'replicache'
-import { create } from 'zustand'
+import { enableMapSet } from "immer"
+import type { Replicache } from "replicache"
+import { create } from "zustand"
 
 import type {
   ClientDashboardMutatorsType,
   ClientGlobalMutatorsType,
-} from '@pachi/core'
+} from "@pachi/core"
 
 enableMapSet()
 

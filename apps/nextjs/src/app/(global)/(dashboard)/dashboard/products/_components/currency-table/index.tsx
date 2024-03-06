@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import type { ColumnDef } from '@tanstack/react-table'
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import type { ColumnDef } from "@tanstack/react-table"
 
-import type { Price } from '@pachi/db'
-import { currencies, type CurrencyType } from '@pachi/types'
-import { generateId, ulid } from '@pachi/utils'
+import type { Price } from "@pachi/db"
+import { currencies, type CurrencyType } from "@pachi/types"
+import { generateId, ulid } from "@pachi/utils"
 
-import { Table } from '~/components/table/table'
-import { useTable } from '~/components/table/use-table'
-import { UserStore } from '~/replicache/stores'
-import { useReplicache } from '~/zustand/replicache'
-import { getCurrenciesColumns } from './columns'
+import { Table } from "~/components/table/table"
+import { useTable } from "~/components/table/use-table"
+import { UserStore } from "~/replicache/stores"
+import { useReplicache } from "~/zustand/replicache"
+import { getCurrenciesColumns } from "./columns"
 
 interface CurrencyTableProps {
   productCurrencyCodes: string[]
@@ -63,7 +63,7 @@ function CurrenciesTable({
     for (const currencyCode of selectedRowIds) {
       if (!exisitingCurrencyCodesSet.has(currencyCode))
         pricesToCreate.push({
-          id: generateId({ id: ulid(), prefix: 'price' }),
+          id: generateId({ id: ulid(), prefix: "price" }),
           amount: 0,
           currencyCode: currencyCode,
           variantId,

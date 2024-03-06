@@ -1,14 +1,14 @@
-import { MainNav } from '~/components/layouts/main-nav/main-nav'
-import MainSidebar from '~/components/templates/sidebars/main-sidebar'
-import { ScrollArea } from '~/components/ui/scroll-area'
-import { GlobalReplicacheProvider } from '~/providers/replicache/global'
+import { MainNav } from "~/components/layouts/main-nav/main-nav"
+import MainSidebar from "~/components/templates/sidebars/main-sidebar"
+import { ScrollArea } from "~/components/ui/scroll-area"
+import { GlobalReplicacheProvider } from "~/providers/replicache/global"
 
 interface HomeLayoutProps {
   children: React.ReactNode
 }
 
 export default function MainLayout({ children }: HomeLayoutProps) {
-  const username = 'pachimari'
+  const username = "pachimari"
   return (
     <GlobalReplicacheProvider>
       <div className="relative flex min-h-screen flex-col">
