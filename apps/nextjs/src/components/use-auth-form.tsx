@@ -41,7 +41,7 @@ export function UserAuthForm({
     const { message, type, sessionId } = isLogin
       ? await login(value)
       : await registerAction(value)
-    if (sessionId) localStorage?.setItem('auth_session', sessionId)
+    if (sessionId) localStorage.setItem('auth_session', sessionId)
     if (type === 'ERROR') {
       toast.error(message)
     }
