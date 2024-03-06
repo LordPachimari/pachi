@@ -1,10 +1,10 @@
-import { eq } from "drizzle-orm";
-import { Effect, pipe } from "effect";
+import { eq } from 'drizzle-orm'
+import { Effect, pipe } from 'effect'
 
-import { products } from "@pachi/db/schema";
-import { withDieErrorLogger } from "@pachi/utils";
+import { products } from '@pachi/db/schema'
+import { withDieErrorLogger } from '@pachi/utils'
 
-import type { GetClientViewDataWithTable } from "../types";
+import type { GetClientViewDataWithTable } from '../types'
 
 export const productsCVD: GetClientViewDataWithTable = ({
   transaction,
@@ -16,16 +16,16 @@ export const productsCVD: GetClientViewDataWithTable = ({
         ? transaction
             .select()
             .from(products)
-            .where(eq(products.status, "published"))
+            .where(eq(products.status, 'published'))
         : transaction
             .select({ id: products.id, version: products.version })
             .from(products)
-            .where(eq(products.status, "published")),
+            .where(eq(products.status, 'published')),
     ),
     Effect.map((products) => [
-      { tableName: "products" as const, cvd: products },
+      { tableName: 'products' as const, cvd: products },
     ]),
-    Effect.orDieWith((e) => withDieErrorLogger(e, "productsCVD space record")),
-  );
-  return cvd;
-};
+    Effect.orDieWith((e) => withDieErrorLogger(e, 'productsCVD space record')),
+  )
+  return cvd
+}

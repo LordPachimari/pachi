@@ -1,29 +1,29 @@
-import { relations } from "drizzle-orm";
-import { boolean, index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { relations } from 'drizzle-orm'
+import { boolean, index, integer, pgTable, varchar } from 'drizzle-orm/pg-core'
 
-import { cartItems } from "./cart-item";
-import { returns } from "./return";
-import { returnReasons } from "./return-reason";
+import { cartItems } from './cart-item'
+import { returns } from './return'
+import { returnReasons } from './return-reason'
 
 export const returnItems = pgTable(
-  "return_items",
+  'return_items',
   {
-    itemId: varchar("itemId").notNull().primaryKey(),
-    isRequested: boolean("isRequested").default(true),
-    note: varchar("note"),
-    quantity: integer("quantity"),
-    reasonId: varchar("reasonId"),
-    receivedQuantity: integer("receivedQuantity"),
-    requestedQuantity: integer("requestedQuantity"),
-    returnId: varchar("returnId"),
-    version: integer("version").notNull().default(0),
+    itemId: varchar('itemId').notNull().primaryKey(),
+    isRequested: boolean('isRequested').default(true),
+    note: varchar('note'),
+    quantity: integer('quantity'),
+    reasonId: varchar('reasonId'),
+    receivedQuantity: integer('receivedQuantity'),
+    requestedQuantity: integer('requestedQuantity'),
+    returnId: varchar('returnId'),
+    version: integer('version').notNull().default(0),
   },
   (t) => ({
-    returnIdIndex1: index("returnIdIndex1").on(t.returnId),
-    reasonIdIndex: index("reasonIdIndex").on(t.reasonId),
-    itemIdIndex: index("itemIdIndex").on(t.itemId),
+    returnIdIndex1: index('returnIdIndex1').on(t.returnId),
+    reasonIdIndex: index('reasonIdIndex').on(t.reasonId),
+    itemIdIndex: index('itemIdIndex').on(t.itemId),
   }),
-);
+)
 export const ReturnItemRelations = relations(returnItems, ({ one }) => ({
   reason: one(returnReasons, {
     fields: [returnItems.reasonId],
@@ -37,4 +37,4 @@ export const ReturnItemRelations = relations(returnItems, ({ one }) => ({
     fields: [returnItems.itemId],
     references: [cartItems.id],
   }),
-}));
+}))

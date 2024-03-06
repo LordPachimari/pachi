@@ -1,16 +1,16 @@
-"use client";
+'use client'
 
-import { useTheme } from "next-themes";
+import { useTheme } from 'next-themes'
 
-import { Icons } from "~/components/ui/icons";
+import { Icons } from '~/components/ui/icons'
 
 export function ThemeToggle() {
-  const { setTheme, theme } = useTheme();
+  const { setTheme, theme } = useTheme()
 
   return (
     <button
       className="h-18 w-18 group flex flex-col items-center justify-center text-sm   "
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
     >
       <Icons.sun
         className="h-5 w-5 rotate-0 scale-100 text-slate-11 transition-all group-hover:text-slate-9 dark:-rotate-90 dark:scale-0"
@@ -22,5 +22,5 @@ export function ThemeToggle() {
       />
       <span className="sr-only ">Toggle theme</span>
     </button>
-  );
+  )
 }

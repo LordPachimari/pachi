@@ -1,18 +1,18 @@
-import Link from "next/link";
+import Link from 'next/link'
 
-import { cn } from "@pachi/utils";
+import { cn } from '@pachi/utils'
 
-import { ThemeToggle } from "~/components/layouts/theme-toggle";
-import { buttonVariants } from "~/components/ui/button";
-import { Icons } from "~/components/ui/icons";
-import { siteConfig } from "~/config/site";
+import { ThemeToggle } from '~/components/layouts/theme-toggle'
+import { buttonVariants } from '~/components/ui/button'
+import { Icons } from '~/components/ui/icons'
+import { siteConfig } from '~/config/site'
 
 export function SiteFooter() {
   return (
     <footer className="w-full border-t bg-background">
       <div className="container flex flex-col items-center justify-between space-y-1 py-5 md:h-16 md:flex-row md:py-0">
         <div className="text-center text-base text-muted-foreground">
-          Learn to do a{" "}
+          Learn to do a{' '}
           <a
             aria-label="Kickflip tutorial on YouTube"
             href="https://www.youtube.com/watch?v=kpVhjV-I6nM"
@@ -28,8 +28,8 @@ export function SiteFooter() {
             <div
               className={cn(
                 buttonVariants({
-                  size: "icon",
-                  variant: "ghost",
+                  size: 'icon',
+                  variant: 'ghost',
                 }),
               )}
             >
@@ -41,5 +41,5 @@ export function SiteFooter() {
         </div>
       </div>
     </footer>
-  );
+  )
 }

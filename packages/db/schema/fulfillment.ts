@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations } from 'drizzle-orm'
 import {
   boolean,
   index,
@@ -7,41 +7,41 @@ import {
   pgTable,
   primaryKey,
   varchar,
-} from "drizzle-orm/pg-core";
+} from 'drizzle-orm/pg-core'
 
-import { cartItems } from "./cart-item";
-import { fulfillmentProviders } from "./fulfillment-provider";
-import { orders } from "./order";
-import { trackingLinks } from "./tracking-link";
+import { cartItems } from './cart-item'
+import { fulfillmentProviders } from './fulfillment-provider'
+import { orders } from './order'
+import { trackingLinks } from './tracking-link'
 
 export const fulfillments = pgTable(
-  "fulfillments",
+  'fulfillments',
   {
-    id: varchar("id").notNull().primaryKey(),
-    createdAt: varchar("createdAt"),
-    updatedAt: varchar("updatedAt"),
-    canceledAt: varchar("canceledAt"),
-    claimOrderId: varchar("claimOrderId"),
-    data: json("data").$type<Record<string, unknown>>(),
-    idempotencyKey: varchar("idempotencyKey"),
-    notificationOff: boolean("notificationOff"),
-    orderId: varchar("orderId"),
-    providerId: varchar("providerId").notNull(),
-    locationId: varchar("locationId").notNull(),
-    shippedAt: varchar("shippedAt"),
-    swapId: varchar("swapId"),
-    trackingNumbers: json("trackingNumbers"),
-    version: integer("version").notNull().default(0),
+    id: varchar('id').notNull().primaryKey(),
+    createdAt: varchar('createdAt'),
+    updatedAt: varchar('updatedAt'),
+    canceledAt: varchar('canceledAt'),
+    claimOrderId: varchar('claimOrderId'),
+    data: json('data').$type<Record<string, unknown>>(),
+    idempotencyKey: varchar('idempotencyKey'),
+    notificationOff: boolean('notificationOff'),
+    orderId: varchar('orderId'),
+    providerId: varchar('providerId').notNull(),
+    locationId: varchar('locationId').notNull(),
+    shippedAt: varchar('shippedAt'),
+    swapId: varchar('swapId'),
+    trackingNumbers: json('trackingNumbers'),
+    version: integer('version').notNull().default(0),
   },
   (fulfillment) => ({
-    claimOrderIdIndex1: index("claimOrderIdIndex1").on(
+    claimOrderIdIndex1: index('claimOrderIdIndex1').on(
       fulfillment.claimOrderId,
     ),
-    orderIdIndex_3: index("orderIdIndex_3").on(fulfillment.orderId),
-    providerIdIndex1: index("providerIdIndex1").on(fulfillment.providerId),
-    swapIdIndex1: index("swapIdIndex1").on(fulfillment.swapId),
+    orderIdIndex_3: index('orderIdIndex_3').on(fulfillment.orderId),
+    providerIdIndex1: index('providerIdIndex1').on(fulfillment.providerId),
+    swapIdIndex1: index('swapIdIndex1').on(fulfillment.swapId),
   }),
-);
+)
 export const fulfillmentRelations = relations(
   fulfillments,
   ({ one, many }) => ({
@@ -60,19 +60,19 @@ export const fulfillmentRelations = relations(
     items: many(fulfillmentItems),
     trackingLinks: many(trackingLinks),
   }),
-);
+)
 
 export const fulfillmentItems = pgTable(
-  "fulfillment_items",
+  'fulfillment_items',
   {
-    itemId: varchar("itemId").notNull(),
-    fulfillmentId: varchar("fulfillmentId").notNull(),
-    quantity: integer("quantity"),
+    itemId: varchar('itemId').notNull(),
+    fulfillmentId: varchar('fulfillmentId').notNull(),
+    quantity: integer('quantity'),
   },
   (t) => ({
     pk: primaryKey(t.itemId, t.fulfillmentId),
   }),
-);
+)
 export const fulfillmentItemsRelations = relations(
   fulfillmentItems,
   ({ one }) => ({
@@ -85,4 +85,4 @@ export const fulfillmentItemsRelations = relations(
       references: [fulfillments.id],
     }),
   }),
-);
+)

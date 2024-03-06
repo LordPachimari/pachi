@@ -1,8 +1,8 @@
-import { DashboardButton } from "../../layouts/main-nav/dashboard-button";
-import { ThemeToggle } from "../../layouts/theme-toggle";
+import { DashboardButton } from '../../layouts/main-nav/dashboard-button'
+import { ThemeToggle } from '../../layouts/theme-toggle'
 
 interface MainSidebarProps {
-  username: string | undefined;
+  username: string | undefined
 }
 export default function MainSidebar({ username }: MainSidebarProps) {
   return (
@@ -10,5 +10,5 @@ export default function MainSidebar({ username }: MainSidebarProps) {
       <DashboardButton username={username} />
       <ThemeToggle />
     </div>
-  );
+  )
 }

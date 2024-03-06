@@ -1,12 +1,12 @@
-import { eq } from "drizzle-orm";
-import { Effect } from "effect";
+import { eq } from 'drizzle-orm'
+import { Effect } from 'effect'
 
-import { ServerContext } from "../context";
+import { ServerContext } from '../context'
 
 export const ProductOptionRepository = {
   getProductOption: (id: string) =>
     Effect.gen(function* (_) {
-      const { manager } = yield* _(ServerContext);
+      const { manager } = yield* _(ServerContext)
       return yield* _(
         Effect.tryPromise(() =>
           manager.query.productOptions.findFirst({
@@ -16,7 +16,7 @@ export const ProductOptionRepository = {
             },
           }),
         ).pipe(Effect.orDie),
-      );
+      )
     }),
-};
-export type ProductOptionRepositoryType = typeof ProductOptionRepository;
+}
+export type ProductOptionRepositoryType = typeof ProductOptionRepository

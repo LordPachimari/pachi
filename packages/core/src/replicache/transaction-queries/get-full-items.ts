@@ -1,30 +1,30 @@
-import { inArray } from "drizzle-orm";
-import { Effect, pipe } from "effect";
+import { inArray } from 'drizzle-orm'
+import { Effect, pipe } from 'effect'
 
-import { tableNamesMap, type TableName, type Transaction } from "@pachi/db";
-import { users } from "@pachi/db/schema";
-import { withDieErrorLogger } from "@pachi/utils";
+import { tableNamesMap, type TableName, type Transaction } from '@pachi/db'
+import { users } from '@pachi/db/schema'
+import { withDieErrorLogger } from '@pachi/utils'
 
 export const getFullItems = ({
   tableName,
   keys,
   transaction,
 }: {
-  tableName: TableName;
-  keys: string[];
-  transaction: Transaction;
+  tableName: TableName
+  keys: string[]
+  transaction: Transaction
 }): Effect.Effect<Array<Record<string, unknown>>, never, never> => {
   if (keys.length === 0) {
-    return Effect.succeed([]);
+    return Effect.succeed([])
   }
-  if (tableName === "users") {
+  if (tableName === 'users') {
     return pipe(
       Effect.tryPromise(() =>
         transaction.select().from(users).where(inArray(users.id, keys)),
       ),
-      Effect.orDieWith((e) => withDieErrorLogger(e, "get full items error")),
-    );
-  } else if (tableName === "products") {
+      Effect.orDieWith((e) => withDieErrorLogger(e, 'get full items error')),
+    )
+  } else if (tableName === 'products') {
     return pipe(
       Effect.tryPromise(() =>
         transaction.query.products.findMany({
@@ -52,10 +52,10 @@ export const getFullItems = ({
           },
         }),
       ),
-      Effect.orDieWith((e) => withDieErrorLogger(e, "get full items error")),
-    );
+      Effect.orDieWith((e) => withDieErrorLogger(e, 'get full items error')),
+    )
   } else {
-    const table = tableNamesMap[tableName];
+    const table = tableNamesMap[tableName]
     return pipe(
       Effect.tryPromise(() =>
         transaction
@@ -64,7 +64,7 @@ export const getFullItems = ({
           //@ts-ignore
           .where(inArray(table.id, keys)),
       ),
-      Effect.orDieWith((e) => withDieErrorLogger(e, "get full items error")),
-    );
+      Effect.orDieWith((e) => withDieErrorLogger(e, 'get full items error')),
+    )
   }
-};
+}

@@ -1,35 +1,35 @@
-"use client";
+'use client'
 
-import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import * as React from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
-import { cn } from "@pachi/utils";
+import { cn } from '@pachi/utils'
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "~/components/ui/accordion";
-import { Button } from "~/components/ui/button";
-import { Icons } from "~/components/ui/icons";
-import { ScrollArea } from "~/components/ui/scroll-area";
-import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
-import { siteConfig } from "~/config/site";
-import type { MainNavItem, SidebarNavItem } from "~/types";
+} from '~/components/ui/accordion'
+import { Button } from '~/components/ui/button'
+import { Icons } from '~/components/ui/icons'
+import { ScrollArea } from '~/components/ui/scroll-area'
+import { Sheet, SheetContent, SheetTrigger } from '~/components/ui/sheet'
+import { siteConfig } from '~/config/site'
+import type { MainNavItem, SidebarNavItem } from '~/types'
 
 interface MobileNavProps {
-  mainNavItems?: MainNavItem[];
-  sidebarNavItems: SidebarNavItem[];
+  mainNavItems?: MainNavItem[]
+  sidebarNavItems: SidebarNavItem[]
 }
 
 export function MobileMainNav({
   mainNavItems,
   sidebarNavItems,
 }: MobileNavProps) {
-  const pathname = usePathname();
-  const [isOpen, setIsOpen] = React.useState(false);
+  const pathname = usePathname()
+  const [isOpen, setIsOpen] = React.useState(false)
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -122,15 +122,15 @@ export function MobileMainNav({
         </ScrollArea>
       </SheetContent>
     </Sheet>
-  );
+  )
 }
 
 interface MobileLinkProps {
-  children?: React.ReactNode;
-  href: string;
-  disabled?: boolean;
-  pathname: string;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  children?: React.ReactNode
+  href: string
+  disabled?: boolean
+  pathname: string
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 function MobileLink({
@@ -144,13 +144,13 @@ function MobileLink({
     <Link
       href={href}
       className={cn(
-        "text-foreground/70 transition-colors hover:text-foreground",
-        pathname === href && "text-foreground",
-        disabled && "pointer-events-none opacity-60",
+        'text-foreground/70 transition-colors hover:text-foreground',
+        pathname === href && 'text-foreground',
+        disabled && 'pointer-events-none opacity-60',
       )}
       onClick={() => setIsOpen(false)}
     >
       {children}
     </Link>
-  );
+  )
 }

@@ -9,7 +9,7 @@ const databaseUrl = process.env['DATABASE_URL']!
 const pool = new Pool({
   connectionString: databaseUrl,
 })
- const db = drizzle(pool)
+const db = drizzle(pool)
 
 const adapter = new DrizzlePostgreSQLAdapter(db, session, users)
 

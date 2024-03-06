@@ -1,17 +1,17 @@
-import type { WriteTransaction } from "replicache";
+import type { WriteTransaction } from 'replicache'
 
-import { ClientProduct, ClientStore, ClientUser } from "../../client";
+import { ClientProduct, ClientStore, ClientUser } from '../../client'
 import type {
   ServerDashboardMutatorsType,
   ServerGlobalMutatorsType,
-} from "./server";
+} from './server'
 
 export type ClientDashboardMutatorsType = {
   [key in keyof ServerDashboardMutatorsType]: (
     tx: WriteTransaction,
     args: Parameters<ServerDashboardMutatorsType[key]>[0],
-  ) => Promise<void>;
-};
+  ) => Promise<void>
+}
 export const ClientDashboardMutators: ClientDashboardMutatorsType = {
   createProduct: ClientProduct.createProduct,
   updateProduct: ClientProduct.updateProduct,
@@ -32,17 +32,17 @@ export const ClientDashboardMutators: ClientDashboardMutatorsType = {
   updateProductPrice: ClientProduct.updateProductPrice,
   updateProductTags: ClientProduct.updateProductTags,
   uploadProductImages: ClientProduct.uploadProductImages,
-};
+}
 
 export type ClientGlobalMutatorsType = {
   [key in keyof ServerGlobalMutatorsType]: (
     ctx: WriteTransaction,
     args: Parameters<ServerGlobalMutatorsType[key]>[0],
-  ) => Promise<void>;
-};
+  ) => Promise<void>
+}
 
 export const ClientGlobalMutators: ClientGlobalMutatorsType = {
   createStore: ClientStore.createStore,
   updateStore: ClientStore.updateStore,
   createUser: ClientUser.createUser,
-};
+}

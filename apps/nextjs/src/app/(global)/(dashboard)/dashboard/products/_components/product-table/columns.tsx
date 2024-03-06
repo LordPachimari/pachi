@@ -1,44 +1,44 @@
-"use client";
+'use client'
 
-import Image from "next/image";
+import Image from 'next/image'
 import {
   CheckCircledIcon,
   CrossCircledIcon,
   QuestionMarkCircledIcon,
   StopwatchIcon,
-} from "@radix-ui/react-icons";
-import type { ColumnDef } from "@tanstack/react-table";
-import { CircleIcon } from "lucide-react";
+} from '@radix-ui/react-icons'
+import type { ColumnDef } from '@tanstack/react-table'
+import { CircleIcon } from 'lucide-react'
 
-import type { Product } from "@pachi/db";
-import { products } from "@pachi/db/schema";
+import type { Product } from '@pachi/db'
+import { products } from '@pachi/db/schema'
 
-import ImagePlaceholder from "~/components/molecules/image-placeholder";
-import { TableColumnHeader } from "~/components/table/column-header";
-import { DataTableRowActions } from "~/components/table/row-actions";
-import { Checkbox } from "~/components/ui/checkbox";
+import ImagePlaceholder from '~/components/molecules/image-placeholder'
+import { TableColumnHeader } from '~/components/table/column-header'
+import { DataTableRowActions } from '~/components/table/row-actions'
+import { Checkbox } from '~/components/ui/checkbox'
 import type {
   DataTableFilterableColumn,
   DataTableSearchableColumn,
-} from "~/types";
+} from '~/types'
 
-function StatusIcon({ status }: { status: Product["status"] }) {
-  return status === "draft" ? (
+function StatusIcon({ status }: { status: Product['status'] }) {
+  return status === 'draft' ? (
     <CrossCircledIcon
       className="mr-2 h-4 w-4 text-muted-foreground"
       aria-hidden="true"
     />
-  ) : status === "proposed" ? (
+  ) : status === 'proposed' ? (
     <CheckCircledIcon
       className="mr-2 h-4 w-4 text-muted-foreground"
       aria-hidden="true"
     />
-  ) : status === "published" ? (
+  ) : status === 'published' ? (
     <StopwatchIcon
       className="mr-2 h-4 w-4 text-muted-foreground"
       aria-hidden="true"
     />
-  ) : status === "rejected" ? (
+  ) : status === 'rejected' ? (
     <QuestionMarkCircledIcon
       className="mr-2 h-4 w-4 text-muted-foreground"
       aria-hidden="true"
@@ -48,13 +48,13 @@ function StatusIcon({ status }: { status: Product["status"] }) {
       className="mr-2 h-4 w-4 text-muted-foreground"
       aria-hidden="true"
     />
-  );
+  )
 }
 
 export function getProductsColumns(): ColumnDef<Product, unknown>[] {
   return [
     {
-      id: "select",
+      id: 'select',
       header: ({ table }) => (
         <Checkbox
           checked={table.getIsAllPageRowsSelected()}
@@ -75,7 +75,7 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
       enableHiding: false,
     },
     {
-      accessorKey: "thumbnail",
+      accessorKey: 'thumbnail',
       header: ({ column }) => (
         <TableColumnHeader column={column} title="Thumbnail" />
       ),
@@ -85,7 +85,7 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
             {row.original.thumbnail ? (
               <Image
                 src={row.original.thumbnail.url}
-                alt={row.original.thumbnail.altText || "Uploaded image"}
+                alt={row.original.thumbnail.altText || 'Uploaded image'}
                 width={100}
                 height={80}
                 className="rounded-soft h-full object-cover"
@@ -100,18 +100,18 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
       enableHiding: true,
     },
     {
-      accessorKey: "title",
+      accessorKey: 'title',
       header: ({ column }) => (
         <TableColumnHeader column={column} title="Title" />
       ),
       cell: (info) => {
-        return <div className="w-[80px]">{info.getValue() as string}</div>;
+        return <div className="w-[80px]">{info.getValue() as string}</div>
       },
       enableSorting: true,
       enableHiding: false,
     },
     {
-      accessorKey: "collection",
+      accessorKey: 'collection',
       header: ({ column }) => (
         <TableColumnHeader column={column} title="Collection" />
       ),
@@ -122,14 +122,14 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
       enableHiding: true,
     },
     {
-      accessorKey: "status",
+      accessorKey: 'status',
       header: ({ column }) => (
         <TableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => {
-        const status = row.original.status;
+        const status = row.original.status
         if (!status) {
-          return null;
+          return null
         }
 
         return (
@@ -137,47 +137,47 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
             <StatusIcon status={status} />
             <span className="capitalize">{status}</span>
           </div>
-        );
+        )
       },
       filterFn: (row, id, value) => {
-        return value instanceof Array && value.includes(row.getValue(id));
+        return value instanceof Array && value.includes(row.getValue(id))
       },
       enableSorting: false,
       enableHiding: false,
     },
     {
-      accessorKey: "quantity",
+      accessorKey: 'quantity',
       header: ({ column }) => (
         <TableColumnHeader column={column} title="Quantity" />
       ),
       cell: (info) => {
-        return <div className="w-[80px]">{info.getValue() as number}</div>;
+        return <div className="w-[80px]">{info.getValue() as number}</div>
       },
 
       enableSorting: false,
       enableHiding: true,
     },
     {
-      id: "actions",
+      id: 'actions',
       cell: ({ row }) => <DataTableRowActions row={row} />,
     },
-  ];
+  ]
 }
 
 export const filterableColumns: DataTableFilterableColumn<Product>[] = [
   {
-    id: "status",
-    title: "Status",
+    id: 'status',
+    title: 'Status',
     options: products.status.enumValues.map((status) => ({
       label: status[0]?.toUpperCase() + status.slice(1),
       value: status,
     })),
   },
-];
+]
 
 export const searchableColumns: DataTableSearchableColumn<Product>[] = [
   {
-    id: "title",
-    title: "titles",
+    id: 'title',
+    title: 'titles',
   },
-];
+]

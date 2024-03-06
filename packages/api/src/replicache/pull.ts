@@ -82,7 +82,7 @@ export const pull = <T extends SpaceId>({
                       getClientGroupObject({
                         clientGroupID: pull.data.clientGroupID,
                         transaction,
-                        userId
+                        userId,
                       }),
                     ],
                     {

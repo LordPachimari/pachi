@@ -1,18 +1,18 @@
-import { eq } from "drizzle-orm";
-import { Effect } from "effect";
-import type { ReadonlyJSONObject } from "replicache";
+import { eq } from 'drizzle-orm'
+import { Effect } from 'effect'
+import type { ReadonlyJSONObject } from 'replicache'
 
-import type { CartItem } from "@pachi/db";
-import { cartItems } from "@pachi/db/schema";
-import { NotFound } from "@pachi/types";
-import { withDieErrorLogger } from "@pachi/utils";
+import type { CartItem } from '@pachi/db'
+import { cartItems } from '@pachi/db/schema'
+import { NotFound } from '@pachi/types'
+import { withDieErrorLogger } from '@pachi/utils'
 
-import { ServerContext } from "../context";
+import { ServerContext } from '../context'
 
 export const CartService = {
   updateCartTotals: ({ cartId }: { cartId: string }) =>
     Effect.gen(function* (_) {
-      const { manager, replicacheTransaction } = yield* _(ServerContext);
+      const { manager, replicacheTransaction } = yield* _(ServerContext)
       const cart = yield* _(
         Effect.tryPromise(() =>
           manager.query.carts.findFirst({
@@ -27,48 +27,48 @@ export const CartService = {
             },
           }),
         ).pipe(
-          Effect.orDieWith((e) => withDieErrorLogger(e, "Could not find cart")),
+          Effect.orDieWith((e) => withDieErrorLogger(e, 'Could not find cart')),
         ),
-      );
+      )
       if (!cart) {
-        Effect.fail(new NotFound({ message: "Could not find cart" }));
-        return;
+        Effect.fail(new NotFound({ message: 'Could not find cart' }))
+        return
       }
-      const cartItems = cart.items ?? [];
+      const cartItems = cart.items ?? []
 
-      cart.subtotal = 0;
-      cart.discountTotal = 0;
-      cart.itemTaxTotal = 0;
-      cart.shippingTotal = 0;
-      cart.shippingTaxTotal = 0;
+      cart.subtotal = 0
+      cart.discountTotal = 0
+      cart.itemTaxTotal = 0
+      cart.shippingTotal = 0
+      cart.shippingTaxTotal = 0
 
       cart.items = cartItems.map((item) => {
-        cart.subtotal! += item.total;
-        cart.discountTotal! += item.discountTotal ?? 0;
-        cart.itemTaxTotal! += item.taxTotal ?? 0;
-        return item;
-      });
+        cart.subtotal! += item.total
+        cart.discountTotal! += item.discountTotal ?? 0
+        cart.itemTaxTotal! += item.taxTotal ?? 0
+        return item
+      })
 
       //TODO: shipping tax total, giftcards
-      cart.taxTotal = cart.itemTaxTotal + cart.shippingTaxTotal;
+      cart.taxTotal = cart.itemTaxTotal + cart.shippingTaxTotal
 
       cart.total =
-        cart.subtotal + cart.shippingTotal + cart.taxTotal - cart.discountTotal;
-      replicacheTransaction.set(cart.id, cart as ReadonlyJSONObject, "carts");
+        cart.subtotal + cart.shippingTotal + cart.taxTotal - cart.discountTotal
+      replicacheTransaction.set(cart.id, cart as ReadonlyJSONObject, 'carts')
     }),
   generateCartItem: ({
     item,
   }: {
     item: {
-      variantId: string;
-      quantity: number;
-      currencyCode: string;
-      cartItemId: string;
-      cartId: string;
-    };
+      variantId: string
+      quantity: number
+      currencyCode: string
+      cartItemId: string
+      cartId: string
+    }
   }) =>
     Effect.gen(function* (_) {
-      const { manager } = yield* _(ServerContext);
+      const { manager } = yield* _(ServerContext)
       const variant = yield* _(
         Effect.tryPromise(() =>
           manager.query.productVariants.findFirst({
@@ -85,20 +85,18 @@ export const CartService = {
             },
           }),
         ).pipe(Effect.orDie),
-      );
+      )
       if (!variant) {
         yield* _(
-          Effect.fail(new NotFound({ message: "Could not find variant" })),
-        );
-        return;
+          Effect.fail(new NotFound({ message: 'Could not find variant' })),
+        )
+        return
       }
 
       //TODO: check for the price list
 
-      const prices = variant.prices;
-      const unitPrice = prices.find(
-        (p) => p.currencyCode === item.currencyCode,
-      );
+      const prices = variant.prices
+      const unitPrice = prices.find((p) => p.currencyCode === item.currencyCode)
       if (!unitPrice) {
         yield* _(
           Effect.fail(
@@ -106,8 +104,8 @@ export const CartService = {
               message: `Could not find prices with currency code ${item.currencyCode}`,
             }),
           ),
-        );
-        return;
+        )
+        return
       }
 
       const cartItem: CartItem = {
@@ -123,23 +121,23 @@ export const CartService = {
         createdAt: new Date().toISOString(),
         total: unitPrice.amount * (item.quantity || 1),
         currencyCode: item.currencyCode,
-      };
+      }
       yield* _(
         Effect.tryPromise(() =>
           //@ts-ignore
           manager.insert(cartItems).values(cartItem),
         ).pipe(Effect.orDie),
-      );
-      return cartItem;
+      )
+      return cartItem
     }),
   deleteCartItem: (itemId: string) =>
     Effect.gen(function* (_) {
-      const { manager } = yield* _(ServerContext);
+      const { manager } = yield* _(ServerContext)
       yield* _(
         Effect.tryPromise(() =>
           manager.delete(cartItems).where(eq(cartItems.id, itemId)),
         ).pipe(Effect.orDie),
-      );
+      )
     }),
-};
-export type CartServiceType = typeof CartService;
+}
+export type CartServiceType = typeof CartService

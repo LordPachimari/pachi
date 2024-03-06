@@ -1,28 +1,28 @@
-"use client";
+'use client'
 
-import { Cross2Icon } from "@radix-ui/react-icons";
-import type { Table } from "@tanstack/react-table";
-import { TrashIcon } from "lucide-react";
+import { Cross2Icon } from '@radix-ui/react-icons'
+import type { Table } from '@tanstack/react-table'
+import { TrashIcon } from 'lucide-react'
 
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 import type {
   DataTableFilterableColumn,
   DataTableSearchableColumn,
-} from "~/types";
-import { TableFacetedFilter } from "./faceted-filter";
-import { TableViewOptions } from "./view-options";
+} from '~/types'
+import { TableFacetedFilter } from './faceted-filter'
+import { TableViewOptions } from './view-options'
 
 interface DataTableToolbar<TData> {
-  table: Table<TData>;
-  filterableColumns?: DataTableFilterableColumn<TData>[];
-  searchableColumns?: DataTableSearchableColumn<TData>[];
-  additionalToolbarButton: React.ReactNode | undefined;
-  view: "row" | "grid";
-  withGridView: boolean;
-  withViewToolbar?: boolean;
-  onChangeView?: React.Dispatch<React.SetStateAction<"row" | "grid">>;
-  deleteRowsAction: React.MouseEventHandler<HTMLButtonElement> | undefined;
+  table: Table<TData>
+  filterableColumns?: DataTableFilterableColumn<TData>[]
+  searchableColumns?: DataTableSearchableColumn<TData>[]
+  additionalToolbarButton: React.ReactNode | undefined
+  view: 'row' | 'grid'
+  withGridView: boolean
+  withViewToolbar?: boolean
+  onChangeView?: React.Dispatch<React.SetStateAction<'row' | 'grid'>>
+  deleteRowsAction: React.MouseEventHandler<HTMLButtonElement> | undefined
 }
 export function TableToolbar<TData>({
   table,
@@ -35,7 +35,7 @@ export function TableToolbar<TData>({
   deleteRowsAction,
   additionalToolbarButton,
 }: Readonly<DataTableToolbar<TData>>) {
-  const isFiltered = table.getState().columnFilters.length > 0;
+  const isFiltered = table.getState().columnFilters.length > 0
 
   return (
     <div className="flex w-full items-center justify-between space-x-2 overflow-auto p-1">
@@ -43,14 +43,14 @@ export function TableToolbar<TData>({
         {searchableColumns.length > 0 &&
           searchableColumns.map(
             (column) =>
-              table.getColumn(column.id ? String(column.id) : "") && (
+              table.getColumn(column.id ? String(column.id) : '') && (
                 <Input
                   key={String(column.id)}
                   placeholder={`Filter ${column.title}...`}
                   value={
                     (table
                       .getColumn(String(column.id))
-                      ?.getFilterValue() as string) ?? ""
+                      ?.getFilterValue() as string) ?? ''
                   }
                   onChange={(event) =>
                     table
@@ -64,10 +64,10 @@ export function TableToolbar<TData>({
         {filterableColumns.length > 0 &&
           filterableColumns.map(
             (column) =>
-              table.getColumn(column.id ? String(column.id) : "") && (
+              table.getColumn(column.id ? String(column.id) : '') && (
                 <TableFacetedFilter
                   key={String(column.id)}
-                  column={table.getColumn(column.id ? String(column.id) : "")}
+                  column={table.getColumn(column.id ? String(column.id) : '')}
                   title={column.title}
                   options={column.options}
                 />
@@ -92,8 +92,8 @@ export function TableToolbar<TData>({
             size="sm"
             className="h-8 bg-red-500"
             onClick={(event) => {
-              deleteRowsAction(event);
-              table.toggleAllPageRowsSelected(false);
+              deleteRowsAction(event)
+              table.toggleAllPageRowsSelected(false)
             }}
           >
             <TrashIcon className="mr-2 h-4 w-4" aria-hidden="true" />
@@ -111,5 +111,5 @@ export function TableToolbar<TData>({
         )}
       </div>
     </div>
-  );
+  )
 }

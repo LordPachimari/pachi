@@ -14,6 +14,6 @@ export class ServerContext extends Context.Tag('ServerContext')<
     requestHeaders: RequestHeaders | undefined
     services: ServicesType
     repositories: RepositoriesType
-    replicacheTransaction:ReplicacheTransaction
+    replicacheTransaction: ReplicacheTransaction
   }
 >() {}

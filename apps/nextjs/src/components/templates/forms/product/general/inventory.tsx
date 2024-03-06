@@ -1,17 +1,17 @@
-import { useCallback, useEffect, useState } from "react";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
-import debounce from "lodash.debounce";
+import { useCallback, useEffect, useState } from 'react'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
+import debounce from 'lodash.debounce'
 
-import type { UpdateProductVariant } from "@pachi/core";
-import type { ProductVariant, ProductVariantUpdates } from "@pachi/db";
+import type { UpdateProductVariant } from '@pachi/core'
+import type { ProductVariant, ProductVariantUpdates } from '@pachi/db'
 
-import InputField from "~/components/molecules/input-field";
-import { Checkbox } from "~/components/ui/checkbox";
-import { Input } from "~/components/ui/input";
+import InputField from '~/components/molecules/input-field'
+import { Checkbox } from '~/components/ui/checkbox'
+import { Input } from '~/components/ui/input'
 
 interface InventoryProps {
-  updateVariant: (props: UpdateProductVariant) => Promise<void>;
-  variant: ProductVariant;
+  updateVariant: (props: UpdateProductVariant) => Promise<void>
+  variant: ProductVariant
 }
 const Inventory = ({ updateVariant, variant }: InventoryProps) => {
   const onInputChange = useCallback(
@@ -20,17 +20,17 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
         updates,
         variantId: variant.id,
         productId: variant.productId,
-      });
+      })
     }, 500),
     [updateVariant],
-  );
-  const [parent] = useAutoAnimate(/* optional config */);
-  const [hasCode, setHasCode] = useState(false);
+  )
+  const [parent] = useAutoAnimate(/* optional config */)
+  const [hasCode, setHasCode] = useState(false)
   useEffect(() => {
     if (variant.barcode ?? variant.hsCode ?? variant.sku) {
-      setHasCode(true);
+      setHasCode(true)
     }
-  }, [variant.barcode, variant.hsCode, variant.sku]);
+  }, [variant.barcode, variant.hsCode, variant.sku])
 
   return (
     <div>
@@ -43,7 +43,7 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
         onChange={async (e) => {
           await onInputChange({
             updates: { quantity: e.currentTarget.valueAsNumber },
-          });
+          })
         }}
       />
       <span className="flex items-center gap-2">
@@ -77,23 +77,23 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
               <InputField
                 label="SKU (Stock Keeping Unit)"
                 placeholder="SKU"
-                defaultValue={variant.sku ?? ""}
+                defaultValue={variant.sku ?? ''}
                 onChange={async (e) => {
                   await onInputChange({
                     updates: { sku: e.currentTarget.value },
-                  });
+                  })
                 }}
               />
             </span>
             <span className="w-full">
               <InputField
                 label="Barcode (ISBN, UPC, GTIN, etc.)"
-                defaultValue={variant.barcode ?? ""}
+                defaultValue={variant.barcode ?? ''}
                 placeholder="Barcode"
                 onChange={async (e) => {
                   await onInputChange({
                     updates: { barcode: e.currentTarget.value },
-                  });
+                  })
                 }}
               />
             </span>
@@ -101,6 +101,6 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
         )}
       </div>
     </div>
-  );
-};
-export default Inventory;
+  )
+}
+export default Inventory

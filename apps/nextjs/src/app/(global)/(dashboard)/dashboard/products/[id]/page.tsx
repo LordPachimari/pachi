@@ -1,66 +1,66 @@
-"use client";
+'use client'
 
-import { useCallback, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import debounce from "lodash.debounce";
+import { useCallback, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import debounce from 'lodash.debounce'
 
 import type {
   UpdateProductImagesOrder,
   UpdateProductPrice,
   UpdateProductVariant,
   UploadProductImages,
-} from "@pachi/core";
-import type { AssignProductOptionValueToVariant } from "@pachi/core/src/input-schema/product";
-import { type Image, type ProductUpdates } from "@pachi/db";
-import { generateId, ulid } from "@pachi/utils";
+} from '@pachi/core'
+import type { AssignProductOptionValueToVariant } from '@pachi/core/src/input-schema/product'
+import { type Image, type ProductUpdates } from '@pachi/db'
+import { generateId, ulid } from '@pachi/utils'
 
-import ProductOverview from "~/app/(global)/(dashboard)/dashboard/products/_components/product-overview";
-import Advanced from "~/components/templates/forms/product/advanced";
-import { General } from "~/components/templates/forms/product/general";
-import Organize from "~/components/templates/forms/product/organize";
-import Variants from "~/components/templates/forms/product/variants";
-import VariantModal from "~/components/templates/modals/variant";
-import { Button } from "~/components/ui/button";
-import { ScrollArea } from "~/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { createUrl } from "~/libs/create-url";
-import { ProductStore, UserStore } from "~/replicache/stores";
-import { useReplicache } from "~/zustand/replicache";
+import ProductOverview from '~/app/(global)/(dashboard)/dashboard/products/_components/product-overview'
+import Advanced from '~/components/templates/forms/product/advanced'
+import { General } from '~/components/templates/forms/product/general'
+import Organize from '~/components/templates/forms/product/organize'
+import Variants from '~/components/templates/forms/product/variants'
+import VariantModal from '~/components/templates/modals/variant'
+import { Button } from '~/components/ui/button'
+import { ScrollArea } from '~/components/ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { createUrl } from '~/libs/create-url'
+import { ProductStore, UserStore } from '~/replicache/stores'
+import { useReplicache } from '~/zustand/replicache'
 
 export default function ProductPage({ params }: { params: { id: string } }) {
-  const { id } = params;
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const storeId = searchParams.get("storeId");
+  const { id } = params
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const storeId = searchParams.get('storeId')
 
-  const {dashboardRep} = useReplicache();
-  const product = ProductStore.get(dashboardRep, id);
-  const store = UserStore.get(dashboardRep, storeId ?? "");
+  const { dashboardRep } = useReplicache()
+  const product = ProductStore.get(dashboardRep, id)
+  const store = UserStore.get(dashboardRep, storeId ?? '')
 
-  const [isVariantModalOpen, setIsVariantModalOpen] = useState(true);
+  const [isVariantModalOpen, setIsVariantModalOpen] = useState(true)
 
   const closeModal = useCallback(() => {
-    setIsVariantModalOpen(false);
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.delete("variantId");
-    router.push(createUrl(id, newParams));
-  }, [id, router, searchParams]);
+    setIsVariantModalOpen(false)
+    const newParams = new URLSearchParams(searchParams.toString())
+    newParams.delete('variantId')
+    router.push(createUrl(id, newParams))
+  }, [id, router, searchParams])
 
   const openModal = useCallback(
     ({ variantId }: { variantId: string }) => {
-      const newParams = new URLSearchParams(searchParams.toString());
-      newParams.set("variantId", variantId);
-      router.push(createUrl(id, newParams));
-      setIsVariantModalOpen(true);
+      const newParams = new URLSearchParams(searchParams.toString())
+      newParams.set('variantId', variantId)
+      router.push(createUrl(id, newParams))
+      setIsVariantModalOpen(true)
     },
     [id, router, searchParams],
-  );
+  )
 
-  const [files, setFiles] = useState<Image[]>([]);
+  const [files, setFiles] = useState<Image[]>([])
 
   useEffect(() => {
-    if (!storeId) router.push("/home");
-  }, [router, storeId]);
+    if (!storeId) router.push('/home')
+  }, [router, storeId])
 
   const updateProduct = useCallback(
     async ({ updates }: { updates: ProductUpdates }) => {
@@ -68,18 +68,18 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         await dashboardRep.mutate.updateProduct({
           id,
           updates,
-        });
+        })
       }
     },
     [dashboardRep, id],
-  );
+  )
 
   const onInputChange = useCallback(
     debounce(async ({ updates }: { updates: ProductUpdates }) => {
-      await updateProduct({ updates });
+      await updateProduct({ updates })
     }, 500),
     [updateProduct],
-  );
+  )
   const updatePrice = useCallback(
     async ({ priceId, updates, variantId, productId }: UpdateProductPrice) => {
       await dashboardRep?.mutate.updateProductPrice({
@@ -87,20 +87,20 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         updates,
         variantId,
         productId,
-      });
+      })
     },
     [dashboardRep],
-  );
+  )
   const updateVariant = useCallback(
     async ({ updates, variantId, productId }: UpdateProductVariant) => {
       await dashboardRep?.mutate.updateProductVariant({
         updates,
         variantId,
         productId,
-      });
+      })
     },
     [dashboardRep],
-  );
+  )
 
   const uploadProductImages = useCallback(
     async ({ images, productId, variantId }: UploadProductImages) => {
@@ -108,45 +108,45 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         images,
         productId,
         variantId,
-      });
+      })
     },
     [dashboardRep],
-  );
+  )
   const updateProductImagesOrder = useCallback(
     async ({ order, productId, variantId }: UpdateProductImagesOrder) => {
       await dashboardRep?.mutate.updateProductImagesOrder({
         productId,
         variantId,
         order,
-      });
+      })
     },
     [dashboardRep],
-  );
+  )
 
   const createVariant = useCallback(async () => {
     if (dashboardRep && product) {
-      const variantId = generateId({ id: ulid(), prefix: "var" });
+      const variantId = generateId({ id: ulid(), prefix: 'var' })
       await dashboardRep.mutate.createProductVariant({
         variant: {
           id: variantId,
           createdAt: new Date().toISOString(),
           productId: product.id,
         },
-      });
-      const newParams = new URLSearchParams(searchParams.toString());
-      newParams.set("variantId", variantId);
-      router.push(createUrl(id, newParams));
-      openModal({ variantId });
+      })
+      const newParams = new URLSearchParams(searchParams.toString())
+      newParams.set('variantId', variantId)
+      router.push(createUrl(id, newParams))
+      openModal({ variantId })
     }
-  }, [dashboardRep, product, id, searchParams, router, openModal]);
+  }, [dashboardRep, product, id, searchParams, router, openModal])
 
   const onTabClick = (
-    value: "general" | "variants" | "organize" | "advanced",
+    value: 'general' | 'variants' | 'organize' | 'advanced',
   ) => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.set("q", value);
-    router.push(createUrl(id, newParams));
-  };
+    const newParams = new URLSearchParams(searchParams.toString())
+    newParams.set('q', value)
+    router.push(createUrl(id, newParams))
+  }
   const onOptionValueChange = useCallback(
     async ({
       optionValueId,
@@ -159,15 +159,13 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         ...(prevOptionValueId && { prevOptionValueId }),
         productId,
         variantId,
-      });
+      })
     },
     [dashboardRep],
-  );
+  )
 
-  const variantId = searchParams.get("variantId");
-  const variant = product?.variants?.find(
-    (variant) => variant.id === variantId,
-  );
+  const variantId = searchParams.get('variantId')
+  const variant = product?.variants?.find((variant) => variant.id === variantId)
 
   return (
     <>
@@ -193,7 +191,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           <Tabs
             aria-label="Stages"
             className="m-0 w-11/12 pt-4"
-            defaultValue={searchParams.get("q") ?? "general"}
+            defaultValue={searchParams.get('q') ?? 'general'}
           >
             <TabsList className=" grid w-full grid-cols-4 border-b">
               {tabs.map((tab) => (
@@ -274,19 +272,19 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         </section>
       </div>
     </>
-  );
+  )
 }
-const tabs: { title: "general" | "variants" | "organize" | "advanced" }[] = [
+const tabs: { title: 'general' | 'variants' | 'organize' | 'advanced' }[] = [
   {
-    title: "general",
+    title: 'general',
   },
   {
-    title: "variants",
+    title: 'variants',
   },
   {
-    title: "organize",
+    title: 'organize',
   },
   {
-    title: "advanced",
+    title: 'advanced',
   },
-];
+]

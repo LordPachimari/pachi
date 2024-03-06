@@ -1,7 +1,7 @@
-import type { SidebarNavItem } from "~/types";
+import type { SidebarNavItem } from '~/types'
 
 export interface DashboardConfig {
-  sidebarNav: SidebarNavItem[];
+  sidebarNav: SidebarNavItem[]
 }
 
 export const dashboardConfig: DashboardConfig = {
@@ -13,34 +13,34 @@ export const dashboardConfig: DashboardConfig = {
     //   items: [],
     // },
     {
-      title: "Products",
-      href: "/dashboard/products",
-      icon: "product",
+      title: 'Products',
+      href: '/dashboard/products',
+      icon: 'product',
       items: [],
     },
     {
-      title: "My Orders",
-      href: "/dashboard/my-orders",
-      icon: "billing",
+      title: 'My Orders',
+      href: '/dashboard/my-orders',
+      icon: 'billing',
       items: [],
     },
     {
-      title: "Customer Orders",
-      href: "/dashboard/customer-orders",
-      icon: "dollarSign",
+      title: 'Customer Orders',
+      href: '/dashboard/customer-orders',
+      icon: 'dollarSign',
       items: [],
     },
     {
-      title: "Customers",
-      href: "/dashboard/customers",
-      icon: "people",
+      title: 'Customers',
+      href: '/dashboard/customers',
+      icon: 'people',
       items: [],
     },
     {
-      title: "Discounts",
-      href: "/dashboard/discounts",
-      icon: "discount",
+      title: 'Discounts',
+      href: '/dashboard/discounts',
+      icon: 'discount',
       items: [],
     },
   ],
-};
+}

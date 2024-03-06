@@ -1,7 +1,7 @@
-import { MainNavContent } from "~/components/layouts/main-nav-content";
-import { MobileMainNav } from "~/components/layouts/mobile-main-nav";
-import { dashboardConfig } from "~/config/dashboard";
-import { siteConfig } from "~/config/site";
+import { MainNavContent } from '~/components/layouts/main-nav-content'
+import { MobileMainNav } from '~/components/layouts/mobile-main-nav'
+import { dashboardConfig } from '~/config/dashboard'
+import { siteConfig } from '~/config/site'
 
 // interface SiteHeaderProps {
 //   // user: User | null;
@@ -131,5 +131,5 @@ export function MainNav() {
         </div>
       </div>
     </header>
-  );
+  )
 }

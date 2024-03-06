@@ -3,12 +3,12 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "~/components/ui/tooltip";
+} from '~/components/ui/tooltip'
 
 type CustomTooltipProps = {
-  children: React.ReactNode;
-  textContent: string;
-};
+  children: React.ReactNode
+  textContent: string
+}
 export function CustomTooltip({ children, textContent }: CustomTooltipProps) {
   return (
     <TooltipProvider>
@@ -19,5 +19,5 @@ export function CustomTooltip({ children, textContent }: CustomTooltipProps) {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  );
+  )
 }

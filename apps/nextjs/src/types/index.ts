@@ -1,56 +1,56 @@
-import type { Icons } from "~/components/ui/icons";
+import type { Icons } from '~/components/ui/icons'
 
 export interface NavItem {
-  title: string;
-  href?: string;
-  disabled?: boolean;
-  external?: boolean;
-  icon?: keyof typeof Icons;
-  label?: string;
-  description?: string;
+  title: string
+  href?: string
+  disabled?: boolean
+  external?: boolean
+  icon?: keyof typeof Icons
+  label?: string
+  description?: string
 }
 
 export interface NavItemWithChildren extends NavItem {
-  items: NavItemWithChildren[];
+  items: NavItemWithChildren[]
 }
 
 export interface NavItemWithOptionalChildren extends NavItem {
-  items?: NavItemWithChildren[];
+  items?: NavItemWithChildren[]
 }
 
 export interface FooterItem {
-  title: string;
+  title: string
   items: {
-    title: string;
-    href: string;
-    external?: boolean;
-  }[];
+    title: string
+    href: string
+    external?: boolean
+  }[]
 }
 
-export type MainNavItem = NavItemWithOptionalChildren;
+export type MainNavItem = NavItemWithOptionalChildren
 
-export type SidebarNavItem = NavItemWithChildren;
+export type SidebarNavItem = NavItemWithChildren
 
 export interface Option {
-  label: string;
-  value: string;
-  icon?: React.ComponentType<{ className?: string }>;
+  label: string
+  value: string
+  icon?: React.ComponentType<{ className?: string }>
 }
 
 export interface StoredFile {
-  id: string;
-  name: string;
-  url: string;
+  id: string
+  name: string
+  url: string
 }
 
 export interface DataTableSearchableColumn<TData> {
-  id: keyof TData;
-  title: string;
+  id: keyof TData
+  title: string
 }
 
 export interface DataTableFilterableColumn<TData>
   extends DataTableSearchableColumn<TData> {
-  options: Option[];
+  options: Option[]
 }
 export interface DebouncedFunc<T extends (...args: any[]) => any> {
   /**
@@ -62,12 +62,12 @@ export interface DebouncedFunc<T extends (...args: any[]) => any> {
    * Otherwise, it returns the return value of the last invocation, or undefined if the debounced
    * function was not invoked yet.
    */
-  (...args: Parameters<T>): ReturnType<T> | undefined;
+  (...args: Parameters<T>): ReturnType<T> | undefined
 
   /**
    * Throw away any pending invocation of the debounced function.
    */
-  cancel(): void;
+  cancel(): void
 
   /**
    * If there is a pending invocation of the debounced function, invoke it immediately and return
@@ -76,5 +76,5 @@ export interface DebouncedFunc<T extends (...args: any[]) => any> {
    * Otherwise, return the value from the last invocation, or undefined if the debounced function
    * was never invoked.
    */
-  flush(): ReturnType<T> | undefined;
+  flush(): ReturnType<T> | undefined
 }

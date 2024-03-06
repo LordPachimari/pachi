@@ -1,31 +1,31 @@
-import { useCallback } from "react";
-import debounce from "lodash.debounce";
+import { useCallback } from 'react'
+import debounce from 'lodash.debounce'
 
-import type { UpdateProductVariant } from "@pachi/core";
-import type { ProductVariant, ProductVariantUpdates } from "@pachi/db";
+import type { UpdateProductVariant } from '@pachi/core'
+import type { ProductVariant, ProductVariantUpdates } from '@pachi/db'
 
-import InputField from "~/components/molecules/input-field";
-import { Separator } from "~/components/ui/separator";
-import { Info } from "../info";
+import InputField from '~/components/molecules/input-field'
+import { Separator } from '~/components/ui/separator'
+import { Info } from '../info'
 
 interface AdvancedProps {
-  updateVariant: (props: UpdateProductVariant) => Promise<void>;
-  variant: ProductVariant | undefined;
+  updateVariant: (props: UpdateProductVariant) => Promise<void>
+  variant: ProductVariant | undefined
 }
 export default function Advanced({ updateVariant, variant }: AdvancedProps) {
   const onInputChange = useCallback(
     debounce(async ({ updates }: { updates: ProductVariantUpdates }) => {
-      console.log("updates", updates);
+      console.log('updates', updates)
       if (variant)
         await updateVariant({
           updates,
           variantId: variant.id,
           productId: variant.productId,
-        });
+        })
     }, 500),
     [updateVariant],
-  );
-  console.log("variant", variant);
+  )
+  console.log('variant', variant)
   return (
     <div className="flex w-full flex-col  px-4 py-2">
       <Info
@@ -44,7 +44,7 @@ export default function Advanced({ updateVariant, variant }: AdvancedProps) {
           onChange={async (e) => {
             await onInputChange({
               updates: { width: e.currentTarget.valueAsNumber },
-            });
+            })
           }}
         />
         <InputField
@@ -91,7 +91,7 @@ export default function Advanced({ updateVariant, variant }: AdvancedProps) {
       <div className="grid w-full grid-cols-2 gap-2">
         <InputField
           label="MID code"
-          defaultValue={variant?.midCode ?? ""}
+          defaultValue={variant?.midCode ?? ''}
           onChange={async (e) =>
             await onInputChange({
               updates: { midCode: e.currentTarget.value },
@@ -100,7 +100,7 @@ export default function Advanced({ updateVariant, variant }: AdvancedProps) {
         />
         <InputField
           label="HS code"
-          defaultValue={variant?.hsCode ?? ""}
+          defaultValue={variant?.hsCode ?? ''}
           onChange={async (e) =>
             await onInputChange({
               updates: { hsCode: e.currentTarget.value },
@@ -109,7 +109,7 @@ export default function Advanced({ updateVariant, variant }: AdvancedProps) {
         />
         <InputField
           label="Country of origin"
-          defaultValue={variant?.originCountry ?? ""}
+          defaultValue={variant?.originCountry ?? ''}
           onChange={async (e) =>
             await onInputChange({
               updates: { originCountry: e.currentTarget.value },
@@ -121,5 +121,5 @@ export default function Advanced({ updateVariant, variant }: AdvancedProps) {
       <Separator className="my-4" />
       <Info title="Sales channels" description="Configure sales channels" />
     </div>
-  );
+  )
 }

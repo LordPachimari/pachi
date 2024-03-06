@@ -1,12 +1,14 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter, useSearchParams } from 'next/navigation'
 import * as React from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+
 import { UserAuthSchema, type UserAuth } from '@pachi/core'
 import { cn } from '@pachi/utils'
+
 import { login } from '~/app/_actions/auth/login'
 import { register as registerAction } from '~/app/_actions/auth/register'
 import { buttonVariants } from '~/components/ui/button'

@@ -1,18 +1,18 @@
-import { and, eq, inArray } from "drizzle-orm";
-import { Effect } from "effect";
+import { and, eq, inArray } from 'drizzle-orm'
+import { Effect } from 'effect'
 
-import type { Transaction } from "@pachi/db";
-import { replicacheClients } from "@pachi/db/schema";
-import { withDieErrorLogger } from "@pachi/utils";
+import type { Transaction } from '@pachi/db'
+import { replicacheClients } from '@pachi/db/schema'
+import { withDieErrorLogger } from '@pachi/utils'
 
 export const getClientLastMutationIdAndVersion_ = ({
   clientIDs,
   transaction,
   clientGroupID,
 }: {
-  clientIDs: string[];
-  clientGroupID: string;
-  transaction: Transaction;
+  clientIDs: string[]
+  clientGroupID: string
+  transaction: Transaction
 }): Effect.Effect<
   Map<string, { lastMutationID: number; version: number }>,
   never,
@@ -36,15 +36,15 @@ export const getClientLastMutationIdAndVersion_ = ({
           ),
       ).pipe(
         Effect.orDieWith((e) =>
-          withDieErrorLogger(e, "getClientLastMutationIdAndVersion error"),
+          withDieErrorLogger(e, 'getClientLastMutationIdAndVersion error'),
         ),
       ),
-    );
+    )
     const keys = new Map(
       result.map((l) => [
         l.id,
         { lastMutationID: l.lastMutationID, version: l.version },
       ]),
-    );
-    return keys;
-  });
+    )
+    return keys
+  })

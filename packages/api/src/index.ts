@@ -1,1 +1,1 @@
-export * from "./replicache";
+export * from './replicache'

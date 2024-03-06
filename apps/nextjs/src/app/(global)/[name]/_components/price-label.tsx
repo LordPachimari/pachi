@@ -1,24 +1,24 @@
-import clsx from "clsx";
+import clsx from 'clsx'
 
-import Price from "~/components/price";
+import Price from '~/components/price'
 
 const PriceLabel = ({
   title,
   amount,
   currencyCode,
-  position = "bottom",
+  position = 'bottom',
 }: {
-  title: string;
-  amount: number;
-  currencyCode: string;
-  position?: "bottom" | "center";
+  title: string
+  amount: number
+  currencyCode: string
+  position?: 'bottom' | 'center'
 }) => {
   return (
     <div
       className={clsx(
-        "absolute bottom-0 left-0 flex w-full px-4 pb-4 @container/label",
+        'absolute bottom-0 left-0 flex w-full px-4 pb-4 @container/label',
         {
-          "lg:px-20 lg:pb-[35%]": position === "center",
+          'lg:px-20 lg:pb-[35%]': position === 'center',
         },
       )}
     >
@@ -34,7 +34,7 @@ const PriceLabel = ({
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PriceLabel;
+export default PriceLabel

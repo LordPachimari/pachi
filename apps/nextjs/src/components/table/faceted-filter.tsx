@@ -1,11 +1,11 @@
-import * as React from "react";
-import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
-import type { Column } from "@tanstack/react-table";
+import * as React from 'react'
+import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons'
+import type { Column } from '@tanstack/react-table'
 
-import { cn } from "@pachi/utils";
+import { cn } from '@pachi/utils'
 
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -14,24 +14,24 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "~/components/ui/command";
+} from '~/components/ui/command'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "~/components/ui/popover";
-import { Separator } from "~/components/ui/separator";
+} from '~/components/ui/popover'
+import { Separator } from '~/components/ui/separator'
 
 export interface FilterOption {
-  label: string;
-  value: string;
-  icon?: React.ComponentType<{ className?: string }>;
+  label: string
+  value: string
+  icon?: React.ComponentType<{ className?: string }>
 }
 
 interface FacetedFilter<TData, TValue> {
-  column: Column<TData, TValue> | undefined;
-  title?: string;
-  options: FilterOption[];
+  column: Column<TData, TValue> | undefined
+  title?: string
+  options: FilterOption[]
 }
 
 export function TableFacetedFilter<TData, TValue>({
@@ -39,7 +39,7 @@ export function TableFacetedFilter<TData, TValue>({
   title,
   options,
 }: Readonly<FacetedFilter<TData, TValue>>) {
-  const selectedValues = new Set(column?.getFilterValue() as string[]);
+  const selectedValues = new Set(column?.getFilterValue() as string[])
 
   return (
     <Popover>
@@ -89,31 +89,31 @@ export function TableFacetedFilter<TData, TValue>({
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => {
-                const isSelected = selectedValues.has(option.value);
+                const isSelected = selectedValues.has(option.value)
                 return (
                   <CommandItem
                     key={option.value}
                     onSelect={() => {
                       if (isSelected) {
-                        selectedValues.delete(option.value);
+                        selectedValues.delete(option.value)
                       } else {
-                        selectedValues.add(option.value);
+                        selectedValues.add(option.value)
                       }
-                      const filterValues = Array.from(selectedValues);
+                      const filterValues = Array.from(selectedValues)
                       column?.setFilterValue(
                         filterValues.length ? filterValues : undefined,
-                      );
+                      )
                     }}
                   >
                     <div
                       className={cn(
-                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                        'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
                         isSelected
-                          ? "bg-primary text-primary-foreground"
-                          : "opacity-50 [&_svg]:invisible",
+                          ? 'bg-primary text-primary-foreground'
+                          : 'opacity-50 [&_svg]:invisible',
                       )}
                     >
-                      <CheckIcon className={cn("h-4 w-4")} aria-hidden="true" />
+                      <CheckIcon className={cn('h-4 w-4')} aria-hidden="true" />
                     </div>
                     {option.icon && (
                       <option.icon
@@ -123,7 +123,7 @@ export function TableFacetedFilter<TData, TValue>({
                     )}
                     <span>{option.label}</span>
                   </CommandItem>
-                );
+                )
               })}
             </CommandGroup>
             {selectedValues.size > 0 && (
@@ -143,5 +143,5 @@ export function TableFacetedFilter<TData, TValue>({
         </Command>
       </PopoverContent>
     </Popover>
-  );
+  )
 }

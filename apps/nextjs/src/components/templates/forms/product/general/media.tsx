@@ -1,29 +1,26 @@
-import React, { useCallback, useEffect } from "react";
-import { DndContext } from "@dnd-kit/core";
-import { generateReactHelpers } from "@uploadthing/react/hooks";
+import React, { useCallback, useEffect } from 'react'
+import { DndContext } from '@dnd-kit/core'
+import { generateReactHelpers } from '@uploadthing/react/hooks'
 
-import type {
-  UpdateProductImagesOrder,
-  UploadProductImages,
-} from "@pachi/core";
-import type { Image } from "@pachi/db";
+import type { UpdateProductImagesOrder, UploadProductImages } from '@pachi/core'
+import type { Image } from '@pachi/db'
 
-import type { OurFileRouter } from "~/app/api/uploadthing/core";
-import { FileUpload } from "~/components/molecules/file-upload";
-import { LargeFirstTile } from "~/components/templates/dnd-kit/sortable/large-first-tile";
+import type { OurFileRouter } from '~/app/api/uploadthing/core'
+import { FileUpload } from '~/components/molecules/file-upload'
+import { LargeFirstTile } from '~/components/templates/dnd-kit/sortable/large-first-tile'
 
 export interface MediaFormType {
-  images: Image[];
+  images: Image[]
 }
 
 interface Props {
-  images: Image[] | undefined;
-  productId: string;
-  variantId: string;
-  files: Image[];
-  setFiles: React.Dispatch<React.SetStateAction<Image[]>>;
-  uploadProductImages: (props: UploadProductImages) => Promise<void>;
-  updateProductImagesOrder: (props: UpdateProductImagesOrder) => Promise<void>;
+  images: Image[] | undefined
+  productId: string
+  variantId: string
+  files: Image[]
+  setFiles: React.Dispatch<React.SetStateAction<Image[]>>
+  uploadProductImages: (props: UploadProductImages) => Promise<void>
+  updateProductImagesOrder: (props: UpdateProductImagesOrder) => Promise<void>
 }
 
 const Media = ({
@@ -35,26 +32,26 @@ const Media = ({
   uploadProductImages,
   updateProductImagesOrder,
 }: Props) => {
-  const { useUploadThing } = generateReactHelpers<OurFileRouter>();
-  const { startUpload } = useUploadThing("imageUploader", {
-    onUploadProgress: (p) => console.log("p", p),
-  });
+  const { useUploadThing } = generateReactHelpers<OurFileRouter>()
+  const { startUpload } = useUploadThing('imageUploader', {
+    onUploadProgress: (p) => console.log('p', p),
+  })
   useEffect(() => {
     if (images) {
-      setFiles(images.toSorted((a, b) => a.order - b.order));
+      setFiles(images.toSorted((a, b) => a.order - b.order))
     }
-  }, [images, setFiles]);
+  }, [images, setFiles])
   const updateImagesOrder = async ({
     order,
   }: {
-    order: Record<string, number>;
+    order: Record<string, number>
   }) => {
     await updateProductImagesOrder({
       order,
       productId,
       variantId,
-    });
-  };
+    })
+  }
 
   return (
     <div className="w-full">
@@ -81,7 +78,7 @@ const Media = ({
         )}
       </DndContext>
     </div>
-  );
-};
+  )
+}
 
-export default Media;
+export default Media

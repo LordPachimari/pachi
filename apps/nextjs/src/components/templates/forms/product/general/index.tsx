@@ -3,35 +3,35 @@ import type {
   UpdateProductPrice,
   UpdateProductVariant,
   UploadProductImages,
-} from "@pachi/core";
-import type { Image, Product, ProductUpdates, Store } from "@pachi/db";
+} from '@pachi/core'
+import type { Image, Product, ProductUpdates, Store } from '@pachi/db'
 
-import { Separator } from "~/components/ui/separator";
-import type { DebouncedFunc } from "~/types";
-import Discountable from "./discountable";
-import Inventory from "./inventory";
-import Media from "./media";
-import Pricing from "./pricing";
-import ProductStatus from "./product-status";
-import TitleAndDescription from "./title-description";
+import { Separator } from '~/components/ui/separator'
+import type { DebouncedFunc } from '~/types'
+import Discountable from './discountable'
+import Inventory from './inventory'
+import Media from './media'
+import Pricing from './pricing'
+import ProductStatus from './product-status'
+import TitleAndDescription from './title-description'
 
 interface GeneralProps {
-  product: Product;
+  product: Product
   onInputChange: DebouncedFunc<
     ({ updates }: { updates: ProductUpdates }) => Promise<void>
-  >;
-  updateProduct: (props: { updates: ProductUpdates }) => Promise<void>;
-  updatePrice: (props: UpdateProductPrice) => Promise<void>;
-  updateVariant: (props: UpdateProductVariant) => Promise<void>;
-  files: Image[];
-  setFiles: React.Dispatch<React.SetStateAction<Image[]>>;
-  uploadProductImages: (props: UploadProductImages) => Promise<void>;
+  >
+  updateProduct: (props: { updates: ProductUpdates }) => Promise<void>
+  updatePrice: (props: UpdateProductPrice) => Promise<void>
+  updateVariant: (props: UpdateProductVariant) => Promise<void>
+  files: Image[]
+  setFiles: React.Dispatch<React.SetStateAction<Image[]>>
+  uploadProductImages: (props: UploadProductImages) => Promise<void>
   updateProductImagesOrder: ({
     order,
     productId,
     variantId,
-  }: UpdateProductImagesOrder) => Promise<void>;
-  store: Store;
+  }: UpdateProductImagesOrder) => Promise<void>
+  store: Store
 }
 export function General({
   product,
@@ -87,5 +87,5 @@ export function General({
         variant={product.variants![0]!}
       />
     </div>
-  );
+  )
 }

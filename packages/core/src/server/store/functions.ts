@@ -1,26 +1,26 @@
-import { Effect } from "effect";
+import { Effect } from 'effect'
 
-import { CreateStoreSchema, UpdateStoreSchema } from "../../input-schema/store";
-import { zod } from "../../util/zod";
-import { ServerContext } from "../context";
+import { CreateStoreSchema, UpdateStoreSchema } from '../../input-schema/store'
+import { zod } from '../../util/zod'
+import { ServerContext } from '../context'
 
 const createStore = zod(CreateStoreSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { store } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { store } = input
     yield* _(
-      Effect.sync(() => replicacheTransaction.set(store.id, store, "stores")),
-    );
+      Effect.sync(() => replicacheTransaction.set(store.id, store, 'stores')),
+    )
   }),
-);
+)
 
 const updateStore = zod(UpdateStoreSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { id, updates } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { id, updates } = input
     yield* _(
-      Effect.sync(() => replicacheTransaction.update(id, updates, "stores")),
-    );
+      Effect.sync(() => replicacheTransaction.update(id, updates, 'stores')),
+    )
   }),
-);
-export { createStore, updateStore };
+)
+export { createStore, updateStore }
