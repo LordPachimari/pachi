@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "beautify": "prettier \"**/*.{mjs,ts,tsx,md,json}\" --write --log-level error",
+    "beautify": "prettier \"**/*.{js,cjs,mjs,ts,tsx,md,json}\" --write --log-level error",
     "build": "pnpm with-env next build",
     "clean": "git clean -xdf .next .turbo node_modules",
     "dev": "pnpm with-env next dev",

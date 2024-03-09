@@ -6,10 +6,10 @@
   "types": "./src/index.ts",
   "license": "MIT",
   "scripts": {
-    "beautify": "prettier \"**/*.{mjs,ts,tsx,md,json}\" --write --log-level error",
+    "beautify": "prettier \"**/*.{js,cjs,mjs,ts,tsx,md,json}\" --write --log-level error",
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
-    "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
+    "format": "prettier --check \"**/*.{js,cjs,mjs,ts,tsx,md,json}\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

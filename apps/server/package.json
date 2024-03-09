@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "beautify": "prettier \"**/*.{mjs,ts,tsx,md,json}\" --write --log-level error",
+    "beautify": "prettier \"**/*.{js,cjs,mjs,ts,tsx,md,json}\" --write --log-level error",
     "dev": "wrangler dev --env dev src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
     "deploy-dev": "wrangler deploy --minify --env dev src/index.ts",
     "test": "vitest run",
-    "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
+    "format": "prettier --check \"**/*.{js,cjs,mjs,ts,tsx,md,json}\"",
     "local-generate": "wrangler d1 execute pachi-db-dev  --local --file=../../packages/db/migrations/0000_chilly_warlock.sql",
     "login": "wrangler login",
     "typecheck": "tsc --noEmit"
