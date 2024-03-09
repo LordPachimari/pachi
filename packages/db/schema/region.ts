@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm'
+import { relations } from "drizzle-orm"
 import {
   boolean,
   index,
@@ -6,34 +6,34 @@ import {
   pgTable,
   primaryKey,
   varchar,
-} from 'drizzle-orm/pg-core'
+} from "drizzle-orm/pg-core"
 
-import { countries } from './country'
-import { currencies } from './currency'
-import { fulfillmentProviders } from './fulfillment-provider'
-import { paymentProviders } from './payment-provider'
-import { taxProviders } from './tax-provider'
-import { taxRates } from './tax-rate'
+import { countries } from "./country"
+import { currencies } from "./currency"
+import { fulfillmentProviders } from "./fulfillment-provider"
+import { paymentProviders } from "./payment-provider"
+import { taxProviders } from "./tax-provider"
+import { taxRates } from "./tax-rate"
 
 export const regions = pgTable(
-  'regions',
+  "regions",
   {
-    id: varchar('id').notNull().primaryKey(),
-    automaticTaxes: boolean('automaticTaxes').notNull().default(true),
-    createdAt: varchar('createdAt'),
-    currencyCode: varchar('currencyCode').notNull(),
-    giftCardsTaxable: boolean('giftCardsTaxable').notNull().default(true),
-    includesTax: boolean('includesTax').default(false),
-    name: varchar('name'),
-    taxCode: varchar('taxCode'),
-    taxProviderId: varchar('taxProviderId'),
-    taxRate: integer('taxRate').notNull(),
-    updatedAt: varchar('updatedAt'),
-    version: integer('version').notNull().default(0),
+    id: varchar("id").notNull().primaryKey(),
+    automaticTaxes: boolean("automaticTaxes").notNull().default(true),
+    createdAt: varchar("createdAt"),
+    currencyCode: varchar("currencyCode").notNull(),
+    giftCardsTaxable: boolean("giftCardsTaxable").notNull().default(true),
+    includesTax: boolean("includesTax").default(false),
+    name: varchar("name"),
+    taxCode: varchar("taxCode"),
+    taxProviderId: varchar("taxProviderId"),
+    taxRate: integer("taxRate").notNull(),
+    updatedAt: varchar("updatedAt"),
+    version: integer("version").notNull().default(0),
   },
   (region) => ({
-    currencyCodeIndex: index('currencyCodeIndex').on(region.currencyCode),
-    taxProviderIdIndex: index('taxProviderIdIndex').on(region.taxProviderId),
+    currencyCodeIndex: index("currencyCodeIndex").on(region.currencyCode),
+    taxProviderIdIndex: index("taxProviderIdIndex").on(region.taxProviderId),
   }),
 )
 export const region_relations = relations(regions, ({ one, many }) => ({
@@ -51,16 +51,16 @@ export const region_relations = relations(regions, ({ one, many }) => ({
   fulfillmentProviders: many(regionsToFulfillmentProviders),
 }))
 export const regionsToPaymentProviders = pgTable(
-  'regions_to_payment_providers',
+  "regions_to_payment_providers",
   {
-    id: varchar('id'),
-    paymentProviderId: varchar('paymentProviderId')
+    id: varchar("id"),
+    paymentProviderId: varchar("paymentProviderId")
       .notNull()
       .references(() => paymentProviders.id),
-    regionId: varchar('regionId')
+    regionId: varchar("regionId")
       .notNull()
       .references(() => regions.id),
-    version: integer('version'),
+    version: integer("version"),
   },
   (t) => ({
     pk: primaryKey(t.regionId, t.paymentProviderId),
@@ -80,16 +80,16 @@ export const regionsToPaymentProvidersRelations = relations(
   }),
 )
 export const regionsToFulfillmentProviders = pgTable(
-  'r_to_f_providers',
+  "r_to_f_providers",
   {
-    id: varchar('id'),
-    fulfillmentProviderId: varchar('fulfillmentProviderId')
+    id: varchar("id"),
+    fulfillmentProviderId: varchar("fulfillmentProviderId")
       .notNull()
-      .references(() => fulfillmentProviders.id, { onDelete: 'cascade' }),
-    regionId: varchar('regionId')
+      .references(() => fulfillmentProviders.id, { onDelete: "cascade" }),
+    regionId: varchar("regionId")
       .notNull()
-      .references(() => regions.id, { onDelete: 'cascade' }),
-    version: integer('version'),
+      .references(() => regions.id, { onDelete: "cascade" }),
+    version: integer("version"),
   },
   (t) => ({
     pk: primaryKey(t.regionId, t.fulfillmentProviderId),

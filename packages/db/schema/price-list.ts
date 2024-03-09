@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm'
+import { relations } from "drizzle-orm"
 import {
   boolean,
   integer,
@@ -6,28 +6,28 @@ import {
   primaryKey,
   text,
   varchar,
-} from 'drizzle-orm/pg-core'
+} from "drizzle-orm/pg-core"
 
-import { customerGroups } from './customer-group'
-import { prices } from './price'
+import { customerGroups } from "./customer-group"
+import { prices } from "./price"
 
-export const priceLists = pgTable('price_lists', {
-  id: varchar('id').notNull().primaryKey(),
-  createdAt: varchar('createdAt'),
-  updatedAt: varchar('updatedAt'),
-  description: text('description'),
-  expiresAt: varchar('expiresAt'),
-  includesTax: boolean('includesTax').default(false),
-  name: varchar('name'),
-  startsAt: varchar('startsAt'),
-  status: text('status', { enum: ['sales', 'override'] })
+export const priceLists = pgTable("price_lists", {
+  id: varchar("id").notNull().primaryKey(),
+  createdAt: varchar("createdAt"),
+  updatedAt: varchar("updatedAt"),
+  description: text("description"),
+  expiresAt: varchar("expiresAt"),
+  includesTax: boolean("includesTax").default(false),
+  name: varchar("name"),
+  startsAt: varchar("startsAt"),
+  status: text("status", { enum: ["sales", "override"] })
     .notNull()
-    .default('sales'),
-  type: text('type', { enum: ['active', 'draft'] })
+    .default("sales"),
+  type: text("type", { enum: ["active", "draft"] })
     .notNull()
-    .default('draft'),
-  updatedBy: varchar('updatedBy'),
-  version: integer('version').notNull().default(0),
+    .default("draft"),
+  updatedBy: varchar("updatedBy"),
+  version: integer("version").notNull().default(0),
 })
 
 export const priceListRelations = relations(priceLists, ({ many }) => ({
@@ -35,16 +35,16 @@ export const priceListRelations = relations(priceLists, ({ many }) => ({
   prices: many(prices),
 }))
 export const priceListsToCustomerGroups = pgTable(
-  'price_lists_to_customer_groups',
+  "price_lists_to_customer_groups",
   {
-    id: varchar('id'),
-    customerGroupId: varchar('customerGroupId')
+    id: varchar("id"),
+    customerGroupId: varchar("customerGroupId")
       .notNull()
-      .references(() => customerGroups.id, { onDelete: 'cascade' }),
-    priceListId: varchar('priceListId')
+      .references(() => customerGroups.id, { onDelete: "cascade" }),
+    priceListId: varchar("priceListId")
       .notNull()
-      .references(() => priceLists.id, { onDelete: 'cascade' }),
-    version: integer('version'),
+      .references(() => priceLists.id, { onDelete: "cascade" }),
+    version: integer("version"),
   },
   (t) => ({
     pk: primaryKey(t.customerGroupId, t.priceListId),

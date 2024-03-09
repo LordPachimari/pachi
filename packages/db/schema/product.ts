@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm'
+import { relations } from "drizzle-orm"
 import {
   boolean,
   index,
@@ -9,51 +9,51 @@ import {
   text,
   uniqueIndex,
   varchar,
-} from 'drizzle-orm/pg-core'
+} from "drizzle-orm/pg-core"
 
-import type { Image } from '../validators/common'
-import { productCollections } from './product-collection'
-import { productOptions } from './product-option'
-import { productTags } from './product-tag'
-import { productVariants } from './product-variant'
-import { salesChannels } from './sales-channel'
-import { stores } from './store'
-import { taxRates } from './tax-rate'
+import type { Image } from "../validators/common"
+import { productCollections } from "./product-collection"
+import { productOptions } from "./product-option"
+import { productTags } from "./product-tag"
+import { productVariants } from "./product-variant"
+import { salesChannels } from "./sales-channel"
+import { stores } from "./store"
+import { taxRates } from "./tax-rate"
 
 export const products = pgTable(
-  'products',
+  "products",
   {
-    id: varchar('id').notNull().primaryKey(),
-    collectionId: varchar('collectionId').references(
+    id: varchar("id").notNull().primaryKey(),
+    collectionId: varchar("collectionId").references(
       () => productCollections.id,
     ),
-    createdAt: varchar('createdAt').notNull(),
-    description: text('description'),
-    version: integer('version').notNull(),
-    updatedAt: varchar('updatedAt'),
-    discountable: boolean('discountable').notNull().default(true),
-    handle: varchar('handle'),
-    metadata: json('metadata').$type<Record<string, unknown>>(),
-    originCountry: varchar('originCountry'),
-    status: text('status', {
-      enum: ['draft', 'proposed', 'published', 'rejected'],
-    }).default('draft'),
-    thumbnail: json('thumbnail').$type<Image>(),
-    title: varchar('title'),
-    updatedBy: varchar('updatedBy'),
-    defaultVariantId: varchar('defaultVariantId').notNull(),
-    storeId: varchar('storeId').notNull(),
-    available: boolean('available').default(true),
-    type: varchar('type'),
+    createdAt: varchar("createdAt").notNull(),
+    description: text("description"),
+    version: integer("version").notNull(),
+    updatedAt: varchar("updatedAt"),
+    discountable: boolean("discountable").notNull().default(true),
+    handle: varchar("handle"),
+    metadata: json("metadata").$type<Record<string, unknown>>(),
+    originCountry: varchar("originCountry"),
+    status: text("status", {
+      enum: ["draft", "proposed", "published", "rejected"],
+    }).default("draft"),
+    thumbnail: json("thumbnail").$type<Image>(),
+    title: varchar("title"),
+    updatedBy: varchar("updatedBy"),
+    defaultVariantId: varchar("defaultVariantId").notNull(),
+    storeId: varchar("storeId").notNull(),
+    available: boolean("available").default(true),
+    type: varchar("type"),
   },
   (product) => ({
-    collectionIdIndex: index('collectionIdIndex').on(product.collectionId),
-    handleIndex: uniqueIndex('handleIndex').on(product.handle),
-    statusIndex: index('statusIndex').on(product.status),
-    defaultVariantIdIndex: index('defaultVariantIdIndex').on(
+    collectionIdIndex: index("collectionIdIndex").on(product.collectionId),
+    handleIndex: uniqueIndex("handleIndex").on(product.handle),
+    statusIndex: index("statusIndex").on(product.status),
+    defaultVariantIdIndex: index("defaultVariantIdIndex").on(
       product.defaultVariantId,
     ),
-    storeIdIndex: index('storeIdIndex').on(product.storeId),
+    storeIdIndex: index("storeIdIndex").on(product.storeId),
   }),
 )
 export const productsRelations = relations(products, ({ one, many }) => ({
@@ -61,7 +61,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
     fields: [products.collectionId],
     references: [productCollections.id],
   }),
-  variants: many(productVariants, { relationName: 'product.variants' }),
+  variants: many(productVariants, { relationName: "product.variants" }),
   options: many(productOptions),
   tags: many(productsToTags),
   salesChannels: many(productsToSalesChannels),
@@ -72,16 +72,16 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   }),
 }))
 export const productsToSalesChannels = pgTable(
-  'products_to_sales_channels',
+  "products_to_sales_channels",
   {
-    id: varchar('id'),
-    productId: varchar('productId')
+    id: varchar("id"),
+    productId: varchar("productId")
       .notNull()
       .references(() => products.id),
-    salesChannelId: varchar('salesChannelId')
+    salesChannelId: varchar("salesChannelId")
       .notNull()
       .references(() => salesChannels.id),
-    version: integer('version'),
+    version: integer("version"),
   },
   (t) => ({
     pk: primaryKey(t.productId, t.salesChannelId),
@@ -102,16 +102,16 @@ export const productsToSalesChannelsRelations = relations(
 )
 
 export const productsToTaxRates = pgTable(
-  'products_to_tax_rates',
+  "products_to_tax_rates",
   {
-    id: varchar('id'),
-    productId: varchar('productId')
+    id: varchar("id"),
+    productId: varchar("productId")
       .notNull()
-      .references(() => products.id, { onDelete: 'cascade' }),
-    rateId: varchar('rateId')
+      .references(() => products.id, { onDelete: "cascade" }),
+    rateId: varchar("rateId")
       .notNull()
-      .references(() => taxRates.id, { onDelete: 'cascade' }),
-    version: integer('version'),
+      .references(() => taxRates.id, { onDelete: "cascade" }),
+    version: integer("version"),
   },
   (t) => ({
     pk: primaryKey(t.productId, t.rateId),
@@ -132,16 +132,16 @@ export const productsToTaxRatesRelations = relations(
   }),
 )
 export const productsToTags = pgTable(
-  'products_to_tags',
+  "products_to_tags",
   {
-    id: varchar('id'),
-    productId: varchar('productId')
+    id: varchar("id"),
+    productId: varchar("productId")
       .notNull()
-      .references(() => products.id, { onDelete: 'cascade' }),
-    tagId: varchar('tagId')
+      .references(() => products.id, { onDelete: "cascade" }),
+    tagId: varchar("tagId")
       .notNull()
-      .references(() => productTags.id, { onDelete: 'cascade' }),
-    version: integer('version'),
+      .references(() => productTags.id, { onDelete: "cascade" }),
+    version: integer("version"),
   },
   (t) => ({
     pk: primaryKey(t.productId, t.tagId),

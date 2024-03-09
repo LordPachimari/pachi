@@ -1,13 +1,13 @@
-import { eq } from 'drizzle-orm'
-import { Effect } from 'effect'
-import type { ReadonlyJSONObject } from 'replicache'
+import { eq } from "drizzle-orm"
+import { Effect } from "effect"
+import type { ReadonlyJSONObject } from "replicache"
 
-import type { CartItem } from '@pachi/db'
-import { cartItems } from '@pachi/db/schema'
-import { NotFound } from '@pachi/types'
-import { withDieErrorLogger } from '@pachi/utils'
+import type { CartItem } from "@pachi/db"
+import { cartItems } from "@pachi/db/schema"
+import { NotFound } from "@pachi/types"
+import { withDieErrorLogger } from "@pachi/utils"
 
-import { ServerContext } from '../context'
+import { ServerContext } from "../context"
 
 export const CartService = {
   updateCartTotals: ({ cartId }: { cartId: string }) =>
@@ -27,11 +27,11 @@ export const CartService = {
             },
           }),
         ).pipe(
-          Effect.orDieWith((e) => withDieErrorLogger(e, 'Could not find cart')),
+          Effect.orDieWith((e) => withDieErrorLogger(e, "Could not find cart")),
         ),
       )
       if (!cart) {
-        Effect.fail(new NotFound({ message: 'Could not find cart' }))
+        Effect.fail(new NotFound({ message: "Could not find cart" }))
         return
       }
       const cartItems = cart.items ?? []
@@ -54,7 +54,7 @@ export const CartService = {
 
       cart.total =
         cart.subtotal + cart.shippingTotal + cart.taxTotal - cart.discountTotal
-      replicacheTransaction.set(cart.id, cart as ReadonlyJSONObject, 'carts')
+      replicacheTransaction.set(cart.id, cart as ReadonlyJSONObject, "carts")
     }),
   generateCartItem: ({
     item,
@@ -88,7 +88,7 @@ export const CartService = {
       )
       if (!variant) {
         yield* _(
-          Effect.fail(new NotFound({ message: 'Could not find variant' })),
+          Effect.fail(new NotFound({ message: "Could not find variant" })),
         )
         return
       }

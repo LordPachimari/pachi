@@ -5,7 +5,7 @@ import { cn } from "@pachi/utils"
 
 import { buttonVariants } from "~/components/ui/button"
 import { Icons } from "~/components/ui/icons"
-import { UserAuthForm } from "../../../components/use-auth-form"
+import { UserAuthForm } from "../../../components/user-auth-form"
 import { validateRequest } from "../../../libs/validate-request"
 
 export const metadata = {

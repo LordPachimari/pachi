@@ -1,7 +1,7 @@
-import type { Effect } from 'effect'
+import type { Effect } from "effect"
 
-import type { Transaction } from '@pachi/db'
-import type { ClientViewDataWithTable } from '@pachi/types'
+import type { Transaction } from "@pachi/db"
+import type { ClientViewDataWithTable } from "@pachi/types"
 
 export type GetClientViewDataWithTable = ({
   transaction,

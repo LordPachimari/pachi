@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm'
+import { relations } from "drizzle-orm"
 import {
   boolean,
   index,
@@ -8,32 +8,32 @@ import {
   primaryKey,
   text,
   varchar,
-} from 'drizzle-orm/pg-core'
+} from "drizzle-orm/pg-core"
 
-import { fulfillmentProviders } from './fulfillment-provider'
-import { regions } from './region'
-import { taxRates } from './tax-rate'
+import { fulfillmentProviders } from "./fulfillment-provider"
+import { regions } from "./region"
+import { taxRates } from "./tax-rate"
 
 export const shippingOptions = pgTable(
-  'shipping_options',
+  "shipping_options",
   {
-    id: varchar('id').notNull().primaryKey(),
-    createdAt: varchar('createdAt'),
-    updatedAt: varchar('updatedAt'),
-    adminOnly: boolean('adminOnly'),
-    amount: integer('amount'),
-    data: json('data').$type<Record<string, unknown>>(),
-    includesTax: boolean('includesTax'),
-    isReturn: boolean('isReturn'),
-    name: varchar('name'),
-    priceType: text('priceType', { enum: ['calculated', 'flatRate'] }),
-    providerId: varchar('providerId'),
-    regionId: varchar('regionId'),
-    version: integer('version').notNull().default(0),
+    id: varchar("id").notNull().primaryKey(),
+    createdAt: varchar("createdAt"),
+    updatedAt: varchar("updatedAt"),
+    adminOnly: boolean("adminOnly"),
+    amount: integer("amount"),
+    data: json("data").$type<Record<string, unknown>>(),
+    includesTax: boolean("includesTax"),
+    isReturn: boolean("isReturn"),
+    name: varchar("name"),
+    priceType: text("priceType", { enum: ["calculated", "flatRate"] }),
+    providerId: varchar("providerId"),
+    regionId: varchar("regionId"),
+    version: integer("version").notNull().default(0),
   },
   (t) => ({
-    providerIdIndex: index('providerIdIndex').on(t.providerId),
-    regionIdIndex: index('regionIdIndex').on(t.regionId),
+    providerIdIndex: index("providerIdIndex").on(t.providerId),
+    regionIdIndex: index("regionIdIndex").on(t.regionId),
   }),
 )
 export const shippingOptionRelations = relations(
@@ -51,16 +51,16 @@ export const shippingOptionRelations = relations(
   }),
 )
 export const shippingOptionsRequirements = pgTable(
-  'shipping_option_requirements',
+  "shipping_option_requirements",
   {
-    id: varchar('id').notNull().primaryKey(),
-    amount: integer('amount'),
-    shippingOptionId: varchar('shippingOptionId'),
-    type: text('type', { enum: ['maxSubtotal', 'minSubtotal'] }),
-    version: integer('version'),
+    id: varchar("id").notNull().primaryKey(),
+    amount: integer("amount"),
+    shippingOptionId: varchar("shippingOptionId"),
+    type: text("type", { enum: ["maxSubtotal", "minSubtotal"] }),
+    version: integer("version"),
   },
   (t) => ({
-    shippingOptionIdIndex: index('shippingOptionIdIndex').on(
+    shippingOptionIdIndex: index("shippingOptionIdIndex").on(
       t.shippingOptionId,
     ),
   }),
@@ -75,16 +75,16 @@ export const shippingOptionRequirementRelations = relations(
   }),
 )
 export const shippingOptionsToTaxRates = pgTable(
-  'shipping_options_to_tax_rates',
+  "shipping_options_to_tax_rates",
   {
-    id: varchar('id'),
-    rateId: varchar('rateId')
+    id: varchar("id"),
+    rateId: varchar("rateId")
       .notNull()
       .references(() => taxRates.id),
-    shippingOptionId: varchar('shippingOptionId')
+    shippingOptionId: varchar("shippingOptionId")
       .notNull()
       .references(() => shippingOptions.id),
-    version: integer('version'),
+    version: integer("version"),
   },
   (t) => ({
     pk: primaryKey(t.shippingOptionId, t.rateId),

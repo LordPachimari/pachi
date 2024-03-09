@@ -1,9 +1,9 @@
-import { Effect } from 'effect'
-import { isDefined } from 'remeda'
+import { Effect } from "effect"
+import { isDefined } from "remeda"
 
-import { type ProductVariant } from '@pachi/db'
-import { NotFound } from '@pachi/types'
-import { generateId, ulid } from '@pachi/utils'
+import { type ProductVariant } from "@pachi/db"
+import { NotFound } from "@pachi/types"
+import { generateId, ulid } from "@pachi/utils"
 
 import {
   AssignProductOptionValueToVariantSchema,
@@ -24,9 +24,9 @@ import {
   UpdateProductTagsSchema,
   UpdateProductVariantSchema,
   UploadProductImagesSchema,
-} from '../../input-schema/product'
-import { zod } from '../../util/zod'
-import { ServerContext } from '../context'
+} from "../../input-schema/product"
+import { zod } from "../../util/zod"
+import { ServerContext } from "../context"
 
 const createProduct = zod(CreateProductSchema, (input) =>
   Effect.gen(function* (_) {
@@ -54,10 +54,10 @@ const createProduct = zod(CreateProductSchema, (input) =>
         prices,
         (price) =>
           Effect.sync(() =>
-            replicacheTransaction.set(price.id, price, 'prices'),
+            replicacheTransaction.set(price.id, price, "prices"),
           ),
         {
-          concurrency: 'unbounded',
+          concurrency: "unbounded",
         },
       ),
     )
@@ -68,7 +68,7 @@ const deleteProduct = zod(DeleteInputSchema, (input) =>
   Effect.gen(function* (_) {
     const { replicacheTransaction } = yield* _(ServerContext)
     const { id } = input
-    yield* _(Effect.sync(() => replicacheTransaction.del(id, 'products')))
+    yield* _(Effect.sync(() => replicacheTransaction.del(id, "products")))
   }),
 )
 
@@ -77,7 +77,7 @@ const updateProduct = zod(UpdateProductSchema, (input) =>
     const { replicacheTransaction } = yield* _(ServerContext)
     const { updates, id } = input
     yield* _(
-      Effect.sync(() => replicacheTransaction.set(id, updates, 'products')),
+      Effect.sync(() => replicacheTransaction.set(id, updates, "products")),
     )
   }),
 )
@@ -90,7 +90,7 @@ const updateProductImagesOrder = zod(UpdateProductImagesOrderSchema, (input) =>
       repositories.productVariantRepository.getProductVariantById(variantId),
     )
     if (!variant) {
-      Effect.fail(new NotFound({ message: 'Variant not found' }))
+      Effect.fail(new NotFound({ message: "Variant not found" }))
       return
     }
     const images = structuredClone(variant.images) ?? []
@@ -101,13 +101,13 @@ const updateProductImagesOrder = zod(UpdateProductImagesOrderSchema, (input) =>
       const o = order[image.id]
       if (isDefined(o)) image.order = o
     }
-    if (variant.id.startsWith('default')) {
+    if (variant.id.startsWith("default")) {
       for (const image of images) {
         if (image.order === 0) {
           replicacheTransaction.update(
             productId,
             { thumbnail: image },
-            'products',
+            "products",
           )
         }
       }
@@ -117,13 +117,13 @@ const updateProductImagesOrder = zod(UpdateProductImagesOrderSchema, (input) =>
         replicacheTransaction.update(
           variantId,
           { images: images },
-          'productVariants',
+          "productVariants",
         ),
       ),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(productId, {}, 'products'),
+        replicacheTransaction.update(productId, {}, "products"),
       ),
     )
   }),
@@ -140,7 +140,7 @@ const uploadProductImages = zod(UploadProductImagesSchema, (input) =>
       repositories.productVariantRepository.getProductVariantById(variantId),
     )
     if (!variant) {
-      Effect.fail(new NotFound({ message: 'Variant not found' }))
+      Effect.fail(new NotFound({ message: "Variant not found" }))
       return
     }
 
@@ -151,13 +151,13 @@ const uploadProductImages = zod(UploadProductImagesSchema, (input) =>
           {
             images: [...(variant.images ? variant.images : []), ...images],
           },
-          'productVariants',
+          "productVariants",
         ),
       ),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(productId, {}, 'products'),
+        replicacheTransaction.update(productId, {}, "products"),
       ),
     )
   }),
@@ -169,12 +169,12 @@ const createProductOption = zod(CreateProductOptionSchema, (input) =>
     const { option } = input
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.set(option.id, option, 'productOptions'),
+        replicacheTransaction.set(option.id, option, "productOptions"),
       ),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(option.productId, {}, 'products'),
+        replicacheTransaction.update(option.productId, {}, "products"),
       ),
     )
   }),
@@ -186,12 +186,12 @@ const updateProductOption = zod(UpdateProductOptionSchema, (input) =>
     const { optionId, updates, productId } = input
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(optionId, updates, 'productOptions'),
+        replicacheTransaction.update(optionId, updates, "productOptions"),
       ),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(productId, {}, 'products'),
+        replicacheTransaction.update(productId, {}, "products"),
       ),
     )
   }),
@@ -202,11 +202,11 @@ const deleteProductOption = zod(DeleteProductOptionSchema, (input) =>
     const { replicacheTransaction } = yield* _(ServerContext)
     const { optionId, productId } = input
     yield* _(
-      Effect.sync(() => replicacheTransaction.del(optionId, 'productOptions')),
+      Effect.sync(() => replicacheTransaction.del(optionId, "productOptions")),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(productId, {}, 'products'),
+        replicacheTransaction.update(productId, {}, "products"),
       ),
     )
   }),
@@ -222,7 +222,7 @@ const updateProductOptionValues = zod(
         repositories.productOptionRepository.getProductOption(optionId),
       )
       if (!option) {
-        Effect.fail(new NotFound({ message: 'Option not found' }))
+        Effect.fail(new NotFound({ message: "Option not found" }))
         return
       }
       const oldValuesKeys = option.values?.map((value) => value.id) ?? []
@@ -232,9 +232,9 @@ const updateProductOptionValues = zod(
           newOptionValues,
           (value) =>
             Effect.sync(() =>
-              replicacheTransaction.set(value.id, value, 'productOptionValues'),
+              replicacheTransaction.set(value.id, value, "productOptionValues"),
             ),
-          { concurrency: 'unbounded' },
+          { concurrency: "unbounded" },
         ),
       )
       yield* _(
@@ -242,14 +242,14 @@ const updateProductOptionValues = zod(
           oldValuesKeys,
           (id) =>
             Effect.sync(() =>
-              replicacheTransaction.del(id, 'productOptionValues'),
+              replicacheTransaction.del(id, "productOptionValues"),
             ),
-          { concurrency: 'unbounded' },
+          { concurrency: "unbounded" },
         ),
       )
       yield* _(
         Effect.sync(() =>
-          replicacheTransaction.update(productId, {}, 'products'),
+          replicacheTransaction.update(productId, {}, "products"),
         ),
       )
     }),
@@ -261,12 +261,12 @@ const deleteProductOptionValue = zod(DeleteProductOptionValueSchema, (input) =>
     const { optionValueId, productId } = input
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.del(optionValueId, 'productOptionValues'),
+        replicacheTransaction.del(optionValueId, "productOptionValues"),
       ),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(productId, {}, 'products'),
+        replicacheTransaction.update(productId, {}, "products"),
       ),
     )
   }),
@@ -278,12 +278,12 @@ const createProductVariant = zod(CreateProductVariantSchema, (input) =>
     const { variant } = input
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.set(variant.id, variant, 'productVariants'),
+        replicacheTransaction.set(variant.id, variant, "productVariants"),
       ),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(variant.productId, {}, 'products'),
+        replicacheTransaction.update(variant.productId, {}, "products"),
       ),
     )
   }),
@@ -295,12 +295,12 @@ const updateProductVariant = zod(UpdateProductVariantSchema, (input) =>
     const { variantId, updates, productId } = input
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(variantId, updates, 'productVariants'),
+        replicacheTransaction.update(variantId, updates, "productVariants"),
       ),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(productId, {}, 'products'),
+        replicacheTransaction.update(productId, {}, "products"),
       ),
     )
   }),
@@ -312,12 +312,12 @@ const deleteProductVariant = zod(DeleteProductVariantSchema, (input) =>
     const { variantId, productId } = input
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.del(variantId, 'productVariants'),
+        replicacheTransaction.del(variantId, "productVariants"),
       ),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(productId, {}, 'products'),
+        replicacheTransaction.update(productId, {}, "products"),
       ),
     )
   }),
@@ -328,21 +328,21 @@ const createProductPrices = zod(CreateProductPricesSchema, (input) =>
     const { replicacheTransaction } = yield* _(ServerContext)
     const { prices, productId } = input
     prices.forEach((price) => {
-      replicacheTransaction.set(price.id, price, 'prices')
+      replicacheTransaction.set(price.id, price, "prices")
     })
     yield* _(
       Effect.forEach(
         prices,
         (price) =>
           Effect.sync(() =>
-            replicacheTransaction.set(price.id, price, 'prices'),
+            replicacheTransaction.set(price.id, price, "prices"),
           ),
-        { concurrency: 'unbounded' },
+        { concurrency: "unbounded" },
       ),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(productId, {}, 'products'),
+        replicacheTransaction.update(productId, {}, "products"),
       ),
     )
   }),
@@ -354,12 +354,12 @@ const updateProductPrice = zod(UpdateProductPriceSchema, (input) =>
     const { priceId, updates, productId } = input
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(priceId, updates, 'prices'),
+        replicacheTransaction.update(priceId, updates, "prices"),
       ),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(productId, {}, 'products'),
+        replicacheTransaction.update(productId, {}, "products"),
       ),
     )
   }),
@@ -372,13 +372,13 @@ const deleteProductPrices = zod(DeleteProductPricesSchema, (input) =>
     yield* _(
       Effect.forEach(
         priceIds,
-        (id) => Effect.sync(() => replicacheTransaction.del(id, 'prices')),
-        { concurrency: 'unbounded' },
+        (id) => Effect.sync(() => replicacheTransaction.del(id, "prices")),
+        { concurrency: "unbounded" },
       ),
     )
     yield* _(
       Effect.sync(() =>
-        replicacheTransaction.update(productId, {}, 'products'),
+        replicacheTransaction.update(productId, {}, "products"),
       ),
     )
   }),
@@ -395,13 +395,13 @@ const assignProductOptionValueToVariant = zod(
           replicacheTransaction.set(
             { optionValueId, variantId },
             { optionValueId, variantId },
-            'productOptionValuesToProductVariants',
+            "productOptionValuesToProductVariants",
           ),
         ),
       )
       yield* _(
         Effect.sync(() =>
-          replicacheTransaction.update(productId, {}, 'products'),
+          replicacheTransaction.update(productId, {}, "products"),
         ),
       )
       if (prevOptionValueId)
@@ -409,7 +409,7 @@ const assignProductOptionValueToVariant = zod(
           Effect.sync(() =>
             replicacheTransaction.del(
               prevOptionValueId,
-              'productOptionValuesToProductVariants',
+              "productOptionValuesToProductVariants",
             ),
           ),
         )
@@ -430,7 +430,7 @@ const updateProductTags = zod(UpdateProductTagsSchema, (input) =>
       repositories.productTagRepository.createProductTags({
         tags: tags.map((value) => {
           return {
-            id: generateId({ id: ulid(), prefix: 'p_tag' }),
+            id: generateId({ id: ulid(), prefix: "p_tag" }),
             value,
             createdAt: new Date().toISOString(),
           }
@@ -446,10 +446,10 @@ const updateProductTags = zod(UpdateProductTagsSchema, (input) =>
             replicacheTransaction.set(
               { productId, tagId: tag.id },
               { productId, tagId: tag.id },
-              'productsToTags',
+              "productsToTags",
             ),
           ),
-        { concurrency: 'unbounded' },
+        { concurrency: "unbounded" },
       ),
     )
   }),

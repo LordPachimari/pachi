@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from "zod"
 
 import {
   ImageSchema,
@@ -9,7 +9,7 @@ import {
   ProductUpdatesSchema,
   ProductVariantSchema,
   ProductVariantUpdatesSchema,
-} from '@pachi/db'
+} from "@pachi/db"
 
 export const CreateProductSchema = z.object({
   product: ProductSchema,

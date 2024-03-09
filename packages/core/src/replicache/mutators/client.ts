@@ -1,10 +1,10 @@
-import type { WriteTransaction } from 'replicache'
+import type { WriteTransaction } from "replicache"
 
-import { ClientProduct, ClientStore, ClientUser } from '../../client'
+import { ClientProduct, ClientStore, ClientUser } from "../../client"
 import type {
   ServerDashboardMutatorsType,
   ServerGlobalMutatorsType,
-} from './server'
+} from "./server"
 
 export type ClientDashboardMutatorsType = {
   [key in keyof ServerDashboardMutatorsType]: (

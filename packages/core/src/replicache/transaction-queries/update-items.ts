@@ -1,11 +1,11 @@
-import { and, eq, sql } from 'drizzle-orm'
-import { Effect } from 'effect'
-import type { ReadonlyJSONObject } from 'replicache'
+import { and, eq, sql } from "drizzle-orm"
+import { Effect } from "effect"
+import type { ReadonlyJSONObject } from "replicache"
 
-import { tableNamesMap, type TableName, type Transaction } from '@pachi/db'
-import { users } from '@pachi/db/schema'
-import { PermissionDenied } from '@pachi/types'
-import { withDieErrorLogger } from '@pachi/utils'
+import { tableNamesMap, type TableName, type Transaction } from "@pachi/db"
+import { users } from "@pachi/db/schema"
+import { PermissionDenied } from "@pachi/types"
+import { withDieErrorLogger } from "@pachi/utils"
 
 export const updateItems_ = ({
   tableName,
@@ -20,7 +20,7 @@ export const updateItems_ = ({
 }): Effect.Effect<void, PermissionDenied, never> =>
   Effect.gen(function* (_) {
     const effects = items.map(({ id, value }) => {
-      if (tableName === 'users')
+      if (tableName === "users")
         return Effect.tryPromise({
           try: () =>
             transaction
@@ -33,7 +33,7 @@ export const updateItems_ = ({
           catch: (error) => {
             Effect.logError(error)
             return new PermissionDenied({
-              message: 'Only the user can update their own profile',
+              message: "Only the user can update their own profile",
             })
           },
         })
@@ -46,8 +46,8 @@ export const updateItems_ = ({
           })
           .where(eq(tableNamesMap[tableName].id, id)),
       ).pipe(
-        Effect.orDieWith((e) => withDieErrorLogger(e, 'updateItems error')),
+        Effect.orDieWith((e) => withDieErrorLogger(e, "updateItems error")),
       )
     })
-    yield* _(Effect.all(effects, { concurrency: 'unbounded' }))
+    yield* _(Effect.all(effects, { concurrency: "unbounded" }))
   })

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { Effect } from 'effect'
-import type { z } from 'zod'
+import type { Effect } from "effect"
+import type { z } from "zod"
 
-import type { NotFound } from '@pachi/types'
+import type { NotFound } from "@pachi/types"
 
-import type { ServerContext } from '../server'
+import type { ServerContext } from "../server"
 
 export function zod<Schema extends z.ZodSchema<any, any, any>>(
   schema: Schema,

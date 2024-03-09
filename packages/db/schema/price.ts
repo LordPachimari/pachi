@@ -1,31 +1,31 @@
-import { relations } from 'drizzle-orm'
-import { index, integer, pgTable, varchar } from 'drizzle-orm/pg-core'
+import { relations } from "drizzle-orm"
+import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core"
 
-import { currencies } from './currency'
-import { priceLists } from './price-list'
-import { productVariants } from './product-variant'
+import { currencies } from "./currency"
+import { priceLists } from "./price-list"
+import { productVariants } from "./product-variant"
 
 export const prices = pgTable(
-  'prices',
+  "prices",
   {
-    id: varchar('id').notNull().primaryKey(),
-    amount: integer('amount').notNull(),
-    createdAt: varchar('createdAt'),
-    currencyCode: varchar('currencyCode')
+    id: varchar("id").notNull().primaryKey(),
+    amount: integer("amount").notNull(),
+    createdAt: varchar("createdAt"),
+    currencyCode: varchar("currencyCode")
       .notNull()
       .references(() => currencies.code),
-    priceListId: varchar('priceListId').references(() => priceLists.id, {
-      onDelete: 'cascade',
+    priceListId: varchar("priceListId").references(() => priceLists.id, {
+      onDelete: "cascade",
     }),
-    variantId: varchar('variantId')
+    variantId: varchar("variantId")
       .notNull()
-      .references(() => productVariants.id, { onDelete: 'cascade' }),
-    version: integer('version').notNull().default(0),
+      .references(() => productVariants.id, { onDelete: "cascade" }),
+    version: integer("version").notNull().default(0),
   },
   (price) => ({
-    priceListIdIndex: index('priceListIdIndex').on(price.priceListId),
-    variantIdIndex: index('variantIdIndex').on(price.variantId),
-    currencyCodeIndex: index('currencyCodeIndex').on(price.currencyCode),
+    priceListIdIndex: index("priceListIdIndex").on(price.priceListId),
+    variantIdIndex: index("variantIdIndex").on(price.variantId),
+    currencyCodeIndex: index("currencyCodeIndex").on(price.currencyCode),
   }),
 )
 export const pricesRelations = relations(prices, ({ one }) => ({

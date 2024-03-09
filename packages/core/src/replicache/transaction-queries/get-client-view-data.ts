@@ -1,14 +1,14 @@
-import { Effect } from 'effect'
+import { Effect } from "effect"
 
-import { type Transaction } from '@pachi/db'
-import { InvalidValue } from '@pachi/types'
+import { type Transaction } from "@pachi/db"
+import { InvalidValue } from "@pachi/types"
 import type {
   ClientViewDataWithTable,
   SpaceId,
   SpaceRecords,
-} from '@pachi/types'
+} from "@pachi/types"
 
-import { SpaceRecordGetter } from '../space-records/space-records'
+import { SpaceRecordGetter } from "../space-records/space-records"
 
 export const getClientViewDataWithTables = <T extends SpaceId>({
   userId,

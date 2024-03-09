@@ -1,14 +1,14 @@
-import { Effect } from 'effect'
-import { isObject, isString } from 'remeda'
-import type { ReadonlyJSONObject } from 'replicache'
+import { Effect } from "effect"
+import { isObject, isString } from "remeda"
+import type { ReadonlyJSONObject } from "replicache"
 
-import { type TableName, type Transaction } from '@pachi/db'
+import { type TableName, type Transaction } from "@pachi/db"
 
-import { deleteItems, setItems, updateItems } from './data/data'
+import { deleteItems, setItems, updateItems } from "./data/data"
 
-const DELETE = 'DELETE' as const
-const SET = 'set' as const
-const UPDATE = 'UPDATE' as const
+const DELETE = "DELETE" as const
+const SET = "set" as const
+const UPDATE = "UPDATE" as const
 
 interface CustomWriteTransaction {
   set(key: string, value: ReadonlyJSONObject, tableName: TableName): void
@@ -126,7 +126,7 @@ export class ReplicacheTransaction implements CustomWriteTransaction {
         setItems(itemsToSet, this._userId, this._transaction),
         updateItems(itemsToUpdate, this._userId, this._transaction),
       ],
-      { concurrency: 'unbounded' },
+      { concurrency: "unbounded" },
     )
     this._cache.clear()
     return Effect.succeed(1)

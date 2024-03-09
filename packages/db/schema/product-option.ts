@@ -1,23 +1,23 @@
-import { relations } from 'drizzle-orm'
-import { index, integer, pgTable, varchar } from 'drizzle-orm/pg-core'
+import { relations } from "drizzle-orm"
+import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core"
 
-import { products } from './product'
-import { productOptionValues } from './product-option-value'
+import { products } from "./product"
+import { productOptionValues } from "./product-option-value"
 
 export const productOptions = pgTable(
-  'product_options',
+  "product_options",
   {
-    id: varchar('id').notNull().primaryKey(),
-    productId: varchar('productId')
+    id: varchar("id").notNull().primaryKey(),
+    productId: varchar("productId")
       .references(() => products.id, {
-        onDelete: 'cascade',
+        onDelete: "cascade",
       })
       .notNull(),
-    name: varchar('name'),
-    version: integer('version').notNull().default(0),
+    name: varchar("name"),
+    version: integer("version").notNull().default(0),
   },
   (productOption) => ({
-    productIdIndex2: index('productIdIndex2').on(productOption.productId),
+    productIdIndex2: index("productIdIndex2").on(productOption.productId),
   }),
 )
 export const productOptionRelations = relations(

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Effect, Either } from 'effect'
+import { Effect, Either } from "effect"
 
 import {
   getClient,
@@ -12,16 +12,16 @@ import {
   setClient,
   type ServerDashboardMutatorsMapType,
   type ServerGlobalMutatorsMapType,
-} from '@pachi/core'
-import type { Db } from '@pachi/db'
+} from "@pachi/core"
+import type { Db } from "@pachi/db"
 import type {
   Mutation,
   PushRequest,
   RequestHeaders,
   SpaceId,
-} from '@pachi/types'
-import { InternalError, pushRequestSchema } from '@pachi/types'
-import { generateId, ulid } from '@pachi/utils'
+} from "@pachi/types"
+import { InternalError, pushRequestSchema } from "@pachi/types"
+import { generateId, ulid } from "@pachi/utils"
 
 export const push = ({
   body,
@@ -37,7 +37,7 @@ export const push = ({
   requestHeaders: RequestHeaders
 }) =>
   Effect.gen(function* (_) {
-    console.log('---------------------------------------------------')
+    console.log("---------------------------------------------------")
 
     const push = pushRequestSchema.safeParse(body)
     if (push.success === false) return yield* _(Effect.fail(push.error))
@@ -47,7 +47,7 @@ export const push = ({
 
     const t0 = Date.now()
     const mutators =
-      spaceId === 'dashboard'
+      spaceId === "dashboard"
         ? ServerDashboardMutatorsMap
         : ServerGlobalMutatorsMap
 
@@ -114,10 +114,10 @@ export const push = ({
                   ]),
                 )
               } else {
-                yield* _(Effect.log('Nothing to update'))
+                yield* _(Effect.log("Nothing to update"))
               }
             }),
-          { isolationLevel: 'serializable', accessMode: 'read write' },
+          { isolationLevel: "serializable", accessMode: "read write" },
         ),
       ).pipe(Effect.orDie)
     }
@@ -166,7 +166,7 @@ const processMutation = ({
     if (!error) {
       yield* _(
         Effect.log(
-          `Processing mutation: ${JSON.stringify(mutation, null, '')}`,
+          `Processing mutation: ${JSON.stringify(mutation, null, "")}`,
         ),
       )
       const t1 = Date.now()
@@ -187,12 +187,12 @@ const processMutation = ({
       const result = yield* _(Effect.either(mutator(args)))
       if (Either.isLeft(result)) {
         const error = result.left
-        if (error._tag === 'NotFound') {
+        if (error._tag === "NotFound") {
           yield* _(Effect.logError(error.message))
           yield* _(
             server.Error.createError({
-              id: generateId({ prefix: 'error', id: ulid() }),
-              type: 'NotFound',
+              id: generateId({ prefix: "error", id: ulid() }),
+              type: "NotFound",
               message: error.message,
             }).pipe(Effect.orDie),
           )

@@ -1,4 +1,4 @@
-import type { TableName } from '.'
+import type { TableName } from "."
 import {
   cartItems,
   carts,
@@ -17,7 +17,7 @@ import {
   productVariants,
   stores,
   users,
-} from './schema'
+} from "./schema"
 
 type UserTable = typeof users
 type ProductTable = typeof products

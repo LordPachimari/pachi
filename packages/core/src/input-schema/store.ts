@@ -1,6 +1,6 @@
-import { z } from 'zod'
+import { z } from "zod"
 
-import { StoreSchema } from '@pachi/db'
+import { StoreSchema } from "@pachi/db"
 
 export const CreateStoreSchema = z.object({
   store: StoreSchema,

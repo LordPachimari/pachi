@@ -1,7 +1,7 @@
-import { Effect } from 'effect'
-import type { ReadonlyJSONObject } from 'replicache'
+import { Effect } from "effect"
+import type { ReadonlyJSONObject } from "replicache"
 
-import { tableNamesMap, type TableName, type Transaction } from '@pachi/db'
+import { tableNamesMap, type TableName, type Transaction } from "@pachi/db"
 
 export const setItems_ = ({
   tableName,
@@ -16,7 +16,7 @@ export const setItems_ = ({
   const table = tableNamesMap[tableName]
   const itemsToPut = items.map(({ value }) => value)
 
-  console.log('items to put', JSON.stringify(itemsToPut))
+  console.log("items to put", JSON.stringify(itemsToPut))
 
   return Effect.tryPromise(() =>
     transaction

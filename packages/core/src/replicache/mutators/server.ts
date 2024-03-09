@@ -1,4 +1,4 @@
-import { Product, Store, User } from '../../server'
+import { Product, Store, User } from "../../server"
 
 const ServerDashboardMutators = {
   createProduct: Product.createProduct,

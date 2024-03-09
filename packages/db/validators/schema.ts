@@ -1,5 +1,5 @@
-import { createInsertSchema } from 'drizzle-zod'
-import { z } from 'zod'
+import { createInsertSchema } from "drizzle-zod"
+import { z } from "zod"
 
 import {
   addresses,
@@ -22,15 +22,15 @@ import {
   stores,
   taxRates,
   users,
-} from '../schema'
-import { carts } from '../schema/cart'
-import { cartItemAdjustments, cartItems } from '../schema/cart-item'
-import { discounts } from '../schema/discount'
-import { discountConditions } from '../schema/discount-condition'
-import { payments } from '../schema/payment'
-import { shippingMethods } from '../schema/shipping-method'
-import { trackingLinks } from '../schema/tracking-link'
-import { ImageSchema } from './common'
+} from "../schema"
+import { carts } from "../schema/cart"
+import { cartItemAdjustments, cartItems } from "../schema/cart-item"
+import { discounts } from "../schema/discount"
+import { discountConditions } from "../schema/discount-condition"
+import { payments } from "../schema/payment"
+import { shippingMethods } from "../schema/shipping-method"
+import { trackingLinks } from "../schema/tracking-link"
+import { ImageSchema } from "./common"
 
 export const CurrencySchema = createInsertSchema(currencies)
 export type Currency = z.infer<typeof CurrencySchema>

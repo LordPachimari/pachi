@@ -1,7 +1,7 @@
-import type { WriteTransaction } from 'replicache'
+import type { WriteTransaction } from "replicache"
 
-import { type Image, type Product, type ProductVariant } from '@pachi/db'
-import { generateId, ulid } from '@pachi/utils'
+import { type Image, type Product, type ProductVariant } from "@pachi/db"
+import { generateId, ulid } from "@pachi/utils"
 
 import {
   type AssignProductOptionValueToVariant,
@@ -22,7 +22,7 @@ import {
   type UpdateProductTags,
   type UpdateProductVariant,
   type UploadProductImages,
-} from '../../input-schema/product'
+} from "../../input-schema/product"
 
 function productNotFound(id: string) {
   console.info(`Product ${id} not found`)
@@ -80,7 +80,7 @@ async function updateProductImagesOrder(
     if (order[image.id] !== undefined) image.order = order[image.id]!
   }
   let thumbnail: Image | undefined = undefined
-  if (variant.id.startsWith('default')) {
+  if (variant.id.startsWith("default")) {
     for (const image of images) {
       if (image.order === 0) {
         thumbnail = image
@@ -249,7 +249,7 @@ async function updateProductVariant(
     return productNotFound(productId)
   }
   if (!product.variants) {
-    return variantNotFound('')
+    return variantNotFound("")
   }
   const variants = product.variants.map((variant) => {
     if (variant.id === variantId) {
@@ -412,7 +412,7 @@ async function updateProductTags(
 
   const newTags = tags.map((value) => {
     return {
-      id: generateId({ id: ulid(), prefix: 'p_tag' }),
+      id: generateId({ id: ulid(), prefix: "p_tag" }),
       value,
       createdAt: new Date().toISOString(),
     }
