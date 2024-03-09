@@ -8,7 +8,7 @@ import { ClientGlobalMutators } from "@pachi/core"
 import { env } from "~/env.mjs"
 import { useReplicache } from "~/zustand/replicache"
 
-function GlobalReplicacheProvider({ children }: { children: React.ReactNode }) {
+export default function GlobalReplicacheProvider({ children }: { children: React.ReactNode }) {
   const userId = "user1"
   const { globalRep, setGlobalRep } = useReplicache()
   const token = localStorage?.getItem("auth_session")
@@ -57,4 +57,3 @@ function GlobalReplicacheProvider({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-export { GlobalReplicacheProvider }

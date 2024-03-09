@@ -19,7 +19,7 @@
     "@pachi/utils": "^0.1.0",
     "base64-arraybuffer": "^1.0.2",
     "drizzle-orm": "^0.29.3",
-    "effect": "^2.3.8",
+    "effect": "^2.4.1",
     "lodash.isequal": "^4.5.0",
     "remeda": "^1.36.0",
     "replicache": "14.0.3",

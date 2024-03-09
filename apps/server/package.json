@@ -22,7 +22,7 @@
     "@pachi/types": "^0.1.0",
     "@pachi/utils": "^0.1.0",
     "drizzle-orm": "^0.29.3",
-    "effect": "^2.3.8",
+    "effect": "^2.4.1",
     "hono": "^4.0.5",
     "jose": "^4.15.2",
     "lucia": "^3.0.1",

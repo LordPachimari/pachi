@@ -1,14 +1,14 @@
-import { eq, sql } from 'drizzle-orm'
-import { Effect } from 'effect'
-import { isDefined } from 'remeda'
-import type { PatchOperation, ReadonlyJSONObject } from 'replicache'
+import { eq, sql } from "drizzle-orm"
+import { Effect } from "effect"
+import { isDefined } from "remeda"
+import type { PatchOperation, ReadonlyJSONObject } from "replicache"
 
-import type { ClientGroupObject, TableName, Transaction } from '@pachi/db'
+import type { ClientGroupObject, TableName, Transaction } from "@pachi/db"
 import {
   jsonTable,
   replicacheClientGroups,
   replicacheClients,
-} from '@pachi/db/schema'
+} from "@pachi/db/schema"
 import {
   AuthorizationError,
   spaceRecords,
@@ -16,8 +16,8 @@ import {
   type PermissionDenied,
   type SpaceId,
   type SpaceRecords,
-} from '@pachi/types'
-import { withDieErrorLogger } from '@pachi/utils'
+} from "@pachi/types"
+import { withDieErrorLogger } from "@pachi/utils"
 
 import {
   deleteItems_,
@@ -25,8 +25,8 @@ import {
   getFullItems,
   setItems_,
   updateItems_,
-} from '../transaction-queries'
-import { getClientLastMutationIdAndVersion_ } from '../transaction-queries/get-client-last-mutations-ids'
+} from "../transaction-queries"
+import { getClientLastMutationIdAndVersion_ } from "../transaction-queries/get-client-last-mutations-ids"
 
 export type ClientRecord = {
   id: string
@@ -89,7 +89,7 @@ export const getSpacePatch = <T extends SpaceId>({
                 isFullItems: false,
               }).pipe(
                 Effect.orDieWith((e) =>
-                  withDieErrorLogger(e, 'location: data getPatch'),
+                  withDieErrorLogger(e, "location: data getPatch"),
                 ),
               ),
             )
@@ -100,7 +100,7 @@ export const getSpacePatch = <T extends SpaceId>({
           })
         },
         {
-          concurrency: 'unbounded',
+          concurrency: "unbounded",
         },
       ),
     )
@@ -134,7 +134,7 @@ export const getSpacePatch = <T extends SpaceId>({
           })
         },
         {
-          concurrency: 'unbounded',
+          concurrency: "unbounded",
         },
       ),
     )
@@ -150,21 +150,21 @@ export const getSpacePatch = <T extends SpaceId>({
             return fullItems
           })
         },
-        { concurrency: 'unbounded' },
+        { concurrency: "unbounded" },
       ),
     )
 
     const patch: PatchOperation[] = []
     for (const key of delKeys) {
       patch.push({
-        op: 'del',
+        op: "del",
         key,
       })
     }
     for (const item of fullItems.flat()) {
       if (item)
         patch.push({
-          op: 'put',
+          op: "put",
           key: (item as { id: string }).id,
           value: item as ReadonlyJSONObject,
         })
@@ -190,7 +190,7 @@ const getSpaceResetPatch = <T extends SpaceId>({
   Effect.gen(function* (_) {
     const patch: PatchOperation[] = [
       {
-        op: 'clear' as const,
+        op: "clear" as const,
       },
     ]
     const newSpaceRecord: SpaceRecords[T] = {} as SpaceRecords[T]
@@ -211,7 +211,7 @@ const getSpaceResetPatch = <T extends SpaceId>({
                 isFullItems: true,
               }).pipe(
                 Effect.orDieWith((e) =>
-                  withDieErrorLogger(e, 'location: data getPatch'),
+                  withDieErrorLogger(e, "location: data getPatch"),
                 ),
               ),
             )
@@ -222,7 +222,7 @@ const getSpaceResetPatch = <T extends SpaceId>({
           })
         },
         {
-          concurrency: 'unbounded',
+          concurrency: "unbounded",
         },
       ),
     )
@@ -237,7 +237,7 @@ const getSpaceResetPatch = <T extends SpaceId>({
             for (const { cvd } of clientViewDataWithTable) {
               for (const item of cvd) {
                 patch.push({
-                  op: 'put',
+                  op: "put",
                   key: item.id,
                   value: item as ReadonlyJSONObject,
                 })
@@ -246,7 +246,7 @@ const getSpaceResetPatch = <T extends SpaceId>({
           })
         },
         {
-          concurrency: 'unbounded',
+          concurrency: "unbounded",
         },
       ),
     )
@@ -275,7 +275,7 @@ export const getClientChanges = ({
           .from(replicacheClients),
       ).pipe(
         Effect.orDieWith((e) =>
-          withDieErrorLogger(e, 'getClientChanges error'),
+          withDieErrorLogger(e, "getClientChanges error"),
         ),
       ),
     )
@@ -304,7 +304,7 @@ export const setItems = (
           return setItems_({ tableName, items, transaction })
         },
         {
-          concurrency: 'unbounded',
+          concurrency: "unbounded",
         },
       ),
     )
@@ -322,7 +322,7 @@ export const updateItems = (
     for (const [tableName, items] of props.entries()) {
       effects.push(updateItems_({ tableName, items, userId, transaction }))
     }
-    yield* _(Effect.all(effects, { concurrency: 'unbounded' }))
+    yield* _(Effect.all(effects, { concurrency: "unbounded" }))
   })
 
 export const deleteItems = (
@@ -336,7 +336,7 @@ export const deleteItems = (
     for (const [tableName, keys] of props.entries()) {
       effects.push(deleteItems_({ tableName, keys, userId, transaction }))
     }
-    yield* _(Effect.all(effects, { concurrency: 'unbounded' }))
+    yield* _(Effect.all(effects, { concurrency: "unbounded" }))
   })
 
 export const getPrevSpaceRecord = <T extends SpaceId>({
@@ -358,7 +358,7 @@ export const getPrevSpaceRecord = <T extends SpaceId>({
         }),
       ).pipe(
         Effect.orDieWith((e) =>
-          withDieErrorLogger(e, 'getPrevSpaceRecord error'),
+          withDieErrorLogger(e, "getPrevSpaceRecord error"),
         ),
       ),
     )
@@ -384,7 +384,7 @@ export const getPrevClientRecord = <T extends SpaceId>({
         }),
       ).pipe(
         Effect.orDieWith((e) =>
-          withDieErrorLogger(e, 'getPrevClientRecord error'),
+          withDieErrorLogger(e, "getPrevClientRecord error"),
         ),
       ),
     )
@@ -395,20 +395,11 @@ export const getPrevClientRecord = <T extends SpaceId>({
 export const getClientGroupObject = ({
   clientGroupID,
   transaction,
-  userId,
 }: {
   clientGroupID: string
   transaction: Transaction
-  userId: string | undefined
 }): Effect.Effect<ClientGroupObject, AuthorizationError, never> =>
   Effect.gen(function* (_) {
-    if (!userId) {
-      return yield* _(
-        Effect.fail(
-          new AuthorizationError({ message: 'User is not authenticated' }),
-        ),
-      )
-    }
     const clientViewData = yield* _(
       Effect.tryPromise(() =>
         transaction.query.replicacheClientGroups.findFirst({
@@ -416,17 +407,10 @@ export const getClientGroupObject = ({
         }),
       ).pipe(
         Effect.orDieWith((e) =>
-          withDieErrorLogger(e, 'getClientGroupObject error'),
+          withDieErrorLogger(e, "getClientGroupObject error"),
         ),
       ),
     )
-    if (clientViewData && clientViewData.userId !== userId) {
-      return yield* _(
-        Effect.fail(
-          new AuthorizationError({ message: 'User is not authorized' }),
-        ),
-      )
-    }
     if (clientViewData) return clientViewData
     else
       return {
@@ -460,7 +444,7 @@ export const setClientGroupObject = ({
           }),
       ).pipe(
         Effect.orDieWith((e) =>
-          withDieErrorLogger(e, 'setClientGroupObject error'),
+          withDieErrorLogger(e, "setClientGroupObject error"),
         ),
       ),
     )
@@ -483,7 +467,7 @@ export const setSpaceRecord = <T extends SpaceId>({
           value: spaceRecord,
         }),
       ).pipe(
-        Effect.orDieWith((e) => withDieErrorLogger(e, 'setSpaceRecord error')),
+        Effect.orDieWith((e) => withDieErrorLogger(e, "setSpaceRecord error")),
       ),
     )
   })
@@ -502,7 +486,7 @@ export const deleteSpaceRecord = ({
         transaction.delete(jsonTable).where(eq(jsonTable.id, key)),
       ).pipe(
         Effect.orDieWith((e) =>
-          withDieErrorLogger(e, 'delete space record error'),
+          withDieErrorLogger(e, "delete space record error"),
         ),
       ),
     )
@@ -522,18 +506,18 @@ export const getClient = ({
         transaction.query.replicacheClients.findFirst({
           where: (client, { eq }) => eq(client.id, clientID),
         }),
-      ).pipe(Effect.orDieWith((e) => withDieErrorLogger(e, 'getClient error'))),
+      ).pipe(Effect.orDieWith((e) => withDieErrorLogger(e, "getClient error"))),
     )
     if (!client)
       return {
         id: clientID,
-        clientGroupID: '',
+        clientGroupID: "",
         lastMutationID: 0,
       }
     if (client.clientGroupID !== clientGroupID) {
       yield* _(
         Effect.fail(
-          new AuthorizationError({ message: 'clientGroupID does not match' }),
+          new AuthorizationError({ message: "clientGroupID does not match" }),
         ),
       )
     }
@@ -556,10 +540,10 @@ export const setClient = ({
         target: replicacheClients.id,
         set: {
           //@ts-ignore
-          lastMutationID: sql.placeholder('lastMutationID'),
+          lastMutationID: sql.placeholder("lastMutationID"),
         },
       }),
-  ).pipe(Effect.orDieWith((e) => withDieErrorLogger(e, 'setClient error')))
+  ).pipe(Effect.orDieWith((e) => withDieErrorLogger(e, "setClient error")))
 
 export const getClientLastMutationIdsAndVersion = ({
   clientIDs,

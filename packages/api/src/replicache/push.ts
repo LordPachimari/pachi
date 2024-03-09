@@ -61,15 +61,6 @@ export const push = ({
                 userId,
                 transaction,
               )
-              // 2: check if user has access to the client group
-              yield* _(
-                getClientGroupObject({
-                  clientGroupID: push.data.clientGroupID,
-                  transaction,
-                  userId,
-                  //TODO: HANDLE ERROR
-                }).pipe(Effect.orDie),
-              )
               // 2: get client row
               const baseClient = yield* _(
                 getClient({

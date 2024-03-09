@@ -50,7 +50,7 @@ export function Table<TData, TValue>({
   }, [initialView])
   return (
     <div className="space-y-4">
-      {withToolbar ?? (
+      {withToolbar && (
         <TableToolbar
           table={table}
           filterableColumns={filterableColumns}

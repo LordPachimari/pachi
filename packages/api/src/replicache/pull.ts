@@ -1,6 +1,6 @@
-import { Effect } from 'effect'
-import type { PullResponseOKV1 } from 'replicache'
-import { z } from 'zod'
+import { Effect } from "effect"
+import type { PullResponseOKV1 } from "replicache"
+import { z } from "zod"
 
 import {
   deleteSpaceRecord,
@@ -11,13 +11,13 @@ import {
   getSpacePatch,
   setClientGroupObject,
   setSpaceRecord,
-} from '@pachi/core'
-import type { Db } from '@pachi/db'
-import type { Cookie, PullRequest, SpaceId, SpaceRecords } from '@pachi/types'
-import { pullRequestSchema } from '@pachi/types'
-import { withDieErrorLogger } from '@pachi/utils'
+} from "@pachi/core"
+import type { Db } from "@pachi/db"
+import type { Cookie, PullRequest, SpaceId, SpaceRecords } from "@pachi/types"
+import { pullRequestSchema } from "@pachi/types"
+import { withDieErrorLogger } from "@pachi/utils"
 
-const subspacesSchema = z.enum(['store', 'user'] as const)
+const subspacesSchema = z.enum(["store", "user"] as const)
 export const pull = <T extends SpaceId>({
   spaceId,
   body,
@@ -32,9 +32,9 @@ export const pull = <T extends SpaceId>({
   db: Db
 }) =>
   Effect.gen(function* (_) {
-    yield* _(Effect.log('----------------------------------------------------'))
+    yield* _(Effect.log("----------------------------------------------------"))
     yield* _(
-      Effect.log(`Processing mutation pull: ${JSON.stringify(body, null, '')}`),
+      Effect.log(`Processing mutation pull: ${JSON.stringify(body, null, "")}`),
     )
 
     //parsing
@@ -53,9 +53,9 @@ export const pull = <T extends SpaceId>({
 
     // 1: get the space record key, to retrieve the previous space record
     const spaceRecordKey =
-      requestCookie && spaceId === 'global'
+      requestCookie && spaceId === "global"
         ? requestCookie.globalSpaceRecordKey
-        : requestCookie && spaceId === 'dashboard'
+        : requestCookie && spaceId === "dashboard"
         ? requestCookie.dashboardSpaceRecordKey
         : undefined
 
@@ -82,14 +82,20 @@ export const pull = <T extends SpaceId>({
                       getClientGroupObject({
                         clientGroupID: pull.data.clientGroupID,
                         transaction,
-                        userId,
                       }),
                     ],
                     {
-                      concurrency: 'unbounded',
+                      concurrency: "unbounded",
                     },
                   ),
                 )
+              yield* _(
+                Effect.log(
+                  `total time getting prev records ${
+                    Date.now() - startTransact
+                  }`,
+                ),
+              )
 
               const patchEffect = getSpacePatch({
                 spaceRecord: prevSpaceRecord,
@@ -111,7 +117,7 @@ export const pull = <T extends SpaceId>({
               const [{ newSpaceRecord, patch }, lastMutationIDChanges] =
                 yield* _(
                   Effect.all([patchEffect, lastMutationIDChangesEffect], {
-                    concurrency: 'unbounded',
+                    concurrency: "unbounded",
                   }),
                 )
 
@@ -140,12 +146,12 @@ export const pull = <T extends SpaceId>({
                 lastMutationIDChanges,
                 cookie: {
                   ...requestCookie,
-                  ...(spaceId === 'global' && {
+                  ...(spaceId === "global" && {
                     globalSpaceRecordKey: nothingToUpdate
                       ? spaceRecordKey
                       : newSpaceRecordKey,
                   }),
-                  ...(spaceId === 'dashboard' && {
+                  ...(spaceId === "dashboard" && {
                     dashboardSpaceRecordKey: nothingToUpdate
                       ? spaceRecordKey
                       : newSpaceRecordKey,
@@ -173,17 +179,17 @@ export const pull = <T extends SpaceId>({
                       deleteSpaceRecord({ key: spaceRecordKey, transaction }),
                     ],
                     {
-                      concurrency: 'unbounded',
+                      concurrency: "unbounded",
                     },
                   ),
                 )
               }
               return resp
             }),
-          { isolationLevel: 'serializable', accessMode: 'read write' },
+          { isolationLevel: "serializable", accessMode: "read write" },
         ),
       ).pipe(
-        Effect.orDieWith((e) => withDieErrorLogger(e, 'transaction error')),
+        Effect.orDieWith((e) => withDieErrorLogger(e, "transaction error")),
       ),
     )
 
@@ -191,7 +197,7 @@ export const pull = <T extends SpaceId>({
 
     yield* _(Effect.log(`total time ${Date.now() - startTransact}`))
 
-    yield* _(Effect.log('----------------------------------------------------'))
+    yield* _(Effect.log("----------------------------------------------------"))
 
     return response
   })

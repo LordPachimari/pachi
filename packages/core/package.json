@@ -17,7 +17,7 @@
     "@pachi/types": "^0.1.0",
     "@pachi/utils": "^0.1.0",
     "drizzle-orm": "^0.29.3",
-    "effect": "^2.3.8",
+    "effect": "^2.4.1",
     "remeda": "^1.36.0",
     "replicache": "14.0.3",
     "zod": "^3.22.2"

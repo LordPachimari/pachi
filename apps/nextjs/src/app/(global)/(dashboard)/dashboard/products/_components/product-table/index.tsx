@@ -82,6 +82,7 @@ function ProductsTable({ storeId }: Readonly<ProductsTableProps>) {
       table={table}
       filterableColumns={filterableColumns}
       searchableColumns={searchableColumns}
+      withToolbar={true}
       additionalToolbarButton={
         <Button
           size="sm"
