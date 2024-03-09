@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "main": "index.mjs",
   "scripts": {
+    "beautify": "prettier \"**/*.{js,cjs,mjs,ts,tsx,md,json}\" --write --log-level error",
     "clean": "rm -rf .turbo node_modules",
-    "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
+    "format": "prettier --check \"**/*.{js,cjs,mjs,ts,tsx,md,json}\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

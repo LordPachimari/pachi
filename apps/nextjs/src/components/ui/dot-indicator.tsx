@@ -1,11 +1,11 @@
-import React from "react";
+import React from "react"
 
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
 type StatusIndicatorProps = {
-  title?: string;
-  variant: "primary" | "danger" | "warning" | "success" | "active" | "default";
-} & React.HTMLAttributes<HTMLDivElement>;
+  title?: string
+  variant: "primary" | "danger" | "warning" | "success" | "active" | "default"
+} & React.HTMLAttributes<HTMLDivElement>
 
 const DotIndicator: React.FC<StatusIndicatorProps> = ({
   title,
@@ -20,7 +20,7 @@ const DotIndicator: React.FC<StatusIndicatorProps> = ({
     "bg-violet-600": variant === "primary",
     "bg-emerald-400": variant === "active",
     "bg-grey-400": variant === "default",
-  });
+  })
   return (
     <div
       className={cn("inter-small-regular flex items-center", className, {
@@ -31,7 +31,7 @@ const DotIndicator: React.FC<StatusIndicatorProps> = ({
       <div className={cn("h-1.5 w-1.5 self-center rounded-full", dotClass)} />
       {title && <span className="ml-2">{title}</span>}
     </div>
-  );
-};
+  )
+}
 
-export default DotIndicator;
+export default DotIndicator

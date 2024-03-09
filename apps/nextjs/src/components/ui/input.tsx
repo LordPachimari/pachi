@@ -1,21 +1,21 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
   EyeClosedIcon,
   EyeOpenIcon,
   MagnifyingGlassIcon,
-} from "@radix-ui/react-icons";
-import { cva, type VariantProps } from "class-variance-authority";
+} from "@radix-ui/react-icons"
+import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
 const inputBaseStyles = cn(
   "caret-ui-fg-base bg-slate-1 hover:bg-slate-2 border-ui-border-base shadow-buttons-neutral placeholder-ui-fg-muted text-ui-fg-base transition-fg relative w-full appearance-none rounded-md border outline-none",
   "focus:border-brand focus:shadow-borders-active focus:shadow-rose-100 focus:shadow-input-shadow",
   "disabled:text-ui-fg-disabled disabled:!bg-ui-bg-disabled disabled:!border-ui-border-base disabled:placeholder-ui-fg-disabled disabled:cursor-not-allowed disabled:!shadow-none",
   "aria-[invalid=true]:!border-ui-border-error aria-[invalid=true]:focus:!shadow-borders-error invalid:!border-ui-border-error invalid:focus:!shadow-borders-error",
-);
+)
 
 // const inputBaseStyles = cn(
 //   "caret-ui-fg-base bg-ui-bg-field hover:bg-ui-bg-field-hover border-ui-border-base shadow-buttons-neutral placeholder-ui-fg-muted text-ui-fg-base transition-fg relative w-full appearance-none rounded-md border outline-none",
@@ -40,17 +40,17 @@ const inputVariants = cva(
       size: "base",
     },
   },
-);
+)
 
 const Input = React.forwardRef<
   HTMLInputElement,
   VariantProps<typeof inputVariants> &
     Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">
 >(({ className, type, size = "base", ...props }, ref) => {
-  const [typeState, setTypeState] = React.useState(type);
+  const [typeState, setTypeState] = React.useState(type)
 
-  const isPassword = type === "password";
-  const isSearch = type === "search";
+  const isPassword = type === "password"
+  const isSearch = type === "search"
 
   return (
     <div className="relative w-full">
@@ -97,7 +97,7 @@ const Input = React.forwardRef<
             className="focus:shadow-borders-interactive-w-focus h-fit w-fit rounded-sm text-ui-fg-muted outline-none transition-all hover:text-ui-fg-base focus:text-ui-fg-base active:text-ui-fg-base"
             type="button"
             onClick={() => {
-              setTypeState(typeState === "password" ? "text" : "password");
+              setTypeState(typeState === "password" ? "text" : "password")
             }}
           >
             <span className="sr-only">
@@ -108,8 +108,8 @@ const Input = React.forwardRef<
         </div>
       )}
     </div>
-  );
-});
-Input.displayName = "Input";
+  )
+})
+Input.displayName = "Input"
 
-export { Input, inputBaseStyles };
+export { Input, inputBaseStyles }

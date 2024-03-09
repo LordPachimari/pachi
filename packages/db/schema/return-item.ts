@@ -1,9 +1,9 @@
-import { relations } from "drizzle-orm";
-import { boolean, index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm"
+import { boolean, index, integer, pgTable, varchar } from "drizzle-orm/pg-core"
 
-import { cartItems } from "./cart-item";
-import { returns } from "./return";
-import { returnReasons } from "./return-reason";
+import { cartItems } from "./cart-item"
+import { returns } from "./return"
+import { returnReasons } from "./return-reason"
 
 export const returnItems = pgTable(
   "return_items",
@@ -23,7 +23,7 @@ export const returnItems = pgTable(
     reasonIdIndex: index("reasonIdIndex").on(t.reasonId),
     itemIdIndex: index("itemIdIndex").on(t.itemId),
   }),
-);
+)
 export const ReturnItemRelations = relations(returnItems, ({ one }) => ({
   reason: one(returnReasons, {
     fields: [returnItems.reasonId],
@@ -37,4 +37,4 @@ export const ReturnItemRelations = relations(returnItems, ({ one }) => ({
     fields: [returnItems.itemId],
     references: [cartItems.id],
   }),
-}));
+}))

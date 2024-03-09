@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 
-import type { Product, ProductUpdates } from "@pachi/db";
+import type { Product, ProductUpdates } from "@pachi/db"
 
 import {
   AlertDialog,
@@ -11,25 +11,25 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "~/components/ui/alert-dialog";
-import { Label } from "~/components/ui/label";
-import { RadioGroup } from "~/components/ui/radio-group";
+} from "~/components/ui/alert-dialog"
+import { Label } from "~/components/ui/label"
+import { RadioGroup } from "~/components/ui/radio-group"
 
 interface ProductStatusProps {
-  updateProduct: ({ updates }: { updates: ProductUpdates }) => Promise<void>;
-  status: Product["status"];
+  updateProduct: ({ updates }: { updates: ProductUpdates }) => Promise<void>
+  status: Product["status"]
 }
 export default function ProductStatus({
   updateProduct,
   status,
 }: ProductStatusProps) {
-  const [open, setOpen] = useState(false);
-  const [open1, setOpen1] = useState(false);
-  const [value, setValue] = useState<"published" | "draft">("published");
+  const [open, setOpen] = useState(false)
+  const [open1, setOpen1] = useState(false)
+  const [value, setValue] = useState<"published" | "draft">("published")
   useEffect(() => {
-    setValue(status as "published" | "draft");
-    setOpen(false);
-  }, [status]);
+    setValue(status as "published" | "draft")
+    setOpen(false)
+  }, [status])
 
   return (
     <div className="mt-2 flex w-full justify-between">
@@ -49,8 +49,8 @@ export default function ProductStatus({
             <AlertDialogAction
               className="bg-brand"
               onClick={async () => {
-                setValue("published");
-                await updateProduct({ updates: { status: "published" } });
+                setValue("published")
+                await updateProduct({ updates: { status: "published" } })
               }}
             >
               Continue
@@ -72,9 +72,9 @@ export default function ProductStatus({
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
-                setValue("draft");
-                await updateProduct({ updates: { status: "draft" } });
-                setOpen1(false);
+                setValue("draft")
+                await updateProduct({ updates: { status: "draft" } })
+                setOpen1(false)
               }}
             >
               Continue
@@ -87,11 +87,11 @@ export default function ProductStatus({
         className="flex"
         value={value as string}
         onValueChange={(e) => {
-          console.log("e", e);
+          console.log("e", e)
           if (e === "published") {
-            setOpen(true);
+            setOpen(true)
           } else {
-            setOpen1(true);
+            setOpen1(true)
           }
         }}
       >
@@ -109,5 +109,5 @@ export default function ProductStatus({
         </div>
       </RadioGroup>
     </div>
-  );
+  )
 }

@@ -1,9 +1,9 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table"
 
-import type { CurrencyType } from "@pachi/types";
+import type { CurrencyType } from "@pachi/types"
 
-import { TableColumnHeader } from "~/components/table/column-header";
-import { Checkbox } from "~/components/ui/checkbox";
+import { TableColumnHeader } from "~/components/table/column-header"
+import { Checkbox } from "~/components/ui/checkbox"
 
 export function getCurrenciesColumns(
   productCurrencyCodes: string[],
@@ -16,7 +16,7 @@ export function getCurrenciesColumns(
         <Checkbox
           defaultChecked={productCurrencyCodes.includes(row.original.code)}
           onCheckedChange={(value) => {
-            row.toggleSelected(!!value);
+            row.toggleSelected(!!value)
           }}
           aria-label="Select row"
           className="translate-y-[2px]"
@@ -31,7 +31,7 @@ export function getCurrenciesColumns(
         <TableColumnHeader column={column} title="Code" />
       ),
       cell: ({ row }) => {
-        return <div className="w-[80px]">{row.getValue(row.id)}</div>;
+        return <div className="w-[80px]">{row.getValue(row.id)}</div>
       },
       enableSorting: true,
       enableHiding: false,
@@ -45,5 +45,5 @@ export function getCurrenciesColumns(
       enableSorting: true,
       enableHiding: true,
     },
-  ];
+  ]
 }

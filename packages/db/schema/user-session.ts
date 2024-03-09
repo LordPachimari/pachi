@@ -1,6 +1,6 @@
-import { bigint, pgTable, varchar } from "drizzle-orm/pg-core";
+import { pgTable, timestamp, varchar } from "drizzle-orm/pg-core"
 
-import { users } from "./user";
+import { users } from "./user"
 
 export const session = pgTable("user_sessions", {
   id: varchar("id", {
@@ -11,10 +11,8 @@ export const session = pgTable("user_sessions", {
   })
     .notNull()
     .references(() => users.id),
-  activeExpires: bigint("active_expires", {
-    mode: "number",
-  }).notNull(),
-  idleExpires: bigint("idle_expires", {
-    mode: "number",
-  }).notNull(),
-});
+  expiresAt: timestamp("expires_at").notNull(),
+  country: varchar("country", {
+    length: 2,
+  }),
+})

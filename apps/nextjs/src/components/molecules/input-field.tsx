@@ -2,27 +2,27 @@ import type {
   ChangeEventHandler,
   FocusEventHandler,
   MouseEventHandler,
-} from "react";
-import React, { useImperativeHandle, useRef } from "react";
+} from "react"
+import React, { useImperativeHandle, useRef } from "react"
 
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
-import { Input } from "../ui/input";
-import type { InputHeaderProps } from "./input-header";
-import InputHeader from "./input-header";
+import { Input } from "../ui/input"
+import type { InputHeaderProps } from "./input-header"
+import InputHeader from "./input-header"
 
 export type InputProps = Omit<React.ComponentPropsWithRef<"input">, "prefix"> &
   InputHeaderProps & {
-    small?: boolean;
-    label?: string;
-    onDelete?: MouseEventHandler<HTMLSpanElement>;
-    onChange?: ChangeEventHandler<HTMLInputElement>;
-    onFocus?: FocusEventHandler<HTMLInputElement>;
-    errors?: Record<string, unknown>;
-    prefix?: React.ReactNode;
-    suffix?: React.ReactNode;
-    props?: React.HTMLAttributes<HTMLDivElement>;
-  };
+    small?: boolean
+    label?: string
+    onDelete?: MouseEventHandler<HTMLSpanElement>
+    onChange?: ChangeEventHandler<HTMLInputElement>
+    onFocus?: FocusEventHandler<HTMLInputElement>
+    errors?: Record<string, unknown>
+    prefix?: React.ReactNode
+    suffix?: React.ReactNode
+    props?: React.HTMLAttributes<HTMLDivElement>
+  }
 
 const InputField = React.forwardRef<HTMLInputElement, InputProps>(
   (
@@ -47,12 +47,12 @@ const InputField = React.forwardRef<HTMLInputElement, InputProps>(
     }: InputProps,
     ref,
   ) => {
-    const inputRef = useRef<HTMLInputElement | null>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null)
 
     useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(
       ref,
       () => inputRef.current,
-    );
+    )
 
     return (
       <div
@@ -74,10 +74,10 @@ const InputField = React.forwardRef<HTMLInputElement, InputProps>(
         />
         {/* <InputError name={name} errors={errors} /> */}
       </div>
-    );
+    )
   },
-);
+)
 
-InputField.displayName = "InputField";
+InputField.displayName = "InputField"
 
-export default InputField;
+export default InputField

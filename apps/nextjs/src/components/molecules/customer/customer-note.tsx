@@ -1,11 +1,11 @@
-import React from "react";
+import React from "react"
 
-import InputField from "~/components/molecules/input-field";
-import { Card, CardContent, CardHeader } from "~/components/ui/card";
+import InputField from "~/components/molecules/input-field"
+import { Card, CardContent, CardHeader } from "~/components/ui/card"
 
 type CustomerNoteProps = {
-  customer_id: string;
-};
+  customer_id: string
+}
 
 const CustomerNote: React.FC<CustomerNoteProps> = ({ customer_id }) => {
   return (
@@ -15,7 +15,7 @@ const CustomerNote: React.FC<CustomerNoteProps> = ({ customer_id }) => {
         <InputField placeholder="Write a note..." />
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default CustomerNote;
+export default CustomerNote

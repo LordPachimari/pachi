@@ -1,9 +1,9 @@
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
 interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  title: string;
-  description?: string | null;
-  size?: "default" | "sm";
+  title: string
+  description?: string | null
+  size?: "default" | "sm"
 }
 
 export function Header({
@@ -34,5 +34,5 @@ export function Header({
         </p>
       ) : null}
     </div>
-  );
+  )
 }

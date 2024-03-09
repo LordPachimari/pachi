@@ -1,7 +1,7 @@
-import { relations } from "drizzle-orm";
-import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm"
+import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core"
 
-import { fulfillments } from "./fulfillment";
+import { fulfillments } from "./fulfillment"
 
 export const trackingLinks = pgTable(
   "tracking_links",
@@ -17,10 +17,10 @@ export const trackingLinks = pgTable(
   (t) => ({
     fulfillmentIdIndex: index("fulfillmentIdIndex").on(t.fulfillmentId),
   }),
-);
+)
 export const trackingLinksRelations = relations(trackingLinks, ({ one }) => ({
   fulfillment: one(fulfillments, {
     fields: [trackingLinks.fulfillmentId],
     references: [fulfillments.id],
   }),
-}));
+}))

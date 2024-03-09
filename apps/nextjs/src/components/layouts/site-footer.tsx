@@ -1,11 +1,11 @@
-import Link from "next/link";
+import Link from "next/link"
 
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
-import { ThemeToggle } from "~/components/layouts/theme-toggle";
-import { buttonVariants } from "~/components/ui/button";
-import { Icons } from "~/components/ui/icons";
-import { siteConfig } from "~/config/site";
+import { ThemeToggle } from "~/components/layouts/theme-toggle"
+import { buttonVariants } from "~/components/ui/button"
+import { Icons } from "~/components/ui/icons"
+import { siteConfig } from "~/config/site"
 
 export function SiteFooter() {
   return (
@@ -41,5 +41,5 @@ export function SiteFooter() {
         </div>
       </div>
     </footer>
-  );
+  )
 }

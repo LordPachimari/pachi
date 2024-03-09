@@ -1,10 +1,10 @@
-import { eq } from "drizzle-orm";
-import { Effect, pipe } from "effect";
+import { eq } from "drizzle-orm"
+import { Effect, pipe } from "effect"
 
-import { products } from "@pachi/db/schema";
-import { withDieErrorLogger } from "@pachi/utils";
+import { products } from "@pachi/db/schema"
+import { withDieErrorLogger } from "@pachi/utils"
 
-import type { GetClientViewDataWithTable } from "../types";
+import type { GetClientViewDataWithTable } from "../types"
 
 export const productsCVD: GetClientViewDataWithTable = ({
   transaction,
@@ -26,6 +26,6 @@ export const productsCVD: GetClientViewDataWithTable = ({
       { tableName: "products" as const, cvd: products },
     ]),
     Effect.orDieWith((e) => withDieErrorLogger(e, "productsCVD space record")),
-  );
-  return cvd;
-};
+  )
+  return cvd
+}

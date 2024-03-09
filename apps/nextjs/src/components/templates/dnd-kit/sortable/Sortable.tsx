@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react"
 import {
   closestCenter,
   defaultDropAnimationSideEffects,
@@ -12,7 +12,7 @@ import {
   type Announcements,
   type DropAnimation,
   type UniqueIdentifier,
-} from "@dnd-kit/core";
+} from "@dnd-kit/core"
 import {
   arrayMove,
   rectSortingStrategy,
@@ -21,16 +21,16 @@ import {
   useSortable,
   type AnimateLayoutChanges,
   type NewIndexGetter,
-} from "@dnd-kit/sortable";
-import { createPortal } from "react-dom";
-import { isDefined } from "remeda";
+} from "@dnd-kit/sortable"
+import { createPortal } from "react-dom"
+import { isDefined } from "remeda"
 
-import { Item } from "../components/Item";
-import type { ItemProps } from "../components/Item/Item";
-import { List } from "../components/List";
-import { Wrapper } from "../components/Wrapper";
-import type { Props } from "../types";
-import { createRange } from "../utilities";
+import { Item } from "../components/Item"
+import type { ItemProps } from "../components/Item/Item"
+import { List } from "../components/List"
+import { Wrapper } from "../components/Wrapper"
+import type { Props } from "../types"
+import { createRange } from "../utilities"
 
 const dropAnimationConfig: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -40,7 +40,7 @@ const dropAnimationConfig: DropAnimation = {
       },
     },
   }),
-};
+}
 
 export function Sortable({
   activationConstraint,
@@ -69,16 +69,16 @@ export function Sortable({
   updateImagesOrder,
   itemsType,
 }: Props) {
-  const map = new Map();
+  const map = new Map()
   for (const item of initialItems) {
-    map.set(item.id, item);
+    map.set(item.id, item)
   }
   const [items, setItems] = useState<ItemProps[]>(
     () =>
       initialItems ??
       createRange<UniqueIdentifier>(itemCount, (index) => index + 1),
-  );
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  )
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint,
@@ -91,20 +91,20 @@ export function Sortable({
       scrollBehavior: "auto",
       coordinateGetter,
     }),
-  );
-  const isFirstAnnouncement = useRef(true);
+  )
+  const isFirstAnnouncement = useRef(true)
   const getIndex = (id: UniqueIdentifier) =>
-    items.findIndex((item) => item.id === id);
+    items.findIndex((item) => item.id === id)
 
   const getPosition = (id: UniqueIdentifier) =>
-    items.findIndex((item) => item.id === id) + 1;
-  const activeIndex = activeId ? getIndex(activeId) : -1;
+    items.findIndex((item) => item.id === id) + 1
+  const activeIndex = activeId ? getIndex(activeId) : -1
   const handleRemove = removable
     ? (id: UniqueIdentifier) => {
-        console.log("actived remove", id);
-        setItems((items) => items.filter((item) => item.id !== id));
+        console.log("actived remove", id)
+        setItems((items) => items.filter((item) => item.id !== id))
       }
-    : undefined;
+    : undefined
 
   const announcements: Announcements = {
     onDragStart({ active: { id } }) {
@@ -112,52 +112,52 @@ export function Sortable({
         id,
       )}. Sortable item ${id} is in position ${getPosition(id)} of ${
         items.length
-      }`;
+      }`
     },
     onDragOver({ active, over }) {
       // In this specific use-case, the picked up item's `id` is always the same as the first `over` id.
       // The first `onDragOver` event therefore doesn't need to be announced, because it is called
       // immediately after the `onDragStart` announcement and is redundant.
       if (isFirstAnnouncement.current === true) {
-        isFirstAnnouncement.current = false;
-        return;
+        isFirstAnnouncement.current = false
+        return
       }
 
       if (over) {
         return `Sortable item ${
           active.id
-        } was moved into position ${getPosition(over.id)} of ${items.length}`;
+        } was moved into position ${getPosition(over.id)} of ${items.length}`
       }
 
-      return;
+      return
     },
     onDragEnd({ active, over }) {
       if (over) {
         return `Sortable item ${
           active.id
-        } was dropped at position ${getPosition(over.id)} of ${items.length}`;
+        } was dropped at position ${getPosition(over.id)} of ${items.length}`
       }
 
-      return;
+      return
     },
     onDragCancel({ active: { id } }) {
       return `Sorting was cancelled. Sortable item ${id} was dropped and returned to position ${getPosition(
         id,
-      )} of ${items.length}.`;
+      )} of ${items.length}.`
     },
-  };
+  }
 
   useEffect(() => {
     if (!activeId) {
-      isFirstAnnouncement.current = true;
+      isFirstAnnouncement.current = true
     }
-  }, [activeId]);
+  }, [activeId])
   useEffect(() => {
     if (initialItems) {
-      setItems(initialItems);
+      setItems(initialItems)
     }
-  }, [initialItems]);
-  console.log("items", items);
+  }, [initialItems])
+  console.log("items", items)
 
   return (
     <DndContext
@@ -168,29 +168,29 @@ export function Sortable({
       collisionDetection={collisionDetection}
       onDragStart={({ active }) => {
         if (!active) {
-          return;
+          return
         }
 
-        setActiveId(active.id);
+        setActiveId(active.id)
       }}
       onDragEnd={({ over }) => {
-        setActiveId(null);
+        setActiveId(null)
 
         if (over) {
-          const overIndex = getIndex(over.id);
+          const overIndex = getIndex(over.id)
           if (activeIndex !== overIndex) {
             setItems((items) => {
-              const reordered = reorderItems(items, activeIndex, overIndex);
+              const reordered = reorderItems(items, activeIndex, overIndex)
               if (itemsType === "images" && isDefined(updateImagesOrder)) {
-                const order: Record<string, number> = {};
+                const order: Record<string, number> = {}
                 reordered.forEach((item, index) => {
-                  order[item.id] = index;
-                });
-                updateImagesOrder({ order }).catch((err) => console.log(err));
+                  order[item.id] = index
+                })
+                updateImagesOrder({ order }).catch((err) => console.log(err))
               }
 
-              return reordered;
-            });
+              return reordered
+            })
           }
         }
       }}
@@ -257,21 +257,21 @@ export function Sortable({
           )
         : null}
     </DndContext>
-  );
+  )
 }
 interface SortableItemProps {
-  animateLayoutChanges: AnimateLayoutChanges;
-  disabled?: boolean;
-  getNewIndex?: NewIndexGetter | undefined;
-  id: UniqueIdentifier;
-  index: number;
-  handle: boolean;
-  useDragOverlay?: boolean;
-  onRemove?(id: UniqueIdentifier): void;
-  style(values: any): React.CSSProperties;
-  renderItem?(args: any): React.ReactElement;
-  wrapperStyle: Props["wrapperStyle"];
-  idMap: Map<UniqueIdentifier, ItemProps>;
+  animateLayoutChanges: AnimateLayoutChanges
+  disabled?: boolean
+  getNewIndex?: NewIndexGetter | undefined
+  id: UniqueIdentifier
+  index: number
+  handle: boolean
+  useDragOverlay?: boolean
+  onRemove?(id: UniqueIdentifier): void
+  style(values: any): React.CSSProperties
+  renderItem?(args: any): React.ReactElement
+  wrapperStyle: Props["wrapperStyle"]
+  idMap: Map<UniqueIdentifier, ItemProps>
 }
 export function SortableItem({
   disabled = false,
@@ -303,7 +303,7 @@ export function SortableItem({
     animateLayoutChanges,
     disabled,
     ...(getNewIndex && { getNewIndex }),
-  });
+  })
 
   return (
     <Item
@@ -340,5 +340,5 @@ export function SortableItem({
       dragOverlay={!useDragOverlay && isDragging}
       {...attributes}
     />
-  );
+  )
 }

@@ -1,10 +1,10 @@
-import React from "react";
+import React from "react"
 
-import styles from "./GridContainer.module.css";
+import styles from "./GridContainer.module.css"
 
 export interface Props {
-  children: React.ReactNode;
-  columns: number;
+  children: React.ReactNode
+  columns: number
 }
 
 export function GridContainer({ children, columns }: Props) {
@@ -19,5 +19,5 @@ export function GridContainer({ children, columns }: Props) {
     >
       {children}
     </ul>
-  );
+  )
 }

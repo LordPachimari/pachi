@@ -1,15 +1,15 @@
-import type { ProductUpdates } from "@pachi/db";
+import type { ProductUpdates } from "@pachi/db"
 
-import { Switch } from "../../../../ui/switch";
+import { Switch } from "../../../../ui/switch"
 
 export type DiscountableFormType = {
-  value: boolean;
-};
+  value: boolean
+}
 
 type Props = {
-  discountable: boolean | undefined;
-  updateProduct: ({ updates }: { updates: ProductUpdates }) => Promise<void>;
-};
+  discountable: boolean | undefined
+  updateProduct: ({ updates }: { updates: ProductUpdates }) => Promise<void>
+}
 
 const Discountable = ({ discountable = false, updateProduct }: Props) => {
   return (
@@ -23,7 +23,7 @@ const Discountable = ({ discountable = false, updateProduct }: Props) => {
         }
       />
     </div>
-  );
-};
+  )
+}
 
-export default Discountable;
+export default Discountable

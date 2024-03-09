@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm"
 import {
   index,
   integer,
@@ -6,11 +6,11 @@ import {
   primaryKey,
   text,
   varchar,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/pg-core"
 
-import { customerGroups } from "./customer-group";
-import { discountRules } from "./discount-rule";
-import { products } from "./product";
+import { customerGroups } from "./customer-group"
+import { discountRules } from "./discount-rule"
+import { products } from "./product"
 
 export const discountConditions = pgTable(
   "discount_conditions",
@@ -38,7 +38,7 @@ export const discountConditions = pgTable(
       discountCondition.discountRuleId,
     ),
   }),
-);
+)
 
 export const discountConditionRelations = relations(
   discountConditions,
@@ -51,7 +51,7 @@ export const discountConditionRelations = relations(
     // product_collections: many(d),
     customerGroups: many(discountConditionCustomerGroups),
   }),
-);
+)
 export const discountConditionsToProducts = pgTable(
   "discount_conditions_to_products",
   {
@@ -65,7 +65,7 @@ export const discountConditionsToProducts = pgTable(
   (t) => ({
     pk: primaryKey(t.conditionId, t.productId),
   }),
-);
+)
 export const discountConditionsToProductsRelations = relations(
   discountConditionsToProducts,
   ({ one }) => ({
@@ -78,7 +78,7 @@ export const discountConditionsToProductsRelations = relations(
       references: [products.id],
     }),
   }),
-);
+)
 export const discountConditionsToCustomerGroups = pgTable(
   "discount_conditions_to_customer_groups",
   {
@@ -92,7 +92,7 @@ export const discountConditionsToCustomerGroups = pgTable(
   (t) => ({
     pk: primaryKey(t.conditionId, t.customerGroupId),
   }),
-);
+)
 export const discountConditionsToCustomerGroupsRelations = relations(
   discountConditionsToCustomerGroups,
   ({ one }) => ({
@@ -105,7 +105,7 @@ export const discountConditionsToCustomerGroupsRelations = relations(
       references: [customerGroups.id],
     }),
   }),
-);
+)
 
 export const discountConditionCustomerGroups = pgTable(
   "discount_condition_customer_groups",
@@ -126,7 +126,7 @@ export const discountConditionCustomerGroups = pgTable(
       t.discountConditionId,
     ),
   }),
-);
+)
 export const discountConditionsCustomerGroupsRelations = relations(
   discountConditionCustomerGroups,
   ({ one }) => ({
@@ -139,7 +139,7 @@ export const discountConditionsCustomerGroupsRelations = relations(
       references: [customerGroups.id],
     }),
   }),
-);
+)
 
 export const discountConditionProducts = pgTable(
   "discount_condition_products",
@@ -156,7 +156,7 @@ export const discountConditionProducts = pgTable(
       t.discountConditionId,
     ),
   }),
-);
+)
 export const discountConditionsProductsRelations = relations(
   discountConditionProducts,
   ({ one }) => ({
@@ -169,4 +169,4 @@ export const discountConditionsProductsRelations = relations(
       references: [products.id],
     }),
   }),
-);
+)

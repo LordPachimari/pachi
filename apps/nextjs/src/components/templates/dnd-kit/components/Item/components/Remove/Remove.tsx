@@ -1,7 +1,7 @@
-import React from "react";
-import { Cross1Icon } from "@radix-ui/react-icons";
+import React from "react"
+import { Cross1Icon } from "@radix-ui/react-icons"
 
-import { Action, type ActionProps } from "../Action";
+import { Action, type ActionProps } from "../Action"
 
 export function Remove(props: ActionProps) {
   return (
@@ -14,5 +14,5 @@ export function Remove(props: ActionProps) {
     >
       <Cross1Icon className="text-red-500 dark:text-red-500" />
     </Action>
-  );
+  )
 }

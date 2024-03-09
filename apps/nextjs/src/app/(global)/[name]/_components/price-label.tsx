@@ -1,6 +1,6 @@
-import clsx from "clsx";
+import clsx from "clsx"
 
-import Price from "~/components/price";
+import Price from "~/components/price"
 
 const PriceLabel = ({
   title,
@@ -8,10 +8,10 @@ const PriceLabel = ({
   currencyCode,
   position = "bottom",
 }: {
-  title: string;
-  amount: number;
-  currencyCode: string;
-  position?: "bottom" | "center";
+  title: string
+  amount: number
+  currencyCode: string
+  position?: "bottom" | "center"
 }) => {
   return (
     <div
@@ -34,7 +34,7 @@ const PriceLabel = ({
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PriceLabel;
+export default PriceLabel

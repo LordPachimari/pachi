@@ -1,5 +1,5 @@
-import { Label } from "~/components/ui/label";
-import { RadioGroup } from "~/components/ui/radio-group";
+import { Label } from "~/components/ui/label"
+import { RadioGroup } from "~/components/ui/radio-group"
 
 const DiscountType = () => {
   return (
@@ -17,7 +17,7 @@ const DiscountType = () => {
         <Label htmlFor="radio_3">Radio 3</Label>
       </div>
     </RadioGroup>
-  );
-};
+  )
+}
 
-export default DiscountType;
+export default DiscountType

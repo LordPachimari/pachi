@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm"
 import {
   index,
   integer,
@@ -6,9 +6,9 @@ import {
   text,
   uniqueIndex,
   varchar,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/pg-core"
 
-import { stores } from "./store";
+import { stores } from "./store"
 
 export const users = pgTable(
   "users",
@@ -16,7 +16,7 @@ export const users = pgTable(
     id: varchar("id").notNull().primaryKey(),
     lastName: varchar("lastName"),
     firstName: varchar("firstName"),
-    username: varchar("username").notNull(),
+    username: varchar("username"),
     createdAt: varchar("createdAt").notNull(),
     email: varchar("email").notNull(),
     about: text("about"),
@@ -27,7 +27,7 @@ export const users = pgTable(
     billingAddressId: varchar("billingAddressId"),
     updatedAt: varchar("updatedAt"),
     phone: varchar("phone"),
-    total: integer("total"),
+    hashedPassword: varchar("hashedPassword").notNull(),
   },
   (users) => ({
     emailIndex: uniqueIndex("emailIndex").on(users.email),
@@ -36,7 +36,7 @@ export const users = pgTable(
       users.billingAddressId,
     ),
   }),
-);
+)
 export const usersRelations = relations(users, ({ many }) => ({
   stores: many(stores),
-}));
+}))

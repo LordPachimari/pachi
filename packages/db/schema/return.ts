@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm"
 import {
   boolean,
   index,
@@ -6,12 +6,12 @@ import {
   json,
   pgTable,
   varchar,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/pg-core"
 
-import { returnStatus } from "../validators/common";
-import { orders } from "./order";
-import { returnItems } from "./return-item";
-import { shippingMethods } from "./shipping-method";
+import { returnStatus } from "../validators/common"
+import { orders } from "./order"
+import { returnItems } from "./return-item"
+import { shippingMethods } from "./shipping-method"
 
 export const returns = pgTable(
   "returns",
@@ -34,7 +34,7 @@ export const returns = pgTable(
       t.shippingMethodId,
     ),
   }),
-);
+)
 export const returnsRelations = relations(returns, ({ one, many }) => ({
   order: one(orders, {
     fields: [returns.orderId],
@@ -45,4 +45,4 @@ export const returnsRelations = relations(returns, ({ one, many }) => ({
     references: [shippingMethods.id],
   }),
   items: many(returnItems),
-}));
+}))

@@ -1,13 +1,13 @@
-import React from "react";
+import React from "react"
 
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
 export interface InputHeaderProps {
-  label?: string;
-  required?: boolean;
-  tooltipContent?: string | undefined;
-  tooltip?: React.ReactNode;
-  className?: string;
+  label?: string
+  required?: boolean
+  tooltipContent?: string | undefined
+  tooltip?: React.ReactNode
+  className?: string
 }
 
 const InputHeader: React.FC<InputHeaderProps> = ({
@@ -27,7 +27,7 @@ const InputHeader: React.FC<InputHeaderProps> = ({
         </div>
       ) : null}
     </div>
-  );
-};
+  )
+}
 
-export default InputHeader;
+export default InputHeader

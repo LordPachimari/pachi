@@ -1,12 +1,12 @@
 // Modified from: https://github.com/shadcn-ui/ui/blob/main/apps/www/components/page-header.tsx
 
-import { cva, type VariantProps } from "class-variance-authority";
-import { Balancer } from "react-wrap-balancer";
+import { cva, type VariantProps } from "class-variance-authority"
+import { Balancer } from "react-wrap-balancer"
 
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
 interface PageHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  as?: React.ElementType;
+  as?: React.ElementType
 }
 
 function PageHeader({
@@ -19,7 +19,7 @@ function PageHeader({
     <Comp className={cn("grid gap-1", className)} {...props}>
       {children}
     </Comp>
-  );
+  )
 }
 
 const headingVariants = cva(
@@ -36,12 +36,12 @@ const headingVariants = cva(
       size: "default",
     },
   },
-);
+)
 
 interface PageHeaderHeadingProps
   extends React.HTMLAttributes<HTMLHeadingElement>,
     VariantProps<typeof headingVariants> {
-  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
 }
 
 function PageHeaderHeading({
@@ -52,7 +52,7 @@ function PageHeaderHeading({
 }: PageHeaderHeadingProps) {
   return (
     <Comp className={cn(headingVariants({ size, className }))} {...props} />
-  );
+  )
 }
 
 const descriptionVariants = cva("text-muted-foreground max-w-[750px]", {
@@ -66,7 +66,7 @@ const descriptionVariants = cva("text-muted-foreground max-w-[750px]", {
   defaultVariants: {
     size: "default",
   },
-});
+})
 
 interface PageHeaderDescriptionProps
   extends React.ComponentProps<typeof Balancer>,
@@ -83,7 +83,7 @@ function PageHeaderDescription({
       className={cn(descriptionVariants({ size, className }))}
       {...props}
     />
-  );
+  )
 }
 
-export { PageHeader, PageHeaderDescription, PageHeaderHeading };
+export { PageHeader, PageHeaderDescription, PageHeaderHeading }

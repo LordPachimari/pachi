@@ -1,10 +1,10 @@
-import uiPreset from "@medusajs/ui-preset";
-import tailwindContainerQueries from "@tailwindcss/container-queries";
-import pluginForm from "@tailwindcss/forms";
-import tailwindTypography from "@tailwindcss/typography";
-import type { Config } from "tailwindcss";
-import tailwindAnimate from "tailwindcss-animate";
-import plugin from "tailwindcss/plugin";
+import uiPreset from "@medusajs/ui-preset"
+import tailwindContainerQueries from "@tailwindcss/container-queries"
+import pluginForm from "@tailwindcss/forms"
+import tailwindTypography from "@tailwindcss/typography"
+import type { Config } from "tailwindcss"
+import tailwindAnimate from "tailwindcss-animate"
+import plugin from "tailwindcss/plugin"
 
 /** @type {import('tailwindcss').Config} */
 const plugins = [
@@ -19,21 +19,21 @@ const plugins = [
           return {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             "animation-delay": value,
-          };
+          }
         },
       },
       {
         values: theme("transitionDelay")!,
       },
-    );
+    )
   }),
-];
+]
 if (tailwindContainerQueries.config) {
-  tailwindContainerQueries.config;
+  tailwindContainerQueries.config
   plugins.push({
     ...tailwindContainerQueries,
     config: tailwindContainerQueries.config,
-  });
+  })
 }
 export default {
   darkMode: ["class"],
@@ -155,4 +155,4 @@ export default {
   },
   presets: [uiPreset],
   plugins,
-} satisfies Config;
+} satisfies Config

@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-"use client";
+"use client"
 
-import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { useFormState, useFormStatus } from "react-dom";
-import { toast as sonnerToast } from "sonner";
+import { useEffect, useRef } from "react"
+import { useRouter } from "next/navigation"
+import { useFormState, useFormStatus } from "react-dom"
+import { toast as sonnerToast } from "sonner"
 
-import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader } from "~/components/ui/card";
-import { Icons } from "~/components/ui/icons";
-import { Input } from "~/components/ui/input";
-import { createUser } from "../_actions/user/create-user";
+import { Button } from "~/components/ui/button"
+import { Card, CardContent, CardHeader } from "~/components/ui/card"
+import { Icons } from "~/components/ui/icons"
+import { Input } from "~/components/ui/input"
+import { createUser } from "../_actions/user/create-user"
 
 function SubmitButton() {
-  const { pending } = useFormStatus();
+  const { pending } = useFormStatus()
 
   return (
     <Button className="z-20 " disabled={pending} type="submit">
@@ -26,31 +26,31 @@ function SubmitButton() {
         <>Next</>
       )}
     </Button>
-  );
+  )
 }
 
 interface UsernameFormState {
-  username: string;
-  type: Awaited<ReturnType<typeof createUser>>["type"];
+  username: string
+  type: Awaited<ReturnType<typeof createUser>>["type"]
 }
 export default function UsernamePage() {
   const initialState: UsernameFormState = {
     username: "",
     type: "NONE",
-  };
-  const [state, formAction] = useFormState(createUser, initialState);
+  }
+  const [state, formAction] = useFormState(createUser, initialState)
   useEffect(() => {
     //@ts-ignore
     if (state.type === "FAIL") {
       //@ts-ignore
-      toast.error(state.message);
+      toast.error(state.message)
     }
     //@ts-ignore
     if (state.type === "SUCCESS") {
       //@ts-ignore
-      toast.success(state.message);
+      toast.success(state.message)
     }
-  }, [state]);
+  }, [state])
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-red-50 dark:bg-slate-4">
       <Card className="h-fit w-full rounded-xl bg-white drop-shadow-md dark:border-[1px] dark:border-slate-6 dark:bg-slate-3 md:w-96">
@@ -75,21 +75,21 @@ export default function UsernamePage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
 
 // TODO: Maybe use for naming something better instead of 'empty' to indicate the input should be cleared?
 function MyInput({ empty }: { empty: boolean }) {
-  const { pending } = useFormStatus();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
+  const { pending } = useFormStatus()
+  const inputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
 
   useEffect(() => {
     if (inputRef.current && empty) {
-      inputRef.current.value = "";
-      router.push("/home");
+      inputRef.current.value = ""
+      router.push("/home")
     }
-  }, [empty, router]);
+  }, [empty, router])
 
   return (
     <Input
@@ -100,15 +100,15 @@ function MyInput({ empty }: { empty: boolean }) {
       className="w-full text-black dark:text-white"
       ref={inputRef}
     />
-  );
+  )
 }
 
 // TODO: Move to a local lib/utils if used anywhere else
 const toast = {
   error(message: string) {
-    sonnerToast.error(message);
+    sonnerToast.error(message)
   },
   success(message: string) {
-    sonnerToast.success(message);
+    sonnerToast.success(message)
   },
-};
+}

@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-"use client";
+"use client"
 
-import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-import Primitive from "react-currency-input-field";
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import Primitive from "react-currency-input-field"
 
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
 const currencyInputVariants = cva(
   cn(
@@ -25,7 +25,7 @@ const currencyInputVariants = cva(
       size: "base",
     },
   },
-);
+)
 
 interface CurrencyInputProps
   extends Omit<
@@ -33,8 +33,8 @@ interface CurrencyInputProps
       "prefix" | "suffix" | "size"
     >,
     VariantProps<typeof currencyInputVariants> {
-  symbol: string;
-  code: string;
+  symbol: string
+  code: string
 }
 
 const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
@@ -50,31 +50,31 @@ const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
     },
     ref,
   ) => {
-    const innerRef = React.useRef<HTMLInputElement>(null);
+    const innerRef = React.useRef<HTMLInputElement>(null)
 
     React.useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(
       ref,
       () => innerRef.current,
-    );
+    )
 
-    const [valid, setValid] = React.useState(true);
+    const [valid, setValid] = React.useState(true)
 
     const onInnerInvalid = React.useCallback(
       (event: React.FormEvent<HTMLInputElement>) => {
-        setValid(event.currentTarget.validity.valid);
+        setValid(event.currentTarget.validity.valid)
 
         if (onInvalid) {
-          onInvalid(event);
+          onInvalid(event)
         }
       },
       [onInvalid],
-    );
+    )
 
     return (
       <div
         onClick={() => {
           if (innerRef.current) {
-            innerRef.current.focus();
+            innerRef.current.focus()
           }
         }}
         className={cn(
@@ -119,9 +119,9 @@ const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
           </p>
         </span>
       </div>
-    );
+    )
   },
-);
-CurrencyInput.displayName = "CurrencyInput";
+)
+CurrencyInput.displayName = "CurrencyInput"
 
-export { CurrencyInput };
+export { CurrencyInput }

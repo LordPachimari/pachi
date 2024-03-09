@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import * as React from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import {
   getCoreRowModel,
   getFacetedRowModel,
@@ -15,9 +15,9 @@ import {
   type PaginationState,
   type SortingState,
   type VisibilityState,
-} from "@tanstack/react-table";
+} from "@tanstack/react-table"
 
-import { useBuildExistingQueryOption, useQueryOptions } from "~/routing/router";
+import { useBuildExistingQueryOption, useQueryOptions } from "~/routing/router"
 
 interface UseDataTableProps<TData, TValue> {
   /**
@@ -25,50 +25,50 @@ interface UseDataTableProps<TData, TValue> {
    * @default []
    * @type TData[]
    */
-  data: TData[];
+  data: TData[]
 
   /**
    * The columns of the table
    * @default []
    * @type ColumnDef<TData, TValue>[]
    */
-  columns: ColumnDef<TData, TValue>[];
+  columns: ColumnDef<TData, TValue>[]
 }
 
 function useTable<TData, TValue>({
   data,
   columns,
 }: UseDataTableProps<TData, TValue>) {
-  const router = useRouter();
-  const params = useSearchParams();
-  const queryOptions = useQueryOptions(params);
+  const router = useRouter()
+  const params = useSearchParams()
+  const queryOptions = useQueryOptions(params)
 
   // Search params
-  const page = queryOptions.page[0] ?? "1";
-  const pageAsNumber = Number(page);
+  const page = queryOptions.page[0] ?? "1"
+  const pageAsNumber = Number(page)
   const fallbackPage =
-    isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
-  const pageSize_ = queryOptions.pageSize[0] ?? "1";
-  const pageSizeAsNumber = Number(pageSize_);
-  const fallbackPageSize = isNaN(pageSizeAsNumber) ? 10 : pageSizeAsNumber;
+    isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber
+  const pageSize_ = queryOptions.pageSize[0] ?? "1"
+  const pageSizeAsNumber = Number(pageSize_)
+  const fallbackPageSize = isNaN(pageSizeAsNumber) ? 10 : pageSizeAsNumber
 
-  const buildQueryOption = useBuildExistingQueryOption();
+  const buildQueryOption = useBuildExistingQueryOption()
 
   // Table states
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = React.useState({})
+  const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
-  );
+  )
 
   // Handle server-side pagination
   const [{ pageIndex, pageSize }, setPagination] =
     React.useState<PaginationState>({
       pageIndex: fallbackPage - 1,
       pageSize: fallbackPageSize,
-    });
+    })
 
   const pagination = React.useMemo(
     () => ({
@@ -76,14 +76,14 @@ function useTable<TData, TValue>({
       pageSize,
     }),
     [pageIndex, pageSize],
-  );
+  )
 
   React.useEffect(() => {
     setPagination({
       pageIndex: fallbackPage - 1,
       pageSize: fallbackPage,
-    });
-  }, [fallbackPage, fallbackPageSize]);
+    })
+  }, [fallbackPage, fallbackPageSize])
 
   React.useEffect(() => {
     router.push(
@@ -94,8 +94,8 @@ function useTable<TData, TValue>({
       {
         scroll: false,
       },
-    );
-  }, [pageIndex, pageSize, buildQueryOption, router]);
+    )
+  }, [pageIndex, pageSize, buildQueryOption, router])
 
   const table = useReactTable({
     data,
@@ -122,8 +122,8 @@ function useTable<TData, TValue>({
     manualPagination: true,
     manualSorting: true,
     manualFiltering: true,
-  });
+  })
 
-  return { table };
+  return { table }
 }
-export { useTable };
+export { useTable }

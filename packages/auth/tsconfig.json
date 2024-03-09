@@ -1,0 +1,14 @@
+{
+  "extends": "@pachi/tsconfig/base.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "lib": ["esnext"],
+    "jsx": "react-jsx"
+  },
+  "include": ["."],
+  "exclude": ["node_modules"]
+}

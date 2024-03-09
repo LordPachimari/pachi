@@ -76,5 +76,5 @@
 // export default OrderDetails;
 
 export default function Page() {
-  return <div></div>;
+  return <div></div>
 }

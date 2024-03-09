@@ -1,10 +1,10 @@
-import type { FunctionComponent } from "react";
+import type { FunctionComponent } from "react"
 
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
 interface TextProps {
-  html: string;
-  className?: string;
+  html: string
+  className?: string
 }
 
 const Prose: FunctionComponent<TextProps> = ({ html, className }) => {
@@ -16,7 +16,7 @@ const Prose: FunctionComponent<TextProps> = ({ html, className }) => {
       )}
       dangerouslySetInnerHTML={{ __html: html }}
     />
-  );
-};
+  )
+}
 
-export default Prose;
+export default Prose

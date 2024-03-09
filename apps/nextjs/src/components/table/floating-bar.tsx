@@ -1,16 +1,16 @@
-"use client";
+"use client"
 
-import React from "react";
-import { Cross2Icon } from "@radix-ui/react-icons";
-import { type Table } from "@tanstack/react-table";
+import React from "react"
+import { Cross2Icon } from "@radix-ui/react-icons"
+import { type Table } from "@tanstack/react-table"
 
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
-import { Button } from "../ui/button";
+import { Button } from "../ui/button"
 
 interface DataTableFloatingBarProps<TData>
   extends React.HTMLAttributes<HTMLElement> {
-  table: Table<TData>;
+  table: Table<TData>
 }
 
 export function TableFloatingBar<TData>({
@@ -19,7 +19,7 @@ export function TableFloatingBar<TData>({
   className,
   ...props
 }: DataTableFloatingBarProps<TData>) {
-  if (table.getFilteredSelectedRowModel().rows.length <= 0) return null;
+  if (table.getFilteredSelectedRowModel().rows.length <= 0) return null
 
   return (
     <div
@@ -40,5 +40,5 @@ export function TableFloatingBar<TData>({
       {table.getFilteredSelectedRowModel().rows.length} row(s) selected
       {children}
     </div>
-  );
+  )
 }

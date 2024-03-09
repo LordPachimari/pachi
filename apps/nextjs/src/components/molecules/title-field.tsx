@@ -1,17 +1,17 @@
-import TextareaAutosize from "react-textarea-autosize";
+import TextareaAutosize from "react-textarea-autosize"
 
-import type { ProductUpdates } from "@pachi/db";
-import type { FieldError as FieldErrorType } from "@pachi/types";
+import type { ProductUpdates } from "@pachi/db"
+import type { FieldError as FieldErrorType } from "@pachi/types"
 
-import type { DebouncedFunc } from "~/types";
+import type { DebouncedFunc } from "~/types"
 
 export interface TitleProps {
   onChange: DebouncedFunc<
     ({ updates }: { updates: ProductUpdates }) => Promise<void>
-  >;
-  value?: string;
-  placeholder?: string;
-  error: FieldErrorType;
+  >
+  value?: string
+  placeholder?: string
+  error: FieldErrorType
 }
 
 const TitleField = ({ onChange, value, placeholder, error }: TitleProps) => {
@@ -28,7 +28,7 @@ const TitleField = ({ onChange, value, placeholder, error }: TitleProps) => {
       />
       {/* <FieldError error={error.error} message={error.message} /> */}
     </div>
-  );
-};
+  )
+}
 
-export default TitleField;
+export default TitleField

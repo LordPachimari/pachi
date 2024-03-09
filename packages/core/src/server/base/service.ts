@@ -1,8 +1,8 @@
-import { CartService, type CartServiceType } from "../cart/service";
+import { CartService, type CartServiceType } from "../cart/service"
 
 export type ServicesType = {
-  CartService: CartServiceType;
-};
+  CartService: CartServiceType
+}
 export const Services: ServicesType = {
   CartService,
-};
+}

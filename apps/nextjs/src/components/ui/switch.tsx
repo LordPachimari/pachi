@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import * as Primitives from "@radix-ui/react-switch";
-import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react"
+import * as Primitives from "@radix-ui/react-switch"
+import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
 const switchVariants = cva(
   "bg-ui-bg-switch-off hover:bg-ui-bg-switch-off-hover data-[state=unchecked]:hover:after:bg-switch-off-hover-gradient before:shadow-details-switch-background focus:shadow-details-switch-background-focus data-[state=checked]:bg-brand disabled:!bg-ui-bg-disabled group relative inline-flex items-center rounded-full outline-none transition-all before:absolute before:inset-0 before:rounded-full before:content-[''] after:absolute after:inset-0 after:rounded-full after:content-[''] disabled:cursor-not-allowed",
@@ -19,7 +19,7 @@ const switchVariants = cva(
       size: "base",
     },
   },
-);
+)
 
 const thumbVariants = cva(
   "bg-ui-fg-on-color shadow-details-switch-handle group-disabled:bg-ui-fg-disabled pointer-events-none z-10 h-[14px] w-[14px] rounded-full transition-all group-disabled:shadow-none",
@@ -35,7 +35,7 @@ const thumbVariants = cva(
       size: "base",
     },
   },
-);
+)
 
 interface SwitchProps
   extends Omit<
@@ -55,7 +55,7 @@ const Switch = React.forwardRef<
   >
     <Primitives.Thumb className={cn(thumbVariants({ size }))} />
   </Primitives.Root>
-));
-Switch.displayName = "Switch";
+))
+Switch.displayName = "Switch"
 
-export { Switch };
+export { Switch }

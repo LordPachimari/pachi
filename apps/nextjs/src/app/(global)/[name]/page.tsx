@@ -1,26 +1,26 @@
-import type { Store } from "@pachi/db";
+import type { Store } from "@pachi/db"
 
-import { PageHeaderHeading } from "~/components/molecules/page-header";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Card, CardContent, CardFooter } from "~/components/ui/card";
-import { EditStoreButton } from "./_components/edit-store-button";
-import { Products } from "./_components/products";
+import { PageHeaderHeading } from "~/components/molecules/page-header"
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
+import { Card, CardContent, CardFooter } from "~/components/ui/card"
+import { EditStoreButton } from "./_components/edit-store-button"
+import { Products } from "./_components/products"
 
 export default function StorePage({
   params,
 }: {
   params: {
-    name: string;
-  };
+    name: string
+  }
 }) {
-  const name = params.name;
+  const name = params.name
   const store: Store = {
     id: "m1e",
     name: "me",
     createdAt: "2023-11-21T12:34:56Z",
     founderId: "m1e",
     version: 0,
-  };
+  }
   return (
     <section className="relative">
       <StoreCard store={store} />
@@ -32,7 +32,7 @@ export default function StorePage({
         <Products />
       </div>
     </section>
-  );
+  )
 }
 function StoreCard({ store }: { store: Store }) {
   return (
@@ -69,5 +69,5 @@ function StoreCard({ store }: { store: Store }) {
         </div>
       </CardFooter>
     </Card>
-  );
+  )
 }

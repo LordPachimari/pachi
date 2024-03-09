@@ -1,23 +1,23 @@
-import type { ProductUpdates } from "@pachi/db";
+import type { ProductUpdates } from "@pachi/db"
 
-import TitleField from "~/components/molecules/title-field";
-import { Textarea } from "~/components/ui/textarea";
-import type { DebouncedFunc } from "~/types";
+import TitleField from "~/components/molecules/title-field"
+import { Textarea } from "~/components/ui/textarea"
+import type { DebouncedFunc } from "~/types"
 
 interface TitleAndDescriptionProps {
-  title: string | null | undefined;
-  description: string | null | undefined;
+  title: string | null | undefined
+  description: string | null | undefined
 
   onInputChange: DebouncedFunc<
     ({ updates }: { updates: ProductUpdates }) => Promise<void>
-  >;
+  >
 }
 export default function TitleAndDescription({
   description,
   title,
   onInputChange,
 }: TitleAndDescriptionProps) {
-  const isGiftCard = false;
+  const isGiftCard = false
   return (
     <div>
       <TitleField
@@ -38,5 +38,5 @@ export default function TitleAndDescription({
         }
       />
     </div>
-  );
+  )
 }

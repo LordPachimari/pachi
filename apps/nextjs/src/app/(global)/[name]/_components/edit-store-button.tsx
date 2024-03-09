@@ -1,40 +1,40 @@
-"use client";
+"use client"
 
-import { useCallback, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Edit3Icon } from "lucide-react";
+import { useCallback, useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Edit3Icon } from "lucide-react"
 
-import EditStoreModal from "~/components/templates/modals/edit-store";
-import { Button } from "~/components/ui/button";
-import { createUrl } from "~/libs/create-url";
+import EditStoreModal from "~/components/templates/modals/edit-store"
+import { Button } from "~/components/ui/button"
+import { createUrl } from "~/libs/create-url"
 
 export function EditStoreButton({ storeName }: { storeName: string }) {
-  const searchParams = useSearchParams();
-  const q = searchParams.get("q");
+  const searchParams = useSearchParams()
+  const q = searchParams.get("q")
 
-  const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter()
+  const [isOpen, setIsOpen] = useState(false)
   useEffect(() => {
     if (q === "edit") {
-      setIsOpen(true);
+      setIsOpen(true)
     } else {
-      setIsOpen(false);
+      setIsOpen(false)
     }
-  }, [q]);
+  }, [q])
 
   const closeModal = useCallback(() => {
-    setIsOpen(false);
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.delete("q");
-    router.push(createUrl(storeName, newParams));
-  }, [storeName, router, searchParams]);
+    setIsOpen(false)
+    const newParams = new URLSearchParams(searchParams.toString())
+    newParams.delete("q")
+    router.push(createUrl(storeName, newParams))
+  }, [storeName, router, searchParams])
 
   const openModal = useCallback(() => {
-    const newParams = new URLSearchParams(searchParams.toString());
-    newParams.set("q", "edit");
-    router.push(createUrl(storeName, newParams));
-    setIsOpen(true);
-  }, [storeName, router, searchParams]);
+    const newParams = new URLSearchParams(searchParams.toString())
+    newParams.set("q", "edit")
+    router.push(createUrl(storeName, newParams))
+    setIsOpen(true)
+  }, [storeName, router, searchParams])
   return (
     <>
       <EditStoreModal closeModal={closeModal} isOpen={isOpen} />
@@ -47,5 +47,5 @@ export function EditStoreButton({ storeName }: { storeName: string }) {
         {window.innerWidth > 768 ? "Edit store" : <Edit3Icon />}
       </Button>
     </>
-  );
+  )
 }

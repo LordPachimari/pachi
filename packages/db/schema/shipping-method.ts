@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm"
 import {
   boolean,
   index,
@@ -6,12 +6,12 @@ import {
   json,
   pgTable,
   varchar,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/pg-core"
 
-import { carts } from "./cart";
-import { orders } from "./order";
-import { returns } from "./return";
-import { shippingOptions } from "./shipping-option";
+import { carts } from "./cart"
+import { orders } from "./order"
+import { returns } from "./return"
+import { shippingOptions } from "./shipping-option"
 
 export const shippingMethods = pgTable(
   "shipping_methods",
@@ -40,7 +40,7 @@ export const shippingMethods = pgTable(
       t.shippingOptionId,
     ),
   }),
-);
+)
 export const ShippingMethodRelations = relations(
   shippingMethods,
   ({ one }) => ({
@@ -66,4 +66,4 @@ export const ShippingMethodRelations = relations(
     }),
     // tax_lines: many(ShippingMethodTaxLine),
   }),
-);
+)

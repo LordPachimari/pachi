@@ -1,55 +1,55 @@
-import React, { useEffect } from "react";
-import Image from "next/image";
+import React, { useEffect } from "react"
+import Image from "next/image"
 import type {
   DraggableSyntheticListeners,
   UniqueIdentifier,
-} from "@dnd-kit/core";
-import type { Transform } from "@dnd-kit/utilities";
-import { Loader2Icon } from "lucide-react";
+} from "@dnd-kit/core"
+import type { Transform } from "@dnd-kit/utilities"
+import { Loader2Icon } from "lucide-react"
 
-import type { Image as ImageType } from "@pachi/db";
-import { cn } from "@pachi/utils";
+import type { Image as ImageType } from "@pachi/db"
+import { cn } from "@pachi/utils"
 
-import { Handle, Remove } from "./components";
-import styles from "./Item.module.css";
+import { Handle, Remove } from "./components"
+import styles from "./Item.module.css"
 
 export type ItemProps = ImageType & {
-  id: UniqueIdentifier;
-};
+  id: UniqueIdentifier
+}
 export interface Props {
-  dragOverlay?: boolean;
-  color?: string;
-  disabled?: boolean;
-  dragging?: boolean;
-  handle?: boolean;
-  handleProps?: Record<string, unknown> | undefined;
-  height?: number;
-  index?: number;
-  fadeIn?: boolean;
-  transform?: Transform | null;
-  listeners?: DraggableSyntheticListeners;
-  sorting?: boolean;
-  style?: React.CSSProperties;
-  transition?: string | undefined;
-  wrapperStyle?: React.CSSProperties | undefined;
-  value: UniqueIdentifier;
-  idMap: Map<UniqueIdentifier, ItemProps>;
-  onRemove?: (() => void) | undefined;
+  dragOverlay?: boolean
+  color?: string
+  disabled?: boolean
+  dragging?: boolean
+  handle?: boolean
+  handleProps?: Record<string, unknown> | undefined
+  height?: number
+  index?: number
+  fadeIn?: boolean
+  transform?: Transform | null
+  listeners?: DraggableSyntheticListeners
+  sorting?: boolean
+  style?: React.CSSProperties
+  transition?: string | undefined
+  wrapperStyle?: React.CSSProperties | undefined
+  value: UniqueIdentifier
+  idMap: Map<UniqueIdentifier, ItemProps>
+  onRemove?: (() => void) | undefined
   renderItem?:
     | ((args: {
-        dragOverlay: boolean;
-        dragging: boolean;
-        sorting: boolean;
-        index: number | undefined;
-        fadeIn: boolean;
-        listeners: DraggableSyntheticListeners;
-        ref: React.Ref<HTMLElement>;
-        style: React.CSSProperties | undefined;
-        transform: Props["transform"];
-        transition: Props["transition"];
-        value: Props["value"];
+        dragOverlay: boolean
+        dragging: boolean
+        sorting: boolean
+        index: number | undefined
+        fadeIn: boolean
+        listeners: DraggableSyntheticListeners
+        ref: React.Ref<HTMLElement>
+        style: React.CSSProperties | undefined
+        transform: Props["transform"]
+        transition: Props["transition"]
+        value: Props["value"]
       }) => React.ReactElement)
-    | undefined;
+    | undefined
 }
 
 export const Item = React.memo(
@@ -80,18 +80,18 @@ export const Item = React.memo(
       },
       ref,
     ) => {
-      const image = idMap.get(value);
+      const image = idMap.get(value)
       useEffect(() => {
         if (!dragOverlay) {
-          return;
+          return
         }
 
-        document.body.style.cursor = "grabbing";
+        document.body.style.cursor = "grabbing"
 
         return () => {
-          document.body.style.cursor = "";
-        };
-      }, [dragOverlay]);
+          document.body.style.cursor = ""
+        }
+      }, [dragOverlay])
 
       return renderItem ? (
         renderItem({
@@ -179,7 +179,7 @@ export const Item = React.memo(
             </span>
           </div>
         </li>
-      );
+      )
     },
   ),
-);
+)

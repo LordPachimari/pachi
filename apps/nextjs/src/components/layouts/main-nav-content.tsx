@@ -1,18 +1,18 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import Link from "next/link";
+import * as React from "react"
+import Link from "next/link"
 
-import { cn } from "@pachi/utils";
+import { cn } from "@pachi/utils"
 
-import { Icons } from "~/components/ui/icons";
-import { NavigationMenuLink } from "~/components/ui/navigation-menu";
-import { productCategories } from "~/config/products";
-import { siteConfig } from "~/config/site";
-import type { MainNavItem } from "~/types";
+import { Icons } from "~/components/ui/icons"
+import { NavigationMenuLink } from "~/components/ui/navigation-menu"
+import { productCategories } from "~/config/products"
+import { siteConfig } from "~/config/site"
+import type { MainNavItem } from "~/types"
 
 interface MainNavProps {
-  items?: MainNavItem[];
+  items?: MainNavItem[]
 }
 
 export function MainNavContent({ items }: MainNavProps) {
@@ -41,7 +41,7 @@ export function MainNavContent({ items }: MainNavProps) {
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 const ListItem = React.forwardRef<
@@ -66,6 +66,6 @@ const ListItem = React.forwardRef<
         </a>
       </NavigationMenuLink>
     </li>
-  );
-});
-ListItem.displayName = "ListItem";
+  )
+})
+ListItem.displayName = "ListItem"

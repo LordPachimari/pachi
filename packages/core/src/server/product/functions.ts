@@ -1,9 +1,9 @@
-import { Effect } from "effect";
-import { isDefined } from "remeda";
+import { Effect } from "effect"
+import { isDefined } from "remeda"
 
-import { type ProductVariant } from "@pachi/db";
-import { NotFound } from "@pachi/types";
-import { generateId, ulid } from "@pachi/utils";
+import { type ProductVariant } from "@pachi/db"
+import { NotFound } from "@pachi/types"
+import { generateId, ulid } from "@pachi/utils"
 
 import {
   AssignProductOptionValueToVariantSchema,
@@ -24,18 +24,18 @@ import {
   UpdateProductTagsSchema,
   UpdateProductVariantSchema,
   UploadProductImagesSchema,
-} from "../../input-schema/product";
-import { zod } from "../../util/zod";
-import { ServerContext } from "../context";
+} from "../../input-schema/product"
+import { zod } from "../../util/zod"
+import { ServerContext } from "../context"
 
 const createProduct = zod(CreateProductSchema, (input) =>
   Effect.gen(function* (_) {
-    const { repositories, replicacheTransaction } = yield* _(ServerContext);
-    const { product, prices } = input;
+    const { repositories, replicacheTransaction } = yield* _(ServerContext)
+    const { product, prices } = input
     const defaultVariant: ProductVariant = {
       id: product.defaultVariantId,
       productId: product.id,
-    };
+    }
     yield* _(
       repositories.productRepository.insertProduct({
         product: {
@@ -43,12 +43,12 @@ const createProduct = zod(CreateProductSchema, (input) =>
           defaultVariantId: defaultVariant.id,
         },
       }),
-    );
+    )
     yield* _(
       repositories.productVariantRepository.insertProductVariant({
         variant: defaultVariant,
       }),
-    );
+    )
     yield* _(
       Effect.forEach(
         prices,
@@ -60,46 +60,46 @@ const createProduct = zod(CreateProductSchema, (input) =>
           concurrency: "unbounded",
         },
       ),
-    );
+    )
   }),
-);
+)
 
 const deleteProduct = zod(DeleteInputSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { id } = input;
-    yield* _(Effect.sync(() => replicacheTransaction.del(id, "products")));
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { id } = input
+    yield* _(Effect.sync(() => replicacheTransaction.del(id, "products")))
   }),
-);
+)
 
 const updateProduct = zod(UpdateProductSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { updates, id } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { updates, id } = input
     yield* _(
       Effect.sync(() => replicacheTransaction.set(id, updates, "products")),
-    );
+    )
   }),
-);
+)
 
 const updateProductImagesOrder = zod(UpdateProductImagesOrderSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction, repositories } = yield* _(ServerContext);
-    const { productId, order, variantId } = input;
+    const { replicacheTransaction, repositories } = yield* _(ServerContext)
+    const { productId, order, variantId } = input
     const variant = yield* _(
       repositories.productVariantRepository.getProductVariantById(variantId),
-    );
+    )
     if (!variant) {
-      Effect.fail(new NotFound({ message: "Variant not found" }));
-      return;
+      Effect.fail(new NotFound({ message: "Variant not found" }))
+      return
     }
-    const images = structuredClone(variant.images) ?? [];
+    const images = structuredClone(variant.images) ?? []
     if (images.length === 0) {
-      return;
+      return
     }
     for (const image of images) {
-      const o = order[image.id];
-      if (isDefined(o)) image.order = o;
+      const o = order[image.id]
+      if (isDefined(o)) image.order = o
     }
     if (variant.id.startsWith("default")) {
       for (const image of images) {
@@ -108,7 +108,7 @@ const updateProductImagesOrder = zod(UpdateProductImagesOrderSchema, (input) =>
             productId,
             { thumbnail: image },
             "products",
-          );
+          )
         }
       }
     }
@@ -120,28 +120,28 @@ const updateProductImagesOrder = zod(UpdateProductImagesOrderSchema, (input) =>
           "productVariants",
         ),
       ),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const uploadProductImages = zod(UploadProductImagesSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction, repositories } = yield* _(ServerContext);
-    const { variantId, images, productId } = input;
+    const { replicacheTransaction, repositories } = yield* _(ServerContext)
+    const { variantId, images, productId } = input
     if (images.length === 0) {
-      return;
+      return
     }
     const variant = yield* _(
       repositories.productVariantRepository.getProductVariantById(variantId),
-    );
+    )
     if (!variant) {
-      Effect.fail(new NotFound({ message: "Variant not found" }));
-      return;
+      Effect.fail(new NotFound({ message: "Variant not found" }))
+      return
     }
 
     yield* _(
@@ -154,78 +154,78 @@ const uploadProductImages = zod(UploadProductImagesSchema, (input) =>
           "productVariants",
         ),
       ),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const createProductOption = zod(CreateProductOptionSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { option } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { option } = input
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.set(option.id, option, "productOptions"),
       ),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(option.productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const updateProductOption = zod(UpdateProductOptionSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { optionId, updates, productId } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { optionId, updates, productId } = input
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(optionId, updates, "productOptions"),
       ),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const deleteProductOption = zod(DeleteProductOptionSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { optionId, productId } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { optionId, productId } = input
     yield* _(
       Effect.sync(() => replicacheTransaction.del(optionId, "productOptions")),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const updateProductOptionValues = zod(
   UpdateProductOptionValuesSchema,
   (input) =>
     Effect.gen(function* (_) {
-      const { replicacheTransaction, repositories } = yield* _(ServerContext);
-      const { optionId, newOptionValues, productId } = input;
+      const { replicacheTransaction, repositories } = yield* _(ServerContext)
+      const { optionId, newOptionValues, productId } = input
       const option = yield* _(
         repositories.productOptionRepository.getProductOption(optionId),
-      );
+      )
       if (!option) {
-        Effect.fail(new NotFound({ message: "Option not found" }));
-        return;
+        Effect.fail(new NotFound({ message: "Option not found" }))
+        return
       }
-      const oldValuesKeys = option.values?.map((value) => value.id) ?? [];
+      const oldValuesKeys = option.values?.map((value) => value.id) ?? []
 
       yield* _(
         Effect.forEach(
@@ -236,7 +236,7 @@ const updateProductOptionValues = zod(
             ),
           { concurrency: "unbounded" },
         ),
-      );
+      )
       yield* _(
         Effect.forEach(
           oldValuesKeys,
@@ -246,90 +246,90 @@ const updateProductOptionValues = zod(
             ),
           { concurrency: "unbounded" },
         ),
-      );
+      )
       yield* _(
         Effect.sync(() =>
           replicacheTransaction.update(productId, {}, "products"),
         ),
-      );
+      )
     }),
-);
+)
 
 const deleteProductOptionValue = zod(DeleteProductOptionValueSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { optionValueId, productId } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { optionValueId, productId } = input
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.del(optionValueId, "productOptionValues"),
       ),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const createProductVariant = zod(CreateProductVariantSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { variant } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { variant } = input
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.set(variant.id, variant, "productVariants"),
       ),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(variant.productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const updateProductVariant = zod(UpdateProductVariantSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { variantId, updates, productId } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { variantId, updates, productId } = input
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(variantId, updates, "productVariants"),
       ),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const deleteProductVariant = zod(DeleteProductVariantSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { variantId, productId } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { variantId, productId } = input
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.del(variantId, "productVariants"),
       ),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const createProductPrices = zod(CreateProductPricesSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { prices, productId } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { prices, productId } = input
     prices.forEach((price) => {
-      replicacheTransaction.set(price.id, price, "prices");
-    });
+      replicacheTransaction.set(price.id, price, "prices")
+    })
     yield* _(
       Effect.forEach(
         prices,
@@ -339,57 +339,57 @@ const createProductPrices = zod(CreateProductPricesSchema, (input) =>
           ),
         { concurrency: "unbounded" },
       ),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const updateProductPrice = zod(UpdateProductPriceSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { priceId, updates, productId } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { priceId, updates, productId } = input
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(priceId, updates, "prices"),
       ),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const deleteProductPrices = zod(DeleteProductPricesSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction } = yield* _(ServerContext);
-    const { priceIds, productId } = input;
+    const { replicacheTransaction } = yield* _(ServerContext)
+    const { priceIds, productId } = input
     yield* _(
       Effect.forEach(
         priceIds,
         (id) => Effect.sync(() => replicacheTransaction.del(id, "prices")),
         { concurrency: "unbounded" },
       ),
-    );
+    )
     yield* _(
       Effect.sync(() =>
         replicacheTransaction.update(productId, {}, "products"),
       ),
-    );
+    )
   }),
-);
+)
 
 const assignProductOptionValueToVariant = zod(
   AssignProductOptionValueToVariantSchema,
   (input) =>
     Effect.gen(function* (_) {
-      const { replicacheTransaction } = yield* _(ServerContext);
-      const { optionValueId, variantId, prevOptionValueId, productId } = input;
+      const { replicacheTransaction } = yield* _(ServerContext)
+      const { optionValueId, variantId, prevOptionValueId, productId } = input
       yield* _(
         Effect.sync(() =>
           replicacheTransaction.set(
@@ -398,12 +398,12 @@ const assignProductOptionValueToVariant = zod(
             "productOptionValuesToProductVariants",
           ),
         ),
-      );
+      )
       yield* _(
         Effect.sync(() =>
           replicacheTransaction.update(productId, {}, "products"),
         ),
-      );
+      )
       if (prevOptionValueId)
         yield* _(
           Effect.sync(() =>
@@ -412,19 +412,19 @@ const assignProductOptionValueToVariant = zod(
               "productOptionValuesToProductVariants",
             ),
           ),
-        );
+        )
     }),
-);
+)
 
 const updateProductTags = zod(UpdateProductTagsSchema, (input) =>
   Effect.gen(function* (_) {
-    const { replicacheTransaction, repositories } = yield* _(ServerContext);
-    const { productId, tags } = input;
+    const { replicacheTransaction, repositories } = yield* _(ServerContext)
+    const { productId, tags } = input
     yield* _(
       repositories.productTagRepository.deleteTagsFromProduct({
         productId,
       }),
-    );
+    )
 
     const newTags = yield* _(
       repositories.productTagRepository.createProductTags({
@@ -433,10 +433,10 @@ const updateProductTags = zod(UpdateProductTagsSchema, (input) =>
             id: generateId({ id: ulid(), prefix: "p_tag" }),
             value,
             createdAt: new Date().toISOString(),
-          };
+          }
         }),
       }),
-    );
+    )
 
     yield* _(
       Effect.forEach(
@@ -451,9 +451,9 @@ const updateProductTags = zod(UpdateProductTagsSchema, (input) =>
           ),
         { concurrency: "unbounded" },
       ),
-    );
+    )
   }),
-);
+)
 export {
   createProduct,
   assignProductOptionValueToVariant,
@@ -473,4 +473,4 @@ export {
   updateProductTags,
   updateProductVariant,
   uploadProductImages,
-};
+}

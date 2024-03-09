@@ -1,26 +1,26 @@
-import { z } from "zod";
+import { z } from "zod"
 
 export const ImageSchema = z.object({
   id: z.string(),
   altText: z.string(),
   order: z.number(),
   url: z.string(),
-});
+})
 
 export const product_status = [
   "draft",
   "proposed",
   "published",
   "rejected",
-] as const;
-export type Image = z.infer<typeof ImageSchema>;
+] as const
+export type Image = z.infer<typeof ImageSchema>
 export const category = [
   "Electronics",
   "Clothing",
   "Shoes",
   "Accessories",
   "Other",
-] as const;
+] as const
 
 export const subcategory = [
   "Electronics",
@@ -28,7 +28,7 @@ export const subcategory = [
   "Shoes",
   "Accessories",
   "Other",
-] as const;
+] as const
 
 export const fulfillmentStatus = [
   "fulfilled",
@@ -39,9 +39,9 @@ export const fulfillmentStatus = [
   "requiresAction",
   "returned",
   "shipped",
-] as const;
-export const FulfillmentStatusSchema = z.enum(fulfillmentStatus);
-export type FulfillmentStatus = z.infer<typeof FulfillmentStatusSchema>;
+] as const
+export const FulfillmentStatusSchema = z.enum(fulfillmentStatus)
+export type FulfillmentStatus = z.infer<typeof FulfillmentStatusSchema>
 
 export const swapFulfillmentStatus = [
   "canceled",
@@ -51,7 +51,7 @@ export const swapFulfillmentStatus = [
   "requiresAction",
 
   "shipped",
-] as const;
+] as const
 
 export const paymentStatus = [
   "notPaid",
@@ -61,9 +61,9 @@ export const paymentStatus = [
   "refunded",
   "canceled",
   "requiresAction",
-] as const;
-export const PaymentStatusSchema = z.enum(paymentStatus);
-export type PaymentStatus = z.infer<typeof PaymentStatusSchema>;
+] as const
+export const PaymentStatusSchema = z.enum(paymentStatus)
+export type PaymentStatus = z.infer<typeof PaymentStatusSchema>
 
 export const swapPaymentStatus = [
   "awaiting",
@@ -75,7 +75,7 @@ export const swapPaymentStatus = [
   "partiallyRefunded",
   "refunded",
   "requiresAction",
-] as const;
+] as const
 
 export const orderStatus = [
   "archived",
@@ -83,10 +83,10 @@ export const orderStatus = [
   "completed",
   "pending",
   "requiresAction",
-] as const;
+] as const
 
-export const OrderStatusSchema = z.enum(orderStatus);
-export type OrderStatus = z.infer<typeof OrderStatusSchema>;
+export const OrderStatusSchema = z.enum(orderStatus)
+export type OrderStatus = z.infer<typeof OrderStatusSchema>
 
 export const orderEditStatus = [
   "canceled",
@@ -94,7 +94,7 @@ export const orderEditStatus = [
   "created",
   "declined",
   "requested",
-] as const;
+] as const
 
 export const paymentCollectionStatus = [
   "authorized",
@@ -102,27 +102,27 @@ export const paymentCollectionStatus = [
   "canceled",
   "notPaid",
   "partiallyAuthorized",
-] as const;
+] as const
 
 export const returnStatus = [
   "canceled",
   "received",
   "requested",
   "requiresAction",
-] as const;
+] as const
 
 export const productStatus = [
   "draft",
   "published",
   "proposed",
   "rejected",
-] as const;
-export const ProductStatusSchema = z.enum(productStatus);
-export type ProductStatus = z.infer<typeof ProductStatusSchema>;
+] as const
+export const ProductStatusSchema = z.enum(productStatus)
+export type ProductStatus = z.infer<typeof ProductStatusSchema>
 
-export const discountType = ["offProducts", "offOrder", "buyXGetY"] as const;
-export const DiscountTypeSchema = z.enum(discountType);
-export type DiscountType = z.infer<typeof DiscountTypeSchema>;
+export const discountType = ["offProducts", "offOrder", "buyXGetY"] as const
+export const DiscountTypeSchema = z.enum(discountType)
+export type DiscountType = z.infer<typeof DiscountTypeSchema>
 
 export const CartTypeSchema = z.enum([
   "claim",
@@ -130,8 +130,8 @@ export const CartTypeSchema = z.enum([
   "draftOrder",
   "paymentLink",
   "swap",
-]);
-export type CartType = z.infer<typeof CartTypeSchema>;
+])
+export type CartType = z.infer<typeof CartTypeSchema>
 
 export enum DiscountRuleType {
   FIXED = "fixed",

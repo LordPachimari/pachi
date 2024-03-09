@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm"
 import {
   boolean,
   index,
@@ -6,25 +6,25 @@ import {
   pgTable,
   text,
   varchar,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/pg-core"
 
 import {
   fulfillmentStatus,
   orderStatus,
   paymentStatus,
-} from "../validators/common";
-import { addresses } from "./address";
-import { carts } from "./cart";
-import { cartItems } from "./cart-item";
-import { currencies } from "./currency";
-import { discounts } from "./discount";
-import { fulfillments } from "./fulfillment";
-import { payments } from "./payment";
-import { refunds } from "./refund";
-import { regions } from "./region";
-import { returns } from "./return";
-import { shippingMethods } from "./shipping-method";
-import { users } from "./user";
+} from "../validators/common"
+import { addresses } from "./address"
+import { carts } from "./cart"
+import { cartItems } from "./cart-item"
+import { currencies } from "./currency"
+import { discounts } from "./discount"
+import { fulfillments } from "./fulfillment"
+import { payments } from "./payment"
+import { refunds } from "./refund"
+import { regions } from "./region"
+import { returns } from "./return"
+import { shippingMethods } from "./shipping-method"
+import { users } from "./user"
 
 export const orders = pgTable(
   "orders",
@@ -84,7 +84,7 @@ export const orders = pgTable(
       order.shippingAddressId,
     ),
   }),
-);
+)
 export const OrderRelations = relations(orders, ({ one, many }) => ({
   billingAddress: one(addresses, {
     fields: [orders.billingAddressId],
@@ -127,7 +127,7 @@ export const OrderRelations = relations(orders, ({ one, many }) => ({
   refunds: many(refunds),
   items: many(cartItems),
   // gift_card_transactions: many(GiftCardTransaction),
-}));
+}))
 export const ordersToDiscounts = pgTable("orders_to_discounts", {
   discountId: varchar("discountId")
     .notNull()
@@ -135,7 +135,7 @@ export const ordersToDiscounts = pgTable("orders_to_discounts", {
   orderId: varchar("orderId")
     .notNull()
     .references(() => orders.id),
-});
+})
 export const orderToDiscountsRelations = relations(
   ordersToDiscounts,
   ({ one }) => ({
@@ -148,4 +148,4 @@ export const orderToDiscountsRelations = relations(
       references: [orders.id],
     }),
   }),
-);
+)

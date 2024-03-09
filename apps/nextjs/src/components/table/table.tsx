@@ -1,6 +1,6 @@
-import * as React from "react";
-import type { ColumnDef, Table as TanstackTable } from "@tanstack/react-table";
-import { flexRender } from "@tanstack/react-table";
+import * as React from "react"
+import type { ColumnDef, Table as TanstackTable } from "@tanstack/react-table"
+import { flexRender } from "@tanstack/react-table"
 
 import {
   TableBody,
@@ -9,28 +9,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
+} from "~/components/ui/table"
 import type {
   DataTableFilterableColumn,
   DataTableSearchableColumn,
-} from "~/types";
-import { TableFloatingBar } from "./floating-bar";
-import { TablePagination } from "./pagination";
-import { TableToolbar } from "./toolbar";
+} from "~/types"
+import { TableFloatingBar } from "./floating-bar"
+import { TablePagination } from "./pagination"
+import { TableToolbar } from "./toolbar"
 
 type TableProps<TData, TValue> = {
-  columns: ColumnDef<TData, TValue>[];
-  table: TanstackTable<TData>;
-  filterableColumns?: DataTableFilterableColumn<TData>[];
-  searchableColumns?: DataTableSearchableColumn<TData>[];
-  withToolbar?: boolean;
-  additionalToolbarButton?: React.ReactNode;
-  deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>;
-  view?: "row" | "grid";
-  floatingBarContent?: React.ReactNode | null;
-  withGridView?: boolean;
-  gridViewComponent?: React.ReactNode;
-};
+  columns: ColumnDef<TData, TValue>[]
+  table: TanstackTable<TData>
+  filterableColumns?: DataTableFilterableColumn<TData>[]
+  searchableColumns?: DataTableSearchableColumn<TData>[]
+  withToolbar?: boolean
+  additionalToolbarButton?: React.ReactNode
+  deleteRowsAction?: React.MouseEventHandler<HTMLButtonElement>
+  view?: "row" | "grid"
+  floatingBarContent?: React.ReactNode | null
+  withGridView?: boolean
+  gridViewComponent?: React.ReactNode
+}
 export function Table<TData, TValue>({
   columns,
   table,
@@ -44,13 +44,13 @@ export function Table<TData, TValue>({
   additionalToolbarButton,
   floatingBarContent,
 }: Readonly<TableProps<TData, TValue>>) {
-  const [view, setView] = React.useState<"row" | "grid">("row");
+  const [view, setView] = React.useState<"row" | "grid">("row")
   React.useEffect(() => {
-    setView(initialView);
-  }, [initialView]);
+    setView(initialView)
+  }, [initialView])
   return (
     <div className="space-y-4">
-      {withToolbar ?? (
+      {withToolbar && (
         <TableToolbar
           table={table}
           filterableColumns={filterableColumns}
@@ -76,7 +76,7 @@ export function Table<TData, TValue>({
                             header.getContext(),
                           )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -122,5 +122,5 @@ export function Table<TData, TValue>({
         ) : null}
       </div>
     </div>
-  );
+  )
 }

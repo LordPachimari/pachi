@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm"
 import {
   boolean,
   index,
@@ -7,12 +7,12 @@ import {
   pgTable,
   text,
   varchar,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/pg-core"
 
-import type { Image } from "../validators/common";
-import { prices } from "./price";
-import { products } from "./product";
-import { productOptionValuesToProductVariants } from "./product-option-value";
+import type { Image } from "../validators/common"
+import { prices } from "./price"
+import { products } from "./product"
+import { productOptionValuesToProductVariants } from "./product-option-value"
 
 export const productVariants = pgTable(
   "product_variants",
@@ -48,7 +48,7 @@ export const productVariants = pgTable(
   (productVariant) => ({
     productIdIndex: index("productIdIndex").on(productVariant.productId),
   }),
-);
+)
 export const productVariantRelations = relations(
   productVariants,
   ({ one, many }) => ({
@@ -62,4 +62,4 @@ export const productVariantRelations = relations(
       relationName: "variant.optionValues",
     }),
   }),
-);
+)
