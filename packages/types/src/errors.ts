@@ -22,3 +22,11 @@ export class NotFound extends Data.TaggedError("NotFound")<{
 export class AuthorizationError extends Data.TaggedError("AuthorizationError")<{
   readonly message: string;
 }> {}
+
+export class InvalidInput extends Data.TaggedError("InvalidInput")<{
+  readonly message: string;
+}> {}
+
+export class UserAlreadyExist extends Data.TaggedError("UserAlreadyExist")<{
+  readonly message: string;
+}> {}

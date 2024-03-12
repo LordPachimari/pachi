@@ -1,17 +1,15 @@
 export type SortFilterItem = {
-  title: string
-  slug: string | null
-  sortKey: "RELEVANCE" | "BEST_SELLING" | "CREATED_AT" | "PRICE"
-  reverse: boolean
-}
-
+  title: string;
+  slug: string | null;
+  sortKey: "RELEVANCE" | "BEST_SELLING" | "CREATED_AT" | "PRICE";
+  reverse: boolean;
+};
 export const defaultSort: SortFilterItem = {
   title: "Relevance",
   slug: null,
   sortKey: "RELEVANCE",
   reverse: false,
-}
-
+};
 export const sorting: SortFilterItem[] = [
   defaultSort,
   {
@@ -38,16 +36,13 @@ export const sorting: SortFilterItem[] = [
     sortKey: "PRICE",
     reverse: true,
   },
-]
-
+];
 export const TAGS = {
   categories: "categories",
   products: "products",
-}
-
-export const HIDDEN_PRODUCT_TAG = "nextjs-frontend-hidden"
-export const DEFAULT_OPTION = "Default Title"
-
+};
+export const HIDDEN_PRODUCT_TAG = "nextjs-frontend-hidden";
+export const DEFAULT_OPTION = "Default Title";
 export const CHECKOUT_PAGE_PROPS = {
   title: "Checkout",
   body: `Checkout is not implemented yet in this template. Check out 
@@ -55,10 +50,8 @@ export const CHECKOUT_PAGE_PROPS = {
   description: "Checkout is not implemented yet in this template",
   updatedAt: new Date().toISOString(),
   createdAt: new Date().toISOString(),
-}
-
+};
 export const PREFICES = {
   products: (filterId?: string) => (filterId ? `p_${filterId}` : `p_`),
-}
-
-export const LUCIA_COOKIE_NAME = "auth_session"
+};
+export const LUCIA_COOKIE_NAME = "auth_session";

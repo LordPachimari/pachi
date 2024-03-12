@@ -1,2 +1,2 @@
-export * from "./repository"
-export * as Store from "./functions"
+export * from "./repository";
+export * as Store from "./functions";

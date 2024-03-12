@@ -1,9 +1,9 @@
-import type { Address } from "@pachi/db"
+import type { Address } from "@pachi/db";
 
 type FormattedAddressProps = {
-  title: string
-  addr?: Address
-}
+  title: string;
+  addr?: Address;
+};
 
 export const FormattedAddress = ({ title, addr }: FormattedAddressProps) => {
   if (!addr) {
@@ -12,7 +12,7 @@ export const FormattedAddress = ({ title, addr }: FormattedAddressProps) => {
         <div className="inter-small-regular text-grey-50 mb-1">{title}</div>
         <div className="inter-small-regular flex flex-col">N/A</div>
       </div>
-    )
+    );
   }
 
   return (
@@ -28,5 +28,5 @@ export const FormattedAddress = ({ title, addr }: FormattedAddressProps) => {
         </span>
       </div>
     </div>
-  )
-}
+  );
+};

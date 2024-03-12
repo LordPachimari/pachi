@@ -1,10 +1,9 @@
-import { slugify } from "@pachi/utils"
+import { slugify } from "@pachi/utils";
 
-import { productCategories } from "~/config/products"
-import type { MainNavItem } from "~/types"
+import { productCategories } from "~/config/products";
+import type { MainNavItem } from "~/types";
 
-export type SiteConfig = typeof siteConfig
-
+export type SiteConfig = typeof siteConfig;
 export const siteConfig = {
   name: "Resell",
   description: "An e-commerce for reselling items.",
@@ -38,4 +37,4 @@ export const siteConfig = {
     twitter: "https://twitter.com/sadmann17",
     github: "https://github.com/sadmann7/skateshop",
   },
-}
+};

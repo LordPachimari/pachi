@@ -1,28 +1,30 @@
-"use client"
+"use client";
 
-import { useCallback } from "react"
-import { useRouter } from "next/navigation"
-import { LayoutDashboard } from "lucide-react"
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { LayoutDashboard } from "lucide-react";
 
-import { generateId } from "@pachi/utils"
+import { generateId } from "@pachi/utils";
 
 interface DashboardButtonProps {
-  username: string | undefined
+  username: string | undefined;
 }
+
 export function DashboardButton({ username }: DashboardButtonProps) {
-  const router = useRouter()
+  const router = useRouter();
   const onClick = useCallback(() => {
     if (!username) {
-      return router.push(`/login`)
+      return router.push(`/login`);
     }
 
-    const storeId = localStorage?.getItem("storeId")
+    const storeId = localStorage?.getItem("storeId");
+
     router.push(
       `/dashboard/products?storeId=${
         storeId ?? generateId({ id: username, prefix: "store" })
       }`,
-    )
-  }, [username, router])
+    );
+  }, [username, router]);
 
   return (
     <button
@@ -34,5 +36,5 @@ export function DashboardButton({ username }: DashboardButtonProps) {
         Dashboard
       </p>
     </button>
-  )
+  );
 }

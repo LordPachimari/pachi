@@ -1,24 +1,26 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { redirect } from "next/navigation"
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
-import { cn } from "@pachi/utils"
+import { cn } from "@pachi/utils";
 
-import { buttonVariants } from "~/components/ui/button"
-import { Icons } from "~/components/ui/icons"
-import { UserAuthForm } from "../../../components/user-auth-form"
-import { validateRequest } from "../../../libs/validate-request"
+import { buttonVariants } from "~/components/ui/button";
+import { Icons } from "~/components/ui/icons";
+import { UserAuthForm } from "../../../components/user-auth-form";
+import { validateRequest } from "../../../libs/validate-request";
 
 export const metadata: Metadata = {
   title: "Login",
   description: "Login to your account",
-}
+};
 
 export default async function LoginPage() {
-  const { user } = await validateRequest()
+  const { user } = await validateRequest();
+
   if (user) {
-    redirect("/home")
+    redirect("/home");
   }
+
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
       <Link
@@ -54,5 +56,5 @@ export default async function LoginPage() {
         </p>
       </div>
     </div>
-  )
+  );
 }

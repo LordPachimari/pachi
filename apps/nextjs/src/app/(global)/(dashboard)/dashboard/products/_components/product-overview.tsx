@@ -1,4 +1,4 @@
-import { Separator } from "~/components/ui/separator"
+import { Separator } from "~/components/ui/separator";
 
 export default function ProductOverview() {
   return (
@@ -16,5 +16,5 @@ export default function ProductOverview() {
       <Separator className="my-4" />
       <h1 className="flex h-14 items-center">$96.42</h1>
     </article>
-  )
+  );
 }

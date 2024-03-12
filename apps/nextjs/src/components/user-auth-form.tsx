@@ -1,55 +1,60 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
+import * as React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-import { UserAuthSchema, type UserAuth } from "@pachi/core"
-import { cn } from "@pachi/utils"
+import { UserAuthSchema, type UserAuth } from "@pachi/core";
+import { cn } from "@pachi/utils";
 
-import { login } from "~/app/_actions/auth/login"
-import { register as registerAction } from "~/app/_actions/auth/register"
-import { buttonVariants } from "~/components/ui/button"
-import { Icons } from "~/components/ui/icons"
-import { Input } from "~/components/ui/input"
-import { Label } from "~/components/ui/label"
+import { login } from "~/app/_actions/auth/login";
+import { register as registerAction } from "~/app/_actions/auth/register";
+import { buttonVariants } from "~/components/ui/button";
+import { Icons } from "~/components/ui/icons";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
-  isLogin: boolean
+  isLogin: boolean;
 }
+
 export function UserAuthForm({
   className,
   isLogin,
   ...props
 }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false)
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<UserAuth>({
     resolver: zodResolver(UserAuthSchema),
-  })
-  const searchParams = useSearchParams()
-  const router = useRouter()
+  });
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   async function onSubmit(value: UserAuth) {
-    setIsLoading(true)
+    setIsLoading(true);
     const { message, type, sessionId } = isLogin
       ? await login(value)
-      : await registerAction(value)
-    if (sessionId) localStorage.setItem("auth_session", sessionId)
+      : await registerAction(value);
+
+    if (sessionId) localStorage.setItem("auth_session", sessionId);
+
     if (type === "ERROR") {
-      toast.error(message)
+      toast.error(message);
     }
+
     if (type === "SUCCESS") {
-      toast.success(message)
-      if (isLogin) router.push(searchParams.get("from") ?? "/home")
+      toast.success(message);
+
+      if (isLogin) router.push(searchParams.get("from") ?? "/home");
     }
-    setIsLoading(false)
+    setIsLoading(false);
   }
 
   return (
@@ -119,7 +124,7 @@ export function UserAuthForm({
         type="button"
         className={cn(buttonVariants({ variant: "outline" }))}
         onClick={() => {
-          setIsGoogleLoading(true)
+          setIsGoogleLoading(true);
         }}
         disabled={isLoading || isGoogleLoading}
       >
@@ -131,5 +136,5 @@ export function UserAuthForm({
         Google
       </button>
     </div>
-  )
+  );
 }

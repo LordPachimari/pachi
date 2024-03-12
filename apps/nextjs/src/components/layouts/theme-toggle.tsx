@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useTheme } from "next-themes"
+import { useTheme } from "next-themes";
 
-import { Icons } from "~/components/ui/icons"
+import { Icons } from "~/components/ui/icons";
 
 export function ThemeToggle() {
-  const { setTheme, theme } = useTheme()
+  const { setTheme, theme } = useTheme();
 
   return (
     <button
@@ -22,5 +22,5 @@ export function ThemeToggle() {
       />
       <span className="sr-only ">Toggle theme</span>
     </button>
-  )
+  );
 }

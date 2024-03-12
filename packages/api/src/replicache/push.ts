@@ -39,19 +39,14 @@ export const push = ({
   Effect.gen(function* (_) {
     console.log("---------------------------------------------------")
 
-    const push = pushRequestSchema.safeParse(body)
-    if (push.success === false) return yield* _(Effect.fail(push.error))
-    if (push.data.mutations.length === 0) {
-      return
-    }
-
     const t0 = Date.now()
     const mutators =
       spaceId === "dashboard"
         ? ServerDashboardMutatorsMap
         : ServerGlobalMutatorsMap
+    const push = body
 
-    for (const mutation of push.data.mutations) {
+    for (const mutation of push.mutations) {
       // 1: start transaction for each mutation
       Effect.tryPromise(() =>
         db.transaction(
@@ -66,7 +61,7 @@ export const push = ({
                 getClient({
                   clientID: mutation.clientID,
                   transaction,
-                  clientGroupID: push.data.clientGroupID,
+                  clientGroupID: push.clientGroupID,
                 }).pipe(Effect.orDie),
               )
 
@@ -104,7 +99,7 @@ export const push = ({
                   Effect.all([
                     setClient({
                       client: {
-                        clientGroupID: push.data.clientGroupID,
+                        clientGroupID: push.clientGroupID,
                         id: mutation.clientID,
                         lastMutationID: nextMutationId,
                       },
@@ -139,14 +134,17 @@ const processMutation = ({
 }) =>
   Effect.gen(function* (_) {
     const expectedMutationID = lastMutationID + 1
+
     if (mutation.id < expectedMutationID) {
       yield* _(
         Effect.log(
           `Mutation ${mutation.id} has already been processed - skipping`,
         ),
       )
+
       return lastMutationID
     }
+
     if (mutation.id > expectedMutationID) {
       yield* _(
         Effect.logWarning(
@@ -174,6 +172,7 @@ const processMutation = ({
       const { name, args } = mutation
 
       const mutator = mutators.get(name)
+
       if (!mutator) {
         yield* _(
           Effect.fail(
@@ -182,25 +181,20 @@ const processMutation = ({
             }),
           ),
         )
+
         return lastMutationID
       }
-      const result = yield* _(Effect.either(mutator(args)))
-      if (Either.isLeft(result)) {
-        const error = result.left
-        if (error._tag === "NotFound") {
-          yield* _(Effect.logError(error.message))
-          yield* _(
-            server.Error.createError({
-              id: generateId({ prefix: "error", id: ulid() }),
-              type: "NotFound",
-              message: error.message,
-            }).pipe(Effect.orDie),
-          )
-        }
-      } else {
-        result.right
+
+      yield* _(mutator(args).pipe(Effect.catchTag("NotFound", (error)=>{
+          server.Error.createError({
+            id: generateId({ prefix: "error", id: ulid() }),
+            type: "NotFound",
+            message: error.message,
+          }).pipe(Effect.orDie)
+
+        return Effect.succeed(1)
       }
-      yield* _(Effect.log(`Processed mutation in ${Date.now() - t1}`))
+      )))
 
       return expectedMutationID
     } else {
@@ -209,6 +203,7 @@ const processMutation = ({
       yield* _(
         Effect.log(`Handling error from mutation ${JSON.stringify(mutation)} `),
       )
+
       return lastMutationID
     }
   })

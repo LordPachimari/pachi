@@ -14,8 +14,7 @@ export const sortOptions = [
     label: "Alphabetical: Z to A",
     value: "name.desc",
   },
-]
-
+];
 export const productCategories = [
   {
     title: "Electronics",
@@ -38,12 +37,11 @@ export const productCategories = [
     title: "Other",
     image: "/images/backpack-one.webp",
   },
-]
+];
 // satisfies {
 //   title: PublishedProduct["category"];
 //   image: string;
 // }[];
-
 export const productTags = [
   "new",
   "sale",
@@ -53,4 +51,4 @@ export const productTags = [
   "trending",
   "limited",
   "exclusive",
-]
+];

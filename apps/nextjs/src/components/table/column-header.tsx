@@ -3,24 +3,24 @@ import {
   ArrowUpIcon,
   CaretSortIcon,
   EyeNoneIcon,
-} from "@radix-ui/react-icons"
-import type { Column } from "@tanstack/react-table"
+} from "@radix-ui/react-icons";
+import type { Column } from "@tanstack/react-table";
 
-import { cn } from "@pachi/utils"
+import { cn } from "@pachi/utils";
 
-import { Button } from "~/components/ui/button"
+import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu"
+} from "~/components/ui/dropdown-menu";
 
 interface TableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
-  column: Column<TData, TValue>
-  title: string
+  column: Column<TData, TValue>;
+  title: string;
 }
 
 export function TableColumnHeader<TData, TValue>({
@@ -29,7 +29,7 @@ export function TableColumnHeader<TData, TValue>({
   className,
 }: TableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <div className={cn(className)}>{title}</div>
+    return <div className={cn(className)}>{title}</div>;
   }
 
   return (
@@ -94,5 +94,5 @@ export function TableColumnHeader<TData, TValue>({
       </DropdownMenu>
       {/* )} */}
     </div>
-  )
+  );
 }

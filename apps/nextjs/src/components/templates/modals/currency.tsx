@@ -1,17 +1,18 @@
-"use client"
+"use client";
 
-import { Fragment } from "react"
-import { Dialog, Transition } from "@headlessui/react"
-import { PlusIcon, SidebarClose } from "lucide-react"
+import { Fragment } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { PlusIcon, SidebarClose } from "lucide-react";
 
-import { Button } from "~/components/ui/button"
+import { Button } from "~/components/ui/button";
 
 interface CurrencyModalProps {
-  children: React.ReactNode
-  open: () => void
-  close: () => void
-  isOpen: boolean
+  children: React.ReactNode;
+  open: () => void;
+  close: () => void;
+  isOpen: boolean;
 }
+
 export default function CurrencyModal({
   children,
   close,
@@ -65,5 +66,5 @@ export default function CurrencyModal({
         </Dialog>
       </Transition>
     </>
-  )
+  );
 }

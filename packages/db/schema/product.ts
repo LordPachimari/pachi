@@ -100,7 +100,6 @@ export const productsToSalesChannelsRelations = relations(
     }),
   }),
 )
-
 export const productsToTaxRates = pgTable(
   "products_to_tax_rates",
   {
@@ -117,7 +116,6 @@ export const productsToTaxRates = pgTable(
     pk: primaryKey(t.productId, t.rateId),
   }),
 )
-
 export const productsToTaxRatesRelations = relations(
   productsToTaxRates,
   ({ one }) => ({

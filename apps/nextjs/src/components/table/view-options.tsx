@@ -1,27 +1,27 @@
-"use client"
+"use client";
 
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
-import { MixerHorizontalIcon } from "@radix-ui/react-icons"
-import type { Table } from "@tanstack/react-table"
-import { LayoutGrid, Rows } from "lucide-react"
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { MixerHorizontalIcon } from "@radix-ui/react-icons";
+import type { Table } from "@tanstack/react-table";
+import { LayoutGrid, Rows } from "lucide-react";
 
-import { Button } from "~/components/ui/button"
+import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "~/components/ui/dropdown-menu"
+} from "~/components/ui/dropdown-menu";
 
 type DataTableViewOptions<TData> = {
-  table: Table<TData>
-  view?: "grid" | "row"
-  withGridView?: boolean
+  table: Table<TData>;
+  view?: "grid" | "row";
+  withGridView?: boolean;
   onChangeView?:
     | React.Dispatch<React.SetStateAction<"row" | "grid">>
-    | undefined
-}
+    | undefined;
+};
 
 export function TableViewOptions<TData>({
   table,
@@ -60,7 +60,7 @@ export function TableViewOptions<TData>({
               >
                 {column.id}
               </DropdownMenuCheckboxItem>
-            )
+            );
           })}
         {withGridView && (
           <>
@@ -68,7 +68,7 @@ export function TableViewOptions<TData>({
               className="capitalize"
               checked={view === "row"}
               onCheckedChange={(value) => {
-                if (onChangeView) onChangeView(value ? "row" : "grid")
+                if (onChangeView) onChangeView(value ? "row" : "grid");
               }}
             >
               <LayoutGrid size={15} />
@@ -77,7 +77,7 @@ export function TableViewOptions<TData>({
               className="capitalize"
               checked={view === "grid"}
               onCheckedChange={(value) => {
-                if (onChangeView) onChangeView(value ? "grid" : "row")
+                if (onChangeView) onChangeView(value ? "grid" : "row");
               }}
             >
               <Rows className="" size={15} />
@@ -86,5 +86,5 @@ export function TableViewOptions<TData>({
         )}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

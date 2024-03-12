@@ -1,15 +1,12 @@
-import {
-  ReadonlyURLSearchParams,
-  usePathname,
-  useSearchParams,
-} from "next/navigation"
-import { forEachObj } from "remeda"
+import type { ReadonlyURLSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import { forEachObj } from "remeda";
 
-import { QUERY_OPTION_NAMES } from "./constants"
+import { QUERY_OPTION_NAMES } from "./constants";
 
 export type UseBuildQueryOptionParams = Partial<
   Record<(typeof QUERY_OPTION_NAMES)[number], string[]>
->
+>;
 
 /**
  * Create an url with query options.
@@ -22,44 +19,46 @@ export type UseBuildQueryOptionParams = Partial<
  * // Result: example.com -> example.com?foo=bar
  */
 function useBuildExistingQueryOption() {
-  const params = useSearchParams()
-  const pathname = usePathname()
-  const queryOptions = useQueryOptions(params)
-  const searchParams = new URLSearchParams(params)
+  const params = useSearchParams();
+  const pathname = usePathname();
+  const queryOptions = useQueryOptions(params);
+  const searchParams = new URLSearchParams(params);
 
   return (queryOption: UseBuildQueryOptionParams) => {
     forEachObj.indexed(queryOption, (values, name) => {
-      const currentValues = queryOptions[name]
+      const currentValues = queryOptions[name];
       const newValue = values?.length
         ? Array.from(new Set([...currentValues, ...values])).filter(Boolean)
-        : []
+        : [];
 
       if (newValue.length) {
-        searchParams.set(name, newValue.join(","))
+        searchParams.set(name, newValue.join(","));
       } else {
-        searchParams.delete(name)
+        searchParams.delete(name);
       }
-    })
+    });
 
-    return `${pathname}?${searchParams.toString()}`
-  }
+    return `${pathname}?${searchParams.toString()}`;
+  };
 }
+
 function useBuildNewQueryOptions(queryOptionParams: UseBuildQueryOptionParams) {
-  const pathname = usePathname()
+  const pathname = usePathname();
   const queryOptions = Object.entries(queryOptionParams)
     .reduce((acc, [name, values = []]) => {
       if (values.length) {
-        acc.set(name, values.join(","))
+        acc.set(name, values.join(","));
       } else {
-        acc.delete(name)
+        acc.delete(name);
       }
 
-      return acc
+      return acc;
     }, new URLSearchParams())
-    .toString()
+    .toString();
 
-  return `${pathname}?${queryOptions}`
+  return `${pathname}?${queryOptions}`;
 }
+
 function useQueryOptions(searchParams: ReadonlyURLSearchParams) {
   return QUERY_OPTION_NAMES.reduce<
     Record<(typeof QUERY_OPTION_NAMES)[number], string[]>
@@ -69,9 +68,9 @@ function useQueryOptions(searchParams: ReadonlyURLSearchParams) {
         .getAll(name)
         .flatMap((values) =>
           values.replace(/\s/g, "").split(",").filter(Boolean),
-        )
+        );
 
-      return acc
+      return acc;
     },
     {
       page: [],
@@ -79,7 +78,11 @@ function useQueryOptions(searchParams: ReadonlyURLSearchParams) {
       title: [],
       status: [],
     },
-  )
+  );
 }
 
-export { useBuildExistingQueryOption, useBuildNewQueryOptions, useQueryOptions }
+export {
+  useBuildExistingQueryOption,
+  useBuildNewQueryOptions,
+  useQueryOptions,
+};

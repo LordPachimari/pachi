@@ -1,1 +1,1 @@
-export * as Error from "./functions"
+export * as Error from "./functions";

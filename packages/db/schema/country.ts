@@ -1,13 +1,7 @@
-import { relations } from "drizzle-orm"
-import {
-  index,
-  integer,
-  pgTable,
-  uniqueIndex,
-  varchar,
-} from "drizzle-orm/pg-core"
+import { relations } from "drizzle-orm";
+import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
-import { regions } from "./region"
+import { regions } from "./region";
 
 export const countries = pgTable(
   "countries",
@@ -23,10 +17,10 @@ export const countries = pgTable(
   (country) => ({
     regionIdIndex: index("regionIdIndex").on(country.regionId),
   }),
-)
+);
 export const countryRelations = relations(countries, ({ one }) => ({
   region: one(regions, {
     fields: [countries.regionId],
     references: [regions.id],
   }),
-}))
+}));

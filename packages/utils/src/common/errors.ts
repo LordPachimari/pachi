@@ -8,5 +8,6 @@ export const withDieErrorLogger = (
   title: string,
 ) => {
   Effect.logError(`${title} error: ${e.message}`);
+  
   return new Error(`${title} error: ${e.message}`);
 };

@@ -1,17 +1,17 @@
-import { eq } from "drizzle-orm"
-import { Effect, pipe } from "effect"
+import { eq } from "drizzle-orm";
+import { Effect, pipe } from "effect";
 
-import { users } from "@pachi/db/schema"
-import { withDieErrorLogger } from "@pachi/utils"
+import { users } from "@pachi/db/schema";
+import { withDieErrorLogger } from "@pachi/utils";
 
-import type { GetClientViewDataWithTable } from "../types"
+import type { GetClientViewDataWithTable } from "../types";
 
 export const userCVD: GetClientViewDataWithTable = ({
   transaction,
   userId,
   isFullItems = false,
 }) => {
-  if (!userId) return Effect.succeed([{ cvd: [], tableName: "users" }])
+  if (!userId) return Effect.succeed([{ cvd: [], tableName: "users" }]);
   const cvd = pipe(
     Effect.tryPromise(() =>
       isFullItems
@@ -45,6 +45,7 @@ export const userCVD: GetClientViewDataWithTable = ({
       },
     ]),
     Effect.orDieWith((e) => withDieErrorLogger(e, "UserCVD space record")),
-  )
-  return cvd
-}
+  );
+
+  return cvd;
+};

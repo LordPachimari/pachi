@@ -39,7 +39,6 @@ export const discountConditions = pgTable(
     ),
   }),
 )
-
 export const discountConditionRelations = relations(
   discountConditions,
   ({ one, many }) => ({
@@ -106,7 +105,6 @@ export const discountConditionsToCustomerGroupsRelations = relations(
     }),
   }),
 )
-
 export const discountConditionCustomerGroups = pgTable(
   "discount_condition_customer_groups",
   {
@@ -140,7 +138,6 @@ export const discountConditionsCustomerGroupsRelations = relations(
     }),
   }),
 )
-
 export const discountConditionProducts = pgTable(
   "discount_condition_products",
   {

@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import Image from "next/image"
+import Image from "next/image";
 import {
   CheckCircledIcon,
   CrossCircledIcon,
   QuestionMarkCircledIcon,
   StopwatchIcon,
-} from "@radix-ui/react-icons"
-import type { ColumnDef } from "@tanstack/react-table"
-import { CircleIcon } from "lucide-react"
+} from "@radix-ui/react-icons";
+import type { ColumnDef } from "@tanstack/react-table";
+import { CircleIcon } from "lucide-react";
 
-import type { Product } from "@pachi/db"
-import { products } from "@pachi/db/schema"
+import type { Product } from "@pachi/db";
+import { products } from "@pachi/db/schema";
 
-import ImagePlaceholder from "~/components/molecules/image-placeholder"
-import { TableColumnHeader } from "~/components/table/column-header"
-import { DataTableRowActions } from "~/components/table/row-actions"
-import { Checkbox } from "~/components/ui/checkbox"
+import ImagePlaceholder from "~/components/molecules/image-placeholder";
+import { TableColumnHeader } from "~/components/table/column-header";
+import { DataTableRowActions } from "~/components/table/row-actions";
+import { Checkbox } from "~/components/ui/checkbox";
 import type {
   DataTableFilterableColumn,
   DataTableSearchableColumn,
-} from "~/types"
+} from "~/types";
 
 function StatusIcon({ status }: { status: Product["status"] }) {
   return status === "draft" ? (
@@ -48,7 +48,7 @@ function StatusIcon({ status }: { status: Product["status"] }) {
       className="mr-2 h-4 w-4 text-muted-foreground"
       aria-hidden="true"
     />
-  )
+  );
 }
 
 export function getProductsColumns(): ColumnDef<Product, unknown>[] {
@@ -105,7 +105,7 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
         <TableColumnHeader column={column} title="Title" />
       ),
       cell: (info) => {
-        return <div className="w-[80px]">{info.getValue() as string}</div>
+        return <div className="w-[80px]">{info.getValue() as string}</div>;
       },
       enableSorting: true,
       enableHiding: false,
@@ -127,9 +127,10 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
         <TableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => {
-        const status = row.original.status
+        const status = row.original.status;
+
         if (!status) {
-          return null
+          return null;
         }
 
         return (
@@ -137,10 +138,10 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
             <StatusIcon status={status} />
             <span className="capitalize">{status}</span>
           </div>
-        )
+        );
       },
       filterFn: (row, id, value) => {
-        return value instanceof Array && value.includes(row.getValue(id))
+        return value instanceof Array && value.includes(row.getValue(id));
       },
       enableSorting: false,
       enableHiding: false,
@@ -151,7 +152,7 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
         <TableColumnHeader column={column} title="Quantity" />
       ),
       cell: (info) => {
-        return <div className="w-[80px]">{info.getValue() as number}</div>
+        return <div className="w-[80px]">{info.getValue() as number}</div>;
       },
 
       enableSorting: false,
@@ -161,9 +162,8 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
       id: "actions",
       cell: ({ row }) => <DataTableRowActions row={row} />,
     },
-  ]
+  ];
 }
-
 export const filterableColumns: DataTableFilterableColumn<Product>[] = [
   {
     id: "status",
@@ -173,11 +173,10 @@ export const filterableColumns: DataTableFilterableColumn<Product>[] = [
       value: status,
     })),
   },
-]
-
+];
 export const searchableColumns: DataTableSearchableColumn<Product>[] = [
   {
     id: "title",
     title: "titles",
   },
-]
+];

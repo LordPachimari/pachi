@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Menu } from "lucide-react"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Menu } from "lucide-react";
 
-import { cn } from "@pachi/utils"
+import { cn } from "@pachi/utils";
 
-import { Icons } from "~/components/ui/icons"
-import type { SidebarNavItem } from "~/types"
-import { Button } from "../ui/button"
+import { Icons } from "~/components/ui/icons";
+import type { SidebarNavItem } from "~/types";
+import { Button } from "../ui/button";
 
 export interface SidebarNavProps {
-  items: SidebarNavItem[]
-  toggleShowSidebar: () => void
+  items: SidebarNavItem[];
+  toggleShowSidebar: () => void;
 }
 
 export function SidebarNav({ items, toggleShowSidebar }: SidebarNavProps) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
-  if (!items?.length) return null
+  if (!items?.length) return null;
 
   return (
     <div className="z-100 flex w-full flex-col gap-2">
@@ -34,7 +34,7 @@ export function SidebarNav({ items, toggleShowSidebar }: SidebarNavProps) {
       </div>
 
       {items.map((item, index) => {
-        const Icon = Icons[item.icon ?? "chevronLeft"]
+        const Icon = Icons[item.icon ?? "chevronLeft"];
 
         return item.href ? (
           <Link
@@ -63,8 +63,8 @@ export function SidebarNav({ items, toggleShowSidebar }: SidebarNavProps) {
           >
             {item.title}
           </span>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

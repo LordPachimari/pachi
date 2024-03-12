@@ -1,1 +1,2 @@
-export * from "./replicache"
+export * from "./replicache";
+export * from "./auth";

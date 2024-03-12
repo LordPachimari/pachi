@@ -1,17 +1,16 @@
-import React, { forwardRef, type CSSProperties } from "react"
+import React, { forwardRef, type CSSProperties } from "react";
 
-import { cn } from "@pachi/utils"
+import { cn } from "@pachi/utils";
 
-import styles from "./Action.module.css"
+import styles from "./Action.module.css";
 
 export interface Props extends React.HTMLAttributes<HTMLButtonElement> {
   active?: {
-    fill: string
-    background: string
-  }
-  cursor?: CSSProperties["cursor"]
+    fill: string;
+    background: string;
+  };
+  cursor?: CSSProperties["cursor"];
 }
-
 export const Action = forwardRef<HTMLButtonElement, Props>(
   ({ active, className, cursor, style, ...props }, ref) => {
     return (
@@ -29,7 +28,7 @@ export const Action = forwardRef<HTMLButtonElement, Props>(
           } as CSSProperties
         }
       />
-    )
+    );
   },
-)
-Action.displayName = "Action"
+);
+Action.displayName = "Action";

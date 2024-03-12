@@ -1,5 +1,5 @@
 //@ts-ignore
-import { fileURLToPath } from "url"
+import { fileURLToPath } from "url";
 
 /** @typedef  {import("prettier").Config} PrettierConfig */
 /** @typedef {import("prettier-plugin-tailwindcss").PluginOptions} TailwindConfig */
@@ -28,7 +28,12 @@ const config = {
   ],
   importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
   importOrderTypeScriptVersion: "4.4.0",
-  semi: false,
-}
+  arrowParens: "always",
+  printWidth: 80,
+  singleQuote: false,
+  semi: true,
+  trailingComma: "all",
+  tabWidth: 2,
+};
 
-export default config
+export default config;

@@ -1,20 +1,21 @@
-import type { Product } from "@pachi/db"
+import type { Product } from "@pachi/db";
 
-const TABLE_QUERY_OPTIONS = ["page", "pageSize"] as const
+const TABLE_QUERY_OPTIONS = ["page", "pageSize"] as const;
 const PRODUCT_QUERY_OPTIONS: (keyof Pick<Product, "title" | "status">)[] = [
   "title",
   "status",
-] as const
+] as const;
 
 const PRODUCT_TABLE_QUERY_OPTIONS = [
   ...TABLE_QUERY_OPTIONS,
   ...PRODUCT_QUERY_OPTIONS,
-] as const
+] as const;
 
-const QUERY_OPTION_NAMES = [...PRODUCT_QUERY_OPTIONS, ...TABLE_QUERY_OPTIONS]
+const QUERY_OPTION_NAMES = [...PRODUCT_QUERY_OPTIONS, ...TABLE_QUERY_OPTIONS];
+
 export {
   TABLE_QUERY_OPTIONS,
   PRODUCT_QUERY_OPTIONS,
   QUERY_OPTION_NAMES,
   PRODUCT_TABLE_QUERY_OPTIONS,
-}
+};

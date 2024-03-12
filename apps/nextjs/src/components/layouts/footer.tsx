@@ -1,11 +1,11 @@
-import Link from "next/link"
+import Link from "next/link";
 
-const { COMPANY_NAME, SITE_NAME } = process.env
+const { COMPANY_NAME, SITE_NAME } = process.env;
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear()
-  const copyrightDate = 2023 + (currentYear > 2023 ? `-${currentYear}` : "")
-  const copyrightName = COMPANY_NAME ?? SITE_NAME ?? ""
+  const currentYear = new Date().getFullYear();
+  const copyrightDate = 2023 + (currentYear > 2023 ? `-${currentYear}` : "");
+  const copyrightName = COMPANY_NAME ?? SITE_NAME ?? "";
 
   return (
     <footer className="text-sm text-neutral-500 dark:text-neutral-400">
@@ -52,5 +52,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

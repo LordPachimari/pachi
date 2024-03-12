@@ -1,16 +1,16 @@
-import { Effect, pipe } from "effect"
-import { log } from "effect/Console"
+import { Effect, pipe } from "effect";
+import { log } from "effect/Console";
 
-import { withDieErrorLogger } from "@pachi/utils"
+import { withDieErrorLogger } from "@pachi/utils";
 
-import type { GetClientViewDataWithTable } from "../types"
+import type { GetClientViewDataWithTable } from "../types";
 
 export const storeCVD: GetClientViewDataWithTable = ({
   transaction,
   userId,
   isFullItems = false,
 }) => {
-  if (!userId) return Effect.succeed([{ cvd: [], tableName: "products" }])
+  if (!userId) return Effect.succeed([{ cvd: [], tableName: "products" }]);
 
   const cvd = pipe(
     Effect.tryPromise(() =>
@@ -81,7 +81,7 @@ export const storeCVD: GetClientViewDataWithTable = ({
     ),
     Effect.map((data) => data?.flat() ?? []),
     Effect.orDieWith((e) => withDieErrorLogger(e, "StoreCVD space record")),
-  )
+  );
 
-  return cvd
-}
+  return cvd;
+};

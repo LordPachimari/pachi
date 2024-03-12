@@ -41,5 +41,12 @@
     "vitest": "^0.34.6",
     "vitest-environment-miniflare": "^2.14.1",
     "wrangler": "^3.10.1"
-  }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@pachi/eslint-config/base"
+    ]
+  },
+  "prettier": "@pachi/prettier-config"
 }

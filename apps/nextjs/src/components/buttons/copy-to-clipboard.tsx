@@ -1,18 +1,18 @@
-import React, { useEffect } from "react"
-import clsx from "clsx"
-import { toast } from "sonner"
+import React, { useEffect } from "react";
+import clsx from "clsx";
+import { toast } from "sonner";
 
-import useClipboard from "~/hooks/use-clipboard"
-import { Button } from "../ui/button"
-import { Icons } from "../ui/icons"
+import useClipboard from "~/hooks/use-clipboard";
+import { Button } from "../ui/button";
+import { Icons } from "../ui/icons";
 
 interface CopyToClipboardProps {
-  value: string
-  displayValue?: string
-  successDuration?: number
-  showValue?: boolean
-  iconSize?: number
-  onCopy?: () => void
+  value: string;
+  displayValue?: string;
+  successDuration?: number;
+  showValue?: boolean;
+  iconSize?: number;
+  onCopy?: () => void;
 }
 
 const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
@@ -26,13 +26,13 @@ const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
   const [isCopied, handleCopy] = useClipboard(value, {
     ...(onCopy && { onCopied: onCopy }),
     successDuration: successDuration,
-  })
+  });
 
   useEffect(() => {
     if (isCopied) {
-      toast.message("Copied!")
+      toast.message("Copied!");
     }
-  }, [isCopied])
+  }, [isCopied]);
 
   return (
     <div className="inter-small-regular text-grey-50 gap-x-xsmall flex items-center">
@@ -53,7 +53,7 @@ const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
         </span>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default CopyToClipboard
+export default CopyToClipboard;

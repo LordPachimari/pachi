@@ -29,7 +29,6 @@ export const priceLists = pgTable("price_lists", {
   updatedBy: varchar("updatedBy"),
   version: integer("version").notNull().default(0),
 })
-
 export const priceListRelations = relations(priceLists, ({ many }) => ({
   customerGroups: many(priceListsToCustomerGroups),
   prices: many(prices),

@@ -1,14 +1,14 @@
-import Link from "next/link"
+import Link from "next/link";
 
-import type { PublishedProduct } from "@pachi/db"
+import type { PublishedProduct } from "@pachi/db";
 
-import Grid from "~/components/ui/grid"
-import { GridTileImage } from "./tile"
+import Grid from "~/components/ui/grid";
+import { GridTileImage } from "./tile";
 
 export default function ProductGridItems({
   products,
 }: {
-  products: PublishedProduct[]
+  products: PublishedProduct[];
 }) {
   return (
     <>
@@ -34,5 +34,5 @@ export default function ProductGridItems({
         </Grid.Item>
       ))}
     </>
-  )
+  );
 }

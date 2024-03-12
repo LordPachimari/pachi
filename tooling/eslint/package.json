@@ -27,9 +27,11 @@
     "eslint-plugin-react-hooks": "^4.6.0"
   },
   "devDependencies": {
-    "@types/eslint": "^8.44.7",
     "@pachi/prettier-config": "workspace:^0.1.0",
     "@pachi/tsconfig": "workspace:^0.1.0",
+    "@stylistic/eslint-plugin": "^1.6.3",
+    "@stylistic/eslint-plugin-migrate": "^1.6.3",
+    "@types/eslint": "^8.44.7",
     "eslint": "^8.53.0",
     "typescript": "^5.3.3"
   },

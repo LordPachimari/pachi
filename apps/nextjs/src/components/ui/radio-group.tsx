@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as Primitives from "@radix-ui/react-radio-group"
+import * as React from "react";
+import * as Primitives from "@radix-ui/react-radio-group";
 
-import { cn } from "@pachi/utils"
+import { cn } from "@pachi/utils";
 
 const Root = React.forwardRef<
   React.ElementRef<typeof Primitives.Root>,
@@ -15,9 +15,9 @@ const Root = React.forwardRef<
       {...props}
       ref={ref}
     />
-  )
-})
-Root.displayName = "RadioGroup.Root"
+  );
+});
+Root.displayName = "RadioGroup.Root";
 
 const Item = React.forwardRef<
   React.ElementRef<typeof Primitives.Item>,
@@ -42,10 +42,10 @@ const Item = React.forwardRef<
         </Primitives.Indicator>
       </div>
     </Primitives.Item>
-  )
-})
-Item.displayName = "RadioGroup.Item"
+  );
+});
+Item.displayName = "RadioGroup.Item";
 
-const RadioGroup = Object.assign(Root, { Item })
+const RadioGroup = Object.assign(Root, { Item });
 
-export { RadioGroup }
+export { RadioGroup };

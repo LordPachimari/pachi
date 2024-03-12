@@ -1,15 +1,15 @@
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 
-import { Toaster } from "~/components/ui/toaster"
-import { ThemeProvider } from "~/providers/theme-provider"
+import { Toaster } from "~/components/ui/toaster";
+import { ThemeProvider } from "~/providers/theme-provider";
 
-import "~/styles/globals.css"
+import "~/styles/globals.css";
 
 const fontSans = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
-})
+});
 
 export const metadata: Metadata = {
   title: "Pachi",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     site: "@pachi",
     creator: "@pachimari",
   },
-}
+};
 
 export default function Layout(props: { children: React.ReactNode }) {
   return (
@@ -37,5 +37,5 @@ export default function Layout(props: { children: React.ReactNode }) {
         <Toaster />
       </body>
     </html>
-  )
+  );
 }

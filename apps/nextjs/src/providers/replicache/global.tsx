@@ -1,27 +1,28 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { Replicache, type PullResponseOKV1 } from "replicache"
+import { useEffect } from "react";
+import { Replicache, type PullResponseOKV1 } from "replicache";
 
-import { ClientGlobalMutators } from "@pachi/core"
+import { ClientGlobalMutators } from "@pachi/core";
 
-import { env } from "~/env.mjs"
-import { useReplicache } from "~/zustand/replicache"
+import { env } from "~/env.mjs";
+import { useReplicache } from "~/zustand/replicache";
 
 export default function GlobalReplicacheProvider({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const userId = "user1"
-  const { globalRep, setGlobalRep } = useReplicache()
-  const token = localStorage?.getItem("auth_session")
+  const userId = "user1";
+  const { globalRep, setGlobalRep } = useReplicache();
+  const token = localStorage?.getItem("auth_session");
+
   useEffect(() => {
     if (globalRep) {
-      return
+      return;
     }
 
-    if (!userId) return
+    if (!userId) return;
     const r = new Replicache({
       name: userId,
       licenseKey: env.NEXT_PUBLIC_REPLICACHE_KEY,
@@ -43,20 +44,19 @@ export default function GlobalReplicacheProvider({
             credentials: "include",
             cache: "no-store",
           },
-        )
+        );
+
         return {
-          response:
-            result.status === 200
-              ? ((await result.json()) as PullResponseOKV1)
-              : undefined,
+          response: result.status === 200 ? await result.json() : undefined,
           httpRequestInfo: {
             httpStatusCode: result.status,
             errorMessage: result.statusText,
           },
-        }
+        };
       },
-    })
-    setGlobalRep(r)
-  }, [userId, globalRep, setGlobalRep])
-  return <>{children}</>
+    });
+    setGlobalRep(r);
+  }, [userId, globalRep, setGlobalRep]);
+
+  return <>{children}</>;
 }

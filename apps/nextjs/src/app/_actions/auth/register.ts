@@ -1,12 +1,12 @@
-"use server"
+"use server";
 
-import { cookies } from "next/headers"
-import { z } from "zod"
+import { cookies } from "next/headers";
+import { z } from "zod";
 
-import type { UserAuth } from "@pachi/core"
+import type { UserAuth } from "@pachi/core";
 
-import { LUCIA_COOKIE_NAME } from "~/constants"
-import { env } from "~/env.mjs"
+import { LUCIA_COOKIE_NAME } from "~/constants";
+import { env } from "~/env.mjs";
 
 async function register({ email, password }: UserAuth) {
   const { message, type, sessionId } = await fetch(
@@ -32,9 +32,12 @@ async function register({ email, password }: UserAuth) {
           message: z.string(),
           sessionId: z.string().optional(),
         })
-        .parse(data)
-    })
-  if (sessionId) cookies().set(LUCIA_COOKIE_NAME, sessionId)
-  return { message, type, sessionId }
+        .parse(data);
+    });
+
+  if (sessionId) cookies().set(LUCIA_COOKIE_NAME, sessionId);
+
+  return { message, type, sessionId };
 }
-export { register }
+
+export { register };
