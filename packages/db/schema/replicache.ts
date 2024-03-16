@@ -7,12 +7,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-import type { TableName } from "..";
-
 export type ClientViewRecord = Record<string, number>;
-export type ClientViewRecordWTableName = {
-  [K in TableName]?: ClientViewRecord;
-};
 export const replicacheClients = pgTable(
   "replicache_clients",
   {
@@ -29,15 +24,12 @@ export const replicacheClientGroups = pgTable("replicache_client_groups", {
   id: varchar("id").notNull().primaryKey(),
   spaceRecordVersion: integer("spaceRecordVersion").notNull(),
 });
-export const spaceRecords = pgTable(
-  "space_records",
+export const replicacheSubspaceRecords = pgTable(
+  "replicaсhe_subspace_records",
   {
     id: varchar("id").notNull().primaryKey(),
     subspaceID: varchar("id").notNull(),
-    spaceID: varchar("space").notNull(),
-    record: json("record")
-      .notNull()
-      .$type<Record<string, ClientViewRecordWTableName>>(),
+    record: json("record").notNull().$type<ClientViewRecord>(),
     version: integer("version"),
   },
   (spaceRecord) => ({

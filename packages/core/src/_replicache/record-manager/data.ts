@@ -1,41 +1,88 @@
-import { eq, inArray, sql } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { Effect, pipe } from "effect";
-import { isDefined, keys, mapToObj, toPairs } from "remeda";
+import { isDefined, keys, mapToObj } from "remeda";
 import type { PatchOperation, ReadonlyJSONObject } from "replicache";
 
 import {
   tableNamesMap,
   type ClientGroupObject,
+  type ReplicacheClient,
   type TableName,
   type Transaction,
 } from "@pachi/db";
 import {
-  jsonTable,
   replicacheClientGroups,
   replicacheClients,
+  replicacheSubspaceRecords,
 } from "@pachi/db/schema";
-import { UnknownExceptionLogger, type ExtractEffectValue } from "@pachi/utils";
+import {
+  ulid,
+  UnknownExceptionLogger,
+  type ExtractEffectValue,
+} from "@pachi/utils";
 
 import {
   AuthorizationError,
+  InvalidValue,
   SPACE_RECORD,
   type ClientViewRecord,
   type PermissionDenied,
+  type RowsWTableName,
   type SpaceID,
   type SpaceRecord,
 } from "../../schema-and-types";
+import { deleteItems_, setItems_, updateItems_ } from "../transaction-queries";
 import type {
   ClientRecordDiff,
-  ReplicacheRecordBase,
+  ReplicacheRecordManagerBase,
   SpaceRecordDiff,
-} from "../main";
-import {
-  deleteItems_,
-  getClientViewRecordWTables,
-  setItems_,
-  updateItems_,
-} from "../transaction-queries";
-import { getClientLastMutationIdAndVersion_ } from "../transaction-queries/get-client-last-mutations-ids";
+  SubspaceRecord,
+} from "./manager";
+import { SpaceRecordGetter } from "./space-record/getter";
+
+export const makeClientViewRecord = (
+  data: RowsWTableName[],
+): Record<string, number> => {
+  const clientViewRecord: Record<string, number> = {};
+
+  for (const { rows } of data) {
+    for (const row of rows) {
+      clientViewRecord[row.id] = row.version;
+    }
+  }
+
+  return clientViewRecord;
+};
+
+export const getRowsWTableName = <T extends SpaceID>({
+  userId,
+  spaceID,
+  subspaceID,
+  transaction,
+  fullRows,
+}: {
+  spaceID: T;
+  userId: string | undefined;
+  subspaceID: SpaceRecord[T][number];
+  transaction: Transaction;
+  fullRows: boolean;
+}): Effect.Effect<RowsWTableName[], InvalidValue, never> => {
+  const getRowsWTableName = SpaceRecordGetter[spaceID][subspaceID];
+
+  if (getRowsWTableName) {
+    return getRowsWTableName({
+      transaction,
+      userId,
+      fullRows,
+    });
+  }
+
+  return Effect.fail(
+    new InvalidValue({
+      message: "Invalid spaceID or subspaceID",
+    }),
+  );
+};
 
 const getPrevSpaceRecord = <T extends SpaceID>({
   key,
@@ -43,28 +90,27 @@ const getPrevSpaceRecord = <T extends SpaceID>({
   transaction,
   subspaceIDs,
 }: {
-  key: string;
+  key: string | undefined;
   spaceID: T;
   transaction: Transaction;
   subspaceIDs: Array<SpaceRecord[T][number]>;
-}): ReturnType<ReplicacheRecordBase["getPrevSpaceRecord"]> => {
+}): ReturnType<ReplicacheRecordManagerBase["getPrevSpaceRecord"]> => {
   return Effect.gen(function* (_) {
+    if (!key) return undefined;
     const subIDs = subspaceIDs.length > 0 ? subspaceIDs : SPACE_RECORD[spaceID];
 
     return yield* _(
       pipe(
         Effect.tryPromise(() =>
-          transaction.query.spaceRecords.findMany({
+          transaction.query.replicacheSubspaceRecords.findMany({
             columns: {
+              id: true,
               subspaceID: true,
               record: true,
             },
             where: ({ subspaceID, id }, { inArray, eq, and }) =>
               and(eq(id, key), inArray(subspaceID, subIDs)),
           }),
-        ),
-        Effect.map((records) =>
-          mapToObj(records, (record) => [record.subspaceID, record.record]),
         ),
         Effect.orDieWith((e) =>
           UnknownExceptionLogger(e, "GET PREVIOUS SPACE RECORD ERROR"),
@@ -84,109 +130,111 @@ const getCurrentSpaceRecord = <T extends SpaceID>({
   transaction: Transaction;
   subspaceIDs: Array<SpaceRecord[T][number]>;
   userId: string | undefined;
-}): ReturnType<ReplicacheRecordBase["getCurrentSpaceRecord"]> => {
+}): ReturnType<ReplicacheRecordManagerBase["getCurrentSpaceRecord"]> => {
   return Effect.gen(function* (_) {
     const subIDs = subspaceIDs ?? SPACE_RECORD[spaceID];
 
     return yield* _(
-      pipe(
-        Effect.forEach(
-          subIDs,
-          (subspaceID) =>
-            getClientViewRecordWTables({
+      Effect.forEach(
+        subIDs,
+        (subspaceID) =>
+          pipe(
+            getRowsWTableName({
               spaceID,
               subspaceID,
               transaction,
               userId,
               fullRows: false,
-            })
-              .pipe(
-                Effect.map((clientViewRecordWTable) => {
-                  return {
-                    subspaceID,
-                    clientViewRecordWTable,
-                  };
-                }),
-              )
-              .pipe(Effect.orDie),
+            }),
+            Effect.map((rows) => ({
+              rows,
+              subspaceRecord: {
+                id: ulid(),
+                subspaceID,
+                record: makeClientViewRecord(rows),
+              },
+            })),
+            Effect.orDie,
+          ),
 
-          {
-            concurrency: "unbounded",
-          },
-        ),
+        {
+          concurrency: "unbounded",
+        },
       ),
-      Effect.map((subspaceClientViewRecord) =>
-        mapToObj(subspaceClientViewRecord, (record) => [
-          record.subspaceID,
-          record.clientViewRecordWTable,
-        ]),
-      ),
+      Effect.orDie,
     );
   });
 };
 
-const diffSpaceRecords = <T extends SpaceID>(
+const diffSpaceRecords = ({
+  currentRecord,
+  prevRecord,
+}: {
   prevRecord: ExtractEffectValue<
-    ReturnType<ReplicacheRecordBase["getPrevSpaceRecord"]>
-  >,
+    ReturnType<ReplicacheRecordManagerBase["getPrevSpaceRecord"]>
+  >;
   currentRecord: ExtractEffectValue<
-    ReturnType<ReplicacheRecordBase["getPrevSpaceRecord"]>
-  >,
-  spaceID: T,
-): ReturnType<ReplicacheRecordBase["diffSpaceRecords"]> => {
+    ReturnType<ReplicacheRecordManagerBase["getCurrentSpaceRecord"]>
+  >;
+}): ReturnType<ReplicacheRecordManagerBase["diffSpaceRecords"]> => {
   return Effect.gen(function* (_) {
     const diff: SpaceRecordDiff = {
       deletedIDs: new Map(),
       newIDs: new Map(),
     };
 
+    if (!prevRecord) {
+      return diff;
+    }
+
+    const prevSpaceRecordObj = mapToObj(prevRecord, (data) => [
+      data.subspaceID,
+      data.record,
+    ]);
+
     yield* _(
       Effect.forEach(
-        toPairs.strict(currentRecord),
-        ([subspaceID, clientViewRecordWTableName]) => {
+        currentRecord,
+        ({ rows, subspaceRecord }) => {
           return Effect.sync(() => {
-            const prevClientViewRecordWTableName = prevRecord[subspaceID];
+            const prevClientViewRecord =
+              prevSpaceRecordObj[subspaceRecord.subspaceID] ?? {};
 
-            toPairs(clientViewRecordWTableName).forEach(
-              ([tableName_, currentClientViewRecord]) => {
-                const tableName = tableName_ as TableName;
-                const newIDs = diff.newIDs.get(tableName) ?? new Set();
-                const deletedIDs = diff.deletedIDs.get(tableName) ?? new Set();
-                const prevClientViewRecord =
-                  prevClientViewRecordWTableName[tableName] ?? {};
+            rows.forEach(({ rows, tableName }) => {
+              const newIDs = diff.newIDs.get(tableName) ?? new Set();
+              const deletedIDs = diff.deletedIDs.get(tableName) ?? new Set();
 
-                const addNewIDs = Effect.forEach(
-                  toPairs(currentClientViewRecord),
-                  ([id, version]) =>
-                    Effect.sync(() => {
-                      const prevVersion = prevClientViewRecord[id];
+              const addNewIDs = Effect.forEach(
+                rows,
+                ({ id, version }) =>
+                  Effect.sync(() => {
+                    const prevVersion = prevClientViewRecord[id];
 
-                      if (!isDefined(prevVersion) || prevVersion < version) {
-                        newIDs.add(id);
-                      }
-                    }),
-                  { concurrency: "unbounded" },
-                );
+                    if (!isDefined(prevVersion) || prevVersion < version) {
+                      newIDs.add(id);
+                    }
+                  }),
+                { concurrency: "unbounded" },
+              );
 
-                const addDeletedIDs = Effect.forEach(
-                  keys(prevClientViewRecord),
-                  (id) =>
-                    Effect.sync(() => {
-                      if (!isDefined(currentClientViewRecord[id])) {
-                        deletedIDs.add(id);
-                      }
-                    }),
-                  { concurrency: "unbounded" },
-                );
+              const addDeletedIDs = Effect.forEach(
+                keys(prevClientViewRecord),
+                (id) =>
+                  Effect.sync(() => {
+                    if (!isDefined(subspaceRecord.record[id])) {
+                      deletedIDs.add(id);
+                    }
+                  }),
+                { concurrency: "unbounded" },
+              );
 
-                Effect.all([addNewIDs, addDeletedIDs], {
-                  concurrency: "unbounded",
-                });
+              Effect.all([addNewIDs, addDeletedIDs], {
+                concurrency: "unbounded",
+              });
 
-                diff.deletedIDs.set(tableName, deletedIDs);
-                diff.newIDs.set(tableName, newIDs);
-              },
-            );
+              diff.deletedIDs.set(tableName, deletedIDs);
+              diff.newIDs.set(tableName, newIDs);
+            });
           });
         },
         { concurrency: "unbounded" },
@@ -203,10 +251,10 @@ const getPrevClientRecord = ({
 }: {
   key: string | undefined;
   transaction: Transaction;
-}): ReturnType<ReplicacheRecordBase["getPrevClientRecord"]> =>
+}): ReturnType<ReplicacheRecordManagerBase["getPrevClientRecord"]> =>
   Effect.gen(function* (_) {
     if (!key) {
-      return {};
+      return undefined;
     }
     const spaceRecord = yield* _(
       Effect.tryPromise(() =>
@@ -222,7 +270,7 @@ const getPrevClientRecord = ({
 
     if (spaceRecord?.value) return spaceRecord.value as ClientViewRecord;
 
-    return {};
+    return undefined;
   });
 
 const getCurrentClientRecord = ({
@@ -231,7 +279,7 @@ const getCurrentClientRecord = ({
 }: {
   transaction: Transaction;
   clientGroupID: string;
-}): ReturnType<ReplicacheRecordBase["getCurrentClientRecord"]> =>
+}): ReturnType<ReplicacheRecordManagerBase["getCurrentClientRecord"]> =>
   pipe(
     Effect.tryPromise(() =>
       transaction
@@ -242,31 +290,31 @@ const getCurrentClientRecord = ({
         .from(replicacheClients)
         .where(eq(replicacheClients.clientGroupID, clientGroupID)),
     ),
-    Effect.map((clients) =>
-      clients.length > 0
-        ? mapToObj(clients, (client) => [client.id, client.lastMutationID])
-        : {},
-    ),
     Effect.orDieWith((e) =>
       UnknownExceptionLogger(e, "GET CURRENT CLIENT RECORD ERROR"),
     ),
   );
 
-const diffClientRecords = (
+const diffClientRecords = ({
+  currentRecord,
+  prevRecord,
+}: {
   prevRecord: ExtractEffectValue<
-    ReturnType<ReplicacheRecordBase["getPrevClientRecord"]>
-  >,
+    ReturnType<ReplicacheRecordManagerBase["getPrevClientRecord"]>
+  >;
   currentRecord: ExtractEffectValue<
-    ReturnType<ReplicacheRecordBase["getCurrentClientRecord"]>
-  >,
-): ReturnType<ReplicacheRecordBase["diffClientRecords"]> => {
+    ReturnType<ReplicacheRecordManagerBase["getCurrentClientRecord"]>
+  >;
+}): ReturnType<ReplicacheRecordManagerBase["diffClientRecords"]> => {
   return Effect.gen(function* (_) {
     const diff: ClientRecordDiff = {};
 
+    if (!prevRecord) return diff;
+
     yield* _(
       Effect.forEach(
-        toPairs(currentRecord),
-        ([id, lastMutationID]) => {
+        currentRecord,
+        ({ id, lastMutationID }) => {
           return Effect.sync(() => {
             if (
               !isDefined(prevRecord[id]) ||
@@ -290,11 +338,7 @@ const createSpacePatch = ({
 }: {
   diff: SpaceRecordDiff;
   transaction: Transaction;
-}): Effect.Effect<
-  ReturnType<ReplicacheRecordBase["createSpacePatch"]>,
-  never,
-  never
-> => {
+}): ReturnType<ReplicacheRecordManagerBase["createSpacePatch"]> => {
   return Effect.gen(function* (_) {
     const patch: PatchOperation[] = [];
     const fullRows = yield* _(
@@ -350,7 +394,7 @@ const createSpacePatch = ({
   });
 };
 
-const resetSpace = <T extends SpaceID>({
+const createSpaceResetPatch = <T extends SpaceID>({
   spaceID,
   transaction,
   userId,
@@ -358,11 +402,7 @@ const resetSpace = <T extends SpaceID>({
   spaceID: T;
   userId: string | undefined;
   transaction: Transaction;
-}): Effect.Effect<
-  { patch: PatchOperation[]; newSpaceRecord: SpaceRecord[T] },
-  never,
-  never
-> =>
+}): ReturnType<ReplicacheRecordManagerBase["createSpaceResetPatch"]> =>
   Effect.gen(function* (_) {
     const patch: PatchOperation[] = [
       {
@@ -371,22 +411,48 @@ const resetSpace = <T extends SpaceID>({
     ];
     const subspaceIDs = SPACE_RECORD[spaceID];
 
-    const record = yield* _(
+    yield* _(
       Effect.forEach(
         subspaceIDs,
         (subspaceID) =>
-          getClientViewRecordWTables({
-            spaceID,
-            subspaceID,
-            transaction,
-            userId,
-            fullRows: true,
-          }),
+          pipe(
+            getRowsWTableName({
+              spaceID,
+              subspaceID,
+              transaction,
+              userId,
+              fullRows: true,
+            }),
+            Effect.map((data) =>
+              Effect.forEach(
+                data,
+                ({ rows }) =>
+                  Effect.sync(() =>
+                    Effect.forEach(
+                      rows,
+                      (item) =>
+                        Effect.sync(() =>
+                          patch.push({
+                            op: "put",
+                            key: item.id,
+                            value: item as ReadonlyJSONObject,
+                          }),
+                        ),
+                      { concurrency: "unbounded" },
+                    ),
+                  ),
+                { concurrency: "unbounded" },
+              ),
+            ),
+            Effect.orDie,
+          ),
         {
           concurrency: "unbounded",
         },
       ),
     );
+
+    return patch;
   });
 
 const getFullRows = ({
@@ -509,34 +575,6 @@ export const deleteItems = (
     }
     yield* _(Effect.all(effects, { concurrency: "unbounded" }));
   });
-export const getPrevSpaceRecord_ = <T extends SpaceID>({
-  key,
-  transaction,
-}: {
-  key: string | undefined;
-  transaction: Transaction;
-  spaceID: T;
-}): Effect.Effect<SpaceRecord[T] | undefined, never, never> =>
-  Effect.gen(function* (_) {
-    if (!key) {
-      return undefined;
-    }
-    const spaceRecord = yield* _(
-      Effect.tryPromise(() =>
-        transaction.query.jsonTable.findFirst({
-          where: (json, { eq }) => eq(json.id, key),
-        }),
-      ).pipe(
-        Effect.orDieWith((e) =>
-          UnknownExceptionLogger(e, "getPrevSpaceRecord error"),
-        ),
-      ),
-    );
-
-    if (spaceRecord?.value) return spaceRecord.value as SpaceRecord[T];
-
-    return undefined;
-  });
 export const getClientGroupObject = ({
   clientGroupID,
   transaction,
@@ -552,7 +590,7 @@ export const getClientGroupObject = ({
         }),
       ).pipe(
         Effect.orDieWith((e) =>
-          UnknownExceptionLogger(e, "getClientGroupObject error"),
+          UnknownExceptionLogger(e, "GET CLIENT GROUP OBJECT ERROR"),
         ),
       ),
     );
@@ -589,50 +627,50 @@ export const setClientGroupObject = ({
           }),
       ).pipe(
         Effect.orDieWith((e) =>
-          UnknownExceptionLogger(e, "setClientGroupObject error"),
+          UnknownExceptionLogger(e, "SET CLIENT GROUP OBJECT ERROR"),
         ),
       ),
     );
   });
-export const setSpaceRecord = <T extends SpaceID>({
-  key,
+export const setSpaceRecord = ({
   spaceRecord,
   transaction,
 }: {
-  key: string;
-  spaceRecord: SpaceRecords[T];
+  spaceRecord: Array<SubspaceRecord>;
   transaction: Transaction;
 }): Effect.Effect<void, never, never> =>
   Effect.gen(function* (_) {
     yield* _(
       Effect.tryPromise(() =>
-        transaction.insert(jsonTable).values({
-          id: key,
-          value: spaceRecord,
-        }),
+        transaction
+          .insert(replicacheSubspaceRecords)
+          //@ts-ignore
+          .values(spaceRecord),
       ).pipe(
         Effect.orDieWith((e) =>
-          UnknownExceptionLogger(e, "setSpaceRecord error"),
+          UnknownExceptionLogger(e, "SET SPACE RECORD ERROR"),
         ),
       ),
     );
   });
 export const deleteSpaceRecord = ({
-  key,
+  keys,
   transaction,
 }: {
-  key: string | undefined;
+  keys: string[];
   transaction: Transaction;
 }): Effect.Effect<void, never, never> =>
   Effect.gen(function* (_) {
-    if (!key) return;
+    if (keys.length === 0) return;
 
     yield* _(
       Effect.tryPromise(() =>
-        transaction.delete(jsonTable).where(eq(jsonTable.id, key)),
+        transaction
+          .delete(replicacheSubspaceRecords)
+          .where(inArray(replicacheSubspaceRecords.id, keys)),
       ).pipe(
         Effect.orDieWith((e) =>
-          UnknownExceptionLogger(e, "delete space record error"),
+          UnknownExceptionLogger(e, "DELETE SPACE RECORD ERROR"),
         ),
       ),
     );
@@ -646,7 +684,7 @@ export const getClient = ({
   transaction: Transaction;
   clientID: string;
   clientGroupID: string;
-}): Effect.Effect<ClientRecord, AuthorizationError, never> => {
+}): Effect.Effect<ReplicacheClient, AuthorizationError, never> => {
   return Effect.gen(function* (_) {
     const client = yield* _(
       Effect.tryPromise(() =>
@@ -654,7 +692,7 @@ export const getClient = ({
           where: (client, { eq }) => eq(client.id, clientID),
         }),
       ).pipe(
-        Effect.orDieWith((e) => UnknownExceptionLogger(e, "getClient error")),
+        Effect.orDieWith((e) => UnknownExceptionLogger(e, "GET CLIENT ERROR")),
       ),
     );
 
@@ -668,7 +706,7 @@ export const getClient = ({
     if (client.clientGroupID !== clientGroupID) {
       yield* _(
         Effect.fail(
-          new AuthorizationError({ message: "clientGroupID does not match" }),
+          new AuthorizationError({ message: "CLIENT GROUP DOES NOT MATCH" }),
         ),
       );
     }
@@ -680,7 +718,7 @@ export const setClient = ({
   transaction,
   client,
 }: {
-  client: ClientRecord;
+  client: ReplicacheClient;
   transaction: Transaction;
 }): Effect.Effect<void, never, never> =>
   Effect.tryPromise(() =>
@@ -691,38 +729,15 @@ export const setClient = ({
       .onConflictDoUpdate({
         target: replicacheClients.id,
         set: {
-          //@ts-ignore
-          lastMutationID: sql.placeholder("lastMutationID"),
+          lastMutationID: client.lastMutationID,
         },
       }),
-  ).pipe(Effect.orDieWith((e) => UnknownExceptionLogger(e, "setClient error")));
-const getClientLastMutationIdsAndVersion = ({
-  clientIDs,
-  clientGroupID,
-  transaction,
-}: {
-  clientIDs: string[];
-  clientGroupID: string;
-  transaction: Transaction;
-}): Effect.Effect<
-  Map<string, { lastMutationID: number; version: number }>,
-  never,
-  never
-> =>
-  Effect.gen(function* (_) {
-    const result = yield* _(
-      getClientLastMutationIdAndVersion_({
-        clientGroupID,
-        clientIDs,
-        transaction,
-      }),
-    );
-
-    return result;
-  });
-
+  ).pipe(
+    Effect.orDieWith((e) => UnknownExceptionLogger(e, "SET CLIENT ERROR")),
+  );
 export {
   createSpacePatch,
+  createSpaceResetPatch,
   diffClientRecords,
   diffSpaceRecords,
   getCurrentClientRecord,

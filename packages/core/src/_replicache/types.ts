@@ -3,11 +3,9 @@ import { z } from "zod";
 
 import { type TableName } from "@pachi/db";
 
-export const ClientViewRecordSchema = z.record(z.string(), z.number());
 export type ClientViewRecord = Record<string, number>;
-export type ClientViewRecordWTableName = {
-  [K in TableName]?: ClientViewRecord;
-};
+export type Row = Record<string, unknown> & { id: string; version: number };
+export type RowsWTableName = { tableName: TableName; rows: Row[] };
 export const SpaceIDSchema = z.enum(["global", "dashboard"] as const);
 export type SpaceID = z.infer<typeof SpaceIDSchema>;
 export const SPACE_RECORD = {

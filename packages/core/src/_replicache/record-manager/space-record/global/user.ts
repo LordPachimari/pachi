@@ -1,18 +1,17 @@
 import { eq } from "drizzle-orm";
 import { Effect, pipe } from "effect";
-import { mapToObj } from "remeda";
 
 import { users } from "@pachi/db/schema";
 import { UnknownExceptionLogger } from "@pachi/utils";
 
-import type { GetClientViewRecordWTableName } from "../types";
+import type { GetRowsWTableName } from "../types";
 
-export const userCVD: GetClientViewRecordWTableName = ({
+export const userCVD: GetRowsWTableName = ({
   transaction,
   userId,
   fullRows = false,
 }) => {
-  if (!userId) return Effect.succeed({ users: {} });
+  if (!userId) return Effect.succeed([]);
   const cvd = pipe(
     Effect.tryPromise(() =>
       fullRows
@@ -38,14 +37,13 @@ export const userCVD: GetClientViewRecordWTableName = ({
             },
           }),
     ),
-    Effect.map((user) => {
-      return {
-        users: user ? { [user.id]: user.version } : {},
-        stores: user?.stores
-          ? mapToObj(user.stores, (store) => [store.id, store.version])
-          : {},
-      };
-    }),
+    Effect.map((user) => [
+      { tableName: "users" as const, rows: user ? [user] : [] },
+      {
+        tableName: "stores" as const,
+        rows: user?.stores ?? [],
+      },
+    ]),
     Effect.orDieWith((e) =>
       UnknownExceptionLogger(e, "ERROR RETRIEVING USER CVD"),
     ),

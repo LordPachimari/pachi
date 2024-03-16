@@ -4,7 +4,7 @@ import type { ReadonlyJSONObject } from "replicache";
 
 import { type TableName, type Transaction } from "@pachi/db";
 
-import { deleteItems, setItems, updateItems } from "./data/data";
+import { deleteItems, setItems, updateItems } from "./record-manager/data";
 
 const DELETE = "DELETE" as const;
 const SET = "set" as const;

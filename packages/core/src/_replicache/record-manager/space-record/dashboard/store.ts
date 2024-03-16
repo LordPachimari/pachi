@@ -1,16 +1,15 @@
 import { Effect, pipe } from "effect";
-import { mapToObj } from "remeda";
 
 import { UnknownExceptionLogger } from "@pachi/utils";
 
-import type { GetClientViewRecordWTableName } from "../types";
+import type { GetRowsWTableName } from "../types";
 
-export const storeCVD: GetClientViewRecordWTableName = ({
+export const storeCVD: GetRowsWTableName = ({
   transaction,
   userId,
   fullRows = false,
 }) => {
-  if (!userId) return Effect.succeed([{ cvd: [], tableName: "products" }]);
+  if (!userId) return Effect.succeed([]);
 
   const cvd = pipe(
     Effect.tryPromise(() =>
@@ -69,39 +68,15 @@ export const storeCVD: GetClientViewRecordWTableName = ({
     Effect.map(
       (data) =>
         data?.stores.map((store) => {
-          return {
-            stores: { [store.id]: store.version },
-            products: mapToObj(store.products, (product) => [
-              product.id,
-              product.version,
-            ]),
-          };
+          return [
+            { tableName: "stores" as const, rows: [store] },
+            { tableName: "products" as const, rows: store.products },
+          ];
         }),
     ),
-    Effect.map((data) =>
-      data
-        ? data.reduce(
-            (acc, item) => {
-              return {
-                stores: {
-                  ...acc.stores,
-                  ...item.stores,
-                },
-                products: {
-                  ...acc.products,
-                  ...item.products,
-                },
-              };
-            },
-            {
-              stores: {},
-              products: {},
-            },
-          )
-        : {},
-    ),
+    Effect.map((data) => (data ? data.flat() : [])),
     Effect.orDieWith((e) =>
-      UnknownExceptionLogger(e, "ERROR RETRIEVING STORE CVD"),
+      UnknownExceptionLogger(e, "ERROR RETRIEVING STORE ROWS"),
     ),
   );
 

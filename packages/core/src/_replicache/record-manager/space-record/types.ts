@@ -2,14 +2,14 @@ import type { Effect } from "effect";
 
 import type { Transaction } from "@pachi/db";
 
-import type { ClientViewRecordWTableName } from "../../../schema-and-types";
+import type { RowsWTableName } from "../../types";
 
-export type GetClientViewRecordWTableName = ({
+export type GetRowsWTableName = ({
   transaction,
   fullRows,
-  userId
+  userId,
 }: {
   transaction: Transaction;
   fullRows: boolean;
   userId: string | undefined;
-}) => Effect.Effect<ClientViewRecordWTableName, never, never>;
+}) => Effect.Effect<RowsWTableName[], never, never>;

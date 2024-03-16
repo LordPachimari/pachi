@@ -17,6 +17,7 @@ import {
   regions,
   replicacheClientGroups,
   replicacheClients,
+  replicacheSubspaceRecords,
   salesChannels,
   session,
   shippingOptions,
@@ -263,3 +264,11 @@ export const clientGroupSchema = createInsertSchema(replicacheClientGroups);
 export type ClientGroupObject = z.infer<typeof clientGroupSchema>;
 export const ReplicacheClientSchema = createInsertSchema(replicacheClients);
 export type ReplicacheClient = z.infer<typeof ReplicacheClientSchema>;
+export const ReplicacheSubspaceRecordSchema = createInsertSchema(
+  replicacheSubspaceRecords,
+).extend({
+  record: z.record(z.string(), z.number()),
+});
+export type ReplicacheSubspaceRecord = z.infer<
+  typeof ReplicacheSubspaceRecordSchema
+>;

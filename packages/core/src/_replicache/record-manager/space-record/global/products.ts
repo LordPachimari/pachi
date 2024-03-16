@@ -5,9 +5,9 @@ import { mapToObj } from "remeda";
 import { products } from "@pachi/db/schema";
 import { UnknownExceptionLogger } from "@pachi/utils";
 
-import type { GetClientViewRecordWTableName } from "../types";
+import type { GetRowsWTableName } from "../types";
 
-export const productsCVD: GetClientViewRecordWTableName = ({
+export const productsCVD: GetRowsWTableName = ({
   transaction,
   fullRows = false,
 }) => {
@@ -23,16 +23,11 @@ export const productsCVD: GetClientViewRecordWTableName = ({
             .from(products)
             .where(eq(products.status, "published")),
     ),
-    Effect.map((products) => {
-      return {
-        products: mapToObj(products, (product) => [
-          product.id,
-          product.version,
-        ]),
-      };
-    }),
+    Effect.map((products) => [
+      { tableName: "products" as const, rows: products },
+    ]),
     Effect.orDieWith((e) =>
-      UnknownExceptionLogger(e, "ERROR RETRIEVING PRODUCTS CVD"),
+      UnknownExceptionLogger(e, "ERROR RETRIEVING PRODUCTS ROWS"),
     ),
   );
 

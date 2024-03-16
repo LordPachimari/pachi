@@ -1,10 +1,10 @@
-import type { SpaceID, SpaceRecord } from "../../schema-and-types";
+import type { SpaceID, SpaceRecord } from "../../types";
 import { storeCVD } from "./dashboard";
 import { userCVD } from "./global";
-import type { GetClientViewRecordWTableName } from "./types";
+import type { GetRowsWTableName } from "./types";
 
 export type SpaceRecordGetterType = {
-  [K in SpaceID]: Record<SpaceRecord[K][number], GetClientViewRecordWTableName>;
+  [K in SpaceID]: Record<SpaceRecord[K][number], GetRowsWTableName>;
 };
 export const SpaceRecordGetter: SpaceRecordGetterType = {
   dashboard: {

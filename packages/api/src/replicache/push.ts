@@ -34,7 +34,9 @@ export const push = ({
   requestHeaders: RequestHeaders;
 }) =>
   Effect.gen(function* (_) {
-    console.log("---------------------------------------------------");
+    yield* _(
+      Effect.log("----------------------------------------------------"),
+    );
 
     const startTime = yield* _(Clock.currentTimeMillis);
     const mutators =
@@ -43,7 +45,7 @@ export const push = ({
         : ServerGlobalMutatorsMap;
 
     for (const mutation of push.mutations) {
-      // 1: start transaction for each mutation
+      // 1: START TRANSACTION FOR EACH MUTATION
       Effect.tryPromise(() =>
         db.transaction(
           async (transaction) =>
