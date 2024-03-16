@@ -1,6 +1,5 @@
-import { Effect } from "effect";
+import { Clock, Effect } from "effect";
 import type { PullResponseOKV1 } from "replicache";
-import { z } from "zod";
 
 import {
   deleteSpaceRecord,
@@ -11,23 +10,23 @@ import {
   getSpacePatch,
   setClientGroupObject,
   setSpaceRecord,
+  type Cookie,
+  type PullRequest,
+  type SpaceId,
+  type SpaceRecords,
 } from "@pachi/core";
 import type { Db } from "@pachi/db";
-import type { Cookie, PullRequest, SpaceId, SpaceRecords } from "@pachi/types";
-import { pullRequestSchema } from "@pachi/types";
-import { withDieErrorLogger } from "@pachi/utils";
-
-const subspacesSchema = z.enum(["store", "user"] as const);
+import { ulid, UnknownExceptionLogger } from "@pachi/utils";
 
 export const pull = <T extends SpaceId>({
-  spaceId,
-  body,
+  spaceID,
+  body: pull,
   userId,
   db,
-  subspaceIds,
+  subspaceIDs,
 }: {
-  spaceId: T;
-  subspaceIds: (keyof SpaceRecords[T])[] | undefined;
+  spaceID: T;
+  subspaceIDs: (keyof SpaceRecords[T])[] | undefined;
   body: PullRequest;
   userId: string | undefined;
   db: Db;
@@ -37,41 +36,26 @@ export const pull = <T extends SpaceId>({
       Effect.log("----------------------------------------------------"),
     );
 
-    yield* _(
-      Effect.log(`Processing mutation pull: ${JSON.stringify(body, null, "")}`),
-    );
+    yield* _(Effect.log(`PROCESSING PULL: ${JSON.stringify(pull, null, "")}`));
 
-    //parsing
-    const pull = pullRequestSchema.safeParse(body);
-    const parsedSubspaceIds = subspacesSchema.optional().safeParse(subspaceIds);
+    const requestCookie = pull.cookie;
+    const startTransact = yield* _(Clock.currentTimeMillis);
 
-    if (pull.success === false) {
-      return yield* _(Effect.fail(pull.error));
-    }
-
-    if (parsedSubspaceIds.success === false) {
-      return yield* _(Effect.fail(parsedSubspaceIds.error));
-    }
-
-    const requestCookie = pull.data.cookie;
-
-    const startTransact = Date.now();
-
-    // 1: get the space record key, to retrieve the previous space record
+    // 1: GET SPACE RECORD KEY: TO RETRIEVE PREVIOUS SPACE RECORD
     const spaceRecordKey =
-      requestCookie && spaceId === "global"
+      requestCookie && spaceID === "global"
         ? requestCookie.globalSpaceRecordKey
-        : requestCookie && spaceId === "dashboard"
+        : requestCookie && spaceID === "dashboard"
         ? requestCookie.dashboardSpaceRecordKey
         : undefined;
 
-    // 2: begin transaction
+    // 2: BEGIN PULL TRANSACTION
     const processPull = yield* _(
       Effect.tryPromise(() =>
         db.transaction(
           async (transaction) =>
             Effect.gen(function* (_) {
-              // 3: get previous space record and previous client record, and client group object
+              // 3: GET PREVIOUS SPACE RECORD, CLIENT RECORD, AND CLIENT GROUP OBJECT
               const [prevSpaceRecord, prevClientRecord, clientGroupObject] =
                 yield* _(
                   Effect.all(
@@ -79,14 +63,14 @@ export const pull = <T extends SpaceId>({
                       getPrevSpaceRecord({
                         key: spaceRecordKey,
                         transaction,
-                        spaceId,
+                        spaceID,
                       }),
                       getPrevClientRecord({
                         transaction,
                         key: requestCookie?.clientRecordKey,
                       }),
                       getClientGroupObject({
-                        clientGroupID: pull.data.clientGroupID,
+                        clientGroupID: pull.clientGroupID,
                         transaction,
                       }),
                     ],
@@ -96,22 +80,22 @@ export const pull = <T extends SpaceId>({
                   ),
                 );
 
+              const currentTime = yield* _(Clock.currentTimeMillis);
+
               yield* _(
                 Effect.log(
-                  `total time getting prev records ${
-                    Date.now() - startTransact
+                  `TOTAL TIME OF GETTING PREVIOUS RECORDS ${
+                    currentTime - startTransact
                   }`,
                 ),
               );
 
               const patchEffect = getSpacePatch({
                 spaceRecord: prevSpaceRecord,
-                spaceId,
+                spaceID,
                 userId,
                 transaction,
-                subspaceIds: parsedSubspaceIds.data as
-                  | (keyof SpaceRecords[T])[]
-                  | undefined,
+                subspaceIDs,
               });
 
               const lastMutationIDChangesEffect = getClientChanges({
@@ -139,11 +123,7 @@ export const pull = <T extends SpaceId>({
               const nextSpaceRecordVersion = prevSpaceRecordVersion + 1;
               clientGroupObject.spaceRecordVersion = nextSpaceRecordVersion;
 
-              const newSpaceRecordKey = makeSpaceRecordKey({
-                clientGroupID: clientGroupObject.id,
-                order: nextSpaceRecordVersion,
-                spaceId,
-              });
+              const newSpaceRecordKey = ulid();
 
               const nothingToUpdate =
                 patch.length === 0 &&
@@ -153,19 +133,19 @@ export const pull = <T extends SpaceId>({
                 lastMutationIDChanges,
                 cookie: {
                   ...requestCookie,
-                  ...(spaceId === "global" && {
+                  ...(spaceID === "global" && {
                     globalSpaceRecordKey: nothingToUpdate
                       ? spaceRecordKey
                       : newSpaceRecordKey,
                   }),
-                  ...(spaceId === "dashboard" && {
+                  ...(spaceID === "dashboard" && {
                     dashboardSpaceRecordKey: nothingToUpdate
                       ? spaceRecordKey
                       : newSpaceRecordKey,
                   }),
                   order: nothingToUpdate
                     ? prevSpaceRecordVersion
-                    : clientGroupObject.spaceRecordVersion,
+                    : nextSpaceRecordVersion,
                 } satisfies Cookie,
                 patch,
               };
@@ -198,13 +178,17 @@ export const pull = <T extends SpaceId>({
           { isolationLevel: "serializable", accessMode: "read write" },
         ),
       ).pipe(
-        Effect.orDieWith((e) => withDieErrorLogger(e, "transaction error")),
+        Effect.orDieWith((e) =>
+          UnknownExceptionLogger(e, "TRANSACTION ERROR IN PULL"),
+        ),
       ),
     );
 
     const response = yield* _(processPull);
 
-    yield* _(Effect.log(`total time ${Date.now() - startTransact}`));
+    const endTransact = yield* _(Clock.currentTimeMillis);
+
+    yield* _(Effect.log(`total time ${endTransact - startTransact}`));
 
     yield* _(
       Effect.log("----------------------------------------------------"),
@@ -212,15 +196,3 @@ export const pull = <T extends SpaceId>({
 
     return response;
   });
-
-function makeSpaceRecordKey({
-  order,
-  clientGroupID,
-  spaceId,
-}: {
-  order: number;
-  clientGroupID: string;
-  spaceId: SpaceId;
-}) {
-  return `${spaceId}/${clientGroupID}/${order}`;
-}

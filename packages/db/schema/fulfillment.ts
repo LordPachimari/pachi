@@ -69,7 +69,7 @@ export const fulfillmentItems = pgTable(
     quantity: integer("quantity"),
   },
   (t) => ({
-    pk: primaryKey(t.itemId, t.fulfillmentId),
+    pk: primaryKey({columns:[t.itemId, t.fulfillmentId]}),
   }),
 );
 export const fulfillmentItemsRelations = relations(

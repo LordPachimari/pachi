@@ -5,7 +5,7 @@ import type { ReadonlyJSONObject } from "replicache";
 import type { CartItem } from "@pachi/db";
 import { cartItems } from "@pachi/db/schema";
 import { NotFound } from "@pachi/types";
-import { withDieErrorLogger } from "@pachi/utils";
+import { UnknownExceptionLogger } from "@pachi/utils";
 
 import { ServerContext } from "../context";
 
@@ -27,7 +27,9 @@ export const CartService = {
             },
           }),
         ).pipe(
-          Effect.orDieWith((e) => withDieErrorLogger(e, "Could not find cart")),
+          Effect.orDieWith((e) =>
+            UnknownExceptionLogger(e, "Could not find cart"),
+          ),
         ),
       );
 

@@ -1,10 +1,9 @@
 import { Effect } from "effect";
 import type { UnknownException } from "effect/Cause";
 
-import type { InvalidValue } from "@pachi/types";
 
-export const withDieErrorLogger = (
-  e: UnknownException | InvalidValue,
+export const UnknownExceptionLogger = (
+  e: UnknownException ,
   title: string,
 ) => {
   Effect.logError(`${title} error: ${e.message}`);

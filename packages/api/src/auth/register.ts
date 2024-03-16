@@ -1,10 +1,9 @@
 import { Effect } from "effect";
 import { generateId, Scrypt, type Lucia } from "lucia";
 
-import { UserAuthSchema } from "@pachi/core";
+import { InvalidInput, UserAuthSchema } from "@pachi/core";
 import type { Db, User } from "@pachi/db";
 import { users } from "@pachi/db/schema";
-import { InvalidInput } from "@pachi/types";
 
 interface RegisterProps {
   email: string;
@@ -28,19 +27,6 @@ const register = ({ email, password, db, lucia }: RegisterProps) => {
       ).pipe(Effect.catchAll(() => Effect.fail(InvalidInputError))),
     );
 
-    if (
-      typeof password !== "string" ||
-      password.length < 6 ||
-      password.length > 255
-    ) {
-      yield* _(
-        Effect.fail(
-          new InvalidInput({
-            message: "Invalid input",
-          }),
-        ),
-      );
-    }
     const createdAt = new Date().toISOString();
     const hashedPassword = yield* _(
       Effect.tryPromise(() => new Scrypt().hash(password)),

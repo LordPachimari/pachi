@@ -42,7 +42,7 @@ export const customersToGroups = pgTable(
       .references(() => customerGroups.id, { onDelete: "cascade" }),
   },
   (t) => ({
-    pk: primaryKey(t.customerId, t.groupId),
+    pk: primaryKey({ columns: [t.customerId, t.groupId] }),
   }),
 );
 export const customersToGroupsRelations = relations(

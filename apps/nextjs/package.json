@@ -24,7 +24,6 @@
     "@pachi/auth": "^0.1.0",
     "@pachi/core": "^0.1.0",
     "@pachi/db": "^0.1.0",
-    "@pachi/types": "^0.1.0",
     "@pachi/utils": "^0.1.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",

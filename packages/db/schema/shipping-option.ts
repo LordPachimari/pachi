@@ -87,7 +87,7 @@ export const shippingOptionsToTaxRates = pgTable(
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.shippingOptionId, t.rateId),
+    pk: primaryKey({columns:[t.shippingOptionId, t.rateId]}),
   }),
 )
 export const shippingOptionToTaxRatesRelations = relations(

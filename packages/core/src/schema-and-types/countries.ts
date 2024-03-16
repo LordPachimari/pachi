@@ -245,7 +245,6 @@ export const isoAlpha2Countries = {
   ZM: "Zambia",
   ZW: "Zimbabwe",
 };
-
 export const countries = [
   { alpha2: "AF", name: "Afghanistan", alpha3: "AFG", numeric: "004" },
   { alpha2: "AL", name: "Albania", alpha3: "ALB", numeric: "008" },
@@ -620,6 +619,7 @@ export function countryLookup(isoCountryCode: string) {
   }
 
   const normalizedIsoCountryCode = isoCountryCode.toUpperCase();
+
   //@ts-ignore
   if (isoAlpha2Countries[normalizedIsoCountryCode]) {
     //@ts-ignore

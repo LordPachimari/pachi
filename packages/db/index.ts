@@ -7,7 +7,7 @@ import * as schema from "./schema";
 export * as schema from "./schema";
 export * from "./table-name";
 export * from "./validators/common";
-export * from "./validators/schema";
+export * from "./validators/schema-and-types";
 
 const tableName = [
   "users",

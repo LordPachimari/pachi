@@ -51,7 +51,7 @@ export const productOptionValuesToProductVariants = pgTable(
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.optionValueId, t.variantId),
+    pk: primaryKey({columns:[t.optionValueId, t.variantId]}),
   }),
 )
 export const productOptionValuesToProductVariantsRelations = relations(

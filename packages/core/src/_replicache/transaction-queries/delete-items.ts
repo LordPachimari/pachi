@@ -2,7 +2,7 @@ import { inArray } from "drizzle-orm";
 import { Effect } from "effect";
 
 import { tableNamesMap, type TableName, type Transaction } from "@pachi/db";
-import { withDieErrorLogger } from "@pachi/utils";
+import { UnknownExceptionLogger } from "@pachi/utils";
 
 export const deleteItems_ = ({
   tableName,
@@ -21,7 +21,9 @@ export const deleteItems_ = ({
       Effect.tryPromise(() =>
         transaction.delete(table).where(inArray(table.id, keys)),
       ).pipe(
-        Effect.orDieWith((e) => withDieErrorLogger(e, "delete Items error")),
+        Effect.orDieWith((e) =>
+          UnknownExceptionLogger(e, "delete Items error"),
+        ),
       ),
     );
   });

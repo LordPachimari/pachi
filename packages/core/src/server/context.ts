@@ -1,10 +1,10 @@
 import { Context } from "effect";
 
 import type { Db, Transaction } from "@pachi/db";
-import type { RequestHeaders } from "@pachi/types";
 
 import type { RepositoriesType, ServicesType } from ".";
-import type { ReplicacheTransaction } from "../replicache";
+import type { ReplicacheTransaction } from "../_replicache";
+import type { RequestHeaders } from "../schema-and-types";
 
 export class ServerContext extends Context.Tag("ServerContext")<
   ServerContext,

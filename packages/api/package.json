@@ -15,7 +15,6 @@
   "dependencies": {
     "@pachi/core": "^0.1.0",
     "@pachi/db": "^0.1.0",
-    "@pachi/types": "^0.1.0",
     "@pachi/utils": "^0.1.0",
     "base64-arraybuffer": "^1.0.2",
     "drizzle-orm": "^0.29.3",

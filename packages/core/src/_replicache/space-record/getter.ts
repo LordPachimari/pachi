@@ -1,11 +1,10 @@
-import type { SpaceId, SpaceRecords } from "@pachi/types";
-
+import type { SpaceID, SpaceRecord } from "../../schema-and-types";
 import { storeCVD } from "./dashboard";
 import { userCVD } from "./global";
-import type { GetClientViewDataWithTable } from "./types";
+import type { GetClientViewRecordWTableName } from "./types";
 
 export type SpaceRecordGetterType = {
-  [K in SpaceId]: Record<keyof SpaceRecords[K], GetClientViewDataWithTable>;
+  [K in SpaceID]: Record<SpaceRecord[K][number], GetClientViewRecordWTableName>;
 };
 export const SpaceRecordGetter: SpaceRecordGetterType = {
   dashboard: {

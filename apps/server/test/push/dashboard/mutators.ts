@@ -8,7 +8,7 @@
 //   type Product,
 //   type ProductUpdates,
 // } from "@pachi/db";
-// import type { SpaceId } from "@pachi/types";
+// import type { SpaceID } from "@pachi/types";
 
 // import type { Bindings } from "~/index";
 
@@ -18,7 +18,7 @@
 //   private readonly db: Db;
 //   private readonly env: Bindings;
 //   private readonly userId: string;
-//   private readonly spaceId: SpaceId;
+//   private readonly spaceID: SpaceID;
 //   private readonly requestHeaders: {
 //     ip: string | null;
 //     userAgent: string | null;
@@ -31,7 +31,7 @@
 //     env,
 //     userId,
 //     requestHeaders,
-//     spaceId,
+//     spaceID,
 //   }: {
 //     clientGroupID: string;
 //     clientID: string;
@@ -42,7 +42,7 @@
 //       ip: string | null;
 //       userAgent: string | null;
 //     };
-//     spaceId: SpaceId;
+//     spaceID: SpaceID;
 //   }) {
 //     this.clientGroupID = clientGroupID;
 //     this.clientID = clientID;
@@ -50,7 +50,7 @@
 //     this.env = env;
 //     this.userId = userId;
 //     this.requestHeaders = requestHeaders;
-//     this.spaceId = spaceId;
+//     this.spaceID = spaceID;
 //   }
 //   async createProduct(product: Product) {
 //     return await push({
@@ -76,7 +76,7 @@
 //         cacheName: this.env.MOMENTO_CACHE_NAME,
 //         client: this.client,
 //       },
-//       spaceId: this.spaceId,
+//       spaceID: this.spaceID,
 //       userId: this.userId,
 //       requestHeaders: this.requestHeaders,
 //     });
@@ -103,7 +103,7 @@
 //         cacheName: this.env.MOMENTO_CACHE_NAME,
 //         client: this.client,
 //       },
-//       spaceId: this.spaceId,
+//       spaceID: this.spaceID,
 //       userId: this.userId,
 //       requestHeaders: this.requestHeaders,
 //     });
@@ -128,7 +128,7 @@
 //         cacheName: this.env.MOMENTO_CACHE_NAME,
 //         client: this.client,
 //       },
-//       spaceId: this.spaceId,
+//       spaceID: this.spaceID,
 //       userId: this.userId,
 //       requestHeaders: this.requestHeaders,
 //     });

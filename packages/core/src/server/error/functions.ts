@@ -1,10 +1,10 @@
 import { Effect } from "effect";
 
-import { ErrorSchema } from "../../input-schema/error";
+import { InputErrorSchema } from "../../schema-and-types";
 import { zod } from "../../util/zod";
 import { ServerContext } from "../context";
 
-const createError = zod(ErrorSchema, (input) =>
+const createError = zod(InputErrorSchema, (input) =>
   Effect.gen(function* (_) {
     const { replicacheTransaction } = yield* _(ServerContext);
 

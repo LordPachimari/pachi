@@ -1,9 +1,8 @@
 import { Effect } from "effect";
 import { Scrypt, type Lucia } from "lucia";
 
-import { UserAuthSchema } from "@pachi/core";
+import { InvalidInput, UserAuthSchema } from "@pachi/core";
 import type { Db } from "@pachi/db";
-import { InvalidInput } from "@pachi/types";
 
 interface LoginProps {
   email: string;
@@ -27,19 +26,6 @@ const login = ({ email, password, db, lucia }: LoginProps) => {
       ).pipe(Effect.catchAll(() => Effect.fail(InvalidInputError))),
     );
 
-    if (
-      typeof password !== "string" ||
-      password.length < 6 ||
-      password.length > 255
-    ) {
-      yield* _(
-        Effect.fail(
-          new InvalidInput({
-            message: "Invalid input",
-          }),
-        ),
-      );
-    }
     const user = yield* _(
       Effect.tryPromise(() =>
         db.query.users.findFirst({

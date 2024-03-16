@@ -4,8 +4,9 @@ import type { ReadonlyJSONObject } from "replicache";
 
 import { tableNamesMap, type TableName, type Transaction } from "@pachi/db";
 import { users } from "@pachi/db/schema";
-import { PermissionDenied } from "@pachi/types";
-import { withDieErrorLogger } from "@pachi/utils";
+import { UnknownExceptionLogger } from "@pachi/utils";
+
+import { PermissionDenied } from "../../schema-and-types";
 
 export const updateItems_ = ({
   tableName,
@@ -48,7 +49,7 @@ export const updateItems_ = ({
           })
           .where(eq(tableNamesMap[tableName].id, id)),
       ).pipe(
-        Effect.orDieWith((e) => withDieErrorLogger(e, "updateItems error")),
+        Effect.orDieWith((e) => UnknownExceptionLogger(e, "updateItems error")),
       );
     });
     yield* _(Effect.all(effects, { concurrency: "unbounded" }));

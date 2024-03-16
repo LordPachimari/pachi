@@ -2,9 +2,9 @@ import { Effect } from "effect";
 import { isDefined } from "remeda";
 
 import { type ProductVariant } from "@pachi/db";
-import { NotFound } from "@pachi/types";
 import { generateId, ulid } from "@pachi/utils";
 
+import { NotFound } from "../../schema-and-types";
 import {
   AssignProductOptionValueToVariantSchema,
   CreateProductOptionSchema,
@@ -24,7 +24,7 @@ import {
   UpdateProductTagsSchema,
   UpdateProductVariantSchema,
   UploadProductImagesSchema,
-} from "../../input-schema/product";
+} from "../../schema-and-types/product";
 import { zod } from "../../util/zod";
 import { ServerContext } from "../context";
 

@@ -3,7 +3,7 @@ import { Effect, pipe } from "effect";
 
 import { tableNamesMap, type TableName, type Transaction } from "@pachi/db";
 import { users } from "@pachi/db/schema";
-import { withDieErrorLogger } from "@pachi/utils";
+import { UnknownExceptionLogger } from "@pachi/utils";
 
 export const getFullItems = ({
   tableName,
@@ -23,7 +23,9 @@ export const getFullItems = ({
       Effect.tryPromise(() =>
         transaction.select().from(users).where(inArray(users.id, keys)),
       ),
-      Effect.orDieWith((e) => withDieErrorLogger(e, "get full items error")),
+      Effect.orDieWith((e) =>
+        UnknownExceptionLogger(e, "get full items error"),
+      ),
     );
   } else if (tableName === "products") {
     return pipe(
@@ -53,7 +55,9 @@ export const getFullItems = ({
           },
         }),
       ),
-      Effect.orDieWith((e) => withDieErrorLogger(e, "get full items error")),
+      Effect.orDieWith((e) =>
+        UnknownExceptionLogger(e, "get full items error"),
+      ),
     );
   } else {
     const table = tableNamesMap[tableName];
@@ -66,7 +70,9 @@ export const getFullItems = ({
           //@ts-ignore
           .where(inArray(table.id, keys)),
       ),
-      Effect.orDieWith((e) => withDieErrorLogger(e, "get full items error")),
+      Effect.orDieWith((e) =>
+        UnknownExceptionLogger(e, "get full items error"),
+      ),
     );
   }
 };

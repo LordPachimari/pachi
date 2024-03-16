@@ -84,7 +84,7 @@ export const productsToSalesChannels = pgTable(
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.productId, t.salesChannelId),
+    pk: primaryKey({columns:[t.productId, t.salesChannelId]}),
   }),
 )
 export const productsToSalesChannelsRelations = relations(
@@ -113,7 +113,7 @@ export const productsToTaxRates = pgTable(
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.productId, t.rateId),
+    pk: primaryKey({columns:[t.productId, t.rateId]}),
   }),
 )
 export const productsToTaxRatesRelations = relations(
@@ -142,7 +142,7 @@ export const productsToTags = pgTable(
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.productId, t.tagId),
+    pk: primaryKey({columns:[t.productId, t.tagId]}),
   }),
 )
 export const productToTagsRelations = relations(productsToTags, ({ one }) => ({

@@ -3,8 +3,7 @@
 import type { Effect } from "effect";
 import type { z, ZodError } from "zod";
 
-import type { NotFound } from "@pachi/types";
-
+import type { NotFound } from "../schema-and-types";
 import type { ServerContext } from "../server";
 
 export function zod<Schema extends z.ZodSchema<any, any, any>>(

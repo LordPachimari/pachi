@@ -7,18 +7,17 @@ import { cors } from "hono/cors";
 import { Lucia, verifyRequestOrigin, type User as LuciaUser } from "lucia";
 
 import { login, pull, push, register } from "@pachi/api";
-import { type UserAuth } from "@pachi/core";
-import { schema, type Country, type Currency, type Db } from "@pachi/db";
-import { countries as countriesTable, currencies } from "@pachi/db/schema";
 import {
   countries,
-  currencies as currencies_values,
+  currencies as currenciesValues,
   pullRequestSchema,
   pushRequestSchema,
-  subspacesSchema,
-  type PushRequest,
-  type SpaceId,
-} from "@pachi/types";
+  SpaceIDSchema,
+  UserAuthSchema,
+  type UserAuth,
+} from "@pachi/core";
+import { schema, type Country, type Currency, type Db } from "@pachi/db";
+import { countries as countriesTable, currencies } from "@pachi/db/schema";
 import { generateId as generateULID, ulid } from "@pachi/utils";
 
 export type Bindings = {
@@ -45,14 +44,14 @@ app.use(
       "authorization",
     ],
     allowMethods: ["POST", "GET", "OPTIONS"],
-    exposeHeaders: ["Content-Length", "X-Kuma-Revision"],
+    exposeHeaders: ["Content-Length"],
     maxAge: 600,
     credentials: true,
   }),
 );
 
+// CSRF middleware
 app.use("*", async (c, next) => {
-  // CSRF middleware
   if (c.req.method === "GET") {
     return next();
   }
@@ -86,16 +85,9 @@ app.use("*", async (c, next) => {
         secure: c.env.ENVIRONMENT === "prod", // replaces `env` config
       },
     },
-    getUserAttributes: (attributes) => {
-      return {
-        //@ts-ignore
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        username: attributes.username,
-      };
-    },
   });
 
-  //IMPORTANT!
+  // IMPORTANT!
   c.set("lucia" as never, lucia);
   c.set("db" as never, db);
 
@@ -115,54 +107,63 @@ app.use("*", async (c, next) => {
   return next();
 });
 
-app.post("/pull/:spaceId", async (c) => {
+app.post("/pull/:spaceID", async (c) => {
+  // 1: PARSE INPUT
+  const db = c.get("db" as never) as Db;
+  const subspaceIDs = c.req.queries("subspaces");
   const userId = (c.get("user" as never) as LuciaUser | undefined)?.id;
-  const spaceId = c.req.param("spaceId");
-  const subspaceIdsInput = c.req.query("subspaceId");
-  const subspaceIds = subspaceIdsInput
-    ? subspacesSchema.parse(JSON.parse(subspaceIdsInput))
-    : undefined;
-  const json = await c.req.json().then((json) => pullRequestSchema.parse(json));
+  const spaceID = SpaceIDSchema.parse(c.req.param("spaceID"));
+  const body = pullRequestSchema.parse(await c.req.json());
 
+  // 2: PULL
   const pullEffect = pull({
-    body: json,
-    db: c.get("db" as never),
-    spaceId: spaceId as SpaceId,
-    userId: userId,
-    subspaceIds: subspaceIds as never[],
+    body,
+    db,
+    spaceID,
+    userId,
+    subspaceIDs: subspaceIDs as never[] | undefined,
   }).pipe(Effect.orDie);
 
+  // 3: RUN PROMISE
   const pullResponse = await Effect.runPromise(pullEffect);
 
   return c.json(pullResponse, 200);
 });
 
-app.post("/push/:spaceId", async (c) => {
+app.post("/push/:spaceID", async (c) => {
+  // 1: PARSE INPUT
   const userId = (c.get("user" as never) as LuciaUser | undefined)?.id;
-  const spaceId = c.req.param("spaceId");
   const db = c.get("db" as never) as Db;
-  const json = pushRequestSchema.parse(await c.req.json());
+  const spaceID = SpaceIDSchema.parse(c.req.param("spaceID"));
+  const body = pushRequestSchema.parse(await c.req.json());
 
+  // 2: PULL
   const pushEffect = push({
-    body: json,
+    body,
     db,
-    spaceId: spaceId as SpaceId,
-    userId: userId,
+    spaceID,
+    userId,
     requestHeaders: {
       ip: c.req.raw.headers.get("cf-connecting-ip"),
       userAgent: c.req.raw.headers.get("user-agent"),
     },
   }).pipe(Effect.orDie);
 
+  // 3: RUN PROMISE
   await Effect.runPromise(pushEffect);
 
   return c.json({}, 200);
 });
 
 app.post("/register", async (c) => {
+  // 1: GET INPUT
   const db = c.get("db" as never) as Db;
   const lucia = c.get("lucia" as never) as Lucia;
+
+  // value is parsed in registerEffect for error handling
   const { email, password } = (await c.req.json()) as UserAuth;
+
+  // 2: REGISTER
   const registerEffect = register({
     db,
     lucia,
@@ -175,15 +176,20 @@ app.post("/register", async (c) => {
       ),
     )
     .pipe(Effect.orDie);
+
+  // 3: RUN PROMISE
   const registerResult = await Effect.runPromise(registerEffect);
 
   return c.json(registerResult, 200);
 });
 
 app.post("/login", async (c) => {
+  // 1: PARSE INPUT
   const db = c.get("db" as never) as Db;
   const lucia = c.get("lucia" as never) as Lucia;
-  const { email, password } = (await c.req.json()) as UserAuth;
+  const { email, password } = UserAuthSchema.parse(await c.req.json());
+
+  // 2: LOGIN
   const loginEffect = login({
     db,
     lucia,
@@ -196,6 +202,8 @@ app.post("/login", async (c) => {
       ),
     )
     .pipe(Effect.orDie);
+
+  // 3: RUN PROMISE
   const loginResult = await Effect.runPromise(loginEffect);
 
   return c.json(loginResult, 200);
@@ -203,22 +211,25 @@ app.post("/login", async (c) => {
 
 //ADMIN ENDPOINTS
 app.post("/currencies", async (c) => {
+  // 1: GET INPUT
   const db = c.get("db" as never) as Db;
-  const values: Currency[] = Object.values(currencies_values).map((value) => {
+  const values: Currency[] = Object.values(currenciesValues).map((value) => {
     return {
       code: value.code,
       symbol: value.symbol,
-      symbol_native: value.symbol_native,
       name: value.name,
     };
   });
-  //@ts-ignore eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
+  // 2: INSERT
+  //@ts-ignore
   await db.insert(currencies).values(values);
 
   return c.json({}, 200);
 });
 
 app.post("/countries", async (c) => {
+  // 1: GET INPUT
   const db = c.get("db" as never) as Db;
   const values: Country[] = Object.values(countries).map((value) => {
     return {
@@ -228,13 +239,15 @@ app.post("/countries", async (c) => {
       displayName: value.name,
     };
   });
-  //@ts-ignore eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
+  // 2: INSERT
+  //@ts-ignore
   await db.insert(countriesTable).values(values);
 
   return c.json({}, 200);
 });
 
-app.get("/hello", async (c) => {
+app.get("/hello", (c) => {
   return c.text("hello");
 });
 

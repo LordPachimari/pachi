@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@pachi/db": "^0.1.0",
-    "@pachi/types": "^0.1.0",
     "@pachi/utils": "^0.1.0",
     "drizzle-orm": "^0.29.3",
     "effect": "^2.4.1",

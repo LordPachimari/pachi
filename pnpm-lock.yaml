@@ -168,9 +168,6 @@ importers:
       '@pachi/db':
         specifier: ^0.1.0
         version: link:../../packages/db
-      '@pachi/types':
-        specifier: ^0.1.0
-        version: link:../../packages/types
       '@pachi/utils':
         specifier: ^0.1.0
         version: link:../../packages/utils
@@ -419,9 +416,6 @@ importers:
       '@pachi/db':
         specifier: ^0.1.0
         version: link:../../packages/db
-      '@pachi/types':
-        specifier: ^0.1.0
-        version: link:../../packages/types
       '@pachi/utils':
         specifier: ^0.1.0
         version: link:../../packages/utils
@@ -489,9 +483,6 @@ importers:
       '@pachi/db':
         specifier: ^0.1.0
         version: link:../db
-      '@pachi/types':
-        specifier: ^0.1.0
-        version: link:../types
       '@pachi/utils':
         specifier: ^0.1.0
         version: link:../utils
@@ -584,9 +575,6 @@ importers:
       '@pachi/db':
         specifier: ^0.1.0
         version: link:../db
-      '@pachi/types':
-        specifier: ^0.1.0
-        version: link:../types
       '@pachi/utils':
         specifier: ^0.1.0
         version: link:../utils
@@ -677,54 +665,11 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3
 
-  packages/types:
-    dependencies:
-      '@pachi/db':
-        specifier: ^0.1.0
-        version: link:../db
-      effect:
-        specifier: ^2.4.1
-        version: 2.4.1
-      replicache:
-        specifier: 14.0.3
-        version: 14.0.3
-      valibot:
-        specifier: ^0.17.1
-        version: 0.17.1
-      zod:
-        specifier: ^3.22.2
-        version: 3.22.2
-    devDependencies:
-      '@pachi/eslint-config':
-        specifier: workspace:^0.1.0
-        version: link:../../tooling/eslint
-      '@pachi/prettier-config':
-        specifier: workspace:^0.1.0
-        version: link:../../tooling/prettier
-      '@pachi/tsconfig':
-        specifier: workspace:^0.1.0
-        version: link:../../tooling/typescript
-      dotenv-cli:
-        specifier: ^7.3.0
-        version: 7.3.0
-      eslint:
-        specifier: ^8.53.0
-        version: 8.53.0
-      prettier:
-        specifier: ^3.0.3
-        version: 3.0.3
-      typescript:
-        specifier: ^5.3.3
-        version: 5.3.3
-
   packages/utils:
     dependencies:
       '@pachi/db':
         specifier: ^0.1.0
         version: link:../db
-      '@pachi/types':
-        specifier: ^0.1.0
-        version: link:../types
       clsx:
         specifier: ^2.0.0
         version: 2.0.0

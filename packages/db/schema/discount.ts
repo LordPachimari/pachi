@@ -61,7 +61,7 @@ export const discountsToRegions = pgTable(
       .references(() => regions.id),
   },
   (t) => ({
-    pk: primaryKey(t.discountId, t.regionId),
+    pk: primaryKey({columns:[t.discountId, t.regionId]}),
   }),
 )
 export const discountsToRegionsRelations = relations(

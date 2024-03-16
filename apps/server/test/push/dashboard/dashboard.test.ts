@@ -18,7 +18,7 @@
 
 // describe("dashboard space", () => {
 //   const userId = "user1";
-//   const spaceId = "dashboard";
+//   const spaceID = "dashboard";
 //   const requestHeaders = {
 //     ip: "whatever",
 //     userAgent: "whatever",
@@ -45,7 +45,7 @@
 //     env,
 //     requestHeaders,
 //     userId,
-//     spaceId,
+//     spaceID,
 //   });
 //   afterAll(async () => {
 //     await dashboardMutators.flush();

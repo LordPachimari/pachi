@@ -7,7 +7,6 @@
   "scripts": {},
   "dependencies": {
     "@pachi/db": "^0.1.0",
-    "@pachi/types": "^0.1.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.10",
     "effect": "^2.4.1",

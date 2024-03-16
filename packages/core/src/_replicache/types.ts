@@ -1,101 +1,85 @@
 import { type PatchOperation } from "replicache";
 import { z } from "zod";
 
-import type { TableName } from "@pachi/db";
+import { type TableName } from "@pachi/db";
 
-export type ClientViewDataWithTable = {
-  tableName: TableName;
-  cvd: ClientViewData[];
+export const ClientViewRecordSchema = z.record(z.string(), z.number());
+export type ClientViewRecord = Record<string, number>;
+export type ClientViewRecordWTableName = {
+  [K in TableName]?: ClientViewRecord;
 };
-export const ClientViewDataSchema = z
-  .record(z.string(), z.unknown())
-  .and(z.object({ id: z.string(), version: z.number() }));
-export type ClientViewData = z.infer<typeof ClientViewDataSchema>;
-export const RecordDataSchema = z.record(z.string(), z.number());
-export const SpaceRecordsSchema = z.object({
-  global: z.object({
-    user: RecordDataSchema,
-  }),
-  dashboard: z.object({
-    store: RecordDataSchema,
-  }),
-});
-export type SpaceRecords = z.infer<typeof SpaceRecordsSchema>;
-export const SpaceIdSchema = SpaceRecordsSchema.keyof();
-export type SpaceId = z.infer<typeof SpaceIdSchema>;
-export const spaceRecords: SpaceRecords = {
-  global: {
-    user: {},
-  },
-  dashboard: {
-    store: {},
-  },
+export const SpaceIDSchema = z.enum(["global", "dashboard"] as const);
+export type SpaceID = z.infer<typeof SpaceIDSchema>;
+export const SPACE_RECORD = {
+  global: ["user" as const],
+  dashboard: ["store" as const],
 };
+export type SpaceRecord = typeof SPACE_RECORD;
 export const mutationAffectedSpaces = {
   createProduct: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   updateProduct: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   deleteProduct: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   deleteProductVariant: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   publishProduct: {
-    dashboard: ["store"] as const,
-    products: ["products"] as const,
+    dashboard: ["store" as const],
+    products: ["products" as const],
   },
   draftProduct: {
-    dashboard: ["store"] as const,
-    products: ["products"] as const,
+    dashboard: ["store" as const],
+    products: ["products" as const],
   },
   createProductOption: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   updateProductOption: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   deleteProductOption: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   updateProductOptionValues: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   uploadProductImages: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   updateImagesOrder: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   createProductVariant: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   updateProductVariant: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   updatePrice: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   createStore: {
-    global: ["user"] as const,
+    global: ["user" as const],
   },
   createUser: {
-    global: ["user"] as const,
+    global: ["user" as const],
   },
   updateStore: {
-    global: ["user"] as const,
+    global: ["user" as const],
   },
   createPrices: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   deletePrices: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
   assignProductOptionValueToVariant: {
-    dashboard: ["store"] as const,
+    dashboard: ["store" as const],
   },
 };
 const mutationNames = [
@@ -158,4 +142,6 @@ export const RequestHeadersSchema = z.object({
   userAgent: z.string().nullable(),
 });
 export type RequestHeaders = z.infer<typeof RequestHeadersSchema>;
-export const subspacesSchema = z.array(z.enum(["store", "user"] as const)).optional();
+export const subspacesSchema = z
+  .array(z.enum(["store", "user"] as const))
+  .optional();

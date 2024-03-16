@@ -3,7 +3,7 @@ import { Effect } from "effect";
 import type { Store } from "@pachi/db";
 import { generateId } from "@pachi/utils";
 
-import { CreateUserSchema } from "../../input-schema/user";
+import { CreateUserSchema } from "../../schema-and-types/user";
 import { zod } from "../../util/zod";
 import { ServerContext } from "../context";
 

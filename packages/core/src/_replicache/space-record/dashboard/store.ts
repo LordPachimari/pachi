@@ -1,20 +1,20 @@
 import { Effect, pipe } from "effect";
-import { log } from "effect/Console";
+import { mapToObj } from "remeda";
 
-import { withDieErrorLogger } from "@pachi/utils";
+import { UnknownExceptionLogger } from "@pachi/utils";
 
-import type { GetClientViewDataWithTable } from "../types";
+import type { GetClientViewRecordWTableName } from "../types";
 
-export const storeCVD: GetClientViewDataWithTable = ({
+export const storeCVD: GetClientViewRecordWTableName = ({
   transaction,
   userId,
-  isFullItems = false,
+  fullRows = false,
 }) => {
   if (!userId) return Effect.succeed([{ cvd: [], tableName: "products" }]);
 
   const cvd = pipe(
     Effect.tryPromise(() =>
-      isFullItems
+      fullRows
         ? transaction.query.users.findFirst({
             where: (user, { eq }) => eq(user.id, userId),
             with: {
@@ -68,19 +68,41 @@ export const storeCVD: GetClientViewDataWithTable = ({
     ),
     Effect.map(
       (data) =>
-        data?.stores.map((store) => [
-          {
-            cvd: [store],
-            tableName: "stores" as const,
-          },
-          {
-            cvd: store.products,
-            tableName: "products" as const,
-          },
-        ]),
+        data?.stores.map((store) => {
+          return {
+            stores: { [store.id]: store.version },
+            products: mapToObj(store.products, (product) => [
+              product.id,
+              product.version,
+            ]),
+          };
+        }),
     ),
-    Effect.map((data) => data?.flat() ?? []),
-    Effect.orDieWith((e) => withDieErrorLogger(e, "StoreCVD space record")),
+    Effect.map((data) =>
+      data
+        ? data.reduce(
+            (acc, item) => {
+              return {
+                stores: {
+                  ...acc.stores,
+                  ...item.stores,
+                },
+                products: {
+                  ...acc.products,
+                  ...item.products,
+                },
+              };
+            },
+            {
+              stores: {},
+              products: {},
+            },
+          )
+        : {},
+    ),
+    Effect.orDieWith((e) =>
+      UnknownExceptionLogger(e, "ERROR RETRIEVING STORE CVD"),
+    ),
   );
 
   return cvd;

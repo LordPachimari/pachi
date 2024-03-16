@@ -22,7 +22,7 @@ import {
   type UpdateProductTags,
   type UpdateProductVariant,
   type UploadProductImages,
-} from "../../input-schema/product";
+} from "../../schema-and-types/product";
 
 function productNotFound(id: string) {
   console.info(`Product ${id} not found`);

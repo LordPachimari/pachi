@@ -1,6 +1,9 @@
 import { Effect } from "effect";
 
-import { CreateStoreSchema, UpdateStoreSchema } from "../../input-schema/store";
+import {
+  CreateStoreSchema,
+  UpdateStoreSchema,
+} from "../../schema-and-types/store";
 import { zod } from "../../util/zod";
 import { ServerContext } from "../context";
 
