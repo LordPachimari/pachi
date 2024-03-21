@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { Server } from "../../..";
 
+import { Server } from "../../..";
 
 export const CreateStoreSchema = z.object({
   store: Server.StoreSchema,

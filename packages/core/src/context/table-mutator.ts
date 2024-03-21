@@ -2,11 +2,7 @@ import { Context, type Effect } from "effect";
 import type { ReadonlyJSONObject } from "replicache";
 
 import type { TableName } from "@pachi/db";
-
-import type {
-  AuthorizationError,
-  NotFound,
-} from "@pachi/validators";
+import type { AuthorizationError, NotFound } from "@pachi/validators";
 
 class TableMutator extends Context.Tag("TableMutator")<
   TableMutator,

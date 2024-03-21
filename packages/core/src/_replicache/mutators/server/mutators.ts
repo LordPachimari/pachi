@@ -40,9 +40,7 @@ const DashboardMutators = {
   uploadProductImages,
 };
 
-export const DashboardMutatorsMap = new Map(
-  Object.entries(DashboardMutators),
-);
+export const DashboardMutatorsMap = new Map(Object.entries(DashboardMutators));
 export type DashboardMutatorsType = typeof DashboardMutators;
 export type DashboardMutatorsMapType = typeof DashboardMutatorsMap;
 export const GlobalMutators = {
@@ -50,8 +48,6 @@ export const GlobalMutators = {
   createStore,
   updateStore,
 };
-export const GlobalMutatorsMap = new Map(
-  Object.entries(GlobalMutators),
-);
+export const GlobalMutatorsMap = new Map(Object.entries(GlobalMutators));
 export type GlobalMutatorsType = typeof GlobalMutators;
 export type GlobalMutatorsMapType = typeof GlobalMutatorsMap;

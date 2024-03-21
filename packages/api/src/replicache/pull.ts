@@ -4,7 +4,12 @@ import type { PullResponseOKV1 } from "replicache";
 import { ReplicacheRecordManager } from "@pachi/core";
 import type { Db } from "@pachi/db";
 import { ulid, UnknownExceptionLogger } from "@pachi/utils";
-import type { Cookie, PullRequest, SpaceID, SpaceRecord } from "@pachi/validators";
+import type {
+  Cookie,
+  PullRequest,
+  SpaceID,
+  SpaceRecord,
+} from "@pachi/validators";
 
 export const pull = <T extends SpaceID>({
   spaceID,

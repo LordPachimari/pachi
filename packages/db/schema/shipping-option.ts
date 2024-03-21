@@ -11,7 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { regions } from "./region";
-import {  shippingProviders } from "./shipping-provider";
+import { shippingProviders } from "./shipping-provider";
 import { taxRates } from "./tax-rate";
 
 export const shippingOptions = pgTable(

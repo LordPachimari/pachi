@@ -1,8 +1,8 @@
-import { relations } from "drizzle-orm"
-import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core"
+import { relations } from "drizzle-orm";
+import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
-import { orders } from "./order"
-import { payments } from "./payment"
+import { orders } from "./order";
+import { payments } from "./payment";
 
 export const refunds = pgTable(
   "refunds",
@@ -22,7 +22,7 @@ export const refunds = pgTable(
     orderIdIndex7: index("orderIdIndex7").on(refund.orderId),
     paymentIdIndex: index("paymentIdIndex").on(refund.paymentId),
   }),
-)
+);
 export const RefundRelations = relations(refunds, ({ one }) => ({
   order: one(orders, {
     fields: [refunds.orderId],
@@ -32,4 +32,4 @@ export const RefundRelations = relations(refunds, ({ one }) => ({
     fields: [refunds.paymentId],
     references: [payments.id],
   }),
-}))
+}));

@@ -34,12 +34,7 @@ const paymentStatus = [
   "canceled",
 ] as const;
 
-const orderStatus = [
-  "archived",
-  "canceled",
-  "completed",
-  "awaiting",
-] as const;
+const orderStatus = ["archived", "canceled", "completed", "awaiting"] as const;
 
 export const orders = pgTable(
   "orders",

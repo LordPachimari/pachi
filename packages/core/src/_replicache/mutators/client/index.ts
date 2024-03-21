@@ -1,6 +1,6 @@
 import type { WriteTransaction } from "replicache";
 
-;
+import type { Server } from "..";
 import {
   assignProductOptionValueToVariant,
   createProduct,
@@ -22,7 +22,6 @@ import {
 } from "./product";
 import { createStore, updateStore } from "./store";
 import { createUser } from "./user";
-import type { Server } from "..";
 
 export type DashboardMutatorsType = {
   [key in keyof Server.DashboardMutatorsType]: (

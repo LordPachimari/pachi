@@ -11,13 +11,13 @@ export function calculatePriceTaxAmount({
   includesTax,
   taxRate,
 }: {
-  price: number
-  includesTax?: boolean
-  taxRate: number
+  price: number;
+  includesTax?: boolean;
+  taxRate: number;
 }): number {
   if (includesTax) {
-    return (taxRate * price) / (1 + taxRate)
+    return (taxRate * price) / (1 + taxRate);
   }
 
-  return price * taxRate
+  return price * taxRate;
 }

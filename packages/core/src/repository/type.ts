@@ -1,4 +1,4 @@
-import type{ Server } from "@pachi/validators";
+import type { Server } from "@pachi/validators";
 
 type ResultType<With, Entity> = With extends { [P in keyof Entities]?: true }
   ? Entity & Pick<Entities, Extract<keyof With, keyof Entities>>

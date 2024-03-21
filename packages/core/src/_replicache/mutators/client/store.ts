@@ -1,6 +1,5 @@
 import type { WriteTransaction } from "replicache";
 
-
 import type { Client, CreateStore, UpdateStore } from "@pachi/validators";
 
 async function createStore(tx: WriteTransaction, input: CreateStore) {
@@ -17,7 +16,7 @@ async function updateStore(tx: WriteTransaction, input: UpdateStore) {
     throw new Error(`Store not found`);
   }
   const updated = { ...store, ...updates };
-  
+
   return tx.set(id, updated);
 }
 

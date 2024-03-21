@@ -1,4 +1,4 @@
-import { integer, pgTable, uniqueIndex, varchar } from "drizzle-orm/pg-core"
+import { integer, pgTable, uniqueIndex, varchar } from "drizzle-orm/pg-core";
 
 export const returnReasons = pgTable(
   "return_reasons",
@@ -14,4 +14,4 @@ export const returnReasons = pgTable(
   (t) => ({
     valueIndex: uniqueIndex("valueIndex").on(t.value),
   }),
-)
+);

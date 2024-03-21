@@ -1,4 +1,4 @@
-import type { SpaceID, SpaceRecord } from "@pachi/validators"
+import type { SpaceID, SpaceRecord } from "@pachi/validators";
 
 import { storeCVD } from "./dashboard";
 import { userCVD } from "./global";

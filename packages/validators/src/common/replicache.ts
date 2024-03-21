@@ -1,9 +1,13 @@
+import { createInsertSchema } from "drizzle-zod";
 import { type PatchOperation } from "replicache";
 import { z } from "zod";
 
 import { type TableName } from "@pachi/db";
-import { createInsertSchema } from "drizzle-zod";
-import { replicacheClientGroups, replicacheClients, replicacheSubspaceRecords } from "@pachi/db/schema";
+import {
+  replicacheClientGroups,
+  replicacheClients,
+  replicacheSubspaceRecords,
+} from "@pachi/db/schema";
 
 export const clientGroupSchema = createInsertSchema(replicacheClientGroups);
 export type ClientGroupObject = z.infer<typeof clientGroupSchema>;

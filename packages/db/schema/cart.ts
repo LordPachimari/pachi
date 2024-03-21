@@ -1,12 +1,12 @@
-import { relations } from "drizzle-orm"
-import { index, integer, json, pgTable, varchar } from "drizzle-orm/pg-core"
+import { relations } from "drizzle-orm";
+import { index, integer, json, pgTable, varchar } from "drizzle-orm/pg-core";
 
-import { addresses } from "./address"
-import { cartItems } from "./cart-item"
-import { discounts } from "./discount"
-import { payments } from "./payment"
-import { regions } from "./region"
-import { users } from "./user"
+import { addresses } from "./address";
+import { cartItems } from "./cart-item";
+import { discounts } from "./discount";
+import { payments } from "./payment";
+import { regions } from "./region";
+import { users } from "./user";
 
 export const carts = pgTable(
   "carts",
@@ -58,7 +58,7 @@ export const carts = pgTable(
     paymentIdIndex1: index("paymentIdIndex1").on(cart.paymentId),
     salesChannelIdIndex1: index("salesChannelIdIndex1").on(cart.salesChannelId),
   }),
-)
+);
 export const cartsRelations = relations(carts, ({ one, many }) => ({
   billingAddress: one(addresses, {
     fields: [carts.billingAddressId],
@@ -91,7 +91,7 @@ export const cartsRelations = relations(carts, ({ one, many }) => ({
   //     fields: [Cart.sales_channel_id],
   //     references: [SalesChannel.id],
   //   }),
-}))
+}));
 // export const carts_to_discounts = pgTable(
 //   "carts_to_discounts",
 //   {

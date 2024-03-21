@@ -1,9 +1,9 @@
-import { relations } from "drizzle-orm"
-import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core"
+import { relations } from "drizzle-orm";
+import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
-import { currencies } from "./currency"
-import { priceLists } from "./price-list"
-import { productVariants } from "./product-variant"
+import { currencies } from "./currency";
+import { priceLists } from "./price-list";
+import { productVariants } from "./product-variant";
 
 export const prices = pgTable(
   "prices",
@@ -27,7 +27,7 @@ export const prices = pgTable(
     variantIdIndex: index("variantIdIndex").on(price.variantId),
     currencyCodeIndex: index("currencyCodeIndex").on(price.currencyCode),
   }),
-)
+);
 export const pricesRelations = relations(prices, ({ one }) => ({
   priceLists: one(priceLists, {
     fields: [prices.priceListId],
@@ -41,4 +41,4 @@ export const pricesRelations = relations(prices, ({ one }) => ({
     fields: [prices.variantId],
     references: [productVariants.id],
   }),
-}))
+}));

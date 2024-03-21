@@ -1,8 +1,8 @@
-import { relations } from "drizzle-orm"
-import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core"
+import { relations } from "drizzle-orm";
+import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
-import { products } from "./product"
-import { productOptionValues } from "./product-option-value"
+import { products } from "./product";
+import { productOptionValues } from "./product-option-value";
 
 export const productOptions = pgTable(
   "product_options",
@@ -19,7 +19,7 @@ export const productOptions = pgTable(
   (productOption) => ({
     productIdIndex2: index("productIdIndex2").on(productOption.productId),
   }),
-)
+);
 export const productOptionRelations = relations(
   productOptions,
   ({ one, many }) => ({
@@ -29,4 +29,4 @@ export const productOptionRelations = relations(
     }),
     values: many(productOptionValues),
   }),
-)
+);

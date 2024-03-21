@@ -1,8 +1,8 @@
-import { relations } from "drizzle-orm"
-import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core"
+import { relations } from "drizzle-orm";
+import { index, integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
-import { countries } from "./country"
-import { users } from "./user"
+import { countries } from "./country";
+import { users } from "./user";
 
 export const addresses = pgTable(
   "addresses",
@@ -24,7 +24,7 @@ export const addresses = pgTable(
     customerIdIndex: index("customerIdIndex").on(address.customerId),
     countryCodeIndex: index("countryCodeIndex").on(address.countryCode),
   }),
-)
+);
 export const addressesRelations = relations(addresses, ({ one }) => ({
   customer: one(users, {
     fields: [addresses.customerId],
@@ -34,4 +34,4 @@ export const addressesRelations = relations(addresses, ({ one }) => ({
     fields: [addresses.countryCode],
     references: [countries.countryCode],
   }),
-}))
+}));

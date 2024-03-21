@@ -1,8 +1,8 @@
 import type { WriteTransaction } from "replicache";
 
 import {
-  type Client,
   type AssignProductOptionValueToVariant,
+  type Client,
   type CreateProduct,
   type CreateProductOption,
   type CreateProductPrices,
@@ -372,9 +372,7 @@ async function updateProductPrice(
   await tx.set(product.id, {
     ...product,
     variants: product.variants?.map((v) =>
-      v.id === variantId
-        ? { ...variant, prices: variantPrices }
-        : v,
+      v.id === variantId ? { ...variant, prices: variantPrices } : v,
     ),
   });
 }
@@ -401,9 +399,7 @@ async function deleteProductPrices(
   await tx.set(product.id, {
     ...product,
     variants: product.variants?.map((v) =>
-      v.id === variantId
-        ? { ...variant, prices: variant_prices }
-        : v,
+      v.id === variantId ? { ...variant, prices: variant_prices } : v,
     ),
   });
 }

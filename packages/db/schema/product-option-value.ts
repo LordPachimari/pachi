@@ -1,14 +1,14 @@
-import { relations } from "drizzle-orm"
+import { relations } from "drizzle-orm";
 import {
   index,
   integer,
   pgTable,
   primaryKey,
   varchar,
-} from "drizzle-orm/pg-core"
+} from "drizzle-orm/pg-core";
 
-import { productOptions } from "./product-option"
-import { productVariants } from "./product-variant"
+import { productOptions } from "./product-option";
+import { productVariants } from "./product-variant";
 
 export const productOptionValues = pgTable(
   "product_option_values",
@@ -27,7 +27,7 @@ export const productOptionValues = pgTable(
     ),
     optionIdIndex: index("optionIdIndex").on(productOption.optionId),
   }),
-)
+);
 export const productOptionValuesRelations = relations(
   productOptionValues,
   ({ one, many }) => ({
@@ -37,7 +37,7 @@ export const productOptionValuesRelations = relations(
     }),
     optionValues: many(productOptionValuesToProductVariants),
   }),
-)
+);
 export const productOptionValuesToProductVariants = pgTable(
   "product_option_values_to_product_variants",
   {
@@ -51,9 +51,9 @@ export const productOptionValuesToProductVariants = pgTable(
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey({columns:[t.optionValueId, t.variantId]}),
+    pk: primaryKey({ columns: [t.optionValueId, t.variantId] }),
   }),
-)
+);
 export const productOptionValuesToProductVariantsRelations = relations(
   productOptionValuesToProductVariants,
   ({ one }) => ({
@@ -67,4 +67,4 @@ export const productOptionValuesToProductVariantsRelations = relations(
       references: [productOptionValues.id],
     }),
   }),
-)
+);

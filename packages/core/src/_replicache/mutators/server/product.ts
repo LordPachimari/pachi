@@ -23,11 +23,11 @@ import {
   type Server,
 } from "@pachi/validators";
 
+import { TableMutator } from "../../../..";
 import {
   ProductOptionRepository,
   ProductVariantRepository,
 } from "../../../repository";
-import { TableMutator } from "../../../..";
 import { zod } from "../../../util/zod";
 
 const createProduct = zod(CreateProductSchema, (input) =>

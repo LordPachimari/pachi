@@ -1,5 +1,6 @@
-import type { TableNameToTableMap, Transaction } from "@pachi/db";
 import { Context } from "effect";
+
+import type { TableNameToTableMap, Transaction } from "@pachi/db";
 
 class Database extends Context.Tag("Database")<
   Database,
