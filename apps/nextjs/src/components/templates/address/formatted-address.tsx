@@ -1,8 +1,8 @@
-import type { Address } from "@pachi/db";
+import type { Client } from "@pachi/validators";
 
 type FormattedAddressProps = {
   title: string;
-  addr?: Address;
+  addr?: Client.Address;
 };
 
 export const FormattedAddress = ({ title, addr }: FormattedAddressProps) => {

@@ -2,20 +2,15 @@ import { enableMapSet } from "immer";
 import type { Replicache } from "replicache";
 import { create } from "zustand";
 
-import type {
-  ClientDashboardMutatorsType,
-  ClientGlobalMutatorsType,
-} from "@pachi/core";
+import type { DashboardMutatorsType, GlobalMutatorsType } from "@pachi/core";
 
 enableMapSet();
 
 interface ReplicacheState {
-  globalRep: Replicache<ClientGlobalMutatorsType> | null;
-  setGlobalRep: (rep: Replicache<ClientGlobalMutatorsType> | null) => void;
-  dashboardRep: Replicache<ClientDashboardMutatorsType> | null;
-  setDashboardRep: (
-    rep: Replicache<ClientDashboardMutatorsType> | null,
-  ) => void;
+  globalRep: Replicache<GlobalMutatorsType> | null;
+  setGlobalRep: (rep: Replicache<GlobalMutatorsType> | null) => void;
+  dashboardRep: Replicache<DashboardMutatorsType> | null;
+  setDashboardRep: (rep: Replicache<DashboardMutatorsType> | null) => void;
 }
 
 export const useReplicache = create<ReplicacheState>((set) => ({

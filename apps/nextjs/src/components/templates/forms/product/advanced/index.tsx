@@ -1,8 +1,7 @@
 import { useCallback } from "react";
 import debounce from "lodash.debounce";
 
-import type { UpdateProductVariant } from "@pachi/core";
-import type { ProductVariant, ProductVariantUpdates } from "@pachi/db";
+import type { Client, UpdateProductVariant } from "@pachi/validators";
 
 import InputField from "~/components/molecules/input-field";
 import { Separator } from "~/components/ui/separator";
@@ -10,21 +9,24 @@ import { Info } from "../info";
 
 interface AdvancedProps {
   updateVariant: (props: UpdateProductVariant) => Promise<void>;
-  variant: ProductVariant | undefined;
+  variant: Client.ProductVariant | undefined;
 }
 
 export default function Advanced({ updateVariant, variant }: AdvancedProps) {
   const onInputChange = useCallback(
-    debounce(async ({ updates }: { updates: ProductVariantUpdates }) => {
-      console.log("updates", updates);
+    debounce(
+      async ({ updates }: { updates: UpdateProductVariant["updates"] }) => {
+        console.log("updates", updates);
 
-      if (variant)
-        await updateVariant({
-          updates,
-          variantId: variant.id,
-          productId: variant.productId,
-        });
-    }, 500),
+        if (variant)
+          await updateVariant({
+            updates,
+            variantId: variant.id,
+            productId: variant.productId,
+          });
+      },
+      500,
+    ),
     [updateVariant],
   );
   console.log("variant", variant);

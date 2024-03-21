@@ -7,7 +7,7 @@ type CustomerNoteProps = {
   customer_id: string;
 };
 
-const CustomerNote: React.FC<CustomerNoteProps> = ({ customer_id }) => {
+const CustomerNote: React.FC<CustomerNoteProps> = () => {
   return (
     <Card className="w-full rounded-xl ">
       <CardHeader>Note to customer</CardHeader>

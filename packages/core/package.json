@@ -19,7 +19,7 @@
     "drizzle-orm": "^0.30.4",
     "effect": "^2.4.1",
     "remeda": "^1.36.0",
-    "replicache": "14.0.3",
+    "replicache": "14.1.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {

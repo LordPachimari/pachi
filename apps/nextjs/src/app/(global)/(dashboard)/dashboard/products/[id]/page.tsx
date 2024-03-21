@@ -4,15 +4,16 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import debounce from "lodash.debounce";
 
+import { generateId, ulid } from "@pachi/utils";
 import type {
+  AssignProductOptionValueToVariant,
+  Image,
+  UpdateProduct,
   UpdateProductImagesOrder,
   UpdateProductPrice,
   UpdateProductVariant,
   UploadProductImages,
-} from "@pachi/core";
-import type { AssignProductOptionValueToVariant } from "@pachi/core/src/input-schema/product";
-import { type Image, type ProductUpdates } from "@pachi/db";
-import { generateId, ulid } from "@pachi/utils";
+} from "@pachi/validators";
 
 import ProductOverview from "~/app/(global)/(dashboard)/dashboard/products/_components/product-overview";
 import Advanced from "~/components/templates/forms/product/advanced";
@@ -63,7 +64,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   }, [router, storeId]);
 
   const updateProduct = useCallback(
-    async ({ updates }: { updates: ProductUpdates }) => {
+    async (updates: UpdateProduct["updates"]) => {
       if (dashboardRep) {
         await dashboardRep.mutate.updateProduct({
           id,
@@ -75,8 +76,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   );
 
   const onInputChange = useCallback(
-    debounce(async ({ updates }: { updates: ProductUpdates }) => {
-      await updateProduct({ updates });
+    debounce(async (updates: UpdateProduct["updates"]) => {
+      await updateProduct(updates);
     }, 500),
     [updateProduct],
   );
@@ -92,7 +93,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     [dashboardRep],
   );
   const updateVariant = useCallback(
-    //s
     async ({ updates, variantId, productId }: UpdateProductVariant) => {
       await dashboardRep?.mutate.updateProductVariant({
         updates,
@@ -245,11 +245,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </TabsContent>
             <TabsContent key="organize" value="organize">
               <ScrollArea className="h-product-input  ">
-                <Organize
-                  onInputChange={onInputChange}
-                  productId={id}
-                  productTags={product?.tags ?? []}
-                />
+                <Organize onInputChange={onInputChange} productId={id} />
               </ScrollArea>
             </TabsContent>
             <TabsContent key="advanced" value="advanced">

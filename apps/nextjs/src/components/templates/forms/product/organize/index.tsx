@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import type { ProductTag, ProductUpdates } from "@pachi/db";
+import type { UpdateProduct } from "@pachi/validators";
 
 import InputField from "~/components/molecules/input-field";
 import InputHeader from "~/components/molecules/input-header";
@@ -11,35 +11,11 @@ import type { DebouncedFunc } from "~/types";
 interface OrganizeProps {
   productId: string;
   onInputChange: DebouncedFunc<
-    ({ updates }: { updates: ProductUpdates }) => Promise<void>
+    (updates: UpdateProduct["updates"]) => Promise<void>
   >;
-  productTags: ProductTag[];
 }
 
-export default function Organize({
-  productId,
-  onInputChange,
-  productTags,
-}: OrganizeProps) {
-  const [tags, setTags] = useState<string[]>([]);
-
-  //TODO: fix this
-  // const onTagsChange = useCallback(
-  //   debounce(async (tags: string[]) => {
-  //     await dashboardRep?.mutate.updateProductTags({
-  //       args: {
-  //         productId,
-  //         tags,
-  //       },
-  //     });
-  //   }, 500),
-  //   [dashboardRep, productId],
-  // );
-  useEffect(() => {
-    const tags = productTags.map((t) => t.value) ?? [];
-    setTags(tags);
-  }, [productTags]);
-
+export default function Organize({ onInputChange }: OrganizeProps) {
   return (
     <div className="flex w-full flex-col gap-2 px-4 pb-2 pt-0">
       <InputField label="Product category" />
@@ -47,9 +23,7 @@ export default function Organize({
         label="Product type"
         onChange={(e) =>
           onInputChange({
-            updates: {
-              type: e.target.value,
-            },
+            type: e.target.value,
           })
         }
       />

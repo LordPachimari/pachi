@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import type { Product, ProductUpdates } from "@pachi/db";
+import type { Client, UpdateProduct } from "@pachi/validators";
 
 import {
   AlertDialog,
@@ -16,8 +16,8 @@ import { Label } from "~/components/ui/label";
 import { RadioGroup } from "~/components/ui/radio-group";
 
 interface ProductStatusProps {
-  updateProduct: ({ updates }: { updates: ProductUpdates }) => Promise<void>;
-  status: Product["status"];
+  updateProduct: (props: UpdateProduct["updates"]) => Promise<void>;
+  status: Client.Product["status"];
 }
 
 export default function ProductStatus({
@@ -26,10 +26,10 @@ export default function ProductStatus({
 }: ProductStatusProps) {
   const [open, setOpen] = useState(false);
   const [open1, setOpen1] = useState(false);
-  const [value, setValue] = useState<"published" | "draft">("published");
+  const [value, setValue] = useState<Client.Product["status"]>("published");
 
   useEffect(() => {
-    setValue(status as "published" | "draft");
+    setValue(status);
     setOpen(false);
   }, [status]);
 
@@ -52,7 +52,7 @@ export default function ProductStatus({
               className="bg-brand"
               onClick={async () => {
                 setValue("published");
-                await updateProduct({ updates: { status: "published" } });
+                await updateProduct({ status: "published" });
               }}
             >
               Continue
@@ -75,7 +75,7 @@ export default function ProductStatus({
             <AlertDialogAction
               onClick={async () => {
                 setValue("draft");
-                await updateProduct({ updates: { status: "draft" } });
+                await updateProduct({ status: "draft" });
                 setOpen1(false);
               }}
             >

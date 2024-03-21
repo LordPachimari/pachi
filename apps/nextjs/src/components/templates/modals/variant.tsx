@@ -4,17 +4,13 @@ import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 
 import type {
   AssignProductOptionValueToVariant,
+  Client,
+  Image,
   UpdateProductImagesOrder,
   UpdateProductPrice,
   UpdateProductVariant,
   UploadProductImages,
-} from "@pachi/core";
-import type {
-  Image,
-  ProductOption,
-  ProductOptionValue,
-  ProductVariant,
-} from "@pachi/db";
+} from "@pachi/validators";
 
 import Inventory from "../forms/product/general/inventory";
 import Media from "../forms/product/general/media";
@@ -26,8 +22,8 @@ interface VariantModalProps {
   productId: string;
   images: Image[];
   // trigger: React.ReactNode;
-  options: ProductOption[];
-  variant: ProductVariant;
+  options: Client.ProductOption[];
+  variant: Client.ProductVariant;
   storeId: string;
   uploadProductImages: (props: UploadProductImages) => Promise<void>;
   updatePrice: (props: UpdateProductPrice) => Promise<void>;
@@ -71,13 +67,10 @@ export default function VariantModal({
     if (variant.optionValues && variant.optionValues.length > 0) {
       const variantOptionsMap = variant.optionValues.reduce(
         (acc, optionValue) => {
-          if (
-            optionValue.optionValue.option?.name &&
-            optionValue.optionValue.value
-          ) {
-            acc[optionValue.optionValue.option.name] = {
-              id: optionValue.optionValue.id,
-              value: optionValue.optionValue.value,
+          if (optionValue.value.option?.name && optionValue.value.value) {
+            acc[optionValue.value.option.name] = {
+              id: optionValue.value.id,
+              value: optionValue.value.value,
             };
 
             return acc;
@@ -100,7 +93,7 @@ export default function VariantModal({
 
       return acc;
     },
-    {} as Record<string, ProductOptionValue[]>,
+    {} as Record<string, Client.ProductOptionValue[]>,
   );
   const onSelected = useCallback(
     async ({

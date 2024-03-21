@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { z } from "zod";
 
-import type { UserAuth } from "@pachi/core";
+import type { UserAuth } from "@pachi/validators";
 
 import { LUCIA_COOKIE_NAME } from "~/constants";
 import { env } from "~/env.mjs";

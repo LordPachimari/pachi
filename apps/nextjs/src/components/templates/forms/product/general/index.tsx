@@ -1,10 +1,12 @@
-import type {
-  UpdateProductImagesOrder,
-  UpdateProductPrice,
-  UpdateProductVariant,
-  UploadProductImages,
-} from "@pachi/core";
-import type { Image, Product, ProductUpdates, Store } from "@pachi/db";
+import {
+  type Client,
+  type Image,
+  type UpdateProduct,
+  type UpdateProductImagesOrder,
+  type UpdateProductPrice,
+  type UpdateProductVariant,
+  type UploadProductImages,
+} from "@pachi/validators";
 
 import { Separator } from "~/components/ui/separator";
 import type { DebouncedFunc } from "~/types";
@@ -16,11 +18,11 @@ import ProductStatus from "./product-status";
 import TitleAndDescription from "./title-description";
 
 interface GeneralProps {
-  product: Product;
+  product: Client.Product;
   onInputChange: DebouncedFunc<
-    ({ updates }: { updates: ProductUpdates }) => Promise<void>
+    (props: UpdateProduct["updates"]) => Promise<void>
   >;
-  updateProduct: (props: { updates: ProductUpdates }) => Promise<void>;
+  updateProduct: (props: UpdateProduct["updates"]) => Promise<void>;
   updatePrice: (props: UpdateProductPrice) => Promise<void>;
   updateVariant: (props: UpdateProductVariant) => Promise<void>;
   files: Image[];
@@ -31,7 +33,7 @@ interface GeneralProps {
     productId,
     variantId,
   }: UpdateProductImagesOrder) => Promise<void>;
-  store: Store;
+  store: Client.Store;
 }
 
 export function General({

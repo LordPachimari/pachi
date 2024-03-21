@@ -3,14 +3,13 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import { toast as sonnerToast } from "sonner";
 
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { Icons } from "~/components/ui/icons";
 import { Input } from "~/components/ui/input";
-import { createUser } from "../_actions/user/create-user";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -31,29 +30,29 @@ function SubmitButton() {
 
 interface UsernameFormState {
   username: string;
-  type: Awaited<ReturnType<typeof createUser>>["type"];
+  // type: Awaited<ReturnType<typeof createUser>>["type"];
 }
 
 export default function UsernamePage() {
   const initialState: UsernameFormState = {
     username: "",
-    type: "NONE",
+    // type: "NONE",
   };
-  const [state, formAction] = useFormState(createUser, initialState);
+  // const [state, formAction] = useFormState(createUser, initialState);
 
-  useEffect(() => {
-    //@ts-ignore
-    if (state.type === "FAIL") {
-      //@ts-ignore
-      toast.error(state.message);
-    }
+  // useEffect(() => {
+  //   //@ts-ignore
+  //   if (state.type === "FAIL") {
+  //     //@ts-ignore
+  //     toast.error(state.message);
+  //   }
 
-    //@ts-ignore
-    if (state.type === "SUCCESS") {
-      //@ts-ignore
-      toast.success(state.message);
-    }
-  }, [state]);
+  //   //@ts-ignore
+  //   if (state.type === "SUCCESS") {
+  //     //@ts-ignore
+  //     toast.success(state.message);
+  //   }
+  // }, [state]);
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-red-50 dark:bg-slate-4">
@@ -62,7 +61,7 @@ export default function UsernamePage() {
           <h3 className="prone text-md mb-4 font-bold ">Enter username</h3>
         </CardHeader>
         <CardContent>
-          <form className="grid w-full" action={formAction}>
+          {/* <form className="grid w-full" action={formAction}>
             <label className="sr-only" htmlFor="username">
               Username
             </label>
@@ -75,7 +74,7 @@ export default function UsernamePage() {
             <div className="flex w-full justify-end pt-4">
               <SubmitButton />
             </div>
-          </form>
+          </form> */}
         </CardContent>
       </Card>
     </div>

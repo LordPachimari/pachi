@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-import type { UpdateProductPrice } from "@pachi/core";
-import { type ProductVariant } from "@pachi/db";
+import type { Client, UpdateProductPrice } from "@pachi/validators";
 
 import { CurrenciesTable } from "~/app/(global)/(dashboard)/dashboard/products/_components/currency-table";
 import CurrencyModal from "~/components/templates/modals/currency";
@@ -11,7 +10,7 @@ import { CurrencyInput } from "./currency-input";
 
 interface PricingProps {
   updatePrice: (props: UpdateProductPrice) => Promise<void>;
-  variant: ProductVariant;
+  variant: Client.ProductVariant;
   productCurrencyCodes: string[];
   storeId: string;
   productId: string;

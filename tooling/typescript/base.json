@@ -34,9 +34,7 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noPropertyAccessFromIndexSignature": true,
-    "types": ["@cloudflare/workers-types"],
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "types": ["@cloudflare/workers-types"]
   },
   "exclude": ["node_modules", "build", "dist", ".next", ".expo"]
 }

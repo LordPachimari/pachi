@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { PublishedProduct } from "@pachi/db";
+import type { Client } from "@pachi/validators";
 
 import Grid from "~/components/ui/grid";
 import { GridTileImage } from "./tile";
@@ -8,7 +8,7 @@ import { GridTileImage } from "./tile";
 export default function ProductGridItems({
   products,
 }: {
-  products: PublishedProduct[];
+  products: Client.PublishedProduct[];
 }) {
   return (
     <>

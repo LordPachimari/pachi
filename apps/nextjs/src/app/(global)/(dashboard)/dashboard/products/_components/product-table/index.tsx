@@ -3,8 +3,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { PlusIcon } from "@radix-ui/react-icons";
 import type { ColumnDef } from "@tanstack/react-table";
 
-import type { Price, Product } from "@pachi/db";
 import { generateId, ulid } from "@pachi/utils";
+import type { Client } from "@pachi/validators";
 
 import { Table } from "~/components/table/table";
 import { useTable } from "~/components/table/use-table";
@@ -30,7 +30,7 @@ function ProductsTable({ storeId }: Readonly<ProductsTableProps>) {
 
   const router = useRouter();
   // Memoize the columns so they don't re-render on every render
-  const columns = useMemo<ColumnDef<Product, unknown>[]>(
+  const columns = useMemo<ColumnDef<Client.Product, unknown>[]>(
     () => getProductsColumns(),
     [],
   );
@@ -63,7 +63,7 @@ function ProductsTable({ storeId }: Readonly<ProductsTableProps>) {
           version: 0,
         },
         prices: (store.currencies ?? []).map((currencyCode) => {
-          const price: Price = {
+          const price: Client.Price = {
             id: generateId({ id: ulid(), prefix: "price" }),
             currencyCode,
             amount: 0,

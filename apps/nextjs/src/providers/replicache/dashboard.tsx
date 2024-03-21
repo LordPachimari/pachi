@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { Replicache } from "replicache";
 
-import { ClientDashboardMutators } from "@pachi/core";
+import { DashboardMutators } from "@pachi/core";
 
 import { env } from "~/env.mjs";
 import { useReplicache } from "~/zustand/replicache";
@@ -27,7 +27,7 @@ function DashboardReplicacheProvider({
       licenseKey: env.NEXT_PUBLIC_REPLICACHE_KEY,
       pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/dashboard?userID=${userID}`,
       pullURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/dashboard?userID=${userID}`,
-      mutators: ClientDashboardMutators,
+      mutators: DashboardMutators,
       pullInterval: null,
     });
     setDashboardRep(r);

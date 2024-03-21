@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 
-import type { ProductOption } from "@pachi/db";
+import type { Client } from "@pachi/validators";
 
 import TagInput from "~/components/molecules/tag-input";
 import { Input } from "~/components/ui/input";
 import type { DebouncedFunc } from "~/types";
 
 interface OptionProps {
-  option: ProductOption;
+  option: Client.ProductOption;
   onOptionNameChange: DebouncedFunc<
     (id: string, name: string) => Promise<void>
   >;

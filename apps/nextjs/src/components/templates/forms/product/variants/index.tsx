@@ -1,4 +1,4 @@
-import type { ProductOption, ProductVariant } from "@pachi/db";
+import type { Client } from "@pachi/validators";
 
 import { Separator } from "~/components/ui/separator";
 import { Info } from "../info";
@@ -6,8 +6,8 @@ import CreateOption from "./create-option";
 
 interface VariantsProps {
   productId: string;
-  options: ProductOption[];
-  variants: ProductVariant[];
+  options: Client.ProductOption[];
+  variants: Client.ProductVariant[];
   createVariant: () => Promise<void>;
   openVariantModal: (prop: { variantId: string }) => void;
 }

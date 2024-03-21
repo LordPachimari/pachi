@@ -1,4 +1,4 @@
-import type { ProductUpdates } from "@pachi/db";
+import type { UpdateProduct } from "@pachi/validators";
 
 import { Switch } from "../../../../ui/switch";
 
@@ -8,7 +8,7 @@ export type DiscountableFormType = {
 
 type Props = {
   discountable: boolean | undefined;
-  updateProduct: ({ updates }: { updates: ProductUpdates }) => Promise<void>;
+  updateProduct: (props: UpdateProduct["updates"]) => Promise<void>;
 };
 
 const Discountable = ({ discountable = false, updateProduct }: Props) => {
@@ -19,7 +19,7 @@ const Discountable = ({ discountable = false, updateProduct }: Props) => {
       <Switch
         checked={discountable}
         onCheckedChange={async (checked) =>
-          await updateProduct({ updates: { discountable: checked } })
+          await updateProduct({ discountable: checked })
         }
       />
     </div>

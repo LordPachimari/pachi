@@ -7,8 +7,8 @@ import type {
 import type { Transform } from "@dnd-kit/utilities";
 import { Loader2Icon } from "lucide-react";
 
-import type { Image as ImageType } from "@pachi/db";
 import { cn } from "@pachi/utils";
+import type { Image as ImageType } from "@pachi/validators";
 
 import { Handle, Remove } from "./components";
 import styles from "./Item.module.css";

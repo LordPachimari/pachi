@@ -9,9 +9,8 @@ import { toast } from "sonner";
 import { ulid } from "ulid";
 import type { UploadFileResponse } from "uploadthing/client";
 
-import type { UploadProductImages } from "@pachi/core";
-import type { Image } from "@pachi/db";
 import { cn, formatBytes, generateId } from "@pachi/utils";
+import type { Image, UploadProductImages } from "@pachi/validators";
 
 import { Icons } from "../ui/icons";
 

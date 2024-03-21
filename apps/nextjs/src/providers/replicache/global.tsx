@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { Replicache, type PullResponseOKV1 } from "replicache";
+import { Replicache } from "replicache";
 
-import { ClientGlobalMutators } from "@pachi/core";
+import "@pachi/core";
+
+import { GlobalMutators } from "@pachi/core";
 
 import { env } from "~/env.mjs";
 import { useReplicache } from "~/zustand/replicache";
@@ -28,8 +30,9 @@ export default function GlobalReplicacheProvider({
       licenseKey: env.NEXT_PUBLIC_REPLICACHE_KEY,
       pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/global?userID=${userID}`,
       // pullURL: `${env.NEXT_PUBLIC_WORKER_DEV_URL}/pull/global?userID=${userID}`,
-      mutators: ClientGlobalMutators,
+      mutators: GlobalMutators,
       pullInterval: null,
+      //@ts-ignore
       puller: async (req) => {
         const result = await fetch(
           `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/global?userID=${userID}`,

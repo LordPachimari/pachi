@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 
-import type { Price } from "@pachi/db";
-import { currencies, type CurrencyType } from "@pachi/types";
 import { generateId, ulid } from "@pachi/utils";
+import { currencies, type Client, type CurrencyType } from "@pachi/validators";
 
 import { Table } from "~/components/table/table";
 import { useTable } from "~/components/table/use-table";
@@ -12,7 +11,7 @@ import { getCurrenciesColumns } from "./columns";
 
 interface CurrencyTableProps {
   productCurrencyCodes: string[];
-  prices: Price[];
+  prices: Client.Price[];
   variantId: string;
   storeId: string;
   productId: string;
@@ -51,7 +50,7 @@ function CurrenciesTable({
       prices.map((price) => price.currencyCode),
     );
     const priceIdsToDelete: string[] = [];
-    const pricesToCreate: Price[] = [];
+    const pricesToCreate: Client.Price[] = [];
     const selectedRowIds = table
       .getSelectedRowModel()
       .rows.map((row) => row.id);

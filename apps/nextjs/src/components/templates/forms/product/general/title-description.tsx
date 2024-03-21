@@ -1,4 +1,4 @@
-import type { ProductUpdates } from "@pachi/db";
+import type { UpdateProduct } from "@pachi/validators";
 
 import TitleField from "~/components/molecules/title-field";
 import { Textarea } from "~/components/ui/textarea";
@@ -9,7 +9,7 @@ interface TitleAndDescriptionProps {
   description: string | null | undefined;
 
   onInputChange: DebouncedFunc<
-    ({ updates }: { updates: ProductUpdates }) => Promise<void>
+    (props: UpdateProduct["updates"]) => Promise<void>
   >;
 }
 
@@ -22,11 +22,7 @@ export default function TitleAndDescription({
 
   return (
     <div>
-      <TitleField
-        error={{ error: false }}
-        value={title ?? ""}
-        onChange={onInputChange}
-      />
+      <TitleField value={title ?? ""} onChange={onInputChange} />
       <Textarea
         placeholder={
           isGiftCard ? "The gift card is..." : "A warm and cozy jacket..."
@@ -34,9 +30,7 @@ export default function TitleAndDescription({
         rows={3}
         defaultValue={description ?? ""}
         onChange={async (e) =>
-          await onInputChange({
-            updates: { description: e.currentTarget.value },
-          })
+          await onInputChange({ description: e.currentTarget.value })
         }
       />
     </div>

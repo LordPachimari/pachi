@@ -313,8 +313,8 @@ importers:
         specifier: ^1.36.0
         version: 1.36.0
       replicache:
-        specifier: 14.0.3
-        version: 14.0.3
+        specifier: 14.1.0
+        version: 14.1.0
       replicache-react:
         specifier: ^3.1.0
         version: 3.1.0(react-dom@18.2.0)(react@18.2.0)
@@ -505,8 +505,8 @@ importers:
         specifier: ^1.36.0
         version: 1.36.0
       replicache:
-        specifier: 14.0.3
-        version: 14.0.3
+        specifier: 14.1.0
+        version: 14.1.0
       superjson:
         specifier: 2.2.0
         version: 2.2.0
@@ -591,8 +591,8 @@ importers:
         specifier: ^1.36.0
         version: 1.36.0
       replicache:
-        specifier: 14.0.3
-        version: 14.0.3
+        specifier: 14.1.0
+        version: 14.1.0
       zod:
         specifier: ^3.22.2
         version: 3.22.2
@@ -634,8 +634,8 @@ importers:
         specifier: ^8.11.3
         version: 8.11.3
       replicache:
-        specifier: 14.0.3
-        version: 14.0.3
+        specifier: 14.1.0
+        version: 14.1.0
       valibot:
         specifier: ^0.17.1
         version: 0.17.1
@@ -14538,8 +14538,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /replicache@14.0.3:
-    resolution: {integrity: sha512-BXj8Wg2LS15h+3H66ws5XDHlNT88mLjqEkvxhecg4OaqnfNMBJRr5/gM9Chu4gVciH5w90G1X6JTsshgvW2FBg==}
+  /replicache@14.1.0:
+    resolution: {integrity: sha512-hFCnTBvFTw4j/cggSlzPkDpFkXnYGgSI18qYBTRtPR24m+J92dGvorGqh9+CFvzeSxF+VTf7zeAvF/MKqb3y+w==}
     engines: {node: '>=14.8.0'}
     hasBin: true
     dependencies:

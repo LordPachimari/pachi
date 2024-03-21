@@ -7,12 +7,6 @@ import { cn } from "@pachi/utils";
 import { inputBaseStyles } from "../ui/input";
 import InputHeader from "./input-header";
 
-const ENTER_KEY = 13;
-const TAB_KEY = 9;
-const BACKSPACE_KEY = 8;
-const ARROW_LEFT_KEY = 37;
-const ARROW_RIGHT_KEY = 39;
-
 type TagInputProps = {
   onChange: (values: string[]) => void;
   onValidate?: (value: string) => void;

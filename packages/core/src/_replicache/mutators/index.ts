@@ -1,2 +1,2 @@
-export * as Client from "./client";
+export * from "./client";
 export * as Server from "./server";

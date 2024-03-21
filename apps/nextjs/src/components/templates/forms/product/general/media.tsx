@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
 
 import type {
+  Image,
   UpdateProductImagesOrder,
   UploadProductImages,
-} from "@pachi/core";
-import type { Image } from "@pachi/db";
+} from "@pachi/validators";
 
 import type { OurFileRouter } from "~/app/api/uploadthing/core";
 import { FileUpload } from "~/components/molecules/file-upload";

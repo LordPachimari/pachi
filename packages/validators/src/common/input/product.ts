@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { ImageSchema, Server } from "../../..";
+import { ProductSchema, ProductVariantSchema } from "../../server";
 
 export const CreateProductSchema = z.object({
   product: Server.ProductSchema,
@@ -11,8 +12,17 @@ export const DeleteInputSchema = z.object({
   id: z.string(),
 });
 export type DeleteInput = z.infer<typeof DeleteInputSchema>;
+
+const ProductUpdatesSchema = ProductSchema.pick({
+  title: true,
+  description: true,
+  discountable: true,
+  status: true,
+  type: true,
+});
+
 export const UpdateProductSchema = z.object({
-  updates: Server.ProductUpdatesSchema,
+  updates: ProductUpdatesSchema,
   id: z.string(),
 });
 export type UpdateProduct = z.infer<typeof UpdateProductSchema>;
@@ -64,10 +74,29 @@ export const CreateProductVariantSchema = z.object({
   variant: Server.ProductVariantSchema,
 });
 export type CreateProductVariant = z.infer<typeof CreateProductVariantSchema>;
+const ProductVariantUpdatesSchema = ProductVariantSchema.pick({
+  title: true,
+  barcode: true,
+  ean: true,
+  height: true,
+  hsCode: true,
+  quantity: true,
+  metadata: true,
+  material: true,
+  midCode: true,
+  sku: true,
+  weight: true,
+  width: true,
+  upc: true,
+  allowBackorder: true,
+  length: true,
+  originCountry: true,
+});
+
 export const UpdateProductVariantSchema = z.object({
   variantId: z.string(),
   productId: z.string(),
-  updates: Server.ProductVariantUpdatesSchema,
+  updates: ProductVariantUpdatesSchema,
 });
 export type UpdateProductVariant = z.infer<typeof UpdateProductVariantSchema>;
 export const DeleteProductVariantSchema = z.object({

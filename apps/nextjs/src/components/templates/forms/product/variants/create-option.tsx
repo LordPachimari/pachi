@@ -5,13 +5,12 @@ import debounce from "lodash.debounce";
 import { Trash2Icon } from "lucide-react";
 import { ulid } from "ulid";
 
-import type { DeleteProductOption, DeleteProductVariant } from "@pachi/core";
-import type {
-  ProductOption,
-  ProductOptionValue,
-  ProductVariant,
-} from "@pachi/db";
 import { generateId } from "@pachi/utils";
+import type {
+  Client,
+  DeleteProductOption,
+  DeleteProductVariant,
+} from "@pachi/validators";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -26,8 +25,8 @@ import Option from "./option";
 
 interface CreateOptionProps {
   productId: string;
-  options: ProductOption[];
-  variants: ProductVariant[];
+  options: Client.ProductOption[];
+  variants: Client.ProductVariant[];
   createVariant: () => Promise<void>;
   openVariantModal: (prop: { variantId: string }) => void;
 }
@@ -42,7 +41,7 @@ export default function CreateOption({
   const { dashboardRep } = useReplicache();
   const createOption = useCallback(async () => {
     const id = generateId({ id: ulid(), prefix: "opt" });
-    const option: ProductOption = { id, productId };
+    const option: Client.ProductOption = { id, productId };
     await dashboardRep?.mutate.createProductOption({ option });
   }, [dashboardRep, productId]);
   const deleteOption = useCallback(
@@ -66,12 +65,14 @@ export default function CreateOption({
   );
   const onOptionValuesChange = useCallback(
     debounce(async (optionId: string, values: string[]) => {
-      const newOptionValues: ProductOptionValue[] = values.map((value) => ({
-        id: generateId({ id: ulid(), prefix: "opt_val" }),
-        optionId,
-        value,
-        option: options.find((o) => o.id === optionId)!,
-      }));
+      const newOptionValues: Client.ProductOptionValue[] = values.map(
+        (value) => ({
+          id: generateId({ id: ulid(), prefix: "opt_val" }),
+          optionId,
+          value,
+          option: options.find((o) => o.id === optionId)!,
+        }),
+      );
 
       await dashboardRep?.mutate.updateProductOptionValues({
         optionId,
@@ -180,7 +181,7 @@ export default function CreateOption({
                   <span className="flex h-3/5 gap-2">
                     <p className="w-20 text-sm">
                       {variant.optionValues
-                        ?.map((ov) => `${ov.optionValue.value}`)
+                        ?.map((ov) => `${ov.value.value}`)
                         .join("/")}
                     </p>
                     <p className="w-20 text-sm">

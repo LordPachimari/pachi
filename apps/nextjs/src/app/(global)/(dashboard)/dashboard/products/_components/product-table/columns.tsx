@@ -10,8 +10,7 @@ import {
 import type { ColumnDef } from "@tanstack/react-table";
 import { CircleIcon } from "lucide-react";
 
-import type { Product } from "@pachi/db";
-import { products } from "@pachi/db/schema";
+import type { Client } from "@pachi/validators";
 
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
 import { TableColumnHeader } from "~/components/table/column-header";
@@ -22,24 +21,14 @@ import type {
   DataTableSearchableColumn,
 } from "~/types";
 
-function StatusIcon({ status }: { status: Product["status"] }) {
+function StatusIcon({ status }: { status: Client.Product["status"] }) {
   return status === "draft" ? (
     <CrossCircledIcon
       className="mr-2 h-4 w-4 text-muted-foreground"
       aria-hidden="true"
     />
-  ) : status === "proposed" ? (
-    <CheckCircledIcon
-      className="mr-2 h-4 w-4 text-muted-foreground"
-      aria-hidden="true"
-    />
   ) : status === "published" ? (
     <StopwatchIcon
-      className="mr-2 h-4 w-4 text-muted-foreground"
-      aria-hidden="true"
-    />
-  ) : status === "rejected" ? (
-    <QuestionMarkCircledIcon
       className="mr-2 h-4 w-4 text-muted-foreground"
       aria-hidden="true"
     />
@@ -51,7 +40,7 @@ function StatusIcon({ status }: { status: Product["status"] }) {
   );
 }
 
-export function getProductsColumns(): ColumnDef<Product, unknown>[] {
+export function getProductsColumns(): ColumnDef<Client.Product, unknown>[] {
   return [
     {
       id: "select",
@@ -164,17 +153,18 @@ export function getProductsColumns(): ColumnDef<Product, unknown>[] {
     },
   ];
 }
-export const filterableColumns: DataTableFilterableColumn<Product>[] = [
+export const filterableColumns: DataTableFilterableColumn<Client.Product>[] = [
   {
     id: "status",
     title: "Status",
-    options: products.status.enumValues.map((status) => ({
+    //TODO: GET ENUM
+    options: ["draft", "published"].map((status) => ({
       label: status[0]?.toUpperCase() + status.slice(1),
       value: status,
     })),
   },
 ];
-export const searchableColumns: DataTableSearchableColumn<Product>[] = [
+export const searchableColumns: DataTableSearchableColumn<Client.Product>[] = [
   {
     id: "title",
     title: "titles",

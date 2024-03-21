@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { UserAuthSchema, type UserAuth } from "@pachi/core";
 import { cn } from "@pachi/utils";
+import { UserAuthSchema, type UserAuth } from "@pachi/validators";
 
 import { login } from "~/app/_actions/auth/login";
 import { register as registerAction } from "~/app/_actions/auth/register";

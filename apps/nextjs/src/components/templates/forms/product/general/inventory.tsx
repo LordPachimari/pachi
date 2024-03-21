@@ -2,8 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import debounce from "lodash.debounce";
 
-import type { UpdateProductVariant } from "@pachi/core";
-import type { ProductVariant, ProductVariantUpdates } from "@pachi/db";
+import type { Client, UpdateProductVariant } from "@pachi/validators";
 
 import InputField from "~/components/molecules/input-field";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -11,12 +10,12 @@ import { Input } from "~/components/ui/input";
 
 interface InventoryProps {
   updateVariant: (props: UpdateProductVariant) => Promise<void>;
-  variant: ProductVariant;
+  variant: Client.ProductVariant;
 }
 
 const Inventory = ({ updateVariant, variant }: InventoryProps) => {
   const onInputChange = useCallback(
-    debounce(async ({ updates }: { updates: ProductVariantUpdates }) => {
+    debounce(async (updates: UpdateProductVariant["updates"]) => {
       await updateVariant({
         updates,
         variantId: variant.id,
@@ -43,9 +42,7 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
         defaultValue={variant.quantity ?? 0}
         min={0}
         onChange={async (e) => {
-          await onInputChange({
-            updates: { quantity: e.currentTarget.valueAsNumber },
-          });
+          await onInputChange({ quantity: e.currentTarget.valueAsNumber });
         }}
       />
       <span className="flex items-center gap-2">
@@ -81,9 +78,7 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
                 placeholder="SKU"
                 defaultValue={variant.sku ?? ""}
                 onChange={async (e) => {
-                  await onInputChange({
-                    updates: { sku: e.currentTarget.value },
-                  });
+                  await onInputChange({ sku: e.currentTarget.value });
                 }}
               />
             </span>
@@ -94,7 +89,7 @@ const Inventory = ({ updateVariant, variant }: InventoryProps) => {
                 placeholder="Barcode"
                 onChange={async (e) => {
                   await onInputChange({
-                    updates: { barcode: e.currentTarget.value },
+                    barcode: e.currentTarget.value,
                   });
                 }}
               />

@@ -1,12 +1,12 @@
 "use client";
 
-import type { PublishedProduct } from "@pachi/db";
+import type { Client } from "@pachi/validators";
 
 import ProductGridItems from "~/app/(global)/[name]/_components/product-grid-items";
 import Grid from "~/components/ui/grid";
 
 export function Products() {
-  const products: PublishedProduct[] = [];
+  const products: Client.PublishedProduct[] = [];
 
   if (products.length === 0)
     return (
