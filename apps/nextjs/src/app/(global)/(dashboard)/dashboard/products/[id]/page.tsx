@@ -92,6 +92,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     [dashboardRep],
   );
   const updateVariant = useCallback(
+    //s
     async ({ updates, variantId, productId }: UpdateProductVariant) => {
       await dashboardRep?.mutate.updateProductVariant({
         updates,
