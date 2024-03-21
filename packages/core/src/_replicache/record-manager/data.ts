@@ -4,9 +4,7 @@ import { isDefined, keys, mapToObj } from "remeda";
 import type { PatchOperation, ReadonlyJSONObject } from "replicache";
 
 import {
-  tableNamesMap,
-  type ClientGroupObject,
-  type ReplicacheClient,
+  tableNameToTableMap,
   type TableName,
   type Transaction,
 } from "@pachi/db";
@@ -20,18 +18,16 @@ import {
   UnknownExceptionLogger,
   type ExtractEffectValue,
 } from "@pachi/utils";
-
 import {
-  AuthorizationError,
   InvalidValue,
   SPACE_RECORD,
+  type ClientGroupObject,
   type ClientViewRecord,
-  type PermissionDenied,
   type RowsWTableName,
   type SpaceID,
   type SpaceRecord,
-} from "../../schema-and-types";
-import { deleteItems_, setItems_, updateItems_ } from "../transaction-queries";
+} from "@pachi/validators";
+
 import type {
   ClientRecordDiff,
   ReplicacheRecordManagerBase,
@@ -55,14 +51,14 @@ export const makeClientViewRecord = (
 };
 
 export const getRowsWTableName = <T extends SpaceID>({
-  userId,
+  userID,
   spaceID,
   subspaceID,
   transaction,
   fullRows,
 }: {
   spaceID: T;
-  userId: string | undefined;
+  userID: string | undefined;
   subspaceID: SpaceRecord[T][number];
   transaction: Transaction;
   fullRows: boolean;
@@ -72,7 +68,7 @@ export const getRowsWTableName = <T extends SpaceID>({
   if (getRowsWTableName) {
     return getRowsWTableName({
       transaction,
-      userId,
+      userID,
       fullRows,
     });
   }
@@ -124,12 +120,12 @@ const getCurrentSpaceRecord = <T extends SpaceID>({
   spaceID,
   transaction,
   subspaceIDs,
-  userId,
+  userID,
 }: {
   spaceID: T;
   transaction: Transaction;
   subspaceIDs: Array<SpaceRecord[T][number]>;
-  userId: string | undefined;
+  userID: string | undefined;
 }): ReturnType<ReplicacheRecordManagerBase["getCurrentSpaceRecord"]> => {
   return Effect.gen(function* (_) {
     const subIDs = subspaceIDs ?? SPACE_RECORD[spaceID];
@@ -143,7 +139,7 @@ const getCurrentSpaceRecord = <T extends SpaceID>({
               spaceID,
               subspaceID,
               transaction,
-              userId,
+              userID,
               fullRows: false,
             }),
             Effect.map((rows) => ({
@@ -397,10 +393,10 @@ const createSpacePatch = ({
 const createSpaceResetPatch = <T extends SpaceID>({
   spaceID,
   transaction,
-  userId,
+  userID,
 }: {
   spaceID: T;
-  userId: string | undefined;
+  userID: string | undefined;
   transaction: Transaction;
 }): ReturnType<ReplicacheRecordManagerBase["createSpaceResetPatch"]> =>
   Effect.gen(function* (_) {
@@ -420,7 +416,7 @@ const createSpaceResetPatch = <T extends SpaceID>({
               spaceID,
               subspaceID,
               transaction,
-              userId,
+              userID,
               fullRows: true,
             }),
             Effect.map((data) =>
@@ -489,7 +485,7 @@ const getFullRows = ({
               with: {
                 optionValues: {
                   with: {
-                    optionValue: {
+                    value: {
                       with: {
                         option: true,
                       },
@@ -510,7 +506,7 @@ const getFullRows = ({
       Effect.orDieWith((e) => UnknownExceptionLogger(e, "GET FULL ROWS ERROR")),
     );
   } else {
-    const table = tableNamesMap[tableName];
+    const table = tableNameToTableMap[tableName];
 
     return pipe(
       Effect.tryPromise(() =>
@@ -525,56 +521,6 @@ const getFullRows = ({
   }
 };
 
-export const setItems = (
-  props: Map<TableName, { id: string; value: ReadonlyJSONObject }[]>,
-
-  userId: string | undefined,
-  transaction: Transaction,
-): Effect.Effect<void, never, never> => {
-  return Effect.gen(function* (_) {
-    if (!userId) return;
-
-    yield* _(
-      Effect.forEach(
-        props.entries(),
-        ([tableName, items]) => {
-          return setItems_({ tableName, items, transaction });
-        },
-        {
-          concurrency: "unbounded",
-        },
-      ),
-    );
-  });
-};
-export const updateItems = (
-  props: Map<TableName, { id: string; value: ReadonlyJSONObject }[]>,
-  userId: string | undefined,
-  transaction: Transaction,
-): Effect.Effect<void, PermissionDenied, never> =>
-  Effect.gen(function* (_) {
-    if (!userId) return;
-    const effects: Array<Effect.Effect<void, PermissionDenied, never>> = [];
-
-    for (const [tableName, items] of props.entries()) {
-      effects.push(updateItems_({ tableName, items, userId, transaction }));
-    }
-    yield* _(Effect.all(effects, { concurrency: "unbounded" }));
-  });
-export const deleteItems = (
-  props: Map<TableName, string[]>,
-  userId: string | undefined,
-  transaction: Transaction,
-): Effect.Effect<void, never, never> =>
-  Effect.gen(function* (_) {
-    if (!userId) return;
-    const effects: Array<Effect.Effect<void, never, never>> = [];
-
-    for (const [tableName, keys] of props.entries()) {
-      effects.push(deleteItems_({ tableName, keys, userId, transaction }));
-    }
-    yield* _(Effect.all(effects, { concurrency: "unbounded" }));
-  });
 export const getClientGroupObject = ({
   clientGroupID,
   transaction,
@@ -675,66 +621,6 @@ export const deleteSpaceRecord = ({
       ),
     );
   });
-
-export const getClient = ({
-  transaction,
-  clientID,
-  clientGroupID,
-}: {
-  transaction: Transaction;
-  clientID: string;
-  clientGroupID: string;
-}): Effect.Effect<ReplicacheClient, AuthorizationError, never> => {
-  return Effect.gen(function* (_) {
-    const client = yield* _(
-      Effect.tryPromise(() =>
-        transaction.query.replicacheClients.findFirst({
-          where: (client, { eq }) => eq(client.id, clientID),
-        }),
-      ).pipe(
-        Effect.orDieWith((e) => UnknownExceptionLogger(e, "GET CLIENT ERROR")),
-      ),
-    );
-
-    if (!client)
-      return {
-        id: clientID,
-        clientGroupID: "",
-        lastMutationID: 0,
-      };
-
-    if (client.clientGroupID !== clientGroupID) {
-      yield* _(
-        Effect.fail(
-          new AuthorizationError({ message: "CLIENT GROUP DOES NOT MATCH" }),
-        ),
-      );
-    }
-
-    return client;
-  });
-};
-export const setClient = ({
-  transaction,
-  client,
-}: {
-  client: ReplicacheClient;
-  transaction: Transaction;
-}): Effect.Effect<void, never, never> =>
-  Effect.tryPromise(() =>
-    transaction
-      .insert(replicacheClients)
-      //@ts-ignore
-      .values(client)
-      .onConflictDoUpdate({
-        target: replicacheClients.id,
-        set: {
-          lastMutationID: client.lastMutationID,
-        },
-      }),
-  ).pipe(
-    Effect.orDieWith((e) => UnknownExceptionLogger(e, "SET CLIENT ERROR")),
-  );
 export {
   createSpacePatch,
   createSpaceResetPatch,

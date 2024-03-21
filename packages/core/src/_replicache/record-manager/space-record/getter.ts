@@ -1,4 +1,5 @@
-import type { SpaceID, SpaceRecord } from "../../types";
+import type { SpaceID, SpaceRecord } from "@pachi/validators"
+
 import { storeCVD } from "./dashboard";
 import { userCVD } from "./global";
 import type { GetRowsWTableName } from "./types";

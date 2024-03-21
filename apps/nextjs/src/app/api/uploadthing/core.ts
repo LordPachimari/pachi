@@ -18,13 +18,13 @@ export const ourFileRouter = {
       // if (!user) throw new Error("Unauthorized");
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      // return { userId: user.id };
+      // return { userID: user.id };
       return {};
     })
     // eslint-disable-next-line @typescript-eslint/require-await
     .onUploadComplete(async ({ file }) => {
       // This code RUNS ON YOUR SERVER after upload
-      // console.log("Upload complete for userId:", metadata.userId);
+      // console.log("Upload complete for userID:", metadata.userID);
 
       console.log("file url", file.url);
     }),

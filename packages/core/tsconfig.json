@@ -11,6 +11,6 @@
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
   },
-  "include": ["."],
+  "include": [".", "../validators/src/common/replicache.ts"],
   "exclude": ["node_modules"]
 }

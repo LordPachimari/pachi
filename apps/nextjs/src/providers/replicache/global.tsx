@@ -13,7 +13,7 @@ export default function GlobalReplicacheProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const userId = "user1";
+  const userID = "user1";
   const { globalRep, setGlobalRep } = useReplicache();
   const token = localStorage?.getItem("auth_session");
 
@@ -22,17 +22,17 @@ export default function GlobalReplicacheProvider({
       return;
     }
 
-    if (!userId) return;
+    if (!userID) return;
     const r = new Replicache({
-      name: userId,
+      name: userID,
       licenseKey: env.NEXT_PUBLIC_REPLICACHE_KEY,
-      pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/global?userId=${userId}`,
-      // pullURL: `${env.NEXT_PUBLIC_WORKER_DEV_URL}/pull/global?userId=${userId}`,
+      pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/global?userID=${userID}`,
+      // pullURL: `${env.NEXT_PUBLIC_WORKER_DEV_URL}/pull/global?userID=${userID}`,
       mutators: ClientGlobalMutators,
       pullInterval: null,
       puller: async (req) => {
         const result = await fetch(
-          `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/global?userId=${userId}`,
+          `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/global?userID=${userID}`,
           {
             headers: {
               "content-type": "application/json",
@@ -56,7 +56,7 @@ export default function GlobalReplicacheProvider({
       },
     });
     setGlobalRep(r);
-  }, [userId, globalRep, setGlobalRep]);
+  }, [userID, globalRep, setGlobalRep]);
 
   return <>{children}</>;
 }

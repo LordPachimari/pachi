@@ -1,6 +1,5 @@
 import { eq } from "drizzle-orm";
 import { Effect, pipe } from "effect";
-import { mapToObj } from "remeda";
 
 import { products } from "@pachi/db/schema";
 import { UnknownExceptionLogger } from "@pachi/utils";

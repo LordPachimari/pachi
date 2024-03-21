@@ -1,34 +1,28 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Clock, Effect } from "effect";
+import { Clock, Effect, Layer } from "effect";
 
 import {
-  getClient,
-  InternalError,
-  ReplicacheTransaction,
-  server,
-  ServerDashboardMutatorsMap,
-  ServerGlobalMutatorsMap,
-  setClient,
+  Database,
+  ReplicacheClientRepository,
+  Server,
+  TableMutatorLive,
+} from "@pachi/core";
+import { tableNameToTableMap, type Db } from "@pachi/db";
+import {
+  InternalServerError,
   type Mutation,
   type PushRequest,
   type RequestHeaders,
-  type ServerDashboardMutatorsMapType,
-  type ServerGlobalMutatorsMapType,
   type SpaceID,
-} from "@pachi/core";
-import type { Db } from "@pachi/db";
-import { generateId, ulid } from "@pachi/utils";
+} from "@pachi/validators";
 
 export const push = ({
   body: push,
-  userId,
+  userID,
   db,
   spaceID,
-  requestHeaders,
 }: {
   body: PushRequest;
-  userId: string | undefined;
+  userID: string | undefined;
   db: Db;
   spaceID: SpaceID;
   requestHeaders: RequestHeaders;
@@ -41,8 +35,8 @@ export const push = ({
     const startTime = yield* _(Clock.currentTimeMillis);
     const mutators =
       spaceID === "dashboard"
-        ? ServerDashboardMutatorsMap
-        : ServerGlobalMutatorsMap;
+        ? Server.DashboardMutatorsMap
+        : Server.GlobalMutatorsMap;
 
     for (const mutation of push.mutations) {
       // 1: START TRANSACTION FOR EACH MUTATION
@@ -50,40 +44,40 @@ export const push = ({
         db.transaction(
           async (transaction) =>
             Effect.gen(function* (_) {
-              const replicacheTransaction = new ReplicacheTransaction(
-                userId,
-                transaction,
-              );
-              // 2: get client row
+              // 2: GET CLIENT ROW
               const baseClient = yield* _(
-                getClient({
-                  clientID: mutation.clientID,
-                  transaction,
+                ReplicacheClientRepository.getClientByID({
                   clientGroupID: push.clientGroupID,
-                }).pipe(Effect.orDie),
+                  clientID: mutation.clientID,
+                }),
               );
 
               let updated = false;
 
-              //provide context to the effect
-              const processMutationWithContext = Effect.provideService(
+              const DatabaseLive = Layer.succeed(
+                Database,
+                Database.of({
+                  transaction,
+                  tableNameToTableMap,
+                  userID,
+                }),
+              );
+
+              const context = TableMutatorLive.pipe(
+                Layer.provide(DatabaseLive),
+              );
+
+              // 3: PREPARE MUTATION
+              const processMutationWithContext = Effect.provide(
                 processMutation({
                   lastMutationID: baseClient.lastMutationID,
                   mutation,
                   mutators,
                 }),
-                server.ServerContext,
-                {
-                  manager: transaction,
-                  repositories: server.Repositories,
-                  requestHeaders,
-                  services: server.Services,
-                  userId,
-                  replicacheTransaction,
-                },
+                context,
               );
 
-              // 3: process mutation
+              // 4: PROCESS MUTATION
               const nextMutationId = yield* _(
                 processMutationWithContext.pipe(Effect.orDie),
               );
@@ -94,17 +88,11 @@ export const push = ({
 
               if (updated) {
                 yield* _(
-                  Effect.all([
-                    setClient({
-                      client: {
-                        clientGroupID: push.clientGroupID,
-                        id: mutation.clientID,
-                        lastMutationID: nextMutationId,
-                      },
-                      transaction,
-                    }),
-                    replicacheTransaction.flush(),
-                  ]),
+                  ReplicacheClientRepository.setClient({
+                    clientGroupID: push.clientGroupID,
+                    id: mutation.clientID,
+                    lastMutationID: nextMutationId,
+                  }),
                 );
               } else {
                 yield* _(Effect.log("Nothing to update"));
@@ -129,7 +117,7 @@ const processMutation = ({
   mutation: Mutation;
   lastMutationID: number;
   error?: unknown;
-  mutators: ServerDashboardMutatorsMapType | ServerGlobalMutatorsMapType;
+  mutators: Server.DashboardMutatorsMapType | Server.GlobalMutatorsMapType;
 }) =>
   Effect.gen(function* (_) {
     const expectedMutationID = lastMutationID + 1;
@@ -153,7 +141,7 @@ const processMutation = ({
 
       yield* _(
         Effect.fail(
-          new InternalError({
+          new InternalServerError({
             message: `Mutation ${mutation.id} is from the future - aborting`,
           }),
         ),
@@ -166,7 +154,7 @@ const processMutation = ({
           `Processing mutation: ${JSON.stringify(mutation, null, "")}`,
         ),
       );
-      const t1 = Date.now();
+      const start = yield* _(Clock.currentTimeMillis);
 
       const { name, args } = mutation;
 
@@ -175,7 +163,7 @@ const processMutation = ({
       if (!mutator) {
         yield* _(
           Effect.fail(
-            new InternalError({
+            new InternalServerError({
               message: `No mutator found for ${name}`,
             }),
           ),
@@ -184,19 +172,12 @@ const processMutation = ({
         return lastMutationID;
       }
 
-      yield* _(
-        mutator(args).pipe(
-          Effect.catchTag("NotFound", (error) => {
-            server.Error.createError({
-              id: generateId({ prefix: "error", id: ulid() }),
-              type: "NotFound",
-              message: error.message,
-            }).pipe(Effect.orDie);
+      //@ts-ignore
+      yield* _(mutator(args));
 
-            return Effect.succeed(1);
-          }),
-        ),
-      );
+      const end = yield* _(Clock.currentTimeMillis);
+
+      yield* _(Effect.log(`Processed mutation in ${end - start}`));
 
       return expectedMutationID;
     } else {

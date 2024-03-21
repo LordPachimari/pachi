@@ -10,8 +10,8 @@ import {
 
 import { countries } from "./country";
 import { currencies } from "./currency";
-import { fulfillmentProviders } from "./fulfillment-provider";
 import { paymentProviders } from "./payment-provider";
+import { shippingProviders } from "./shipping-provider";
 import { taxProviders } from "./tax-provider";
 import { taxRates } from "./tax-rate";
 
@@ -85,7 +85,7 @@ export const regionsToFulfillmentProviders = pgTable(
     id: varchar("id"),
     fulfillmentProviderId: varchar("fulfillmentProviderId")
       .notNull()
-      .references(() => fulfillmentProviders.id, { onDelete: "cascade" }),
+      .references(() => shippingProviders.id, { onDelete: "cascade" }),
     regionId: varchar("regionId")
       .notNull()
       .references(() => regions.id, { onDelete: "cascade" }),
@@ -98,9 +98,9 @@ export const regionsToFulfillmentProviders = pgTable(
 export const regionsToFulfillmentProvidersRelations = relations(
   regionsToFulfillmentProviders,
   ({ one }) => ({
-    fulfillment_provider: one(fulfillmentProviders, {
+    fulfillment_provider: one(shippingProviders, {
       fields: [regionsToFulfillmentProviders.fulfillmentProviderId],
-      references: [fulfillmentProviders.id],
+      references: [shippingProviders.id],
     }),
     region: one(regions, {
       fields: [regionsToFulfillmentProviders.regionId],

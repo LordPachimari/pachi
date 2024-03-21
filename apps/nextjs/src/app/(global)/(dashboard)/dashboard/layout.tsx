@@ -7,12 +7,12 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  // const userId = await getUserId();
+  // const userID = await getUserID();
   // const socket = useRef(
   //   new PartySocket({
   //     host: `http://127.0.0.1:1999/parties/push`, // for local development
   //     // host: "my-party.username.partykit.dev", // for production
-  //     space: `dashboard:${userId}`,
+  //     space: `dashboard:${userID}`,
   //   }),
   // );
   // useEffect(() => {

@@ -6,26 +6,18 @@ import * as schema from "./schema";
 
 export * as schema from "./schema";
 export * from "./table-name";
-export * from "./validators/common";
-export * from "./validators/schema-and-types";
 
 const tableName = [
   "users",
   "products",
-  // "notification",
   "productVariants",
   "productOptions",
   "productOptionValues",
   "productTags",
-  // "store",
-  // "sales_channel",
-  // "product_to_sales_channel",
   "productCollections",
   // "product_category",
   "carts",
   "cartItems",
-  // "line_item_adjustment",
-  // "region",
   "productCollections",
   "productTags",
   "productsToTags",

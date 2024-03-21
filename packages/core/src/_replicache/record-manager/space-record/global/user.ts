@@ -8,15 +8,15 @@ import type { GetRowsWTableName } from "../types";
 
 export const userCVD: GetRowsWTableName = ({
   transaction,
-  userId,
+  userID,
   fullRows = false,
 }) => {
-  if (!userId) return Effect.succeed([]);
+  if (!userID) return Effect.succeed([]);
   const cvd = pipe(
     Effect.tryPromise(() =>
       fullRows
         ? transaction.query.users.findFirst({
-            where: () => eq(users.id, userId),
+            where: () => eq(users.id, userID),
             with: {
               stores: true,
             },
@@ -26,7 +26,7 @@ export const userCVD: GetRowsWTableName = ({
               id: true,
               version: true,
             },
-            where: () => eq(users.id, userId),
+            where: () => eq(users.id, userID),
             with: {
               stores: {
                 columns: {

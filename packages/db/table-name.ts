@@ -59,16 +59,12 @@ export type JsonTable = typeof jsonTable;
 export type Table =
   | UserTable
   | ProductTable
-  // | StoreTable
   | ProductVariantTable
   | ProductOptionTable
   | ProductOptionValueTable
-  // | ProductCategoryTable
   | ProductCollectionTable
   | CartTable
   | CartItemTable
-  // | RegionTable
-  // | CartItemAdjustmentTable
   | CustomerGroupTable
   | CustomerToGroupTable
   | PriceListTable
@@ -78,19 +74,16 @@ export type Table =
   | ProductToTagTable
   | ProductOptionValuesToProductVariantsTable
   | JsonTable;
-export const tableNamesMap: Record<TableName, Table> = {
+export const tableNameToTableMap: Record<TableName, Table> = {
   users,
   products,
   productVariants,
   productOptions,
   productOptionValues,
   stores,
-  // product_categorys,
   productCollections,
   carts,
   cartItems,
-  // line_item_adjustments,
-  // region,
   customerGroups,
   customersToGroups,
   priceLists,
@@ -100,4 +93,4 @@ export const tableNamesMap: Record<TableName, Table> = {
   productOptionValuesToProductVariants,
   json: jsonTable,
 };
-export type TableNamesMap = typeof tableNamesMap;
+export type TableNameToTableMap = typeof tableNameToTableMap;

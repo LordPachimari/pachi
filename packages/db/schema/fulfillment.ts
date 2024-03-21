@@ -10,8 +10,8 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { cartItems } from "./cart-item";
-import { fulfillmentProviders } from "./fulfillment-provider";
 import { orders } from "./order";
+import { shippingProviders } from "./shipping-provider";
 import { trackingLinks } from "./tracking-link";
 
 export const fulfillments = pgTable(
@@ -53,9 +53,9 @@ export const fulfillmentRelations = relations(
       fields: [fulfillments.orderId],
       references: [orders.id],
     }),
-    provider: one(fulfillmentProviders, {
+    provider: one(shippingProviders, {
       fields: [fulfillments.providerId],
-      references: [fulfillmentProviders.id],
+      references: [shippingProviders.id],
     }),
     items: many(fulfillmentItems),
     trackingLinks: many(trackingLinks),
@@ -69,7 +69,7 @@ export const fulfillmentItems = pgTable(
     quantity: integer("quantity"),
   },
   (t) => ({
-    pk: primaryKey({columns:[t.itemId, t.fulfillmentId]}),
+    pk: primaryKey({ columns: [t.itemId, t.fulfillmentId] }),
   }),
 );
 export const fulfillmentItemsRelations = relations(

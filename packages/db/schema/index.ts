@@ -10,7 +10,7 @@ export * from "./product-tag";
 export * from "./country";
 export * from "./currency";
 export * from "./customer-group";
-export * from "./fulfillment-provider";
+export * from "./shipping-provider";
 export * from "./price";
 export * from "./payment-provider";
 export * from "./price-list";
@@ -31,3 +31,4 @@ export * from "./discount-condition";
 export * from "./user-session";
 export * from "./country";
 export * from "./json";
+export * from "./tracking-link"

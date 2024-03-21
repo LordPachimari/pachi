@@ -156,21 +156,18 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.3.4
         version: 3.3.4(react-hook-form@7.50.1)
-      '@pachi/api':
-        specifier: ^0.1.0
-        version: link:../../packages/api
       '@pachi/auth':
         specifier: ^0.1.0
         version: link:../../packages/auth
       '@pachi/core':
         specifier: ^0.1.0
         version: link:../../packages/core
-      '@pachi/db':
-        specifier: ^0.1.0
-        version: link:../../packages/db
       '@pachi/utils':
         specifier: ^0.1.0
         version: link:../../packages/utils
+      '@pachi/validators':
+        specifier: ^0.1.0
+        version: link:../../packages/validators
       '@radix-ui/react-accordion':
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@18.2.14)(@types/react@18.2.37)(react-dom@18.2.0)(react@18.2.0)
@@ -259,8 +256,8 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
       drizzle-orm:
-        specifier: ^0.29.3
-        version: 0.29.3(@types/react@18.2.37)(react@18.2.0)
+        specifier: ^0.30.4
+        version: 0.30.4(@types/react@18.2.37)(react@18.2.0)
       effect:
         specifier: ^2.4.1
         version: 2.4.1
@@ -410,18 +407,18 @@ importers:
       '@pachi/api':
         specifier: ^0.1.0
         version: link:../../packages/api
-      '@pachi/core':
-        specifier: ^0.1.0
-        version: link:../../packages/core
       '@pachi/db':
         specifier: ^0.1.0
         version: link:../../packages/db
       '@pachi/utils':
         specifier: ^0.1.0
         version: link:../../packages/utils
+      '@pachi/validators':
+        specifier: ^0.1.0
+        version: link:../../packages/validators
       drizzle-orm:
-        specifier: ^0.29.3
-        version: 0.29.3(@cloudflare/workers-types@4.20230922.0)(@neondatabase/serverless@0.6.0)
+        specifier: ^0.30.4
+        version: 0.30.4(@cloudflare/workers-types@4.20230922.0)(@neondatabase/serverless@0.6.0)
       effect:
         specifier: ^2.4.1
         version: 2.4.1
@@ -486,12 +483,15 @@ importers:
       '@pachi/utils':
         specifier: ^0.1.0
         version: link:../utils
+      '@pachi/validators':
+        specifier: ^0.1.0
+        version: link:../validators
       base64-arraybuffer:
         specifier: ^1.0.2
         version: 1.0.2
       drizzle-orm:
-        specifier: ^0.29.3
-        version: 0.29.3(@cloudflare/workers-types@4.20230922.0)(@neondatabase/serverless@0.6.0)
+        specifier: ^0.30.4
+        version: 0.30.4(@cloudflare/workers-types@4.20230922.0)(@neondatabase/serverless@0.6.0)
       effect:
         specifier: ^2.4.1
         version: 2.4.1
@@ -545,8 +545,8 @@ importers:
         specifier: ^0.1.0
         version: link:../db
       drizzle-orm:
-        specifier: ^0.29.3
-        version: 0.29.3(@neondatabase/serverless@0.6.0)(pg@8.11.3)
+        specifier: ^0.30.4
+        version: 0.30.4(@neondatabase/serverless@0.6.0)(pg@8.11.3)
       lucia:
         specifier: ^3.0.1
         version: 3.0.1
@@ -578,9 +578,12 @@ importers:
       '@pachi/utils':
         specifier: ^0.1.0
         version: link:../utils
+      '@pachi/validators':
+        specifier: ^0.1.0
+        version: link:../validators
       drizzle-orm:
-        specifier: ^0.29.3
-        version: 0.29.3(@neondatabase/serverless@0.6.0)(pg@8.11.3)
+        specifier: ^0.30.4
+        version: 0.30.4(@neondatabase/serverless@0.6.0)(pg@8.11.3)
       effect:
         specifier: ^2.4.1
         version: 2.4.1
@@ -619,14 +622,14 @@ importers:
         specifier: ^0.6.0
         version: 0.6.0
       drizzle-orm:
-        specifier: ^0.29.3
-        version: 0.29.3(@neondatabase/serverless@0.6.0)(pg@8.11.3)
+        specifier: ^0.30.4
+        version: 0.30.4(@neondatabase/serverless@0.6.0)(pg@8.11.3)
       drizzle-valibot:
         specifier: ^0.1.1
-        version: 0.1.1(drizzle-orm@0.29.3)
+        version: 0.1.1(drizzle-orm@0.30.4)
       drizzle-zod:
         specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.29.3)(zod@3.22.2)
+        version: 0.5.1(drizzle-orm@0.30.4)(zod@3.22.2)
       pg:
         specifier: ^8.11.3
         version: 8.11.3
@@ -691,9 +694,6 @@ importers:
       ulid-workers:
         specifier: ^2.1.0
         version: 2.1.0
-      valibot:
-        specifier: ^0.17.1
-        version: 0.17.1
     devDependencies:
       '@pachi/eslint-config':
         specifier: workspace:^0.1.0
@@ -710,6 +710,40 @@ importers:
       dotenv-cli:
         specifier: ^7.3.0
         version: 7.3.0
+      eslint:
+        specifier: ^8.53.0
+        version: 8.53.0
+      prettier:
+        specifier: ^3.0.3
+        version: 3.0.3
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+
+  packages/validators:
+    dependencies:
+      '@pachi/db':
+        specifier: ^0.1.0
+        version: link:../db
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.30.4)(zod@3.22.2)
+      effect:
+        specifier: ^2.4.1
+        version: 2.4.1
+      zod:
+        specifier: ^3.22.2
+        version: 3.22.2
+    devDependencies:
+      '@pachi/eslint-config':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/eslint
+      '@pachi/prettier-config':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/prettier
+      '@pachi/tsconfig':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/typescript
       eslint:
         specifier: ^8.53.0
         version: 8.53.0
@@ -7389,12 +7423,12 @@ packages:
       negotiator: 0.6.3
     dev: false
 
-  /acorn-jsx@5.3.2(acorn@8.10.0):
+  /acorn-jsx@5.3.2(acorn@8.11.3):
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
-      acorn: 8.10.0
+      acorn: 8.11.3
 
   /acorn-walk@8.2.0:
     resolution: {integrity: sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==}
@@ -7410,7 +7444,6 @@ packages:
     resolution: {integrity: sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-    dev: true
 
   /agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
@@ -9014,13 +9047,14 @@ packages:
       - utf-8-validate
     dev: true
 
-  /drizzle-orm@0.29.3(@cloudflare/workers-types@4.20230922.0)(@neondatabase/serverless@0.6.0):
-    resolution: {integrity: sha512-uSE027csliGSGYD0pqtM+SAQATMREb3eSM/U8s6r+Y0RFwTKwftnwwSkqx3oS65UBgqDOM0gMTl5UGNpt6lW0A==}
+  /drizzle-orm@0.30.4(@cloudflare/workers-types@4.20230922.0)(@neondatabase/serverless@0.6.0):
+    resolution: {integrity: sha512-kWoSMGbrOFkmkAweLTFtHJMpN+nwhx89q0mLELqT2aEU+1szNV8jrnBmJwZ0WGNp7J7yQn/ezEtxBI/qzTSElQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
       '@libsql/client': '*'
       '@neondatabase/serverless': '>=0.1'
+      '@op-engineering/op-sqlite': '>=2'
       '@opentelemetry/api': ^1.4.1
       '@planetscale/database': '>=1'
       '@types/better-sqlite3': '*'
@@ -9028,6 +9062,7 @@ packages:
       '@types/react': '>=18'
       '@types/sql.js': '*'
       '@vercel/postgres': '*'
+      '@xata.io/client': '*'
       better-sqlite3: '>=7'
       bun-types: '*'
       expo-sqlite: '>=13.2.0'
@@ -9048,6 +9083,8 @@ packages:
         optional: true
       '@neondatabase/serverless':
         optional: true
+      '@op-engineering/op-sqlite':
+        optional: true
       '@opentelemetry/api':
         optional: true
       '@planetscale/database':
@@ -9061,6 +9098,8 @@ packages:
       '@types/sql.js':
         optional: true
       '@vercel/postgres':
+        optional: true
+      '@xata.io/client':
         optional: true
       better-sqlite3:
         optional: true
@@ -9089,13 +9128,14 @@ packages:
       '@neondatabase/serverless': 0.6.0
     dev: false
 
-  /drizzle-orm@0.29.3(@neondatabase/serverless@0.6.0)(pg@8.11.3):
-    resolution: {integrity: sha512-uSE027csliGSGYD0pqtM+SAQATMREb3eSM/U8s6r+Y0RFwTKwftnwwSkqx3oS65UBgqDOM0gMTl5UGNpt6lW0A==}
+  /drizzle-orm@0.30.4(@neondatabase/serverless@0.6.0)(pg@8.11.3):
+    resolution: {integrity: sha512-kWoSMGbrOFkmkAweLTFtHJMpN+nwhx89q0mLELqT2aEU+1szNV8jrnBmJwZ0WGNp7J7yQn/ezEtxBI/qzTSElQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
       '@libsql/client': '*'
       '@neondatabase/serverless': '>=0.1'
+      '@op-engineering/op-sqlite': '>=2'
       '@opentelemetry/api': ^1.4.1
       '@planetscale/database': '>=1'
       '@types/better-sqlite3': '*'
@@ -9103,6 +9143,7 @@ packages:
       '@types/react': '>=18'
       '@types/sql.js': '*'
       '@vercel/postgres': '*'
+      '@xata.io/client': '*'
       better-sqlite3: '>=7'
       bun-types: '*'
       expo-sqlite: '>=13.2.0'
@@ -9123,6 +9164,8 @@ packages:
         optional: true
       '@neondatabase/serverless':
         optional: true
+      '@op-engineering/op-sqlite':
+        optional: true
       '@opentelemetry/api':
         optional: true
       '@planetscale/database':
@@ -9136,6 +9179,8 @@ packages:
       '@types/sql.js':
         optional: true
       '@vercel/postgres':
+        optional: true
+      '@xata.io/client':
         optional: true
       better-sqlite3:
         optional: true
@@ -9164,13 +9209,14 @@ packages:
       pg: 8.11.3
     dev: false
 
-  /drizzle-orm@0.29.3(@types/react@18.2.37)(react@18.2.0):
-    resolution: {integrity: sha512-uSE027csliGSGYD0pqtM+SAQATMREb3eSM/U8s6r+Y0RFwTKwftnwwSkqx3oS65UBgqDOM0gMTl5UGNpt6lW0A==}
+  /drizzle-orm@0.30.4(@types/react@18.2.37)(react@18.2.0):
+    resolution: {integrity: sha512-kWoSMGbrOFkmkAweLTFtHJMpN+nwhx89q0mLELqT2aEU+1szNV8jrnBmJwZ0WGNp7J7yQn/ezEtxBI/qzTSElQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
       '@libsql/client': '*'
       '@neondatabase/serverless': '>=0.1'
+      '@op-engineering/op-sqlite': '>=2'
       '@opentelemetry/api': ^1.4.1
       '@planetscale/database': '>=1'
       '@types/better-sqlite3': '*'
@@ -9178,6 +9224,7 @@ packages:
       '@types/react': '>=18'
       '@types/sql.js': '*'
       '@vercel/postgres': '*'
+      '@xata.io/client': '*'
       better-sqlite3: '>=7'
       bun-types: '*'
       expo-sqlite: '>=13.2.0'
@@ -9198,6 +9245,8 @@ packages:
         optional: true
       '@neondatabase/serverless':
         optional: true
+      '@op-engineering/op-sqlite':
+        optional: true
       '@opentelemetry/api':
         optional: true
       '@planetscale/database':
@@ -9211,6 +9260,8 @@ packages:
       '@types/sql.js':
         optional: true
       '@vercel/postgres':
+        optional: true
+      '@xata.io/client':
         optional: true
       better-sqlite3:
         optional: true
@@ -9239,21 +9290,21 @@ packages:
       react: 18.2.0
     dev: false
 
-  /drizzle-valibot@0.1.1(drizzle-orm@0.29.3):
+  /drizzle-valibot@0.1.1(drizzle-orm@0.30.4):
     resolution: {integrity: sha512-xVEGIbZ+Ti5IkGJP1jaUV8kQ7b5RITaH5XYYPSDVOq0blxI3y65efZ0ZAUKSo6BhZ+VqfZfZn1ouPb3pR1hA6g==}
     peerDependencies:
       drizzle-orm: '>=0.23.13'
     dependencies:
-      drizzle-orm: 0.29.3(@neondatabase/serverless@0.6.0)(pg@8.11.3)
+      drizzle-orm: 0.30.4(@neondatabase/serverless@0.6.0)(pg@8.11.3)
     dev: false
 
-  /drizzle-zod@0.5.1(drizzle-orm@0.29.3)(zod@3.22.2):
+  /drizzle-zod@0.5.1(drizzle-orm@0.30.4)(zod@3.22.2):
     resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
     peerDependencies:
       drizzle-orm: '>=0.23.13'
       zod: '*'
     dependencies:
-      drizzle-orm: 0.29.3(@neondatabase/serverless@0.6.0)(pg@8.11.3)
+      drizzle-orm: 0.30.4(@neondatabase/serverless@0.6.0)(pg@8.11.3)
       zod: 3.22.2
     dev: false
 
@@ -9819,8 +9870,8 @@ packages:
     resolution: {integrity: sha512-oruZaFkjorTpF32kDSI5/75ViwGeZginGGy2NoOSg3Q9bnwlnmDm4HLnkl0RE3n+njDXR037aY1+x58Z/zFdwQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dependencies:
-      acorn: 8.10.0
-      acorn-jsx: 5.3.2(acorn@8.10.0)
+      acorn: 8.11.3
+      acorn-jsx: 5.3.2(acorn@8.11.3)
       eslint-visitor-keys: 3.4.3
 
   /esprima@4.0.1:
@@ -11530,6 +11581,7 @@ packages:
 
   /js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
+    hasBin: true
     dependencies:
       argparse: 2.0.1
 
@@ -15456,7 +15508,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       '@jridgewell/source-map': 0.3.3
-      acorn: 8.10.0
+      acorn: 8.11.3
       commander: 2.20.3
       source-map-support: 0.5.21
     dev: false

@@ -9,7 +9,6 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-import type { Image } from "../validators/common";
 import { carts } from "./cart";
 import { discounts } from "./discount";
 import { orders } from "./order";
@@ -35,7 +34,7 @@ export const cartItems = pgTable(
     refundable: boolean("refundable"),
     subtotal: integer("subtotal"),
     taxTotal: integer("taxTotal"),
-    thumbnail: json("thumbnail").$type<Image>(),
+    thumbnail: json("thumbnail"),
     title: varchar("title"),
     total: integer("total").notNull(),
     unitPrice: integer("unitPrice").notNull(),

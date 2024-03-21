@@ -1,16 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { Effect } from "effect";
+import type { UnknownException } from "effect/Cause";
 import type { z, ZodError } from "zod";
 
-import type { NotFound } from "../schema-and-types";
-import type { ServerContext } from "../server";
+import type { AuthorizationError, NotFound } from "@pachi/validators";
 
-export function zod<Schema extends z.ZodSchema<any, any, any>>(
+import type { Database, TableMutator } from "..";
+
+export function zod<Schema extends z.ZodSchema>(
   schema: Schema,
   func: (
     value: z.infer<Schema>,
-  ) => Effect.Effect<void, NotFound | ZodError, ServerContext>,
+  ) => Effect.Effect<
+    void,
+    NotFound | ZodError | AuthorizationError | UnknownException,
+    TableMutator | Database
+  >,
 ) {
   const result = (input: z.infer<Schema>) => {
     const parsed = schema.parse(input);

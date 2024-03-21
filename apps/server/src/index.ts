@@ -7,6 +7,9 @@ import { cors } from "hono/cors";
 import { Lucia, verifyRequestOrigin, type User as LuciaUser } from "lucia";
 
 import { login, pull, push, register } from "@pachi/api";
+import { schema, type Db } from "@pachi/db";
+import { countries as countriesTable, currencies } from "@pachi/db/schema";
+import { generateId as generateULID, ulid } from "@pachi/utils";
 import {
   countries,
   currencies as currenciesValues,
@@ -14,11 +17,10 @@ import {
   pushRequestSchema,
   SpaceIDSchema,
   UserAuthSchema,
+  type Server,
+  type SpaceRecord,
   type UserAuth,
-} from "@pachi/core";
-import { schema, type Country, type Currency, type Db } from "@pachi/db";
-import { countries as countriesTable, currencies } from "@pachi/db/schema";
-import { generateId as generateULID, ulid } from "@pachi/utils";
+} from "@pachi/validators";
 
 export type Bindings = {
   ORIGIN_URL: string;
@@ -111,7 +113,7 @@ app.post("/pull/:spaceID", async (c) => {
   // 1: PARSE INPUT
   const db = c.get("db" as never) as Db;
   const subspaceIDs = c.req.queries("subspaces");
-  const userId = (c.get("user" as never) as LuciaUser | undefined)?.id;
+  const userID = (c.get("user" as never) as LuciaUser | undefined)?.id;
   const spaceID = SpaceIDSchema.parse(c.req.param("spaceID"));
   const body = pullRequestSchema.parse(await c.req.json());
 
@@ -120,8 +122,8 @@ app.post("/pull/:spaceID", async (c) => {
     body,
     db,
     spaceID,
-    userId,
-    subspaceIDs: subspaceIDs as never[] | undefined,
+    userID,
+    subspaceIDs: subspaceIDs as Array<SpaceRecord[typeof spaceID][number]>,
   }).pipe(Effect.orDie);
 
   // 3: RUN PROMISE
@@ -132,7 +134,7 @@ app.post("/pull/:spaceID", async (c) => {
 
 app.post("/push/:spaceID", async (c) => {
   // 1: PARSE INPUT
-  const userId = (c.get("user" as never) as LuciaUser | undefined)?.id;
+  const userID = (c.get("user" as never) as LuciaUser | undefined)?.id;
   const db = c.get("db" as never) as Db;
   const spaceID = SpaceIDSchema.parse(c.req.param("spaceID"));
   const body = pushRequestSchema.parse(await c.req.json());
@@ -142,7 +144,7 @@ app.post("/push/:spaceID", async (c) => {
     body,
     db,
     spaceID,
-    userId,
+    userID,
     requestHeaders: {
       ip: c.req.raw.headers.get("cf-connecting-ip"),
       userAgent: c.req.raw.headers.get("user-agent"),
@@ -213,17 +215,19 @@ app.post("/login", async (c) => {
 app.post("/currencies", async (c) => {
   // 1: GET INPUT
   const db = c.get("db" as never) as Db;
-  const values: Currency[] = Object.values(currenciesValues).map((value) => {
-    return {
-      code: value.code,
-      symbol: value.symbol,
-      name: value.name,
-    };
-  });
+  const values: Server.Currency[] = Object.values(currenciesValues).map(
+    (value) => {
+      return {
+        code: value.code,
+        symbol: value.symbol,
+        name: value.name,
+      };
+    },
+  );
 
   // 2: INSERT
   //@ts-ignore
-  await db.insert(currencies).values(values);
+  await db.insert(currencies).values(values).onConflictDoNothing();
 
   return c.json({}, 200);
 });
@@ -231,7 +235,7 @@ app.post("/currencies", async (c) => {
 app.post("/countries", async (c) => {
   // 1: GET INPUT
   const db = c.get("db" as never) as Db;
-  const values: Country[] = Object.values(countries).map((value) => {
+  const values: Server.Country[] = Object.values(countries).map((value) => {
     return {
       id: generateULID({ id: ulid(), prefix: "country" }),
       countryCode: value.alpha2,
@@ -242,7 +246,7 @@ app.post("/countries", async (c) => {
 
   // 2: INSERT
   //@ts-ignore
-  await db.insert(countriesTable).values(values);
+  await db.insert(countriesTable).values(values).onConflictDoNothing();
 
   return c.json({}, 200);
 });

@@ -1,27 +1,22 @@
 import { Clock, Effect } from "effect";
 import type { PullResponseOKV1 } from "replicache";
 
-import {
-  ReplicacheRecordManager,
-  type Cookie,
-  type PullRequest,
-  type SpaceID,
-  type SpaceRecord,
-} from "@pachi/core";
+import { ReplicacheRecordManager } from "@pachi/core";
 import type { Db } from "@pachi/db";
 import { ulid, UnknownExceptionLogger } from "@pachi/utils";
+import type { Cookie, PullRequest, SpaceID, SpaceRecord } from "@pachi/validators";
 
 export const pull = <T extends SpaceID>({
   spaceID,
   body: pull,
-  userId,
+  userID,
   db,
   subspaceIDs,
 }: {
   spaceID: T;
   subspaceIDs: Array<SpaceRecord[T][number]>;
   body: PullRequest;
-  userId: string | undefined;
+  userID: string | undefined;
   db: Db;
 }) =>
   Effect.gen(function* (_) {
@@ -54,7 +49,7 @@ export const pull = <T extends SpaceID>({
                 spaceID,
                 subspaceIDs,
                 transaction,
-                userId,
+                userID,
               });
               // 4: GET PREVIOUS AND CURRENT RECORDS. (1 ROUND TRIP TO THE DATABASE)
               const [

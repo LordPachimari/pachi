@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm"
+import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -7,12 +7,11 @@ import {
   pgTable,
   text,
   varchar,
-} from "drizzle-orm/pg-core"
+} from "drizzle-orm/pg-core";
 
-import type { Image } from "../validators/common"
-import { prices } from "./price"
-import { products } from "./product"
-import { productOptionValuesToProductVariants } from "./product-option-value"
+import { prices } from "./price";
+import { products } from "./product";
+import { productOptionValuesToProductVariants } from "./product-option-value";
 
 export const productVariants = pgTable(
   "product_variants",
@@ -26,7 +25,6 @@ export const productVariants = pgTable(
     hsCode: varchar("hs_code"),
     quantity: integer("quantity").notNull().default(0),
     length: integer("length"),
-    material: varchar("material"),
     metadata: json("metadata").$type<Record<string, unknown>>(),
     midCode: varchar("midCode"),
     originCountry: text("originCountry"),
@@ -40,7 +38,7 @@ export const productVariants = pgTable(
     upc: varchar("upc"),
     weight: integer("weight"),
     width: integer("width"),
-    images: json("images").$type<Image[]>(),
+    images: json("images"),
     version: integer("version").notNull().default(0),
     allowBackorder: boolean("allowBackorder").default(false),
     available: boolean("available").default(true),
@@ -48,7 +46,7 @@ export const productVariants = pgTable(
   (productVariant) => ({
     productIdIndex: index("productIdIndex").on(productVariant.productId),
   }),
-)
+);
 export const productVariantRelations = relations(
   productVariants,
   ({ one, many }) => ({
@@ -62,4 +60,4 @@ export const productVariantRelations = relations(
       relationName: "variant.optionValues",
     }),
   }),
-)
+);

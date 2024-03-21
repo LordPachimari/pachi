@@ -2,6 +2,9 @@
   "extends": "@pachi/tsconfig/base.json",
   "compilerOptions": {
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
+    "paths": {
+      "~/*": ["./src/*"]
+    },
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",

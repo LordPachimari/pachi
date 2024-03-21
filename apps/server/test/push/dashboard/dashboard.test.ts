@@ -17,7 +17,7 @@
 // import { DashboardMutators } from "./mutators";
 
 // describe("dashboard space", () => {
-//   const userId = "user1";
+//   const userID = "user1";
 //   const spaceID = "dashboard";
 //   const requestHeaders = {
 //     ip: "whatever",
@@ -44,7 +44,7 @@
 //     db,
 //     env,
 //     requestHeaders,
-//     userId,
+//     userID,
 //     spaceID,
 //   });
 //   afterAll(async () => {
@@ -55,7 +55,7 @@
 //     const product: Product = {
 //       id: "product1",
 //       createdAt: "today",
-//       seller_id: userId,
+//       seller_id: userID,
 //     };
 //     await dashboardMutators.createProduct(product);
 //     const newProduct = await db.query.products.findFirst({

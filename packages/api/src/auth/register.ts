@@ -1,9 +1,9 @@
 import { Effect } from "effect";
 import { generateId, Scrypt, type Lucia } from "lucia";
 
-import { InvalidInput, UserAuthSchema } from "@pachi/core";
-import type { Db, User } from "@pachi/db";
+import type { Db } from "@pachi/db";
 import { users } from "@pachi/db/schema";
+import { InvalidInput, UserAuthSchema, type Server } from "@pachi/validators";
 
 interface RegisterProps {
   email: string;
@@ -31,7 +31,7 @@ const register = ({ email, password, db, lucia }: RegisterProps) => {
     const hashedPassword = yield* _(
       Effect.tryPromise(() => new Scrypt().hash(password)),
     );
-    const newUser: User = {
+    const newUser: Server.User = {
       id: generateId(15),
       email,
       createdAt,

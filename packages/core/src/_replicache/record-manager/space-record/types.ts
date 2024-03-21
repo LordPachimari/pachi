@@ -1,15 +1,14 @@
 import type { Effect } from "effect";
 
 import type { Transaction } from "@pachi/db";
-
-import type { RowsWTableName } from "../../types";
+import type { RowsWTableName } from "@pachi/validators";
 
 export type GetRowsWTableName = ({
   transaction,
   fullRows,
-  userId,
+  userID,
 }: {
   transaction: Transaction;
   fullRows: boolean;
-  userId: string | undefined;
+  userID: string | undefined;
 }) => Effect.Effect<RowsWTableName[], never, never>;

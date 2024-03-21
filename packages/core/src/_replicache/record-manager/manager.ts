@@ -1,14 +1,17 @@
 import type { Effect } from "effect";
 import type { PatchOperation } from "replicache";
 
+import type { TableName, Transaction } from "@pachi/db";
+import type { ExtractEffectValue } from "@pachi/utils";
 import type {
   ClientGroupObject,
+  ClientViewRecord,
   ReplicacheClient,
   ReplicacheSubspaceRecord,
-  TableName,
-  Transaction,
-} from "@pachi/db";
-import type { ExtractEffectValue } from "@pachi/utils";
+  RowsWTableName,
+  SpaceID,
+  SpaceRecord,
+} from "@pachi/validators";
 
 import {
   createSpacePatch,
@@ -23,13 +26,7 @@ import {
   getPrevSpaceRecord,
   setClientGroupObject,
   setSpaceRecord,
-} from ".";
-import type {
-  ClientViewRecord,
-  RowsWTableName,
-  SpaceID,
-  SpaceRecord,
-} from "../../schema-and-types";
+} from "./data";
 
 interface SpaceRecordDiff {
   newIDs: Map<TableName, Set<string>>;
@@ -90,29 +87,29 @@ interface ReplicacheRecordManagerBase {
 }
 
 class ReplicacheRecordManager implements ReplicacheRecordManagerBase {
-  spaceID: SpaceID;
-  subspaceIDs: Array<SpaceRecord[SpaceID][number]>;
-  transaction: Transaction;
-  clientGroupID: string;
-  userId: string | undefined;
+  private readonly spaceID: SpaceID;
+  private readonly subspaceIDs: Array<SpaceRecord[SpaceID][number]>;
+  private readonly transaction: Transaction;
+  private readonly clientGroupID: string;
+  private readonly userID: string | undefined;
   constructor({
     spaceID,
     subspaceIDs,
     transaction,
     clientGroupID,
-    userId,
+    userID,
   }: {
     spaceID: SpaceID;
     subspaceIDs: Array<SpaceRecord[SpaceID][number]>;
     transaction: Transaction;
     clientGroupID: string;
-    userId: string | undefined;
+    userID: string | undefined;
   }) {
     this.spaceID = spaceID;
     this.transaction = transaction;
     this.subspaceIDs = subspaceIDs;
     this.clientGroupID = clientGroupID;
-    this.userId = userId;
+    this.userID = userID;
   }
   getPrevClientRecord(key: string | undefined) {
     return getPrevClientRecord({
@@ -139,7 +136,7 @@ class ReplicacheRecordManager implements ReplicacheRecordManagerBase {
       spaceID: this.spaceID,
       transaction: this.transaction,
       subspaceIDs: this.subspaceIDs,
-      userId: this.userId,
+      userID: this.userID,
     });
   }
   getClientGroupObject() {
@@ -181,7 +178,7 @@ class ReplicacheRecordManager implements ReplicacheRecordManagerBase {
     return createSpaceResetPatch({
       transaction: this.transaction,
       spaceID: this.spaceID,
-      userId: this.userId,
+      userID: this.userID,
     });
   }
   setSpaceRecord(spaceRecord: Array<SubspaceRecord>) {

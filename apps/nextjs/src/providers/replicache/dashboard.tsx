@@ -14,24 +14,24 @@ function DashboardReplicacheProvider({
   children: React.ReactNode;
 }) {
   const { dashboardRep, setDashboardRep } = useReplicache();
-  const userId = "user1";
+  const userID = "user1";
 
   useEffect(() => {
     if (dashboardRep) {
       return;
     }
 
-    if (!userId) return;
+    if (!userID) return;
     const r = new Replicache({
-      name: userId,
+      name: userID,
       licenseKey: env.NEXT_PUBLIC_REPLICACHE_KEY,
-      pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/dashboard?userId=${userId}`,
-      pullURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/dashboard?userId=${userId}`,
+      pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/dashboard?userID=${userID}`,
+      pullURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/dashboard?userID=${userID}`,
       mutators: ClientDashboardMutators,
       pullInterval: null,
     });
     setDashboardRep(r);
-  }, [userId, dashboardRep, setDashboardRep]);
+  }, [userID, dashboardRep, setDashboardRep]);
 
   return <>{children}</>;
 }

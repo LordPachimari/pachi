@@ -46,7 +46,7 @@ export async function createUser(
         body: JSON.stringify({
           username: data.username,
           email: "rwthunder123@gmail.com",
-          userId: userID,
+          userID: userID,
         }),
       },
     );

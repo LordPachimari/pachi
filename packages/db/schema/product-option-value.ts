@@ -62,7 +62,7 @@ export const productOptionValuesToProductVariantsRelations = relations(
       references: [productVariants.id],
       relationName: "variant.optionValues",
     }),
-    optionValue: one(productOptionValues, {
+    value: one(productOptionValues, {
       fields: [productOptionValuesToProductVariants.optionValueId],
       references: [productOptionValues.id],
     }),

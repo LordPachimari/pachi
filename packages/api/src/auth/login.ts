@@ -1,8 +1,8 @@
 import { Effect } from "effect";
 import { Scrypt, type Lucia } from "lucia";
 
-import { InvalidInput, UserAuthSchema } from "@pachi/core";
 import type { Db } from "@pachi/db";
+import { InvalidInput, UserAuthSchema } from "@pachi/validators";
 
 interface LoginProps {
   email: string;

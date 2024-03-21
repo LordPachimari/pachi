@@ -17,7 +17,7 @@
 //   private readonly clientID: string;
 //   private readonly db: Db;
 //   private readonly env: Bindings;
-//   private readonly userId: string;
+//   private readonly userID: string;
 //   private readonly spaceID: SpaceID;
 //   private readonly requestHeaders: {
 //     ip: string | null;
@@ -29,7 +29,7 @@
 //     db,
 //     client,
 //     env,
-//     userId,
+//     userID,
 //     requestHeaders,
 //     spaceID,
 //   }: {
@@ -37,7 +37,7 @@
 //     clientID: string;
 //     db: Db;
 //     env: Bindings;
-//     userId: string;
+//     userID: string;
 //     requestHeaders: {
 //       ip: string | null;
 //       userAgent: string | null;
@@ -48,7 +48,7 @@
 //     this.clientID = clientID;
 //     this.db = db;
 //     this.env = env;
-//     this.userId = userId;
+//     this.userID = userID;
 //     this.requestHeaders = requestHeaders;
 //     this.spaceID = spaceID;
 //   }
@@ -77,7 +77,7 @@
 //         client: this.client,
 //       },
 //       spaceID: this.spaceID,
-//       userId: this.userId,
+//       userID: this.userID,
 //       requestHeaders: this.requestHeaders,
 //     });
 //   }
@@ -104,7 +104,7 @@
 //         client: this.client,
 //       },
 //       spaceID: this.spaceID,
-//       userId: this.userId,
+//       userID: this.userID,
 //       requestHeaders: this.requestHeaders,
 //     });
 //   }
@@ -129,7 +129,7 @@
 //         client: this.client,
 //       },
 //       spaceID: this.spaceID,
-//       userId: this.userId,
+//       userID: this.userID,
 //       requestHeaders: this.requestHeaders,
 //     });
 //   }

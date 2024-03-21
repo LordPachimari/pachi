@@ -2,6 +2,9 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ES2017",
+    "paths": {
+      "~/*": ["./src/*"]
+    },
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "checkJs": true,
@@ -31,7 +34,9 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noPropertyAccessFromIndexSignature": true,
-    "types": ["@cloudflare/workers-types"]
+    "types": ["@cloudflare/workers-types"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "exclude": ["node_modules", "build", "dist", ".next", ".expo"]
 }
