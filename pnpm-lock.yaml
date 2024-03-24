@@ -67,7 +67,7 @@ importers:
         version: 1.7.1
       nativewind:
         specifier: ^4.0.13
-        version: 4.0.13(@babel/core@7.23.2)(react-native-reanimated@3.3.0)(react-native-safe-area-context@4.6.3)(react-native@0.72.6)(react@18.2.0)(tailwindcss@3.3.5)
+        version: 4.0.13(@babel/core@7.23.2)(react-native-reanimated@3.3.0)(react-native-safe-area-context@4.6.3)(react-native@0.72.6)(react@18.2.0)(tailwindcss@3.4.1)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -130,8 +130,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       tailwindcss:
-        specifier: 3.3.5
-        version: 3.3.5
+        specifier: 3.4.1
+        version: 3.4.1
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
@@ -240,6 +240,9 @@ importers:
       '@tanstack/zod-form-adapter':
         specifier: ^0.13.5
         version: 0.13.5(zod@3.22.2)
+      '@uidotdev/usehooks':
+        specifier: ^2.4.1
+        version: 2.4.1(react-dom@18.2.0)(react@18.2.0)
       '@uploadthing/react':
         specifier: ^6.0.2
         version: 6.0.2(next@14.1.3)(react@18.2.0)(uploadthing@6.1.0)
@@ -374,8 +377,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       tailwindcss:
-        specifier: 3.3.5
-        version: 3.3.5
+        specifier: 3.4.1
+        version: 3.4.1
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
@@ -836,12 +839,12 @@ importers:
         specifier: 8.4.30
         version: 8.4.30
       tailwindcss:
-        specifier: 3.3.5
-        version: 3.3.5
+        specifier: 3.4.1
+        version: 3.4.1
     devDependencies:
       '@medusajs/ui-preset':
         specifier: ^1.0.1
-        version: 1.0.1(tailwindcss@3.3.5)
+        version: 1.0.1(tailwindcss@3.4.1)
       '@pachi/eslint-config':
         specifier: workspace:^0.1.0
         version: link:../eslint
@@ -853,13 +856,13 @@ importers:
         version: link:../typescript
       '@tailwindcss/container-queries':
         specifier: ^0.1.1
-        version: 0.1.1(tailwindcss@3.3.5)
+        version: 0.1.1(tailwindcss@3.4.1)
       '@tailwindcss/forms':
         specifier: ^0.5.6
-        version: 0.5.6(tailwindcss@3.3.5)
+        version: 0.5.6(tailwindcss@3.4.1)
       '@tailwindcss/typography':
         specifier: ^0.5.10
-        version: 0.5.10(tailwindcss@3.3.5)
+        version: 0.5.10(tailwindcss@3.4.1)
       eslint:
         specifier: ^8.53.0
         version: 8.53.0
@@ -868,7 +871,7 @@ importers:
         version: 3.0.3
       tailwindcss-animate:
         specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.3.5)
+        version: 1.0.7(tailwindcss@3.4.1)
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
@@ -3914,14 +3917,14 @@ packages:
       lucia: 3.0.1
     dev: false
 
-  /@medusajs/ui-preset@1.0.1(tailwindcss@3.3.5):
+  /@medusajs/ui-preset@1.0.1(tailwindcss@3.4.1):
     resolution: {integrity: sha512-p4sRAKUEQtgK/gREdeKyLVCL29vJavxk/qpEC+pezK4Y6+ieT8nQwX8Ulho9vSPnKHoBFJpN6/PGYcr6AL5M8A==}
     peerDependencies:
       tailwindcss: '>=3.0.0'
     dependencies:
-      '@tailwindcss/forms': 0.5.6(tailwindcss@3.3.5)
-      tailwindcss: 3.3.5
-      tailwindcss-animate: 1.0.7(tailwindcss@3.3.5)
+      '@tailwindcss/forms': 0.5.6(tailwindcss@3.4.1)
+      tailwindcss: 3.4.1
+      tailwindcss-animate: 1.0.7(tailwindcss@3.4.1)
     dev: true
 
   /@miniflare/cache@2.14.1:
@@ -6638,24 +6641,24 @@ packages:
       zod: 3.22.2
     dev: false
 
-  /@tailwindcss/container-queries@0.1.1(tailwindcss@3.3.5):
+  /@tailwindcss/container-queries@0.1.1(tailwindcss@3.4.1):
     resolution: {integrity: sha512-p18dswChx6WnTSaJCSGx6lTmrGzNNvm2FtXmiO6AuA1V4U5REyoqwmT6kgAsIMdjo07QdAfYXHJ4hnMtfHzWgA==}
     peerDependencies:
       tailwindcss: '>=3.2.0'
     dependencies:
-      tailwindcss: 3.3.5
+      tailwindcss: 3.4.1
     dev: true
 
-  /@tailwindcss/forms@0.5.6(tailwindcss@3.3.5):
+  /@tailwindcss/forms@0.5.6(tailwindcss@3.4.1):
     resolution: {integrity: sha512-Fw+2BJ0tmAwK/w01tEFL5TiaJBX1NLT1/YbWgvm7ws3Qcn11kiXxzNTEQDMs5V3mQemhB56l3u0i9dwdzSQldA==}
     peerDependencies:
       tailwindcss: '>=3.0.0 || >= 3.0.0-alpha.1'
     dependencies:
       mini-svg-data-uri: 1.4.4
-      tailwindcss: 3.3.5
+      tailwindcss: 3.4.1
     dev: true
 
-  /@tailwindcss/typography@0.5.10(tailwindcss@3.3.5):
+  /@tailwindcss/typography@0.5.10(tailwindcss@3.4.1):
     resolution: {integrity: sha512-Pe8BuPJQJd3FfRnm6H0ulKIGoMEQS+Vq01R6M5aCrFB/ccR/shT+0kXLjouGC1gFLm9hopTFN+DMP0pfwRWzPw==}
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
@@ -6664,7 +6667,7 @@ packages:
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.3.5
+      tailwindcss: 3.4.1
     dev: true
 
   /@tanstack/form-core@0.13.5:
@@ -7306,6 +7309,17 @@ packages:
       '@typescript-eslint/types': 6.21.0
       eslint-visitor-keys: 3.4.3
     dev: true
+
+  /@uidotdev/usehooks@2.4.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-1I+RwWyS+kdv3Mv0Vmc+p0dPYH0DTRAo04HLyXReYBL9AeseDWUJyi4THuksBJcu9F0Pih69Ak150VDnqbVnXg==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /@ungap/structured-clone@1.2.0:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
@@ -12776,14 +12790,14 @@ packages:
     hasBin: true
     dev: false
 
-  /nativewind@4.0.13(@babel/core@7.23.2)(react-native-reanimated@3.3.0)(react-native-safe-area-context@4.6.3)(react-native@0.72.6)(react@18.2.0)(tailwindcss@3.3.5):
+  /nativewind@4.0.13(@babel/core@7.23.2)(react-native-reanimated@3.3.0)(react-native-safe-area-context@4.6.3)(react-native@0.72.6)(react@18.2.0)(tailwindcss@3.4.1):
     resolution: {integrity: sha512-iLbilVaeCabUcuNaRquSD76TC0LggZKPIeUlG5q3P5wNvMYuET6kn4OKZDaWxC5kpIOO323HYJHCj8DCg3E1Pw==}
     engines: {node: '>=16'}
     peerDependencies:
       tailwindcss: '>3.3.0'
     dependencies:
-      react-native-css-interop: 0.0.13(@babel/core@7.23.2)(react-native-reanimated@3.3.0)(react-native-safe-area-context@4.6.3)(react-native@0.72.6)(react@18.2.0)(tailwindcss@3.3.5)
-      tailwindcss: 3.3.5
+      react-native-css-interop: 0.0.13(@babel/core@7.23.2)(react-native-reanimated@3.3.0)(react-native-safe-area-context@4.6.3)(react-native@0.72.6)(react@18.2.0)(tailwindcss@3.4.1)
+      tailwindcss: 3.4.1
     transitivePeerDependencies:
       - '@babel/core'
       - react
@@ -13624,27 +13638,27 @@ packages:
     engines: {node: '>=4.0.0'}
     dev: false
 
-  /postcss-import@15.1.0(postcss@8.4.31):
+  /postcss-import@15.1.0(postcss@8.4.30):
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       postcss: ^8.0.0
     dependencies:
-      postcss: 8.4.31
+      postcss: 8.4.30
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.4
 
-  /postcss-js@4.0.1(postcss@8.4.31):
+  /postcss-js@4.0.1(postcss@8.4.30):
     resolution: {integrity: sha512-dDLF8pEO191hJMtlHFPRa8xsizHaM82MLfNkUHdUtVEV3tgTp5oj+8qbEqYM57SLfc74KSbw//4SeJma2LRVIw==}
     engines: {node: ^12 || ^14 || >= 16}
     peerDependencies:
       postcss: ^8.4.21
     dependencies:
       camelcase-css: 2.0.1
-      postcss: 8.4.31
+      postcss: 8.4.30
 
-  /postcss-load-config@4.0.1(postcss@8.4.31):
+  /postcss-load-config@4.0.1(postcss@8.4.30):
     resolution: {integrity: sha512-vEJIc8RdiBRu3oRAI0ymerOn+7rPuMvRXslTvZUKZonDHFIczxztIyJ1urxM1x9JXEikvpWWTUUqal5j/8QgvA==}
     engines: {node: '>= 14'}
     peerDependencies:
@@ -13657,16 +13671,16 @@ packages:
         optional: true
     dependencies:
       lilconfig: 2.1.0
-      postcss: 8.4.31
+      postcss: 8.4.30
       yaml: 2.2.2
 
-  /postcss-nested@6.0.1(postcss@8.4.31):
+  /postcss-nested@6.0.1(postcss@8.4.30):
     resolution: {integrity: sha512-mEp4xPMi5bSWiMbsgoPfcP74lsWLHkQbZc3sY+jWYd65CUwXrUaTp0fmNpa01ZcETKlIgUdFN/MpS2xZtqL9dQ==}
     engines: {node: '>=12.0'}
     peerDependencies:
       postcss: ^8.2.14
     dependencies:
-      postcss: 8.4.31
+      postcss: 8.4.30
       postcss-selector-parser: 6.0.12
 
   /postcss-selector-parser@6.0.10:
@@ -13711,6 +13725,7 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: false
 
   /postgres-array@2.0.0:
     resolution: {integrity: sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA==}
@@ -14116,7 +14131,7 @@ packages:
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
-  /react-native-css-interop@0.0.13(@babel/core@7.23.2)(react-native-reanimated@3.3.0)(react-native-safe-area-context@4.6.3)(react-native@0.72.6)(react@18.2.0)(tailwindcss@3.3.5):
+  /react-native-css-interop@0.0.13(@babel/core@7.23.2)(react-native-reanimated@3.3.0)(react-native-safe-area-context@4.6.3)(react-native@0.72.6)(react@18.2.0)(tailwindcss@3.4.1):
     resolution: {integrity: sha512-giyR8/F1p3P9PAwz4mMd6DY8WQ5XO6U+3trHOD07jq8jLJFLms/4Y56Ux1iN1037iHiPI8v0XUSacraI8/2sqw==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -14141,7 +14156,7 @@ packages:
       react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.23.2)(react@18.2.0)
       react-native-reanimated: 3.3.0(@babel/core@7.23.2)(@babel/plugin-proposal-nullish-coalescing-operator@7.18.6)(@babel/plugin-proposal-optional-chaining@7.21.0)(@babel/plugin-transform-arrow-functions@7.22.5)(@babel/plugin-transform-shorthand-properties@7.22.5)(@babel/plugin-transform-template-literals@7.22.5)(react-native@0.72.6)(react@18.2.0)
       react-native-safe-area-context: 4.6.3(react-native@0.72.6)(react@18.2.0)
-      tailwindcss: 3.3.5
+      tailwindcss: 3.4.1
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -15408,16 +15423,16 @@ packages:
     resolution: {integrity: sha512-3mFKyCo/MBcgyOTlrY8T7odzZFx+w+qKSMAmdFzRvqBfLlSigU6TZnlFHK0lkMwj9Bj8OYU+9yW9lmGuS0QEnQ==}
     dev: false
 
-  /tailwindcss-animate@1.0.7(tailwindcss@3.3.5):
+  /tailwindcss-animate@1.0.7(tailwindcss@3.4.1):
     resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
     dependencies:
-      tailwindcss: 3.3.5
+      tailwindcss: 3.4.1
     dev: true
 
-  /tailwindcss@3.3.5:
-    resolution: {integrity: sha512-5SEZU4J7pxZgSkv7FP1zY8i2TIAOooNZ1e/OGtxIEv6GltpoiXUqWvLy89+a10qYTB1N5Ifkuw9lqQkN9sscvA==}
+  /tailwindcss@3.4.1:
+    resolution: {integrity: sha512-qAYmXRfk3ENzuPBakNK0SRrUDipP8NQnEY6772uDhflcQz5EhRdD7JNZxyrFHVQNCwULPBn6FNPp9brpO7ctcA==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
@@ -15435,11 +15450,11 @@ packages:
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.0.0
-      postcss: 8.4.31
-      postcss-import: 15.1.0(postcss@8.4.31)
-      postcss-js: 4.0.1(postcss@8.4.31)
-      postcss-load-config: 4.0.1(postcss@8.4.31)
-      postcss-nested: 6.0.1(postcss@8.4.31)
+      postcss: 8.4.30
+      postcss-import: 15.1.0(postcss@8.4.30)
+      postcss-js: 4.0.1(postcss@8.4.30)
+      postcss-load-config: 4.0.1(postcss@8.4.30)
+      postcss-nested: 6.0.1(postcss@8.4.30)
       postcss-selector-parser: 6.0.12
       resolve: 1.22.4
       sucrase: 3.32.0

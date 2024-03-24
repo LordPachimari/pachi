@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
+import { Header } from "~/components/templates/layouts/header";
 import { Toaster } from "~/components/ui/toaster";
 import { ThemeProvider } from "~/providers/theme-provider";
 
@@ -32,6 +33,7 @@ export default function Layout(props: { children: React.ReactNode }) {
     <html lang="en">
       <body className={["font-sans", fontSans.variable].join(" ")}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Header />
           {props.children}
         </ThemeProvider>
         <Toaster />
