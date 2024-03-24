@@ -1,6 +1,6 @@
-import { createUploadthing, type FileRouter } from "uploadthing/next"
+import { createUploadthing, type FileRouter } from "uploadthing/next";
 
-const f = createUploadthing()
+const f = createUploadthing();
 
 // const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
 
@@ -18,16 +18,15 @@ export const ourFileRouter = {
       // if (!user) throw new Error("Unauthorized");
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      // return { userId: user.id };
-      return {}
+      // return { userID: user.id };
+      return {};
     })
     // eslint-disable-next-line @typescript-eslint/require-await
     .onUploadComplete(async ({ file }) => {
       // This code RUNS ON YOUR SERVER after upload
-      // console.log("Upload complete for userId:", metadata.userId);
+      // console.log("Upload complete for userID:", metadata.userID);
 
-      console.log("file url", file.url)
+      console.log("file url", file.url);
     }),
-} satisfies FileRouter
-
-export type OurFileRouter = typeof ourFileRouter
+} satisfies FileRouter;
+export type OurFileRouter = typeof ourFileRouter;

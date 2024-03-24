@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm"
+import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -6,14 +6,14 @@ import {
   pgTable,
   primaryKey,
   varchar,
-} from "drizzle-orm/pg-core"
+} from "drizzle-orm/pg-core";
 
-import { countries } from "./country"
-import { currencies } from "./currency"
-import { fulfillmentProviders } from "./fulfillment-provider"
-import { paymentProviders } from "./payment-provider"
-import { taxProviders } from "./tax-provider"
-import { taxRates } from "./tax-rate"
+import { countries } from "./country";
+import { currencies } from "./currency";
+import { paymentProviders } from "./payment-provider";
+import { shippingProviders } from "./shipping-provider";
+import { taxProviders } from "./tax-provider";
+import { taxRates } from "./tax-rate";
 
 export const regions = pgTable(
   "regions",
@@ -35,7 +35,7 @@ export const regions = pgTable(
     currencyCodeIndex: index("currencyCodeIndex").on(region.currencyCode),
     taxProviderIdIndex: index("taxProviderIdIndex").on(region.taxProviderId),
   }),
-)
+);
 export const region_relations = relations(regions, ({ one, many }) => ({
   currency: one(currencies, {
     fields: [regions.currencyCode],
@@ -49,7 +49,7 @@ export const region_relations = relations(regions, ({ one, many }) => ({
   countries: many(countries),
   paymentProviders: many(regionsToPaymentProviders),
   fulfillmentProviders: many(regionsToFulfillmentProviders),
-}))
+}));
 export const regionsToPaymentProviders = pgTable(
   "regions_to_payment_providers",
   {
@@ -63,9 +63,9 @@ export const regionsToPaymentProviders = pgTable(
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.regionId, t.paymentProviderId),
+    pk: primaryKey({ columns: [t.regionId, t.paymentProviderId] }),
   }),
-)
+);
 export const regionsToPaymentProvidersRelations = relations(
   regionsToPaymentProviders,
   ({ one }) => ({
@@ -78,33 +78,33 @@ export const regionsToPaymentProvidersRelations = relations(
       references: [regions.id],
     }),
   }),
-)
+);
 export const regionsToFulfillmentProviders = pgTable(
   "r_to_f_providers",
   {
     id: varchar("id"),
     fulfillmentProviderId: varchar("fulfillmentProviderId")
       .notNull()
-      .references(() => fulfillmentProviders.id, { onDelete: "cascade" }),
+      .references(() => shippingProviders.id, { onDelete: "cascade" }),
     regionId: varchar("regionId")
       .notNull()
       .references(() => regions.id, { onDelete: "cascade" }),
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.regionId, t.fulfillmentProviderId),
+    pk: primaryKey({ columns: [t.regionId, t.fulfillmentProviderId] }),
   }),
-)
+);
 export const regionsToFulfillmentProvidersRelations = relations(
   regionsToFulfillmentProviders,
   ({ one }) => ({
-    fulfillment_provider: one(fulfillmentProviders, {
+    fulfillment_provider: one(shippingProviders, {
       fields: [regionsToFulfillmentProviders.fulfillmentProviderId],
-      references: [fulfillmentProviders.id],
+      references: [shippingProviders.id],
     }),
     region: one(regions, {
       fields: [regionsToFulfillmentProviders.regionId],
       references: [regions.id],
     }),
   }),
-)
+);

@@ -1,21 +1,21 @@
-import { useState } from "react"
+import { useState } from "react";
 
-import type { UpdateProductPrice } from "@pachi/core"
-import { type ProductVariant } from "@pachi/db"
+import type { Client, UpdateProductPrice } from "@pachi/validators";
 
-import { CurrenciesTable } from "~/app/(global)/(dashboard)/dashboard/products/_components/currency-table"
-import CurrencyModal from "~/components/templates/modals/currency"
-import { Label } from "~/components/ui/label"
-import { RadioGroup } from "~/components/ui/radio-group"
-import { CurrencyInput } from "./currency-input"
+import { CurrenciesTable } from "~/app/(global)/(dashboard)/dashboard/products/_components/currency-table";
+import CurrencyModal from "~/components/templates/modals/currency";
+import { Label } from "~/components/ui/label";
+import { RadioGroup } from "~/components/ui/radio-group";
+import { CurrencyInput } from "./currency-input";
 
 interface PricingProps {
-  updatePrice: (props: UpdateProductPrice) => Promise<void>
-  variant: ProductVariant
-  productCurrencyCodes: string[]
-  storeId: string
-  productId: string
+  updatePrice: (props: UpdateProductPrice) => Promise<void>;
+  variant: Client.ProductVariant;
+  productCurrencyCodes: string[];
+  storeId: string;
+  productId: string;
 }
+
 const Pricing = ({
   variant,
   updatePrice,
@@ -23,14 +23,15 @@ const Pricing = ({
   storeId,
   productId,
 }: PricingProps) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const open = () => setIsOpen(true)
+  const [isOpen, setIsOpen] = useState(false);
+  const open = () => setIsOpen(true);
+
   const close = () => {
-    setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
   const [activePrice, setActivePrice] = useState(
     variant.prices?.[0] ? variant.prices[0] : undefined,
-  )
+  );
 
   return (
     <div>
@@ -69,22 +70,25 @@ const Pricing = ({
           className="my-1"
           defaultValue={activePrice.amount / 100}
           onChange={async (e) => {
-            const cleanedValue = e.currentTarget.value.replace(/,/g, "")
-            let valueInCents = Math.floor(parseFloat(cleanedValue) * 100)
+            const cleanedValue = e.currentTarget.value.replace(/,/g, "");
+            let valueInCents = Math.floor(parseFloat(cleanedValue) * 100);
+
             if (isNaN(valueInCents)) {
-              valueInCents = 0
+              valueInCents = 0;
             }
-            console.log("e", valueInCents)
+            console.log("e", valueInCents);
+
             await updatePrice({
               priceId: activePrice.id,
               updates: { amount: valueInCents },
               variantId: variant.id,
               productId: variant.productId,
-            })
+            });
           }}
         />
       )}
     </div>
-  )
-}
-export default Pricing
+  );
+};
+
+export default Pricing;

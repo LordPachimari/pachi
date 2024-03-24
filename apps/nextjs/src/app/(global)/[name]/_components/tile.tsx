@@ -1,7 +1,7 @@
-import Image from "next/image"
-import clsx from "clsx"
+import Image from "next/image";
+import clsx from "clsx";
 
-import PriceLabel from "./price-label"
+import PriceLabel from "./price-label";
 
 export function GridTileImage({
   isInteractive = true,
@@ -9,14 +9,14 @@ export function GridTileImage({
   label,
   ...props
 }: {
-  isInteractive?: boolean
-  active?: boolean
+  isInteractive?: boolean;
+  active?: boolean;
   label?: {
-    title: string
-    amount: number
-    currencyCode: string
-    position: "bottom" | "center"
-  }
+    title: string;
+    amount: number;
+    currencyCode: string;
+    position: "bottom" | "center";
+  };
 } & React.ComponentProps<typeof Image>) {
   return (
     <div
@@ -48,5 +48,5 @@ export function GridTileImage({
         />
       ) : null}
     </div>
-  )
+  );
 }

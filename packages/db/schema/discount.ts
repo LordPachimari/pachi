@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm"
+import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -7,10 +7,10 @@ import {
   primaryKey,
   uniqueIndex,
   varchar,
-} from "drizzle-orm/pg-core"
+} from "drizzle-orm/pg-core";
 
-import { discountRules } from "./discount-rule"
-import { regions } from "./region"
+import { discountRules } from "./discount-rule";
+import { regions } from "./region";
 
 export const discounts = pgTable(
   "discounts",
@@ -38,7 +38,7 @@ export const discounts = pgTable(
     ruleIdIndex: index("ruleIdIndex").on(discount.ruleId),
     codeIndex: uniqueIndex("codeIndex").on(discount.code),
   }),
-)
+);
 export const discounts_relations = relations(discounts, ({ one, many }) => ({
   parent_discount: one(discounts, {
     fields: [discounts.parentDiscountId],
@@ -49,7 +49,7 @@ export const discounts_relations = relations(discounts, ({ one, many }) => ({
     references: [discountRules.id],
   }),
   many: many(discountsToRegions),
-}))
+}));
 export const discountsToRegions = pgTable(
   "discounts_to_regions",
   {
@@ -61,9 +61,9 @@ export const discountsToRegions = pgTable(
       .references(() => regions.id),
   },
   (t) => ({
-    pk: primaryKey(t.discountId, t.regionId),
+    pk: primaryKey({ columns: [t.discountId, t.regionId] }),
   }),
-)
+);
 export const discountsToRegionsRelations = relations(
   discountsToRegions,
   ({ one }) => ({
@@ -76,4 +76,4 @@ export const discountsToRegionsRelations = relations(
       references: [regions.id],
     }),
   }),
-)
+);

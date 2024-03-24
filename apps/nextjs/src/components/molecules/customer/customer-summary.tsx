@@ -1,13 +1,13 @@
-import React from "react"
+import React from "react";
 
-import type { User } from "@pachi/db"
+import type { Client } from "@pachi/validators";
 
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
-import { Card, CardContent, CardHeader } from "~/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Card, CardContent, CardHeader } from "~/components/ui/card";
 
 type CustomerSummaryProps = {
-  customer: User
-}
+  customer: Client.User;
+};
 
 const CustomerSummary: React.FC<CustomerSummaryProps> = ({ customer }) => {
   // const [, handleCopyEmail] = useClipboard(customer.email, {
@@ -59,7 +59,7 @@ const CustomerSummary: React.FC<CustomerSummaryProps> = ({ customer }) => {
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default CustomerSummary
+export default CustomerSummary;

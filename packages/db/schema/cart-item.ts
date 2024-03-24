@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm"
+import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -7,13 +7,12 @@ import {
   pgTable,
   primaryKey,
   varchar,
-} from "drizzle-orm/pg-core"
+} from "drizzle-orm/pg-core";
 
-import type { Image } from "../validators/common"
-import { carts } from "./cart"
-import { discounts } from "./discount"
-import { orders } from "./order"
-import { productVariants } from "./product-variant"
+import { carts } from "./cart";
+import { discounts } from "./discount";
+import { orders } from "./order";
+import { productVariants } from "./product-variant";
 
 export const cartItems = pgTable(
   "cart_items",
@@ -35,7 +34,7 @@ export const cartItems = pgTable(
     refundable: boolean("refundable"),
     subtotal: integer("subtotal"),
     taxTotal: integer("taxTotal"),
-    thumbnail: json("thumbnail").$type<Image>(),
+    thumbnail: json("thumbnail"),
     title: varchar("title"),
     total: integer("total").notNull(),
     unitPrice: integer("unitPrice").notNull(),
@@ -51,9 +50,9 @@ export const cartItems = pgTable(
   (cartItems) => ({
     cartIdIndex: index("cartIdIndex").on(cartItems.cartId),
     orderIdIndex4: index("orderIdIndex4").on(cartItems.orderId),
-    pk: primaryKey(cartItems.variantId, cartItems.id),
+    pk: primaryKey({ columns: [cartItems.variantId, cartItems.id] }),
   }),
-)
+);
 export const cartItemsRelations = relations(cartItems, ({ one, many }) => ({
   cart: one(carts, {
     fields: [cartItems.cartId],
@@ -68,7 +67,7 @@ export const cartItemsRelations = relations(cartItems, ({ one, many }) => ({
     references: [productVariants.id],
   }),
   adjustments: many(cartItemAdjustments),
-}))
+}));
 export const cartItemAdjustments = pgTable(
   "cart_item_adjustments",
   {
@@ -82,7 +81,7 @@ export const cartItemAdjustments = pgTable(
     discountIdIndex: index("discountIdIndex").on(cartItemAdjustment.discountId),
     itemIdIndex: index("itemIdIndex").on(cartItemAdjustment.itemId),
   }),
-)
+);
 export const cartItemAdjustmentsRelations = relations(
   cartItemAdjustments,
   ({ one }) => ({
@@ -95,4 +94,4 @@ export const cartItemAdjustmentsRelations = relations(
       references: [cartItems.id],
     }),
   }),
-)
+);

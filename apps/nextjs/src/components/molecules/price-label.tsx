@@ -1,6 +1,6 @@
-import { cn } from "@pachi/utils"
+import { cn } from "@pachi/utils";
 
-import Price from "../price"
+import Price from "../price";
 
 const PriceLabel = ({
   title,
@@ -8,10 +8,10 @@ const PriceLabel = ({
   currencyCode,
   position = "bottom",
 }: {
-  title: string
-  amount: number
-  currencyCode: string
-  position?: "bottom" | "center"
+  title: string;
+  amount: number;
+  currencyCode: string;
+  position?: "bottom" | "center";
 }) => {
   return (
     <div
@@ -34,7 +34,7 @@ const PriceLabel = ({
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PriceLabel
+export default PriceLabel;

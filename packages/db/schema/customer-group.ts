@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm"
+import { relations } from "drizzle-orm";
 import {
   index,
   integer,
@@ -6,10 +6,10 @@ import {
   primaryKey,
   text,
   varchar,
-} from "drizzle-orm/pg-core"
+} from "drizzle-orm/pg-core";
 
-import { priceLists } from "./price-list"
-import { users } from "./user"
+import { priceLists } from "./price-list";
+import { users } from "./user";
 
 export const customerGroups = pgTable(
   "customer_groups",
@@ -24,11 +24,11 @@ export const customerGroups = pgTable(
   (customerGroup) => ({
     cgNameIndex: index("cgNameIndex").on(customerGroup.name),
   }),
-)
+);
 export const customerGroupRelations = relations(customerGroups, ({ many }) => ({
   customers: many(customersToGroups),
   price_lists: many(customerGroupsToPriceLists),
-}))
+}));
 export const customersToGroups = pgTable(
   "customers_to_groups",
   {
@@ -42,9 +42,9 @@ export const customersToGroups = pgTable(
       .references(() => customerGroups.id, { onDelete: "cascade" }),
   },
   (t) => ({
-    pk: primaryKey(t.customerId, t.groupId),
+    pk: primaryKey({ columns: [t.customerId, t.groupId] }),
   }),
-)
+);
 export const customersToGroupsRelations = relations(
   customersToGroups,
   ({ one }) => ({
@@ -57,8 +57,7 @@ export const customersToGroupsRelations = relations(
       references: [customerGroups.id],
     }),
   }),
-)
-
+);
 export const customerGroupsToPriceLists = pgTable(
   "customer_groups_to_price_lists",
   {
@@ -74,7 +73,7 @@ export const customerGroupsToPriceLists = pgTable(
   (t) => ({
     pk: primaryKey(t.customerGroupId, t.priceListId),
   }),
-)
+);
 export const customerGroupsToPriceListsRelations = relations(
   customerGroupsToPriceLists,
   ({ one }) => ({
@@ -87,4 +86,4 @@ export const customerGroupsToPriceListsRelations = relations(
       references: [priceLists.id],
     }),
   }),
-)
+);

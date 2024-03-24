@@ -1,8 +1,8 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@pachi/utils"
+import { cn } from "@pachi/utils";
 
-import { inputBaseStyles } from "./input"
+import { inputBaseStyles } from "./input";
 
 const Textarea = React.forwardRef<
   HTMLTextAreaElement,
@@ -18,8 +18,8 @@ const Textarea = React.forwardRef<
       )}
       {...props}
     />
-  )
-})
-Textarea.displayName = "Textarea"
+  );
+});
+Textarea.displayName = "Textarea";
 
-export { Textarea }
+export { Textarea };

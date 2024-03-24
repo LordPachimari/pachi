@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm"
+import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -7,12 +7,12 @@ import {
   pgTable,
   primaryKey,
   varchar,
-} from "drizzle-orm/pg-core"
+} from "drizzle-orm/pg-core";
 
-import { cartItems } from "./cart-item"
-import { fulfillmentProviders } from "./fulfillment-provider"
-import { orders } from "./order"
-import { trackingLinks } from "./tracking-link"
+import { cartItems } from "./cart-item";
+import { orders } from "./order";
+import { shippingProviders } from "./shipping-provider";
+import { trackingLinks } from "./tracking-link";
 
 export const fulfillments = pgTable(
   "fulfillments",
@@ -41,7 +41,7 @@ export const fulfillments = pgTable(
     providerIdIndex1: index("providerIdIndex1").on(fulfillment.providerId),
     swapIdIndex1: index("swapIdIndex1").on(fulfillment.swapId),
   }),
-)
+);
 export const fulfillmentRelations = relations(
   fulfillments,
   ({ one, many }) => ({
@@ -53,15 +53,14 @@ export const fulfillmentRelations = relations(
       fields: [fulfillments.orderId],
       references: [orders.id],
     }),
-    provider: one(fulfillmentProviders, {
+    provider: one(shippingProviders, {
       fields: [fulfillments.providerId],
-      references: [fulfillmentProviders.id],
+      references: [shippingProviders.id],
     }),
     items: many(fulfillmentItems),
     trackingLinks: many(trackingLinks),
   }),
-)
-
+);
 export const fulfillmentItems = pgTable(
   "fulfillment_items",
   {
@@ -70,9 +69,9 @@ export const fulfillmentItems = pgTable(
     quantity: integer("quantity"),
   },
   (t) => ({
-    pk: primaryKey(t.itemId, t.fulfillmentId),
+    pk: primaryKey({ columns: [t.itemId, t.fulfillmentId] }),
   }),
-)
+);
 export const fulfillmentItemsRelations = relations(
   fulfillmentItems,
   ({ one }) => ({
@@ -85,4 +84,4 @@ export const fulfillmentItemsRelations = relations(
       references: [fulfillments.id],
     }),
   }),
-)
+);

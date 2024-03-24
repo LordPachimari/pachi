@@ -1,4 +1,4 @@
-import { integer, pgTable, varchar } from "drizzle-orm/pg-core"
+import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
 export const currencies = pgTable("currencies", {
   id: varchar("id"),
@@ -6,4 +6,4 @@ export const currencies = pgTable("currencies", {
   name: varchar("name"),
   symbol: varchar("symbol"),
   version: integer("version").notNull().default(0),
-})
+});

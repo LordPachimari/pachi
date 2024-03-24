@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 // components/Sidebar.js
 
-import { cn } from "@pachi/utils"
+import { cn } from "@pachi/utils";
 
-import { Icons } from "~/components/ui/icons"
-import type { SidebarNavItem } from "~/types"
+import { Icons } from "~/components/ui/icons";
+import type { SidebarNavItem } from "~/types";
 
 export interface DashboardSidebarProps {
-  items: SidebarNavItem[]
-  storeId: string
+  items: SidebarNavItem[];
+  storeId: string;
 }
 
 const DashboardSidebar = ({ items, storeId }: DashboardSidebarProps) => {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <nav
@@ -26,7 +26,7 @@ const DashboardSidebar = ({ items, storeId }: DashboardSidebarProps) => {
     >
       <div className=" mt-20 flex w-full flex-col items-start gap-1 px-2 py-6">
         {items.map((item, index) => {
-          const Icon = Icons[item.icon ?? "chevronLeft"]
+          const Icon = Icons[item.icon ?? "chevronLeft"];
 
           return item.href ? (
             <div
@@ -74,11 +74,11 @@ const DashboardSidebar = ({ items, storeId }: DashboardSidebarProps) => {
             >
               {item.title}
             </span>
-          )
+          );
         })}
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default DashboardSidebar
+export default DashboardSidebar;

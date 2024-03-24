@@ -1,214 +1,194 @@
-import { Effect } from "effect"
-import type { PullResponseOKV1 } from "replicache"
-import { z } from "zod"
+import { Clock, Effect } from "effect";
+import type { PullResponseOKV1 } from "replicache";
 
-import {
-  deleteSpaceRecord,
-  getClientChanges,
-  getClientGroupObject,
-  getPrevClientRecord,
-  getPrevSpaceRecord,
-  getSpacePatch,
-  setClientGroupObject,
-  setSpaceRecord,
-} from "@pachi/core"
-import type { Db } from "@pachi/db"
-import type { Cookie, PullRequest, SpaceId, SpaceRecords } from "@pachi/types"
-import { pullRequestSchema } from "@pachi/types"
-import { withDieErrorLogger } from "@pachi/utils"
+import { ReplicacheRecordManager } from "@pachi/core";
+import type { Db } from "@pachi/db";
+import { ulid, UnknownExceptionLogger } from "@pachi/utils";
+import type {
+  Cookie,
+  PullRequest,
+  SpaceID,
+  SpaceRecord,
+} from "@pachi/validators";
 
-const subspacesSchema = z.enum(["store", "user"] as const)
-export const pull = <T extends SpaceId>({
-  spaceId,
-  body,
-  userId,
+export const pull = <T extends SpaceID>({
+  spaceID,
+  body: pull,
+  userID,
   db,
-  subspaceIds,
+  subspaceIDs,
 }: {
-  spaceId: T
-  subspaceIds: (keyof SpaceRecords[T])[] | undefined
-  body: PullRequest
-  userId: string | undefined
-  db: Db
+  spaceID: T;
+  subspaceIDs: Array<SpaceRecord[T][number]>;
+  body: PullRequest;
+  userID: string | undefined;
+  db: Db;
 }) =>
   Effect.gen(function* (_) {
-    yield* _(Effect.log("----------------------------------------------------"))
     yield* _(
-      Effect.log(`Processing mutation pull: ${JSON.stringify(body, null, "")}`),
-    )
+      Effect.log("----------------------------------------------------"),
+    );
 
-    //parsing
-    const pull = pullRequestSchema.safeParse(body)
-    const parsedSubspaceIds = subspacesSchema.optional().safeParse(subspaceIds)
-    if (pull.success === false) {
-      return yield* _(Effect.fail(pull.error))
-    }
-    if (parsedSubspaceIds.success === false) {
-      return yield* _(Effect.fail(parsedSubspaceIds.error))
-    }
+    yield* _(Effect.log(`PROCESSING PULL: ${JSON.stringify(pull, null, "")}`));
 
-    const requestCookie = pull.data.cookie
+    const requestCookie = pull.cookie;
+    const startTransact = yield* _(Clock.currentTimeMillis);
 
-    const startTransact = Date.now()
-
-    // 1: get the space record key, to retrieve the previous space record
+    // 1: GET SPACE RECORD KEY: TO RETRIEVE PREVIOUS SPACE RECORD
     const spaceRecordKey =
-      requestCookie && spaceId === "global"
+      requestCookie && spaceID === "global"
         ? requestCookie.globalSpaceRecordKey
-        : requestCookie && spaceId === "dashboard"
+        : requestCookie && spaceID === "dashboard"
         ? requestCookie.dashboardSpaceRecordKey
-        : undefined
+        : undefined;
 
-    // 2: begin transaction
+    // 2: BEGIN PULL TRANSACTION
     const processPull = yield* _(
       Effect.tryPromise(() =>
         db.transaction(
           async (transaction) =>
             Effect.gen(function* (_) {
-              // 3: get previous space record and previous client record, and client group object
-              const [prevSpaceRecord, prevClientRecord, clientGroupObject] =
-                yield* _(
-                  Effect.all(
-                    [
-                      getPrevSpaceRecord({
-                        key: spaceRecordKey,
-                        transaction,
-                        spaceId,
-                      }),
-                      getPrevClientRecord({
-                        transaction,
-                        key: requestCookie?.clientRecordKey,
-                      }),
-                      getClientGroupObject({
-                        clientGroupID: pull.data.clientGroupID,
-                        transaction,
-                      }),
-                    ],
-                    {
-                      concurrency: "unbounded",
-                    },
-                  ),
-                )
+              // 3: INIT REPLICACHE
+              const REPLICACHE = new ReplicacheRecordManager({
+                clientGroupID: pull.clientGroupID,
+                spaceID,
+                subspaceIDs,
+                transaction,
+                userID,
+              });
+              // 4: GET PREVIOUS AND CURRENT RECORDS. (1 ROUND TRIP TO THE DATABASE)
+              const [
+                prevSpaceRecord,
+                prevClientRecord,
+                currentSpaceRecord,
+                currentClientRecord,
+                clientGroupObject,
+              ] = yield* _(
+                Effect.all(
+                  [
+                    REPLICACHE.getPrevSpaceRecord(spaceRecordKey),
+                    REPLICACHE.getPrevClientRecord(
+                      requestCookie?.clientRecordKey,
+                    ),
+                    REPLICACHE.getCurrentSpaceRecord(),
+                    REPLICACHE.getCurrentClientRecord(),
+                    REPLICACHE.getClientGroupObject(),
+                  ],
+                  {
+                    concurrency: "unbounded",
+                  },
+                ),
+              );
+
+              const currentTime = yield* _(Clock.currentTimeMillis);
+
               yield* _(
                 Effect.log(
-                  `total time getting prev records ${
-                    Date.now() - startTransact
+                  `TOTAL TIME OF GETTING RECORDS ${
+                    currentTime - startTransact
                   }`,
                 ),
-              )
+              );
 
-              const patchEffect = getSpacePatch({
-                spaceRecord: prevSpaceRecord,
-                spaceId,
-                userId,
-                transaction,
-                subspaceIds: parsedSubspaceIds.data as
-                  | (keyof SpaceRecords[T])[]
-                  | undefined,
-              })
+              // 5: GET RECORDS DIFF
+              const [spaceDiff, clientDiff] = yield* _(
+                Effect.all([
+                  REPLICACHE.diffSpaceRecords(
+                    prevSpaceRecord,
+                    currentSpaceRecord,
+                  ),
+                  REPLICACHE.diffClientRecords(
+                    prevClientRecord,
+                    currentClientRecord,
+                  ),
+                ]),
+              );
 
-              const lastMutationIDChangesEffect = getClientChanges({
-                clientRecord: prevClientRecord,
-                transaction,
-              })
+              // 5: GET THE PATCH: THE DIFF TO THE SPACE RECORD. (2 ROUND TRIP TO THE DATABASE)
+              // IF PREVIOUS SPACE RECORD IS NOT FOUND, THEN RESET THE SPACE RECORD
 
-              // 3: get the patch: the changes to the space record since the last pull
-              // and the lastMutationIDChanges: the changes to the client record since the last pull
-              const [{ newSpaceRecord, patch }, lastMutationIDChanges] =
-                yield* _(
-                  Effect.all([patchEffect, lastMutationIDChangesEffect], {
-                    concurrency: "unbounded",
-                  }),
-                )
+              const spacePatch = prevSpaceRecord
+                ? yield* _(REPLICACHE.createSpacePatch(spaceDiff))
+                : yield* _(REPLICACHE.createSpaceResetPatch());
 
-              // Replicache ClientGroups can be forked from an existing
-              // ClientGroup with existing state and cookie. In this case we
-              // might see a new CG getting a pull with a non-null cookie.
-              // For these CG's, initialize to incoming cookie.
+              // 6: PREPARE UPDATES
               const prevSpaceRecordVersion = Math.max(
                 clientGroupObject.spaceRecordVersion,
                 requestCookie?.order ?? 0,
-              )
-              const nextSpaceRecordVersion = prevSpaceRecordVersion + 1
-              clientGroupObject.spaceRecordVersion = nextSpaceRecordVersion
+              );
+              const nextSpaceRecordVersion = prevSpaceRecordVersion + 1;
+              clientGroupObject.spaceRecordVersion = nextSpaceRecordVersion;
 
-              const newSpaceRecordKey = makeSpaceRecordKey({
-                clientGroupID: clientGroupObject.id,
-                order: nextSpaceRecordVersion,
-                spaceId,
-              })
+              const newSpaceRecordKey = ulid();
 
               const nothingToUpdate =
-                patch.length === 0 &&
-                Object.keys(lastMutationIDChanges).length === 0
+                spacePatch.length === 0 && Object.keys(clientDiff).length === 0;
 
+              // 7: CREATE THE PULL RESPONSE
               const resp: PullResponseOKV1 = {
-                lastMutationIDChanges,
+                lastMutationIDChanges: clientDiff,
                 cookie: {
                   ...requestCookie,
-                  ...(spaceId === "global" && {
+                  ...(spaceID === "global" && {
                     globalSpaceRecordKey: nothingToUpdate
                       ? spaceRecordKey
                       : newSpaceRecordKey,
                   }),
-                  ...(spaceId === "dashboard" && {
+                  ...(spaceID === "dashboard" && {
                     dashboardSpaceRecordKey: nothingToUpdate
                       ? spaceRecordKey
                       : newSpaceRecordKey,
                   }),
                   order: nothingToUpdate
                     ? prevSpaceRecordVersion
-                    : clientGroupObject.spaceRecordVersion,
+                    : nextSpaceRecordVersion,
                 } satisfies Cookie,
-                patch,
-              }
-              yield* _(Effect.log(`pull response ${JSON.stringify(resp)}`))
+                patch: spacePatch,
+              };
+              yield* _(Effect.log(`pull response ${JSON.stringify(resp)}`));
+
+              // 8: UPDATE RECORDS IF THERE ARE CHANGES. (3 ROUND TRIP TO THE DATABASE)
               if (!nothingToUpdate) {
                 yield* _(
                   Effect.all(
                     [
-                      setSpaceRecord({
-                        spaceRecord: newSpaceRecord,
-                        key: newSpaceRecordKey,
-                        transaction,
-                      }),
-                      setClientGroupObject({
-                        clientGroupObject,
-                        transaction,
-                      }),
-                      deleteSpaceRecord({ key: spaceRecordKey, transaction }),
+                      REPLICACHE.setSpaceRecord(
+                        currentSpaceRecord.map(
+                          (record) => record.subspaceRecord,
+                        ),
+                      ),
+                      REPLICACHE.setClientGroupObject(clientGroupObject),
+                      REPLICACHE.deleteSpaceRecord(
+                        prevSpaceRecord ? prevSpaceRecord.map((r) => r.id) : [],
+                      ),
                     ],
                     {
                       concurrency: "unbounded",
                     },
                   ),
-                )
+                );
               }
-              return resp
+
+              return resp;
             }),
           { isolationLevel: "serializable", accessMode: "read write" },
         ),
       ).pipe(
-        Effect.orDieWith((e) => withDieErrorLogger(e, "transaction error")),
+        Effect.orDieWith((e) =>
+          UnknownExceptionLogger(e, "TRANSACTION ERROR IN PULL"),
+        ),
       ),
-    )
+    );
 
-    const response = yield* _(processPull)
+    const response = yield* _(processPull);
 
-    yield* _(Effect.log(`total time ${Date.now() - startTransact}`))
+    const endTransact = yield* _(Clock.currentTimeMillis);
 
-    yield* _(Effect.log("----------------------------------------------------"))
+    yield* _(Effect.log(`TOTAL TIME ${endTransact - startTransact}`));
 
-    return response
-  })
-function makeSpaceRecordKey({
-  order,
-  clientGroupID,
-  spaceId,
-}: {
-  order: number
-  clientGroupID: string
-  spaceId: SpaceId
-}) {
-  return `${spaceId}/${clientGroupID}/${order}`
-}
+    yield* _(
+      Effect.log("----------------------------------------------------"),
+    );
+
+    return response;
+  });

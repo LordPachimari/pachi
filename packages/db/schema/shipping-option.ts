@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm"
+import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -8,11 +8,11 @@ import {
   primaryKey,
   text,
   varchar,
-} from "drizzle-orm/pg-core"
+} from "drizzle-orm/pg-core";
 
-import { fulfillmentProviders } from "./fulfillment-provider"
-import { regions } from "./region"
-import { taxRates } from "./tax-rate"
+import { regions } from "./region";
+import { shippingProviders } from "./shipping-provider";
+import { taxRates } from "./tax-rate";
 
 export const shippingOptions = pgTable(
   "shipping_options",
@@ -35,13 +35,13 @@ export const shippingOptions = pgTable(
     providerIdIndex: index("providerIdIndex").on(t.providerId),
     regionIdIndex: index("regionIdIndex").on(t.regionId),
   }),
-)
+);
 export const shippingOptionRelations = relations(
   shippingOptions,
   ({ one, many }) => ({
-    provider: one(fulfillmentProviders, {
+    provider: one(shippingProviders, {
       fields: [shippingOptions.providerId],
-      references: [fulfillmentProviders.id],
+      references: [shippingProviders.id],
     }),
     region: one(regions, {
       fields: [shippingOptions.regionId],
@@ -49,7 +49,7 @@ export const shippingOptionRelations = relations(
     }),
     requirements: many(shippingOptionsRequirements),
   }),
-)
+);
 export const shippingOptionsRequirements = pgTable(
   "shipping_option_requirements",
   {
@@ -64,7 +64,7 @@ export const shippingOptionsRequirements = pgTable(
       t.shippingOptionId,
     ),
   }),
-)
+);
 export const shippingOptionRequirementRelations = relations(
   shippingOptionsRequirements,
   ({ one }) => ({
@@ -73,7 +73,7 @@ export const shippingOptionRequirementRelations = relations(
       references: [shippingOptions.id],
     }),
   }),
-)
+);
 export const shippingOptionsToTaxRates = pgTable(
   "shipping_options_to_tax_rates",
   {
@@ -87,9 +87,9 @@ export const shippingOptionsToTaxRates = pgTable(
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.shippingOptionId, t.rateId),
+    pk: primaryKey({ columns: [t.shippingOptionId, t.rateId] }),
   }),
-)
+);
 export const shippingOptionToTaxRatesRelations = relations(
   shippingOptionsToTaxRates,
   ({ one }) => ({
@@ -102,4 +102,4 @@ export const shippingOptionToTaxRatesRelations = relations(
       references: [shippingOptions.id],
     }),
   }),
-)
+);

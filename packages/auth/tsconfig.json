@@ -3,6 +3,9 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
+    "paths": {
+      "~/*": ["./src/*"]
+    },
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,

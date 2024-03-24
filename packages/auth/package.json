@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@pachi/db": "^0.1.0",
-    "drizzle-orm": "^0.29.3",
+    "drizzle-orm": "^0.30.4",
     "lucia": "^3.0.1"
   },
   "devDependencies": {

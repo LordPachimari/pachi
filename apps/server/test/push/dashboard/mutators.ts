@@ -8,7 +8,7 @@
 //   type Product,
 //   type ProductUpdates,
 // } from "@pachi/db";
-// import type { SpaceId } from "@pachi/types";
+// import type { SpaceID } from "@pachi/types";
 
 // import type { Bindings } from "~/index";
 
@@ -17,8 +17,8 @@
 //   private readonly clientID: string;
 //   private readonly db: Db;
 //   private readonly env: Bindings;
-//   private readonly userId: string;
-//   private readonly spaceId: SpaceId;
+//   private readonly userID: string;
+//   private readonly spaceID: SpaceID;
 //   private readonly requestHeaders: {
 //     ip: string | null;
 //     userAgent: string | null;
@@ -29,28 +29,28 @@
 //     db,
 //     client,
 //     env,
-//     userId,
+//     userID,
 //     requestHeaders,
-//     spaceId,
+//     spaceID,
 //   }: {
 //     clientGroupID: string;
 //     clientID: string;
 //     db: Db;
 //     env: Bindings;
-//     userId: string;
+//     userID: string;
 //     requestHeaders: {
 //       ip: string | null;
 //       userAgent: string | null;
 //     };
-//     spaceId: SpaceId;
+//     spaceID: SpaceID;
 //   }) {
 //     this.clientGroupID = clientGroupID;
 //     this.clientID = clientID;
 //     this.db = db;
 //     this.env = env;
-//     this.userId = userId;
+//     this.userID = userID;
 //     this.requestHeaders = requestHeaders;
-//     this.spaceId = spaceId;
+//     this.spaceID = spaceID;
 //   }
 //   async createProduct(product: Product) {
 //     return await push({
@@ -76,8 +76,8 @@
 //         cacheName: this.env.MOMENTO_CACHE_NAME,
 //         client: this.client,
 //       },
-//       spaceId: this.spaceId,
-//       userId: this.userId,
+//       spaceID: this.spaceID,
+//       userID: this.userID,
 //       requestHeaders: this.requestHeaders,
 //     });
 //   }
@@ -103,8 +103,8 @@
 //         cacheName: this.env.MOMENTO_CACHE_NAME,
 //         client: this.client,
 //       },
-//       spaceId: this.spaceId,
-//       userId: this.userId,
+//       spaceID: this.spaceID,
+//       userID: this.userID,
 //       requestHeaders: this.requestHeaders,
 //     });
 //   }
@@ -128,8 +128,8 @@
 //         cacheName: this.env.MOMENTO_CACHE_NAME,
 //         client: this.client,
 //       },
-//       spaceId: this.spaceId,
-//       userId: this.userId,
+//       spaceID: this.spaceID,
+//       userID: this.userID,
 //       requestHeaders: this.requestHeaders,
 //     });
 //   }

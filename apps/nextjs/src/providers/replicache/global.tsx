@@ -1,37 +1,41 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { Replicache, type PullResponseOKV1 } from "replicache"
+import { useEffect } from "react";
+import { Replicache } from "replicache";
 
-import { ClientGlobalMutators } from "@pachi/core"
+import "@pachi/core";
 
-import { env } from "~/env.mjs"
-import { useReplicache } from "~/zustand/replicache"
+import { GlobalMutators } from "@pachi/core";
+
+import { env } from "~/env.mjs";
+import { useReplicache } from "~/zustand/replicache";
 
 export default function GlobalReplicacheProvider({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const userId = "user1"
-  const { globalRep, setGlobalRep } = useReplicache()
-  const token = localStorage?.getItem("auth_session")
+  const userID = "user1";
+  const { globalRep, setGlobalRep } = useReplicache();
+  const token = localStorage?.getItem("auth_session");
+
   useEffect(() => {
     if (globalRep) {
-      return
+      return;
     }
 
-    if (!userId) return
+    if (!userID) return;
     const r = new Replicache({
-      name: userId,
+      name: userID,
       licenseKey: env.NEXT_PUBLIC_REPLICACHE_KEY,
-      pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/global?userId=${userId}`,
-      // pullURL: `${env.NEXT_PUBLIC_WORKER_DEV_URL}/pull/global?userId=${userId}`,
-      mutators: ClientGlobalMutators,
+      pushURL: `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/push/global?userID=${userID}`,
+      // pullURL: `${env.NEXT_PUBLIC_WORKER_DEV_URL}/pull/global?userID=${userID}`,
+      mutators: GlobalMutators,
       pullInterval: null,
+      //@ts-ignore
       puller: async (req) => {
         const result = await fetch(
-          `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/global?userId=${userId}`,
+          `${env.NEXT_PUBLIC_WORKER_LOCAL_URL}/pull/global?userID=${userID}`,
           {
             headers: {
               "content-type": "application/json",
@@ -43,20 +47,19 @@ export default function GlobalReplicacheProvider({
             credentials: "include",
             cache: "no-store",
           },
-        )
+        );
+
         return {
-          response:
-            result.status === 200
-              ? ((await result.json()) as PullResponseOKV1)
-              : undefined,
+          response: result.status === 200 ? await result.json() : undefined,
           httpRequestInfo: {
             httpStatusCode: result.status,
             errorMessage: result.statusText,
           },
-        }
+        };
       },
-    })
-    setGlobalRep(r)
-  }, [userId, globalRep, setGlobalRep])
-  return <>{children}</>
+    });
+    setGlobalRep(r);
+  }, [userID, globalRep, setGlobalRep]);
+
+  return <>{children}</>;
 }

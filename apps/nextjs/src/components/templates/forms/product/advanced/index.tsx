@@ -1,31 +1,36 @@
-import { useCallback } from "react"
-import debounce from "lodash.debounce"
+import { useCallback } from "react";
+import debounce from "lodash.debounce";
 
-import type { UpdateProductVariant } from "@pachi/core"
-import type { ProductVariant, ProductVariantUpdates } from "@pachi/db"
+import type { Client, UpdateProductVariant } from "@pachi/validators";
 
-import InputField from "~/components/molecules/input-field"
-import { Separator } from "~/components/ui/separator"
-import { Info } from "../info"
+import InputField from "~/components/molecules/input-field";
+import { Separator } from "~/components/ui/separator";
+import { Info } from "../info";
 
 interface AdvancedProps {
-  updateVariant: (props: UpdateProductVariant) => Promise<void>
-  variant: ProductVariant | undefined
+  updateVariant: (props: UpdateProductVariant) => Promise<void>;
+  variant: Client.ProductVariant | undefined;
 }
+
 export default function Advanced({ updateVariant, variant }: AdvancedProps) {
   const onInputChange = useCallback(
-    debounce(async ({ updates }: { updates: ProductVariantUpdates }) => {
-      console.log("updates", updates)
-      if (variant)
-        await updateVariant({
-          updates,
-          variantId: variant.id,
-          productId: variant.productId,
-        })
-    }, 500),
+    debounce(
+      async ({ updates }: { updates: UpdateProductVariant["updates"] }) => {
+        console.log("updates", updates);
+
+        if (variant)
+          await updateVariant({
+            updates,
+            variantId: variant.id,
+            productId: variant.productId,
+          });
+      },
+      500,
+    ),
     [updateVariant],
-  )
-  console.log("variant", variant)
+  );
+  console.log("variant", variant);
+
   return (
     <div className="flex w-full flex-col  px-4 py-2">
       <Info
@@ -44,7 +49,7 @@ export default function Advanced({ updateVariant, variant }: AdvancedProps) {
           onChange={async (e) => {
             await onInputChange({
               updates: { width: e.currentTarget.valueAsNumber },
-            })
+            });
           }}
         />
         <InputField
@@ -121,5 +126,5 @@ export default function Advanced({ updateVariant, variant }: AdvancedProps) {
       <Separator className="my-4" />
       <Info title="Sales channels" description="Configure sales channels" />
     </div>
-  )
+  );
 }

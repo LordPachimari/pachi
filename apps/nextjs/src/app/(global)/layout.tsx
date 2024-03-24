@@ -1,20 +1,21 @@
-import dynamic from "next/dynamic"
+import dynamic from "next/dynamic";
 
-import { MainNav } from "~/components/layouts/main-nav/main-nav"
-import MainSidebar from "~/components/templates/sidebars/main-sidebar"
-import { ScrollArea } from "~/components/ui/scroll-area"
+import { MainNav } from "~/components/templates/layouts/main-nav/main-nav";
+import MainSidebar from "~/components/templates/sidebars/main-sidebar";
+import { ScrollArea } from "~/components/ui/scroll-area";
 
 const GlobalReplicacheProvider = dynamic(
   () => import("~/providers/replicache/global"),
   { ssr: false },
-)
+);
 
 interface HomeLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default function MainLayout({ children }: HomeLayoutProps) {
-  const username = "pachimari"
+  const username = "pachimari";
+
   return (
     <GlobalReplicacheProvider>
       <div className="relative flex min-h-screen flex-col">
@@ -30,5 +31,5 @@ export default function MainLayout({ children }: HomeLayoutProps) {
         </div>
       </div>
     </GlobalReplicacheProvider>
-  )
+  );
 }

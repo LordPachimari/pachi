@@ -1,51 +1,48 @@
-import { Fragment, useCallback, useEffect, useState } from "react"
-import { Dialog, Listbox, Transition } from "@headlessui/react"
-import { CheckIcon, ChevronsUpDownIcon } from "lucide-react"
+import { Fragment, useCallback, useEffect, useState } from "react";
+import { Dialog, Listbox, Transition } from "@headlessui/react";
+import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 
 import type {
   AssignProductOptionValueToVariant,
+  Client,
+  Image,
   UpdateProductImagesOrder,
   UpdateProductPrice,
   UpdateProductVariant,
   UploadProductImages,
-} from "@pachi/core"
-import type {
-  Image,
-  ProductOption,
-  ProductOptionValue,
-  ProductVariant,
-} from "@pachi/db"
+} from "@pachi/validators";
 
-import Inventory from "../forms/product/general/inventory"
-import Media from "../forms/product/general/media"
-import Pricing from "../forms/product/general/pricing"
+import Inventory from "../forms/product/general/inventory";
+import Media from "../forms/product/general/media";
+import Pricing from "../forms/product/general/pricing";
 
 interface VariantModalProps {
-  closeModal: () => void
-  isOpen: boolean
-  productId: string
-  images: Image[]
+  closeModal: () => void;
+  isOpen: boolean;
+  productId: string;
+  images: Image[];
   // trigger: React.ReactNode;
-  options: ProductOption[]
-  variant: ProductVariant
-  storeId: string
-  uploadProductImages: (props: UploadProductImages) => Promise<void>
-  updatePrice: (props: UpdateProductPrice) => Promise<void>
+  options: Client.ProductOption[];
+  variant: Client.ProductVariant;
+  storeId: string;
+  uploadProductImages: (props: UploadProductImages) => Promise<void>;
+  updatePrice: (props: UpdateProductPrice) => Promise<void>;
 
-  updateVariant: (props: UpdateProductVariant) => Promise<void>
-  currencies: string[]
+  updateVariant: (props: UpdateProductVariant) => Promise<void>;
+  currencies: string[];
   updateProductImagesOrder: ({
     order,
     productId,
     variantId,
-  }: UpdateProductImagesOrder) => Promise<void>
+  }: UpdateProductImagesOrder) => Promise<void>;
   onOptionValueChange: ({
     optionValueId,
     prevOptionValueId,
     productId,
     variantId,
-  }: AssignProductOptionValueToVariant) => Promise<void>
+  }: AssignProductOptionValueToVariant) => Promise<void>;
 }
+
 export default function VariantModal({
   closeModal,
   isOpen,
@@ -61,49 +58,50 @@ export default function VariantModal({
   updateProductImagesOrder,
   onOptionValueChange,
 }: Readonly<VariantModalProps>) {
-  const [files, setFiles] = useState<Image[]>([])
+  const [files, setFiles] = useState<Image[]>([]);
   const [variantOptions, setVariantOptions] = useState<
     Record<string, { id: string; value: string }>
-  >({})
+  >({});
 
   useEffect(() => {
     if (variant.optionValues && variant.optionValues.length > 0) {
       const variantOptionsMap = variant.optionValues.reduce(
         (acc, optionValue) => {
-          if (
-            optionValue.optionValue.option?.name &&
-            optionValue.optionValue.value
-          ) {
-            acc[optionValue.optionValue.option.name] = {
-              id: optionValue.optionValue.id,
-              value: optionValue.optionValue.value,
-            }
-            return acc
+          if (optionValue.value.option?.name && optionValue.value.value) {
+            acc[optionValue.value.option.name] = {
+              id: optionValue.value.id,
+              value: optionValue.value.value,
+            };
+
+            return acc;
           }
-          return acc
+
+          return acc;
         },
         {} as Record<string, { id: string; value: string }>,
-      )
-      setVariantOptions(variantOptionsMap)
+      );
+      setVariantOptions(variantOptionsMap);
     }
-  }, [variant.optionValues])
+  }, [variant.optionValues]);
   const optionsMap = options.reduce(
     (acc, option) => {
       if (option.name && option.values) {
-        acc[option.name] = option.values
-        return acc
+        acc[option.name] = option.values;
+
+        return acc;
       }
-      return acc
+
+      return acc;
     },
-    {} as Record<string, ProductOptionValue[]>,
-  )
+    {} as Record<string, Client.ProductOptionValue[]>,
+  );
   const onSelected = useCallback(
     async ({
       optionValue,
       optionId,
     }: {
-      optionValue: { id: string; value: string }
-      optionId: string
+      optionValue: { id: string; value: string };
+      optionId: string;
     }) => {
       if (optionId && optionValue) {
         await onOptionValueChange({
@@ -113,17 +111,18 @@ export default function VariantModal({
           }),
           productId,
           variantId: variant.id,
-        })
+        });
+
         setVariantOptions((prev) => {
           return {
             ...prev,
             [optionId]: { id: optionValue.id, value: optionValue.value },
-          }
-        })
+          };
+        });
       }
     },
     [onOptionValueChange, productId, variant.id, variantOptions],
-  )
+  );
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -161,7 +160,8 @@ export default function VariantModal({
 
                 <div className="flex w-full flex-col gap-4">
                   {options.map((option, index) => {
-                    if (!option.name) return <></>
+                    if (!option.name) return <></>;
+
                     return (
                       <div className="flex items-center  gap-2" key={index}>
                         <span className="flex h-[30px] min-w-[60px] items-center justify-center rounded-md border">
@@ -215,7 +215,8 @@ export default function VariantModal({
                               <Listbox.Options className="absolute mt-1 max-h-60 w-full  overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
                                 {(optionsMap[option.name] ?? []).map(
                                   (optionValue) => {
-                                    console.log("value", optionValue)
+                                    console.log("value", optionValue);
+
                                     return (
                                       <Listbox.Option
                                         key={optionValue.value}
@@ -253,7 +254,7 @@ export default function VariantModal({
                                           </>
                                         )}
                                       </Listbox.Option>
-                                    )
+                                    );
                                   },
                                 )}
                               </Listbox.Options>
@@ -261,7 +262,7 @@ export default function VariantModal({
                           </div>
                         </Listbox>
                       </div>
-                    )
+                    );
                   })}
                 </div>
                 <h2 className="text-md py-2 font-semibold">{`Media (optional)`}</h2>
@@ -291,5 +292,5 @@ export default function VariantModal({
         </div>
       </Dialog>
     </Transition>
-  )
+  );
 }

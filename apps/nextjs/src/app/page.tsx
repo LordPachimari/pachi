@@ -1,5 +1,11 @@
-import { cookies } from "next/headers"
+import { Features } from "./components/features";
+import { Hero } from "./components/hero";
 
 export default function LandingPage() {
-  return <div className="h-screen w-full bg-background">hi</div>
+  return (
+    <main>
+      <Hero />
+      <Features />
+    </main>
+  );
 }

@@ -1,18 +1,18 @@
-import DashboardSidebar from "~/components/templates/sidebars/dashboard-sidebar"
-import { dashboardConfig } from "~/config/dashboard"
-import { DashboardReplicacheProvider } from "~/providers/replicache/dashboard"
+import DashboardSidebar from "~/components/templates/sidebars/dashboard-sidebar";
+import { dashboardConfig } from "~/config/dashboard";
+import { DashboardReplicacheProvider } from "~/providers/replicache/dashboard";
 
 interface DashboardLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  // const userId = await getUserId();
+  // const userID = await getUserID();
   // const socket = useRef(
   //   new PartySocket({
   //     host: `http://127.0.0.1:1999/parties/push`, // for local development
   //     // host: "my-party.username.partykit.dev", // for production
-  //     space: `dashboard:${userId}`,
+  //     space: `dashboard:${userID}`,
   //   }),
   // );
   // useEffect(() => {
@@ -38,5 +38,5 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <main className="ml-14 w-full">{children}</main>
       </div>
     </DashboardReplicacheProvider>
-  )
+  );
 }

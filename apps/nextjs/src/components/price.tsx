@@ -1,4 +1,4 @@
-import { cn } from "@pachi/utils"
+import { cn } from "@pachi/utils";
 
 const Price = ({
   amount,
@@ -6,10 +6,10 @@ const Price = ({
   currencyCode = "USD",
   currencyCodeClassName,
 }: {
-  amount: number
-  className?: string
-  currencyCode: string
-  currencyCodeClassName?: string
+  amount: number;
+  className?: string;
+  currencyCode: string;
+  currencyCodeClassName?: string;
 } & React.ComponentProps<"p">) => (
   <p suppressHydrationWarning={true} className={className}>
     {`${new Intl.NumberFormat(undefined, {
@@ -21,6 +21,6 @@ const Price = ({
       className={cn("ml-1 inline", currencyCodeClassName)}
     >{`${currencyCode}`}</span>
   </p>
-)
+);
 
-export default Price
+export default Price;

@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm"
+import { relations } from "drizzle-orm";
 import {
   boolean,
   integer,
@@ -6,10 +6,10 @@ import {
   primaryKey,
   text,
   varchar,
-} from "drizzle-orm/pg-core"
+} from "drizzle-orm/pg-core";
 
-import { customerGroups } from "./customer-group"
-import { prices } from "./price"
+import { customerGroups } from "./customer-group";
+import { prices } from "./price";
 
 export const priceLists = pgTable("price_lists", {
   id: varchar("id").notNull().primaryKey(),
@@ -28,12 +28,11 @@ export const priceLists = pgTable("price_lists", {
     .default("draft"),
   updatedBy: varchar("updatedBy"),
   version: integer("version").notNull().default(0),
-})
-
+});
 export const priceListRelations = relations(priceLists, ({ many }) => ({
   customerGroups: many(priceListsToCustomerGroups),
   prices: many(prices),
-}))
+}));
 export const priceListsToCustomerGroups = pgTable(
   "price_lists_to_customer_groups",
   {
@@ -47,9 +46,9 @@ export const priceListsToCustomerGroups = pgTable(
     version: integer("version"),
   },
   (t) => ({
-    pk: primaryKey(t.customerGroupId, t.priceListId),
+    pk: primaryKey({ columns: [t.customerGroupId, t.priceListId] }),
   }),
-)
+);
 export const priceListsToCustomerGroupsRelations = relations(
   priceListsToCustomerGroups,
   ({ one }) => ({
@@ -62,4 +61,4 @@ export const priceListsToCustomerGroupsRelations = relations(
       references: [priceLists.id],
     }),
   }),
-)
+);

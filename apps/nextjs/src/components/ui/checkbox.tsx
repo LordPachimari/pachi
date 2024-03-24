@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as Primitives from "@radix-ui/react-checkbox"
-import { CheckIcon, MinusIcon } from "@radix-ui/react-icons"
+import * as React from "react";
+import * as Primitives from "@radix-ui/react-checkbox";
+import { CheckIcon, MinusIcon } from "@radix-ui/react-icons";
 
-import { cn } from "@pachi/utils"
+import { cn } from "@pachi/utils";
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof Primitives.Root>,
@@ -31,8 +31,8 @@ const Checkbox = React.forwardRef<
         </Primitives.Indicator>
       </div>
     </Primitives.Root>
-  )
-})
-Checkbox.displayName = "Checkbox"
+  );
+});
+Checkbox.displayName = "Checkbox";
 
-export { Checkbox }
+export { Checkbox };
