@@ -100,7 +100,17 @@ export default {
           start: "#7C53FF",
           stop: "#F796FF",
         },
-        brand: "var(--brand)",
+        brand: {
+          1: "var(--brand-1)",
+          2: "var(--brand-2)",
+          3: "var(--brand-3)",
+          4: "var(--brand-4)",
+          5: "var(--brand-5)",
+          6: "var(--brand-6)",
+          7: "var(--brand-7)",
+          8: "var(--brand-8)",
+          9: "var(--brand-9)",
+        },
         "slate-alpha": {
           1: "var(--slate-a1)",
           2: "var(--slate-a2)",

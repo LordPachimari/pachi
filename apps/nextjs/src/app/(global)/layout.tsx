@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 
 import { MainNav } from "~/components/templates/layouts/main-nav/main-nav";
-import MainSidebar from "~/components/templates/sidebars/main-sidebar";
 import { ScrollArea } from "~/components/ui/scroll-area";
 
 const GlobalReplicacheProvider = dynamic(
@@ -21,8 +20,6 @@ export default function MainLayout({ children }: HomeLayoutProps) {
       <div className="relative flex min-h-screen flex-col">
         <MainNav />
         <div className="flex">
-          <MainSidebar username={username} />
-
           <main className="z-0 max-h-screen flex-1 bg-navbar">
             <ScrollArea className="h-content z-10 w-full border bg-background  shadow-inner md:rounded-tl-2xl">
               {children}

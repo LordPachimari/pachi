@@ -116,7 +116,7 @@ export function FileUpload({
       {...getRootProps()}
       className={cn(
         "group relative grid h-28 w-full  cursor-pointer place-items-center rounded-lg border-2 border-dashed border-muted-foreground/25 p-10 px-5 py-2.5 text-center transition hover:bg-muted/25",
-        "ring-offset-background focus-visible:outline-none  focus-visible:outline-brand focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ",
+        "focus-visible:outline-brand ring-offset-background  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ",
         isDragActive && "border-brand",
         disabled && "pointer-events-none opacity-60",
         className,

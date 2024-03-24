@@ -49,7 +49,7 @@ export default async function LoginPage() {
         <p className="px-8 text-center text-sm text-muted-foreground">
           <Link
             href="/register"
-            className="underline underline-offset-4 hover:text-brand"
+            className="hover:text-brand underline underline-offset-4"
           >
             Don&apos;t have an account? Sign Up
           </Link>

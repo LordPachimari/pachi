@@ -109,7 +109,7 @@ export default function CreateOption({
         </Tooltip>
       </span>
       <Button
-        className=" mt-2 flex w-full gap-2 bg-brand  md:w-fit"
+        className=" bg-brand mt-2 flex w-full gap-2  md:w-fit"
         onClick={createOption}
       >
         <PlusIcon fontSize={10} />
@@ -147,7 +147,7 @@ export default function CreateOption({
       <h2 className="text-md my-2 font-semibold ">Create variant</h2>
 
       <Button
-        className=" my-2 flex w-full gap-2 bg-brand  md:w-fit"
+        className=" bg-brand my-2 flex w-full gap-2  md:w-fit"
         onClick={createVariant}
         disabled={!!(!options[0]?.name && !options[0]?.values)}
       >

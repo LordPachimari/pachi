@@ -32,7 +32,7 @@ const Item = React.forwardRef<
       )}
       {...props}
     >
-      <div className="group-hover:shadow-borders-strong-with-shadow flex h-[14px] w-[14px] items-center justify-center rounded-full bg-ui-bg-base shadow-borders-base-with-shadow outline-brand transition-all focus-visible:outline-brand group-focus:!shadow-borders-interactive-with-focus group-disabled:!bg-ui-bg-disabled group-disabled:!shadow-borders-base group-data-[state=checked]:bg-brand group-data-[state=checked]:shadow-borders-error">
+      <div className="group-hover:shadow-borders-strong-with-shadow outline-brand focus-visible:outline-brand group-data-[state=checked]:bg-brand flex h-[14px] w-[14px] items-center justify-center rounded-full bg-ui-bg-base shadow-borders-base-with-shadow transition-all group-focus:!shadow-borders-interactive-with-focus group-disabled:!bg-ui-bg-disabled group-disabled:!shadow-borders-base group-data-[state=checked]:shadow-borders-error">
         <Primitives.Indicator className="flex items-center justify-center">
           <div
             className={cn(

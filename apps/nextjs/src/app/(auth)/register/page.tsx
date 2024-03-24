@@ -47,14 +47,14 @@ export default async function RegisterPage() {
             By clicking continue, you agree to our
             <Link
               href="/terms"
-              className="underline underline-offset-4 hover:text-brand"
+              className="hover:text-brand underline underline-offset-4"
             >
               Terms of Service
             </Link>{" "}
             and{" "}
             <Link
               href="/privacy"
-              className="underline underline-offset-4 hover:text-brand"
+              className="hover:text-brand underline underline-offset-4"
             >
               Privacy Policy
             </Link>

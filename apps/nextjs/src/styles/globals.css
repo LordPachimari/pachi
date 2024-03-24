@@ -36,7 +36,7 @@
 
     --radius: 0.5rem;
 
-    --brand: #f31260;
+    --brand: #fb6f92;
 
     --component: #fff;
     --navbar: #f9f9fb;
@@ -51,31 +51,15 @@
     --box-shadow: var(--box-shadow-border), var(--box-shadow-common);
     --button-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
 
-    --crimson-a1: hsla(340, 100%, 51%, 0.012);
-    --crimson-a2: hsla(330, 100%, 51%, 0.032);
-    --crimson-a3: hsla(332, 99.1%, 47.1%, 0.063);
-    --crimson-a4: hsla(331, 99.9%, 44.3%, 0.102);
-    --crimson-a5: hsla(333, 99.9%, 42.3%, 0.153);
-    --crimson-a6: hsla(333, 99.5%, 40.5%, 0.224);
-    --crimson-a7: hsla(335, 99.7%, 39.1%, 0.322);
-    --crimson-a8: hsla(336, 99.5%, 38.5%, 0.44);
-    --crimson-a9: hsla(336, 99.9%, 44.3%, 0.761);
-    --crimson-a10: hsla(336, 100%, 41.5%, 0.808);
-    --crimson-a11: hsla(336, 99.8%, 38.5%, 0.887);
-    --crimson-a12: hsla(332, 99.8%, 16.3%, 0.914);
-
-    --ruby-a1: hsla(340, 100%, 51%, 0.012);
-    --ruby-a2: hsla(345, 100%, 51%, 0.032);
-    --ruby-a3: hsla(344, 99.1%, 47.1%, 0.063);
-    --ruby-a4: hsla(348, 99.9%, 46.2%, 0.102);
-    --ruby-a5: hsla(346, 99.9%, 43.6%, 0.153);
-    --ruby-a6: hsla(347, 99.6%, 41.2%, 0.22);
-    --ruby-a7: hsla(348, 99.8%, 39.4%, 0.314);
-    --ruby-a8: hsla(348, 99.7%, 38.2%, 0.428);
-    --ruby-a9: hsla(348, 99.8%, 43%, 0.726);
-    --ruby-a10: hsla(347, 99.9%, 40.6%, 0.773);
-    --ruby-a11: hsla(345, 99.9%, 37.9%, 0.859);
-    --ruby-a12: hsla(344, 99.9%, 16.6%, 0.91);
+    --brand-1: #ffe4ec;
+    --brand-2: #ffcada;
+    --brand-3: #ffafc7;
+    --brand-4: #ff95b5;
+    --brand-5: #ff7aa2;
+    --brand-6: #ff2f6d;
+    --brand-7: #e20044;
+    --brand-8: #97002d;
+    --brand-9: #4b0017;
 
     --slate-a1: hsla(240, 89.3%, 18.3%, 0.012);
     --slate-a2: hsla(240, 89.3%, 18.3%, 0.024);
@@ -121,7 +105,8 @@
     --input: 240 3.7% 15.9%;
     --input-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
     --button-shadow: 0px 0px 4px 2px rgba(243, 18, 96, 0.3);
-    --brand: #f31260;
+
+    --brand: #fb6f92;
 
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
@@ -144,31 +129,6 @@
     --box-shadow: var(--box-shadow-border), var(--box-shadow-common);
     --focused-outline-color: #1a001e;
     --focused-outline-color: #430245;
-    --crimson-a1: hsla(354, 100%, 49.3%, 0.022);
-    --crimson-a2: hsla(338, 100%, 49.8%, 0.074);
-    --crimson-a3: hsla(335, 99.8%, 54.7%, 0.143);
-    --crimson-a4: hsla(336, 99.4%, 56.6%, 0.191);
-    --crimson-a5: hsla(336, 99.8%, 57.8%, 0.247);
-    --crimson-a6: hsla(336, 99.3%, 58.1%, 0.33);
-    --crimson-a7: hsla(336, 99.9%, 57.5%, 0.485);
-    --crimson-a8: hsla(336, 99.8%, 54.4%, 0.793);
-    --crimson-a9: hsla(336, 99.9%, 62.7%, 0.905);
-    --crimson-a10: hsla(339, 99.8%, 70.1%, 0.953);
-    --crimson-a11: hsla(341, 100%, 76.1%, 1);
-    --crimson-a12: hsla(330, 99.3%, 91.6%, 0.992);
-
-    --ruby-a1: hsla(340, 100%, 41%, 0.031);
-    --ruby-a2: hsla(345, 100%, 40%, 0.078);
-    --ruby-a3: hsla(344, 99.1%, 37.1%, 0.152);
-    --ruby-a4: hsla(348, 99.9%, 36.2%, 0.204);
-    --ruby-a5: hsla(346, 99.9%, 33.6%, 0.256);
-    --ruby-a6: hsla(347, 99.6%, 31.2%, 0.338);
-    --ruby-a7: hsla(348, 99.8%, 29.4%, 0.494);
-    --ruby-a8: hsla(348, 99.7%, 28.2%, 0.797);
-    --ruby-a9: hsla(348, 99.8%, 33%, 0.888);
-    --ruby-a10: hsla(347, 99.9%, 30.6%, 0.944);
-    --ruby-a11: hsla(345, 99.9%, 27.9%, 1);
-    --ruby-a12: hsla(344, 99.9%, 10.6%, 0.996);
 
     --slate-a1: hsla(240, 92.7%, 53%, 0.009);
     --slate-a2: hsla(240, 92.5%, 72.7%, 0.031);
