@@ -1,8 +1,8 @@
-import Link from 'next/link'
+import Link from "next/link";
 
-type LogoProps = Omit<React.ComponentProps<typeof Link>, 'href'>
+type LogoProps = Omit<React.ComponentProps<typeof Link>, "href">;
 
-function Logo({ className = '', ...props }: LogoProps) {
+function Logo({ className = "", ...props }: LogoProps) {
   return (
     <Link
       {...props}
@@ -11,7 +11,7 @@ function Logo({ className = '', ...props }: LogoProps) {
     >
       Pachi<span className="sr-only">Logo</span>
     </Link>
-  )
+  );
 }
 
-export { Logo }
+export { Logo };

@@ -171,7 +171,7 @@ const TagInput: React.FC<TagInputProps> = ({
             <div
               key={index}
               className={cn(
-                "rounded-rounded bg-ruby-6 flex w-max items-center justify-center gap-x-1 whitespace-nowrap p-2  text-brand ",
+                "rounded-rounded bg-ruby-6 text-brand flex w-max items-center justify-center gap-x-1 whitespace-nowrap  p-2 ",
 
                 {
                   ["bg-ruby-8"]: index === highlighted,

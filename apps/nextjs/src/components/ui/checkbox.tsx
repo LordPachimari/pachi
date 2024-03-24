@@ -21,7 +21,7 @@ const Checkbox = React.forwardRef<
         className,
       )}
     >
-      <div className="group-hover:shadow-borders-strong-with-shadow group-data-[state=indeterminate]:shadow-input-borders h-[14px] w-[14px] rounded-[3px] bg-ui-bg-base text-ui-fg-on-inverted shadow-borders-base-with-shadow transition-all group-focus:!shadow-borders-interactive-with-focus group-disabled:!bg-ui-bg-disabled group-disabled:text-ui-fg-disabled group-disabled:!shadow-borders-base group-data-[state=checked]:bg-brand group-data-[state=indeterminate]:bg-brand group-data-[state=checked]:shadow-borders-base [&_path]:shadow-details-contrast-on-bg-interactive">
+      <div className="group-hover:shadow-borders-strong-with-shadow group-data-[state=indeterminate]:shadow-input-borders group-data-[state=checked]:bg-brand group-data-[state=indeterminate]:bg-brand h-[14px] w-[14px] rounded-[3px] bg-ui-bg-base text-ui-fg-on-inverted shadow-borders-base-with-shadow transition-all group-focus:!shadow-borders-interactive-with-focus group-disabled:!bg-ui-bg-disabled group-disabled:text-ui-fg-disabled group-disabled:!shadow-borders-base group-data-[state=checked]:shadow-borders-base [&_path]:shadow-details-contrast-on-bg-interactive">
         <Primitives.Indicator className=" inset-0">
           {checked === "indeterminate" ? (
             <MinusIcon fontSize={4} />

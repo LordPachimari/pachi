@@ -25,7 +25,7 @@ export default function CurrencyModal({
         aria-label="Open cart"
         onClick={open}
         size="icon"
-        className="shadow-ruby-7 h-4 w-4 bg-brand"
+        className="shadow-ruby-7 bg-brand h-4 w-4"
       >
         <PlusIcon size={10} />
       </Button>
