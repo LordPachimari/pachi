@@ -6,7 +6,7 @@ import { type Table } from "@tanstack/react-table";
 
 import { cn } from "@pachi/utils";
 
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 interface DataTableFloatingBarProps<TData>
   extends React.HTMLAttributes<HTMLElement> {

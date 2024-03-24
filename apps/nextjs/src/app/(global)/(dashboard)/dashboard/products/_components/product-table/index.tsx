@@ -6,8 +6,8 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { generateId, ulid } from "@pachi/utils";
 import type { Client } from "@pachi/validators";
 
-import { Table } from "~/components/table/table";
-import { useTable } from "~/components/table/use-table";
+import { Table } from "~/components/templates/table/table";
+import { useTable } from "~/components/templates/table/use-table";
 import { Button } from "~/components/ui/button";
 import { createUrl } from "~/libs/create-url";
 import { ProductStore, UserStore } from "~/replicache/stores";
@@ -25,7 +25,7 @@ interface ProductsTableProps {
 function ProductsTable({ storeId }: Readonly<ProductsTableProps>) {
   const { dashboardRep } = useReplicache();
   const data = ProductStore.scan(dashboardRep, "p_");
-  const store = UserStore.get(dashboardRep, "store");
+  const store = storeId ? UserStore.get(dashboardRep, storeId) : undefined;
   const searchParams = useSearchParams();
 
   const router = useRouter();

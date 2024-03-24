@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { cn } from "@pachi/utils";
 
-import { ThemeToggle } from "~/components/layouts/theme-toggle";
+import { ThemeToggle } from "~/components/templates/layouts/theme-toggle";
 import { buttonVariants } from "~/components/ui/button";
 import { Icons } from "~/components/ui/icons";
 import { siteConfig } from "~/config/site";

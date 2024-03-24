@@ -3,7 +3,7 @@
 import * as React from "react";
 
 import { Button, type ButtonProps } from "~/components/ui/button";
-import { Icons } from "../ui/icons";
+import { Icons } from "../../ui/icons";
 
 export function CopyButton({ value, ...props }: ButtonProps) {
   const [isCopied, setIsCopied] = React.useState(false);

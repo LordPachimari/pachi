@@ -13,8 +13,8 @@ import { CircleIcon } from "lucide-react";
 import type { Client } from "@pachi/validators";
 
 import ImagePlaceholder from "~/components/molecules/image-placeholder";
-import { TableColumnHeader } from "~/components/table/column-header";
-import { DataTableRowActions } from "~/components/table/row-actions";
+import { TableColumnHeader } from "~/components/templates/table/column-header";
+import { DataTableRowActions } from "~/components/templates/table/row-actions";
 import { Checkbox } from "~/components/ui/checkbox";
 import type {
   DataTableFilterableColumn,

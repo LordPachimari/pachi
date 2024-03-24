@@ -1,5 +1,5 @@
-import { MainNavContent } from "~/components/layouts/main-nav-content";
-import { MobileMainNav } from "~/components/layouts/mobile-main-nav";
+import { MainNavContent } from "~/components/templates/layouts/main-nav-content";
+import { MobileMainNav } from "~/components/templates/layouts/mobile-main-nav";
 import { dashboardConfig } from "~/config/dashboard";
 import { siteConfig } from "~/config/site";
 

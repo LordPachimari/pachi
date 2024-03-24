@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 
 import { cn } from "@pachi/utils";
 
-import { Icons } from "../ui/icons";
+import { Icons } from "../../ui/icons";
 
 type Props = {
   path?: string;

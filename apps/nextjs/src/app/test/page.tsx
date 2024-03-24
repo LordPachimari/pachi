@@ -8,7 +8,7 @@ import { toast as sonnerToast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { Icons } from "~/components/ui/icons";
-import { testApi } from "../_actions/test/test-api";
+import { testApi } from "../../actions/test/test-api";
 
 function SubmitButton() {
   const { pending } = useFormStatus();

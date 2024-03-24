@@ -9,8 +9,8 @@ import { toast } from "sonner";
 import { cn } from "@pachi/utils";
 import { UserAuthSchema, type UserAuth } from "@pachi/validators";
 
-import { login } from "~/app/_actions/auth/login";
-import { register as registerAction } from "~/app/_actions/auth/register";
+import { login } from "~/actions/auth/login";
+import { register as registerAction } from "~/actions/auth/register";
 import { buttonVariants } from "~/components/ui/button";
 import { Icons } from "~/components/ui/icons";
 import { Input } from "~/components/ui/input";

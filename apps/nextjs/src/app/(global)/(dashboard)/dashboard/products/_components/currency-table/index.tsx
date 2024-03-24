@@ -4,8 +4,8 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { generateId, ulid } from "@pachi/utils";
 import { currencies, type Client, type CurrencyType } from "@pachi/validators";
 
-import { Table } from "~/components/table/table";
-import { useTable } from "~/components/table/use-table";
+import { Table } from "~/components/templates/table/table";
+import { useTable } from "~/components/templates/table/use-table";
 import { useReplicache } from "~/zustand/replicache";
 import { getCurrenciesColumns } from "./columns";
 

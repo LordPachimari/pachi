@@ -3,8 +3,8 @@ import clsx from "clsx";
 import { toast } from "sonner";
 
 import useClipboard from "~/hooks/use-clipboard";
-import { Button } from "../ui/button";
-import { Icons } from "../ui/icons";
+import { Button } from "../../ui/button";
+import { Icons } from "../../ui/icons";
 
 interface CopyToClipboardProps {
   value: string;

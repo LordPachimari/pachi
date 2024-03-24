@@ -2,7 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import type { CurrencyType } from "@pachi/validators";
 
-import { TableColumnHeader } from "~/components/table/column-header";
+import { TableColumnHeader } from "~/components/templates/table/column-header";
 import { Checkbox } from "~/components/ui/checkbox";
 
 export function getCurrenciesColumns(

@@ -1,5 +1,5 @@
-import { DashboardButton } from "../../layouts/main-nav/dashboard-button";
-import { ThemeToggle } from "../../layouts/theme-toggle";
+import { DashboardButton } from "../layouts/main-nav/dashboard-button";
+import { ThemeToggle } from "../layouts/theme-toggle";
 
 interface MainSidebarProps {
   username: string | undefined;

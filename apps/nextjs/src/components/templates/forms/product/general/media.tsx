@@ -9,8 +9,8 @@ import type {
 } from "@pachi/validators";
 
 import type { OurFileRouter } from "~/app/api/uploadthing/core";
+import { LargeFirstTile } from "~/components/dnd-kit/sortable/large-first-tile";
 import { FileUpload } from "~/components/molecules/file-upload";
-import { LargeFirstTile } from "~/components/templates/dnd-kit/sortable/large-first-tile";
 
 export interface MediaFormType {
   images: Image[];

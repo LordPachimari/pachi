@@ -8,7 +8,7 @@ import { cn } from "@pachi/utils";
 
 import { Icons } from "~/components/ui/icons";
 import type { SidebarNavItem } from "~/types";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 export interface SidebarNavProps {
   items: SidebarNavItem[];

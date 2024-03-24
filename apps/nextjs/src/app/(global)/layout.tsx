@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 
-import { MainNav } from "~/components/layouts/main-nav/main-nav";
+import { MainNav } from "~/components/templates/layouts/main-nav/main-nav";
 import MainSidebar from "~/components/templates/sidebars/main-sidebar";
 import { ScrollArea } from "~/components/ui/scroll-area";
 

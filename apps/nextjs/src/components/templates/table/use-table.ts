@@ -17,8 +17,6 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 
-import { useBuildExistingQueryOption, useQueryOptions } from "~/routing/router";
-
 interface UseDataTableProps<TData, TValue> {
   /**
    * The data for the table
@@ -39,20 +37,14 @@ function useTable<TData, TValue>({
   data,
   columns,
 }: UseDataTableProps<TData, TValue>) {
-  const router = useRouter();
   const params = useSearchParams();
-  const queryOptions = useQueryOptions(params);
 
   // Search params
-  const page = queryOptions.page[0] ?? "1";
-  const pageAsNumber = Number(page);
+  const pageAsNumber = Number(params.get("page") ?? 0);
   const fallbackPage =
     isNaN(pageAsNumber) || pageAsNumber < 1 ? 1 : pageAsNumber;
-  const pageSize_ = queryOptions.pageSize[0] ?? "1";
-  const pageSizeAsNumber = Number(pageSize_);
+  const pageSizeAsNumber = Number(params.get("pageSize") ?? 10);
   const fallbackPageSize = isNaN(pageSizeAsNumber) ? 10 : pageSizeAsNumber;
-
-  const buildQueryOption = useBuildExistingQueryOption();
 
   // Table states
   const [rowSelection, setRowSelection] = React.useState({});
@@ -84,18 +76,6 @@ function useTable<TData, TValue>({
       pageSize: fallbackPage,
     });
   }, [fallbackPage, fallbackPageSize]);
-
-  React.useEffect(() => {
-    router.push(
-      buildQueryOption({
-        page: [String(pageIndex + 1)],
-        pageSize: [String(pageSize)],
-      }),
-      {
-        scroll: false,
-      },
-    );
-  }, [pageIndex, pageSize, buildQueryOption, router]);
 
   const table = useReactTable({
     data,
