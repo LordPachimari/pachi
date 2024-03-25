@@ -1,7 +1,7 @@
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
-import { Lucia } from "lucia";
+import { Lucia, type User as LuciaUser } from "lucia";
 
 import { session, users } from "@pachi/db/schema";
 
@@ -29,6 +29,7 @@ export const lucia = new Lucia(adapter, {
     };
   },
 });
+export type { LuciaUser };
 
 declare module "lucia" {
   interface Register {

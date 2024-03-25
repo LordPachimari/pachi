@@ -1,9 +1,12 @@
 import { Logo } from "~/components/molecules/logo";
-import { Button } from "~/components/ui/button";
-import { Navbar } from "./navbar";
-import { ThemeToggle } from "./theme-toggle";
+import { validateRequest } from "~/libs/validate-request";
+import { Navbar } from "../navbar";
+import { ThemeToggle } from "../theme-toggle";
+import { DashboardButton } from "./dashboard-button";
 
 async function Header() {
+  const { user } = await validateRequest();
+
   return (
     <Navbar>
       {/* Left corner */}
@@ -16,7 +19,7 @@ async function Header() {
       <div className="hidden gap-6 sm:flex ">
         <ThemeToggle />
         {/* <CartToggle /> */}
-        <Button>Dashboard</Button>
+        <DashboardButton user={user} />
       </div>
     </Navbar>
   );

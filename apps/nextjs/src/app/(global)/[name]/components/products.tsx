@@ -2,7 +2,7 @@
 
 import type { Client } from "@pachi/validators";
 
-import ProductGridItems from "~/app/(global)/[name]/_components/product-grid-items";
+import ProductGridItems from "~/app/(global)/[name]/components/product-grid-items";
 import Grid from "~/components/ui/grid";
 
 export function Products() {

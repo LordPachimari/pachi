@@ -1,5 +1,5 @@
-import clsx from "clsx";
 
+import { cn } from "@pachi/utils";
 import Price from "~/components/price";
 
 const PriceLabel = ({
@@ -15,7 +15,7 @@ const PriceLabel = ({
 }) => {
   return (
     <div
-      className={clsx(
+      className={cn(
         "absolute bottom-0 left-0 flex w-full px-4 pb-4 @container/label",
         {
           "lg:px-20 lg:pb-[35%]": position === "center",

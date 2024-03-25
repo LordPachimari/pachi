@@ -3,8 +3,8 @@ import type { Client } from "@pachi/validators";
 import { PageHeaderHeading } from "~/components/molecules/page-header";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Card, CardContent, CardFooter } from "~/components/ui/card";
-import { EditStoreButton } from "./_components/edit-store-button";
-import { Products } from "./_components/products";
+import { EditStoreButton } from "./components/edit-store-button";
+import { Products } from "./components/products";
 
 export default function StorePage({
   params,

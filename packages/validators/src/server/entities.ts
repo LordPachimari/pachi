@@ -30,7 +30,7 @@ import {
   users,
 } from "@pachi/db/schema";
 
-import { ImageSchema, type Image } from "../..";
+import { ImageSchema, type Image } from "../common";
 
 export const CurrencySchema = createInsertSchema(currencies);
 export type Currency = z.infer<typeof CurrencySchema>;

@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 
-import { MainNav } from "~/components/templates/layouts/main-nav/main-nav";
-import { ScrollArea } from "~/components/ui/scroll-area";
+import { Header } from "~/components/templates/layouts/header/header";
 
 const GlobalReplicacheProvider = dynamic(
   () => import("~/providers/replicache/global"),
@@ -13,20 +12,12 @@ interface HomeLayoutProps {
 }
 
 export default function MainLayout({ children }: HomeLayoutProps) {
-  const username = "pachimari";
-
   return (
-    <GlobalReplicacheProvider>
-      <div className="relative flex min-h-screen flex-col">
-        <MainNav />
-        <div className="flex">
-          <main className="z-0 max-h-screen flex-1 bg-navbar">
-            <ScrollArea className="h-content z-10 w-full border bg-background  shadow-inner md:rounded-tl-2xl">
-              {children}
-            </ScrollArea>
-          </main>
-        </div>
-      </div>
-    </GlobalReplicacheProvider>
+    // <GlobalReplicacheProvider>
+    <>
+      <Header />
+      {children}
+    </>
+    // </GlobalReplicacheProvider>
   );
 }

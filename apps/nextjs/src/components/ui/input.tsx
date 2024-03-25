@@ -12,17 +12,10 @@ import { cn } from "@pachi/utils";
 
 const inputBaseStyles = cn(
   "caret-ui-fg-base bg-slate-1 hover:bg-slate-2 border-ui-border-base shadow-buttons-neutral placeholder-ui-fg-muted text-ui-fg-base transition-fg relative w-full appearance-none rounded-md border outline-none",
-  "focus:border-brand focus:shadow-borders-active focus:shadow-rose-100 focus:shadow-input-shadow",
+  "focus:border-brand-4 focus:shadow-borders-active focus:shadow-rose-100 focus:shadow-input-brand-6",
   "disabled:text-ui-fg-disabled disabled:!bg-ui-bg-disabled disabled:!border-ui-border-base disabled:placeholder-ui-fg-disabled disabled:cursor-not-allowed disabled:!shadow-none",
   "aria-[invalid=true]:!border-ui-border-error aria-[invalid=true]:focus:!shadow-borders-error invalid:!border-ui-border-error invalid:focus:!shadow-borders-error",
 );
-
-// const inputBaseStyles = cn(
-//   "caret-ui-fg-base bg-ui-bg-field hover:bg-ui-bg-field-hover border-ui-border-base shadow-buttons-neutral placeholder-ui-fg-muted text-ui-fg-base transition-fg relative w-full appearance-none rounded-md border outline-none",
-//   "focus:border-brand focus:shadow-borders-active",
-//   "disabled:text-ui-fg-disabled disabled:!bg-ui-bg-disabled disabled:!border-ui-border-base disabled:placeholder-ui-fg-disabled disabled:cursor-not-allowed disabled:!shadow-none",
-//   "aria-[invalid=true]:!border-ui-border-error aria-[invalid=true]:focus:!shadow-borders-error invalid:!border-ui-border-error invalid:focus:!shadow-borders-error",
-// );
 
 const inputVariants = cva(
   cn(

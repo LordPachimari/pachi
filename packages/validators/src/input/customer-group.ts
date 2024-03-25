@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { CustomerGroupSchema } from "../../server";
+import { CustomerGroupSchema } from "../server";
 
 export const CustomerGroupUpdatesSchema = CustomerGroupSchema.pick({
   name: true,
