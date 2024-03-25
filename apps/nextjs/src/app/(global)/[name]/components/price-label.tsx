@@ -1,5 +1,5 @@
-
 import { cn } from "@pachi/utils";
+
 import Price from "~/components/price";
 
 const PriceLabel = ({

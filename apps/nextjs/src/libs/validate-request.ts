@@ -18,4 +18,4 @@ const validateRequest = cache(async () => {
   return result;
 });
 
-export { validateRequest}
+export { validateRequest };
